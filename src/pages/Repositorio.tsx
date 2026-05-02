@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer, Cell,
-  PieChart, Pie, Legend,
+  PieChart, Pie, Legend, LabelList,
 } from "recharts";
 
 const SCORE_STYLE: Record<string, string> = {
