@@ -56,7 +56,21 @@ export function WaveBadge({ wave }: { wave: Wave }) {
     W2: "bg-[hsl(var(--wave-2))]/10 text-[hsl(var(--wave-2))] border-[hsl(var(--wave-2))]/30",
     W3: "bg-[hsl(var(--wave-3))]/10 text-[hsl(var(--wave-3))] border-[hsl(var(--wave-3))]/30",
   };
-  return <span className={cn(baseClass, map[wave])}>{wave}</span>;
+  const info = WAVE_DESCRIPTIONS[wave];
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className={cn(baseClass, map[wave], "cursor-help")} aria-label={info.titulo}>{wave}</span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-xs">
+        <div className="space-y-1">
+          <div className="font-semibold text-sm">{info.titulo}</div>
+          <div className="text-xs text-muted-foreground">{info.periodo}</div>
+          <p className="text-xs leading-relaxed">{info.foco}</p>
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
 }
 
 export function SaudeBadge({ saude }: { saude: Saude }) {
