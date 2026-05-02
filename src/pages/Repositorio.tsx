@@ -637,7 +637,7 @@ function BCStatusChart() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={counts} margin={{ top: 8, right: 12, bottom: 0, left: -12 }}>
+            <BarChart data={counts} margin={{ top: 24, right: 12, bottom: 0, left: -12 }}>
               <XAxis dataKey="status" tick={{ fontSize: 11 }} interval={0} />
               <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
               <RTooltip cursor={{ fill: "hsl(var(--muted))" }} />
@@ -645,6 +645,7 @@ function BCStatusChart() {
                 {counts.map((c, i) => (
                   <Cell key={i} fill={STATUS_COLORS[c.status] ?? "hsl(var(--primary))"} />
                 ))}
+                <LabelList dataKey="total" position="top" style={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 700 }} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -652,7 +653,16 @@ function BCStatusChart() {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie data={counts} dataKey="total" nameKey="status" innerRadius={50} outerRadius={90} paddingAngle={2}>
+              <Pie data={counts} dataKey="total" nameKey="status" innerRadius={50} outerRadius={90} paddingAngle={2}
+                label={({ value, cx, cy, midAngle, innerRadius, outerRadius }) => {
+                  const RADIAN = Math.PI / 180;
+                  const r = innerRadius + (outerRadius - innerRadius) * 0.55;
+                  const x = cx + r * Math.cos(-midAngle * RADIAN);
+                  const y = cy + r * Math.sin(-midAngle * RADIAN);
+                  return <text x={x} y={y} fill="white" fontSize={11} fontWeight={700} textAnchor="middle" dominantBaseline="central">{value}</text>;
+                }}
+                labelLine={false}
+              >
                 {counts.map((c, i) => (
                   <Cell key={i} fill={STATUS_COLORS[c.status] ?? "hsl(var(--primary))"} />
                 ))}
