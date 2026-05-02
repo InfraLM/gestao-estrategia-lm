@@ -44,11 +44,27 @@ const visao2026ByClass: Record<Classificacao, number> = {
 };
 
 // Status por classificação (para gráfico de barras empilhadas filtrável)
-const statusByClassRaw: Record<Classificacao, { "Em Andamento": number; "A Iniciar": number; Backlog: number; Atrasado: number }> = {
-  "Institucional": { "Em Andamento": 14, "A Iniciar": 5, Backlog: 8, Atrasado: 2 },
-  "Melhoria Contínua": { "Em Andamento": 18, "A Iniciar": 6, Backlog: 22, Atrasado: 1 },
-  "Melhoria Contínua com EPP": { "Em Andamento": 9, "A Iniciar": 4, Backlog: 14, Atrasado: 1 },
-  "Novo Produto": { "Em Andamento": 4, "A Iniciar": 8, Backlog: 28, Atrasado: 0 },
+const statusByClassRaw: Record<Classificacao, { "Em Andamento": number; "A Iniciar": number; Backlog: number; Atrasado: number; Concluídos: number }> = {
+  "Institucional": { "Em Andamento": 14, "A Iniciar": 5, Backlog: 4, Atrasado: 2, Concluídos: 4 },
+  "Melhoria Contínua": { "Em Andamento": 18, "A Iniciar": 6, Backlog: 18, Atrasado: 1, Concluídos: 4 },
+  "Melhoria Contínua com EPP": { "Em Andamento": 9, "A Iniciar": 4, Backlog: 11, Atrasado: 1, Concluídos: 3 },
+  "Novo Produto": { "Em Andamento": 4, "A Iniciar": 8, Backlog: 26, Atrasado: 0, Concluídos: 2 },
+};
+
+// Budget por ano (R$)
+const budgetByYear: { ano: string; valor: number }[] = [
+  { ano: "2026", valor: 1_320_000 },
+  { ano: "2027", valor: 1_080_000 },
+  { ano: "2028", valor: 620_000 },
+];
+
+// ICE Quadrant — derive complexidade from budget bucket
+const complexidadeFromBudget = (b: number) => {
+  if (b >= 400_000) return 8.5;
+  if (b >= 200_000) return 6.5;
+  if (b >= 80_000) return 4.5;
+  if (b > 0) return 3;
+  return 2;
 };
 
 const distSemestreRaw: Record<Classificacao, { sem: string; W1: number; W2: number; W3: number }[]> = {
