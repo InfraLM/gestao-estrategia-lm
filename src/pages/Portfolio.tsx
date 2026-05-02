@@ -35,6 +35,35 @@ export default function Portfolio() {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const toggleGroup = (k: string) => setCollapsed(c => ({ ...c, [k]: !c[k] }));
 
+  const columns = ["ID","Projeto","Diretor","Classif.","Wave","Obj.","Status BC","Período","Budget","Status","ICE",""] as const;
+  const defaultWidths = [70, 260, 180, 170, 80, 110, 150, 130, 130, 140, 110, 110];
+  const [colWidths, setColWidths] = useState<number[]>(() => {
+    try {
+      const saved = localStorage.getItem("portfolio.colWidths");
+      if (saved) {
+        const arr = JSON.parse(saved);
+        if (Array.isArray(arr) && arr.length === defaultWidths.length) return arr;
+      }
+    } catch {}
+    return defaultWidths;
+  });
+  const startResize = (i: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = colWidths[i];
+    const onMove = (ev: MouseEvent) => {
+      const next = Math.max(60, startW + (ev.clientX - startX));
+      setColWidths(w => { const c = [...w]; c[i] = next; return c; });
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      setColWidths(w => { try { localStorage.setItem("portfolio.colWidths", JSON.stringify(w)); } catch {} return w; });
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
+
   const updateProject = (id: string, patch: Partial<Projeto>) => {
     setData(prev => prev.map(p => p.id === id ? { ...p, ...patch } : p));
     toast.success(`${id} atualizado`);
@@ -179,11 +208,23 @@ export default function Portfolio() {
       {view === "tabela" ? (
         <Card className="shadow-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
+              <colgroup>
+                {colWidths.map((w, i) => <col key={i} style={{ width: `${w}px` }} />)}
+              </colgroup>
               <thead className="bg-surface-muted text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  {["ID","Projeto","Diretor","Classif.","Wave","Obj.","Status BC","Período","Budget","Status","ICE",""].map(h => (
-                    <th key={h} className="text-left px-4 py-3 font-semibold whitespace-nowrap">{h}</th>
+                  {columns.map((h, i) => (
+                    <th key={h || `c${i}`} className="text-left px-4 py-3 font-semibold whitespace-nowrap relative truncate select-none">
+                      {h}
+                      {i < columns.length - 1 && (
+                        <span
+                          onMouseDown={(e) => startResize(i, e)}
+                          className="absolute right-0 top-0 h-full w-1.5 cursor-col-resize hover:bg-primary/40 active:bg-primary"
+                          aria-label="Redimensionar coluna"
+                        />
+                      )}
+                    </th>
                   ))}
                 </tr>
               </thead>
@@ -203,38 +244,38 @@ export default function Portfolio() {
                     )}
                     {!collapsed[g.key] && g.items.map(p => (
                   <tr key={p.id} className="border-t border-border hover:bg-surface-muted/50 transition-colors">
-                    <td className="px-4 py-3 text-xs text-muted-foreground tabular-nums">{p.id}</td>
-                    <td className="px-4 py-3"><Link to="#" className="font-semibold text-foreground hover:text-primary">{p.nome}</Link></td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 overflow-hidden text-xs text-muted-foreground tabular-nums">{p.id}</td>
+                    <td className="px-4 py-3 overflow-hidden"><Link to="#" className="font-semibold text-foreground hover:text-primary">{p.nome}</Link></td>
+                    <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.diretor} options={diretores} onChange={(v) => updateProject(p.id, { diretor: v })}>
                         <div className="flex items-center gap-2"><div className="h-7 w-7 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center text-xs font-semibold">{p.diretor.split(" ").map(n => n[0]).slice(0,2).join("")}</div><span className="whitespace-nowrap">{p.diretor}</span></div>
                       </InlineSelect>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.classificacao} options={classOpts} onChange={(v) => updateProject(p.id, { classificacao: v as Projeto["classificacao"] })}>
                         <ClassBadge value={p.classificacao} />
                       </InlineSelect>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.wave} options={waveOpts} onChange={(v) => updateProject(p.id, { wave: v as Projeto["wave"] })}>
                         <WaveBadge wave={p.wave} />
                       </InlineSelect>
                     </td>
-                    <td className="px-4 py-3 text-xs font-medium">{p.objetivos.join(", ")}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 overflow-hidden text-xs font-medium">{p.objetivos.join(", ")}</td>
+                    <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.statusBC} options={bcOpts} onChange={(v) => updateProject(p.id, { statusBC: v as Projeto["statusBC"] })}>
                         <BCBadge status={p.statusBC} />
                       </InlineSelect>
                     </td>
-                    <td className="px-4 py-3 text-xs whitespace-nowrap text-muted-foreground">{p.inicio} → {p.termino}</td>
-                    <td className="px-4 py-3 text-xs font-medium tabular-nums whitespace-nowrap">R$ {p.budget.toLocaleString("pt-BR")}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 overflow-hidden text-xs whitespace-nowrap text-muted-foreground">{p.inicio} → {p.termino}</td>
+                    <td className="px-4 py-3 overflow-hidden text-xs font-medium tabular-nums whitespace-nowrap">R$ {p.budget.toLocaleString("pt-BR")}</td>
+                    <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.status} options={statusOpts} onChange={(v) => updateProject(p.id, { status: v as Projeto["status"] })}>
                         <StatusBadge status={p.status} />
                       </InlineSelect>
                     </td>
 
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 overflow-hidden">
                       <div className="flex items-center gap-2 min-w-[80px]">
                         <span className="text-xs font-semibold tabular-nums w-7">{p.ice.toFixed(1)}</span>
                         <div className="h-1.5 flex-1 rounded-full bg-muted overflow-hidden">
@@ -242,7 +283,7 @@ export default function Portfolio() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 overflow-hidden">
                       <div className="flex gap-1">
                         <button onClick={() => setEditing(p)} className="h-7 w-7 grid place-items-center rounded hover:bg-muted"><Edit className="h-3.5 w-3.5" /></button>
                         <button className="h-7 w-7 grid place-items-center rounded hover:bg-muted"><Eye className="h-3.5 w-3.5" /></button>
