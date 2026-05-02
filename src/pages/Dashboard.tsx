@@ -419,45 +419,128 @@ export default function Dashboard() {
 
       {/* Modal lista de projetos filtrados */}
       <Dialog open={showList} onOpenChange={setShowList}>
-        <DialogContent className="max-w-5xl">
+        <DialogContent className="max-w-6xl">
           <DialogHeader>
             <DialogTitle>
-              Projetos considerados no filtro
+              Projetos do portfólio
               <span className="ml-2 text-sm font-normal text-muted-foreground">
-                {isAll ? "Todas as classificações" : filterClasses.join(", ")} · {projetosFiltrados.length} projeto(s)
+                {isAll ? "Todas as classificações" : filterClasses.join(", ")} · {bTotal} resultado(s){bLoading && " · carregando…"}
               </span>
             </DialogTitle>
           </DialogHeader>
-          <ScrollArea className="max-h-[65vh]">
+
+          {/* Toolbar: busca + filtros vindos do backend */}
+          <div className="flex flex-wrap items-center gap-2 pb-2">
+            <div className="relative flex-1 min-w-[220px]">
+              <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input value={bSearch} onChange={e => setBSearch(e.target.value)} placeholder="Buscar por nome, código ou diretor…" className="pl-9 h-9" />
+            </div>
+            <Select value={bStatus} onValueChange={setBStatus}>
+              <SelectTrigger className="h-9 w-[170px]"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent className="z-50 bg-popover">
+                <SelectItem value="all">Todos os status</SelectItem>
+                {["Backlog","A Iniciar","Em Andamento","Validação","Encerramento","Concluído","Pausado","Atrasado","Cancelado","Em Avaliação"].map(s => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={bWave} onValueChange={setBWave}>
+              <SelectTrigger className="h-9 w-[120px]"><SelectValue placeholder="Wave" /></SelectTrigger>
+              <SelectContent className="z-50 bg-popover">
+                <SelectItem value="all">Todas waves</SelectItem>
+                {["W1","W2","W3"].map(w => <SelectItem key={w} value={w}>{w}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={`${bSort}:${bDir}`} onValueChange={(v) => { const [k, d] = v.split(":"); setBSort(k as any); setBDir(d as any); }}>
+              <SelectTrigger className="h-9 w-[180px]"><SelectValue placeholder="Ordenar" /></SelectTrigger>
+              <SelectContent className="z-50 bg-popover">
+                <SelectItem value="ice:desc">ICE (maior)</SelectItem>
+                <SelectItem value="ice:asc">ICE (menor)</SelectItem>
+                <SelectItem value="budget:desc">Budget (maior)</SelectItem>
+                <SelectItem value="budget:asc">Budget (menor)</SelectItem>
+                <SelectItem value="nome:asc">Nome (A→Z)</SelectItem>
+                <SelectItem value="nome:desc">Nome (Z→A)</SelectItem>
+                <SelectItem value="codigo:asc">Código</SelectItem>
+                <SelectItem value="diretor:asc">Diretor</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="ghost" size="sm" onClick={() => { setBSearch(""); setBStatus("all"); setBWave("all"); setBSort("ice"); setBDir("desc"); }} className="gap-1">
+              <X className="h-3.5 w-3.5" /> Limpar
+            </Button>
+          </div>
+
+          <ScrollArea className="max-h-[55vh]">
             <table className="w-full text-sm">
               <thead className="bg-surface-muted text-xs uppercase tracking-wider text-muted-foreground sticky top-0">
                 <tr>
-                  {["ID","Projeto","Diretor","Classif.","Wave","Status","Status BC","Período","Budget","ICE"].map(h => (
-                    <th key={h} className="text-left px-3 py-2 font-semibold whitespace-nowrap">{h}</th>
+                  {([
+                    ["codigo", "ID"],
+                    ["nome", "Projeto"],
+                    ["diretor", "Diretor"],
+                    [null, "Classif."],
+                    ["wave", "Wave"],
+                    ["status", "Status"],
+                    [null, "Status BC"],
+                    [null, "Período"],
+                    ["budget", "Budget"],
+                    ["ice", "ICE"],
+                  ] as Array<[SortKey | null, string]>).map(([k, h]) => (
+                    <th key={h} className="text-left px-3 py-2 font-semibold whitespace-nowrap select-none">
+                      {k ? (
+                        <button onClick={() => toggleSort(k)} className="inline-flex items-center gap-1 hover:text-foreground">
+                          {h}
+                          {bSort === k && (bDir === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
+                        </button>
+                      ) : h}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {projetosFiltrados.map(p => (
+                {bRows.map((p: any) => (
                   <tr key={p.id} className="border-t border-border hover:bg-surface-muted/50">
-                    <td className="px-3 py-2 text-xs text-muted-foreground tabular-nums">{p.id}</td>
-                    <td className="px-3 py-2 font-medium"><Link to={`/gestao/${p.id}`} className="hover:text-primary">{p.nome}</Link></td>
+                    <td className="px-3 py-2 text-xs text-muted-foreground tabular-nums">{p.codigo}</td>
+                    <td className="px-3 py-2 font-medium"><Link to={`/gestao/${p.codigo}`} className="hover:text-primary">{p.nome}</Link></td>
                     <td className="px-3 py-2 text-xs whitespace-nowrap">{p.diretor}</td>
                     <td className="px-3 py-2"><ClassBadge value={p.classificacao} /></td>
                     <td className="px-3 py-2"><WaveBadge wave={p.wave} /></td>
                     <td className="px-3 py-2"><StatusBadge status={p.status} /></td>
-                    <td className="px-3 py-2"><BCBadge status={p.statusBC} /></td>
+                    <td className="px-3 py-2"><BCBadge status={p.status_bc} /></td>
                     <td className="px-3 py-2 text-xs whitespace-nowrap text-muted-foreground">{p.inicio} → {p.termino}</td>
-                    <td className="px-3 py-2 text-xs tabular-nums whitespace-nowrap">R$ {p.budget.toLocaleString("pt-BR")}</td>
-                    <td className="px-3 py-2 text-xs font-semibold tabular-nums">{p.ice.toFixed(1)}</td>
+                    <td className="px-3 py-2 text-xs tabular-nums whitespace-nowrap">R$ {Number(p.budget).toLocaleString("pt-BR")}</td>
+                    <td className="px-3 py-2 text-xs font-semibold tabular-nums">{Number(p.ice).toFixed(1)}</td>
                   </tr>
                 ))}
-                {projetosFiltrados.length === 0 && (
+                {!bLoading && bRows.length === 0 && (
                   <tr><td colSpan={10} className="text-center py-8 text-muted-foreground text-sm">Nenhum projeto encontrado.</td></tr>
                 )}
               </tbody>
             </table>
           </ScrollArea>
+
+          {/* Paginação */}
+          <div className="flex items-center justify-between pt-3 border-t border-border text-xs text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span>Itens por página:</span>
+              <Select value={String(bPageSize)} onValueChange={(v) => setBPageSize(Number(v))}>
+                <SelectTrigger className="h-8 w-[80px]"><SelectValue /></SelectTrigger>
+                <SelectContent className="z-50 bg-popover">
+                  {[10, 20, 50, 100].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-3">
+              <span>Página {bPage} de {totalPages} · {bTotal} item(ns)</span>
+              <div className="flex gap-1">
+                <Button variant="outline" size="sm" disabled={bPage <= 1} onClick={() => setBPage(p => Math.max(1, p - 1))}>
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                </Button>
+                <Button variant="outline" size="sm" disabled={bPage >= totalPages} onClick={() => setBPage(p => Math.min(totalPages, p + 1))}>
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 
