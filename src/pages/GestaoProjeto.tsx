@@ -48,6 +48,8 @@ export default function GestaoProjeto() {
   }
 
   const data = buildProjectData(projeto);
+  const editable = useProjectEditableData(projeto.id, projeto.inicio, projeto.saude);
+  const cronogramaChart = editable.cronogramaChart;
 
   return (
     <div className="space-y-6">
