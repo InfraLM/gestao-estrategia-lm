@@ -17,12 +17,12 @@ const krOpts = okrs.flatMap(o => o.krs).map(kr => ({ value: kr.id, label: `${kr.
 
 const waveOpts: Projeto["wave"][] = ["W1","W2","W3"];
 const classOpts: Projeto["classificacao"][] = ["Institucional","Melhoria Contínua","Melhoria Contínua com EPP","Novo Produto"];
-const statusOpts: Projeto["status"][] = ["Backlog","A Iniciar","Em Andamento","Pausado","Atrasado","Concluído","Cancelado","Em Avaliação"];
+const statusOpts: Projeto["status"][] = ["Backlog","A Iniciar","Em Andamento","Validação","Encerramento","Concluído","Pausado","Atrasado","Cancelado","Em Avaliação"];
 const bcOpts: Projeto["statusBC"][] = ["Em Revisão","BC em Construção","Ativo EPP","Projeto Concluído","BC não aplicável","Sem BC","Adiado","Validado"];
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-const statusCols: Projeto["status"][] = ["Backlog", "A Iniciar", "Em Andamento", "Pausado", "Atrasado", "Concluído"];
+const statusCols: Projeto["status"][] = ["Backlog", "A Iniciar", "Em Andamento", "Validação", "Encerramento", "Concluído"];
 
 export default function Portfolio() {
   const nav = useNavigate();
