@@ -17,6 +17,7 @@ const farolColor = { verde: "bg-success", amarelo: "bg-warning", vermelho: "bg-d
 export default function StatusReport() {
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
   const [expanded, setExpanded] = useState<string | null>(projetos.find(p => p.saude !== "On-Track")?.id ?? null);
+  const [parecerOpen, setParecerOpen] = useState(false);
 
   const ativos = projetos.filter(p => p.status === "Em Andamento" || p.status === "Em Avaliação");
   const onTrack = ativos.filter(p => p.saude === "On-Track").length;
