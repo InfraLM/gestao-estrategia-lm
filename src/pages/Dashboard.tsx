@@ -4,7 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
 import { projetos, totaisPortfolio, okrs, waveColor, type Classificacao } from "@/data/mockData";
-import { BarChart3, FolderOpen, TrendingUp, ShieldCheck, AlertTriangle, Calendar, Filter, X, List } from "lucide-react";
+import { BarChart3, FolderOpen, TrendingUp, ShieldCheck, AlertTriangle, Calendar, Filter, X, List, Info } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Bar, BarChart, CartesianGrid, Cell, LabelList, Legend, Line, LineChart as RLineChart,
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -934,7 +935,21 @@ export default function Dashboard() {
             <div key={okr.id}>
               <div className="mb-3">
                 <div className="text-xs font-semibold text-primary tracking-wide">{okr.id}</div>
-                <div className="text-sm font-semibold">{okr.nome}</div>
+                <div className="flex items-center gap-1.5">
+                  <div className="text-sm font-semibold">{okr.nome}</div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="h-5 w-5 grid place-items-center rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10" aria-label="Saiba mais">
+                        <Info className="h-3.5 w-3.5" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 text-xs leading-relaxed bg-popover">
+                      <div className="font-semibold text-sm mb-1">{okr.id} · {okr.nome}</div>
+                      <div className="text-muted-foreground mb-2">{okr.subtitulo}</div>
+                      <p>{okr.descricao}</p>
+                    </PopoverContent>
+                  </Popover>
+                </div>
                 <div className="text-xs text-muted-foreground">{okr.subtitulo}</div>
               </div>
               <ul className="space-y-2.5">
@@ -945,7 +960,20 @@ export default function Dashboard() {
                   return (
                     <li key={kr.id}>
                       <div className="flex items-center justify-between text-xs mb-1">
-                        <span className="font-medium">{kr.id} <span className="text-muted-foreground font-normal">— {kr.nome}</span></span>
+                        <span className="font-medium flex items-center gap-1">
+                          {kr.id} <span className="text-muted-foreground font-normal">— {kr.nome}</span>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button className="h-4 w-4 grid place-items-center rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10" aria-label="Saiba mais">
+                                <Info className="h-3 w-3" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-72 text-xs leading-relaxed bg-popover">
+                              <div className="font-semibold text-sm mb-1">{kr.id} · {kr.nome}</div>
+                              <p>{kr.descricao}</p>
+                            </PopoverContent>
+                          </Popover>
+                        </span>
                         <span className={`tabular-nums font-semibold ${baixa ? "text-destructive" : "text-foreground"}`}>{kr.iniciativas}</span>
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
