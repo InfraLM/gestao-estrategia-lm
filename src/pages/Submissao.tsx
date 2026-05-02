@@ -359,9 +359,23 @@ export default function Submissao() {
               <Label>Objetivos Estratégicos (BSC)</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {objetivosBSC.map(o => (
-                  <button key={o.id} type="button" className="px-2.5 py-1 rounded-md text-xs border border-border hover:border-primary hover:bg-primary/5 transition-colors">
-                    <span className="font-semibold text-primary">{o.id}</span> · {o.nome.slice(0, 32)}
-                  </button>
+                  <div key={o.id} className="inline-flex items-center rounded-md border border-border hover:border-primary hover:bg-primary/5 transition-colors overflow-hidden">
+                    <button type="button" className="px-2.5 py-1 text-xs">
+                      <span className="font-semibold text-primary">{o.id}</span> · {o.nome.slice(0, 32)}
+                    </button>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button type="button" className="h-7 w-7 grid place-items-center text-muted-foreground hover:text-primary border-l border-border" aria-label="Saiba mais">
+                          <Info className="h-3.5 w-3.5" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80 text-xs leading-relaxed bg-popover">
+                        <div className="font-semibold text-sm mb-1">{o.id} · {o.nome}</div>
+                        <div className="text-muted-foreground mb-2">Perspectiva {o.perspectiva}</div>
+                        <p>{o.descricao}</p>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 ))}
               </div>
             </div>
@@ -369,9 +383,22 @@ export default function Submissao() {
               <Label>KRs Vinculados 2026/1</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {okrs.flatMap(o => o.krs).map(kr => (
-                  <button key={kr.id} type="button" className="px-2.5 py-1 rounded-md text-xs border border-border hover:border-primary hover:bg-primary/5 transition-colors">
-                    <span className="font-semibold">{kr.id}</span> · {kr.nome}
-                  </button>
+                  <div key={kr.id} className="inline-flex items-center rounded-md border border-border hover:border-primary hover:bg-primary/5 transition-colors overflow-hidden">
+                    <button type="button" className="px-2.5 py-1 text-xs">
+                      <span className="font-semibold">{kr.id}</span> · {kr.nome}
+                    </button>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button type="button" className="h-7 w-7 grid place-items-center text-muted-foreground hover:text-primary border-l border-border" aria-label="Saiba mais">
+                          <Info className="h-3.5 w-3.5" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80 text-xs leading-relaxed bg-popover">
+                        <div className="font-semibold text-sm mb-1">{kr.id} · {kr.nome}</div>
+                        <p>{kr.descricao}</p>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 ))}
               </div>
             </div>
