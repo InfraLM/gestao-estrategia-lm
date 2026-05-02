@@ -14,16 +14,391 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cronograma_itens: {
+        Row: {
+          created_at: string
+          data_conclusao: string | null
+          data_prevista: string | null
+          fase: string
+          id: string
+          observacoes: string | null
+          ordem: number
+          projeto_id: string
+          responsavel: string | null
+          status: Database["public"]["Enums"]["cronograma_status_enum"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_conclusao?: string | null
+          data_prevista?: string | null
+          fase: string
+          id?: string
+          observacoes?: string | null
+          ordem?: number
+          projeto_id: string
+          responsavel?: string | null
+          status?: Database["public"]["Enums"]["cronograma_status_enum"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_conclusao?: string | null
+          data_prevista?: string | null
+          fase?: string
+          id?: string
+          observacoes?: string | null
+          ordem?: number
+          projeto_id?: string
+          responsavel?: string | null
+          status?: Database["public"]["Enums"]["cronograma_status_enum"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cronograma_itens_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      eap_itens: {
+        Row: {
+          created_at: string
+          data_conclusao: string | null
+          data_prevista: string | null
+          entregavel: string
+          id: string
+          observacoes: string | null
+          pacote: string
+          projeto_id: string
+          responsavel: string | null
+          status: Database["public"]["Enums"]["eap_status_enum"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_conclusao?: string | null
+          data_prevista?: string | null
+          entregavel: string
+          id?: string
+          observacoes?: string | null
+          pacote: string
+          projeto_id: string
+          responsavel?: string | null
+          status?: Database["public"]["Enums"]["eap_status_enum"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_conclusao?: string | null
+          data_prevista?: string | null
+          entregavel?: string
+          id?: string
+          observacoes?: string | null
+          pacote?: string
+          projeto_id?: string
+          responsavel?: string | null
+          status?: Database["public"]["Enums"]["eap_status_enum"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eap_itens_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entrega_submissoes: {
+        Row: {
+          arquivo_nome: string | null
+          arquivo_path: string | null
+          arquivo_tamanho: number | null
+          created_at: string
+          descricao: string | null
+          eap_item_id: string | null
+          id: string
+          projeto_id: string
+          submitted_by: string
+          tipo_arquivo: string | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          arquivo_nome?: string | null
+          arquivo_path?: string | null
+          arquivo_tamanho?: number | null
+          created_at?: string
+          descricao?: string | null
+          eap_item_id?: string | null
+          id?: string
+          projeto_id: string
+          submitted_by: string
+          tipo_arquivo?: string | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          arquivo_nome?: string | null
+          arquivo_path?: string | null
+          arquivo_tamanho?: number | null
+          created_at?: string
+          descricao?: string | null
+          eap_item_id?: string | null
+          id?: string
+          projeto_id?: string
+          submitted_by?: string
+          tipo_arquivo?: string | null
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entrega_submissoes_eap_item_id_fkey"
+            columns: ["eap_item_id"]
+            isOneToOne: false
+            referencedRelation: "eap_itens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entrega_submissoes_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      projetos: {
+        Row: {
+          avancos: string | null
+          budget: number
+          causa_raiz: string | null
+          classificacao: Database["public"]["Enums"]["classificacao_enum"]
+          codigo: string
+          created_at: string
+          created_by: string | null
+          descricao: string | null
+          diretor: string | null
+          gerente: string | null
+          ice: number
+          id: string
+          inicio: string | null
+          krs: string[]
+          nome: string
+          objetivos: string[]
+          plano_acao: string | null
+          realizado: number
+          saude: Database["public"]["Enums"]["saude_enum"]
+          status: Database["public"]["Enums"]["status_execucao_enum"]
+          status_bc: Database["public"]["Enums"]["status_bc_enum"]
+          termino: string | null
+          updated_at: string
+          wave: Database["public"]["Enums"]["wave_enum"]
+        }
+        Insert: {
+          avancos?: string | null
+          budget?: number
+          causa_raiz?: string | null
+          classificacao?: Database["public"]["Enums"]["classificacao_enum"]
+          codigo: string
+          created_at?: string
+          created_by?: string | null
+          descricao?: string | null
+          diretor?: string | null
+          gerente?: string | null
+          ice?: number
+          id?: string
+          inicio?: string | null
+          krs?: string[]
+          nome: string
+          objetivos?: string[]
+          plano_acao?: string | null
+          realizado?: number
+          saude?: Database["public"]["Enums"]["saude_enum"]
+          status?: Database["public"]["Enums"]["status_execucao_enum"]
+          status_bc?: Database["public"]["Enums"]["status_bc_enum"]
+          termino?: string | null
+          updated_at?: string
+          wave?: Database["public"]["Enums"]["wave_enum"]
+        }
+        Update: {
+          avancos?: string | null
+          budget?: number
+          causa_raiz?: string | null
+          classificacao?: Database["public"]["Enums"]["classificacao_enum"]
+          codigo?: string
+          created_at?: string
+          created_by?: string | null
+          descricao?: string | null
+          diretor?: string | null
+          gerente?: string | null
+          ice?: number
+          id?: string
+          inicio?: string | null
+          krs?: string[]
+          nome?: string
+          objetivos?: string[]
+          plano_acao?: string | null
+          realizado?: number
+          saude?: Database["public"]["Enums"]["saude_enum"]
+          status?: Database["public"]["Enums"]["status_execucao_enum"]
+          status_bc?: Database["public"]["Enums"]["status_bc_enum"]
+          termino?: string | null
+          updated_at?: string
+          wave?: Database["public"]["Enums"]["wave_enum"]
+        }
+        Relationships: []
+      }
+      status_reports: {
+        Row: {
+          avancos: string | null
+          causa_raiz: string | null
+          created_at: string
+          desvios: string | null
+          id: string
+          periodo: string
+          plano_acao: string | null
+          projeto_id: string
+          reportado_por: string | null
+          saude: Database["public"]["Enums"]["saude_enum"] | null
+          updated_at: string
+        }
+        Insert: {
+          avancos?: string | null
+          causa_raiz?: string | null
+          created_at?: string
+          desvios?: string | null
+          id?: string
+          periodo: string
+          plano_acao?: string | null
+          projeto_id: string
+          reportado_por?: string | null
+          saude?: Database["public"]["Enums"]["saude_enum"] | null
+          updated_at?: string
+        }
+        Update: {
+          avancos?: string | null
+          causa_raiz?: string | null
+          created_at?: string
+          desvios?: string | null
+          id?: string
+          periodo?: string
+          plano_acao?: string | null
+          projeto_id?: string
+          reportado_por?: string | null
+          saude?: Database["public"]["Enums"]["saude_enum"] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "status_reports_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "pmo" | "viewer"
+      classificacao_enum:
+        | "Institucional"
+        | "Melhoria Contínua"
+        | "Melhoria Contínua com EPP"
+        | "Novo Produto"
+      cronograma_status_enum:
+        | "Não Iniciado"
+        | "Em Andamento"
+        | "Concluído"
+        | "Atrasado"
+      eap_status_enum: "Pendente" | "Em Andamento" | "Concluído" | "Bloqueado"
+      saude_enum: "On-Track" | "Alerta" | "Off-Track"
+      status_bc_enum:
+        | "Em Revisão"
+        | "BC em Construção"
+        | "Ativo EPP"
+        | "Projeto Concluído"
+        | "BC não aplicável"
+        | "Sem BC"
+        | "Adiado"
+        | "Validado"
+      status_execucao_enum:
+        | "Backlog"
+        | "A Iniciar"
+        | "Em Andamento"
+        | "Pausado"
+        | "Atrasado"
+        | "Concluído"
+        | "Cancelado"
+        | "Em Avaliação"
+      wave_enum: "W1" | "W2" | "W3"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +525,43 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "pmo", "viewer"],
+      classificacao_enum: [
+        "Institucional",
+        "Melhoria Contínua",
+        "Melhoria Contínua com EPP",
+        "Novo Produto",
+      ],
+      cronograma_status_enum: [
+        "Não Iniciado",
+        "Em Andamento",
+        "Concluído",
+        "Atrasado",
+      ],
+      eap_status_enum: ["Pendente", "Em Andamento", "Concluído", "Bloqueado"],
+      saude_enum: ["On-Track", "Alerta", "Off-Track"],
+      status_bc_enum: [
+        "Em Revisão",
+        "BC em Construção",
+        "Ativo EPP",
+        "Projeto Concluído",
+        "BC não aplicável",
+        "Sem BC",
+        "Adiado",
+        "Validado",
+      ],
+      status_execucao_enum: [
+        "Backlog",
+        "A Iniciar",
+        "Em Andamento",
+        "Pausado",
+        "Atrasado",
+        "Concluído",
+        "Cancelado",
+        "Em Avaliação",
+      ],
+      wave_enum: ["W1", "W2", "W3"],
+    },
   },
 } as const
