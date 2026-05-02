@@ -13,6 +13,8 @@ export function StatusBadge({ status }: { status: StatusExecucao }) {
     "Concluído": "bg-success-soft text-success border-success/30",
     "Cancelado": "bg-muted text-muted-foreground border-border",
     "Em Avaliação": "bg-warning-soft text-warning-foreground border-warning/40",
+    "Validação": "bg-info-soft text-info border-info/30",
+    "Encerramento": "bg-warning-soft text-warning-foreground border-warning/40",
   };
   return <span className={cn(baseClass, map[status])}>● {status}</span>;
 }

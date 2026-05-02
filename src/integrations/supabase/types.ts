@@ -176,6 +176,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          cargo: string | null
           created_at: string
           display_name: string | null
           email: string | null
@@ -184,6 +185,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          cargo?: string | null
           created_at?: string
           display_name?: string | null
           email?: string | null
@@ -192,6 +194,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          cargo?: string | null
           created_at?: string
           display_name?: string | null
           email?: string | null
@@ -398,6 +401,8 @@ export type Database = {
         | "Concluído"
         | "Cancelado"
         | "Em Avaliação"
+        | "Validação"
+        | "Encerramento"
       wave_enum: "W1" | "W2" | "W3"
     }
     CompositeTypes: {
@@ -560,6 +565,8 @@ export const Constants = {
         "Concluído",
         "Cancelado",
         "Em Avaliação",
+        "Validação",
+        "Encerramento",
       ],
       wave_enum: ["W1", "W2", "W3"],
     },

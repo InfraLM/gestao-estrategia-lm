@@ -1,7 +1,10 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search } from "lucide-react";
+import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -24,6 +27,21 @@ const titles: Record<string, string> = {
 export default function AppLayout() {
   const loc = useLocation();
   const title = titles[loc.pathname] ?? "PMO Estratégico";
+  const { user, signOut } = useAuth();
+  const [profile, setProfile] = useState<{ display_name?: string | null; cargo?: string | null; email?: string | null } | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) { setProfile(null); setIsAdmin(false); return; }
+    supabase.from("profiles").select("display_name,cargo,email").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => setProfile(data ?? { email: user.email }));
+    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle()
+      .then(({ data }) => setIsAdmin(!!data));
+  }, [user]);
+
+  const displayName = profile?.display_name || user?.email || "Convidado";
+  const cargo = profile?.cargo || (isAdmin ? "Administrador" : (user ? "Usuário" : ""));
+  const initials = displayName.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase();
 
   return (
     <div className="min-h-screen flex bg-surface">
@@ -82,12 +100,20 @@ export default function AppLayout() {
               </button>
               <div className="flex items-center gap-3 pl-3 border-l border-border">
                 <div className="text-right hidden sm:block">
-                  <div className="text-sm font-medium">Bruno Garcia</div>
-                  <div className="text-xs text-muted-foreground">Diretor PMO</div>
+                  <div className="text-sm font-medium flex items-center gap-1.5 justify-end">
+                    {displayName}
+                    {isAdmin && <ShieldCheck className="h-3.5 w-3.5 text-primary" aria-label="Admin" />}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{cargo}</div>
                 </div>
                 <div className="h-9 w-9 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center text-sm font-semibold">
-                  BG
+                  {initials || "?"}
                 </div>
+                {user && (
+                  <button onClick={() => signOut()} title="Sair" className="h-9 w-9 grid place-items-center rounded-md hover:bg-surface-muted text-muted-foreground">
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
