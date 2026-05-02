@@ -380,22 +380,42 @@ export default function Dashboard() {
         </Card>
 
         <Card className="p-5 shadow-card hover:shadow-elevated transition-shadow">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between mb-3">
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Em Andamento</div>
               <div className="mt-2 text-3xl font-semibold tracking-tight tabular-nums text-success">{ativosFiltered}</div>
             </div>
             <TrendingUp className="h-5 w-5 text-success" />
           </div>
+          <div className="space-y-1.5 pt-3 border-t border-border text-xs">
+            <div className="flex items-center justify-between"><span className="text-muted-foreground">Backlog</span><span className="tabular-nums font-semibold">{backlogFiltered}</span></div>
+            <div className="flex items-center justify-between"><span className="text-muted-foreground">A Iniciar</span><span className="tabular-nums font-semibold text-info">{aIniciarFiltered}</span></div>
+            <div className="flex items-center justify-between"><span className="text-muted-foreground">Em Andamento</span><span className="tabular-nums font-semibold text-success">{ativosFiltered}</span></div>
+            <div className="flex items-center justify-between"><span className="text-muted-foreground">Concluídos</span><span className="tabular-nums font-semibold">{concluidosFiltered}</span></div>
+          </div>
         </Card>
 
         <Card className="p-5 shadow-card hover:shadow-elevated transition-shadow">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between mb-3">
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Budget Levantado</div>
               <div className="mt-2 text-3xl font-semibold tracking-tight">{fmtBRL(totaisPortfolio.budgetTotal)}</div>
             </div>
             <BarChart3 className="h-5 w-5 text-foreground" />
+          </div>
+          <div className="space-y-1.5 pt-3 border-t border-border text-xs">
+            {budgetByYear.map(b => {
+              const pct = Math.round((b.valor / totaisPortfolio.budgetTotal) * 100);
+              return (
+                <div key={b.ano} className="flex items-center gap-2">
+                  <span className="text-muted-foreground w-10">{b.ano}</span>
+                  <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
+                  </div>
+                  <span className="tabular-nums font-semibold w-14 text-right">{fmtBRL(b.valor)}</span>
+                </div>
+              );
+            })}
           </div>
         </Card>
 
@@ -406,6 +426,16 @@ export default function Dashboard() {
               <div className="mt-2 text-3xl font-semibold tracking-tight text-info">{totaisPortfolio.bcAprovadoPct}%</div>
             </div>
             <ShieldCheck className="h-5 w-5 text-info" />
+          </div>
+          <div className="pt-3 mt-3 border-t border-border">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">BCs em aberto · iniciados</span>
+              <span className={cn("tabular-nums font-semibold", bcAbertoPct > 30 ? "text-destructive" : bcAbertoPct > 15 ? "text-warning" : "text-success")}>{bcAbertoPct}%</span>
+            </div>
+            <div className="mt-1.5 h-1.5 w-full rounded-full bg-muted overflow-hidden">
+              <div className={cn("h-full", bcAbertoPct > 30 ? "bg-destructive" : bcAbertoPct > 15 ? "bg-warning" : "bg-success")} style={{ width: `${bcAbertoPct}%` }} />
+            </div>
+            <div className="text-[10px] text-muted-foreground mt-1.5 tabular-nums">{iniciadosSemBC} projeto(s) iniciados sem BC finalizado</div>
           </div>
         </Card>
       </div>
