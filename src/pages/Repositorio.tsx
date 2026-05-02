@@ -146,6 +146,9 @@ export default function Repositorio() {
         <KPI label="Documentos" value={totalDocs} icon={Folder} tone="info" />
       </div>
 
+      {/* Consolidado gráfico — BC por status */}
+      <BCStatusChart />
+
       {/* Tabs + Filtros */}
       <Tabs value={tab} onValueChange={v => setTab(v as any)}>
         <TabsList className="grid grid-cols-2 w-full max-w-md">
