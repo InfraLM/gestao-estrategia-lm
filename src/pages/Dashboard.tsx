@@ -85,6 +85,45 @@ const bcByClass: Record<Classificacao, { name: string; value: number; color: str
   "Novo Produto":              [{ name: "Em Revisão", value: 18, color: "hsl(var(--warning))" }, { name: "BC em Construção", value: 6,  color: "hsl(var(--info))" }, { name: "Ativo EPP", value: 2,  color: "hsl(var(--success))" }, { name: "Concluído", value: 1, color: "hsl(var(--wave-2))" }, { name: "Sem BC", value: 3, color: "hsl(var(--neutral))" }, { name: "Sem Informação", value: 70, color: "hsl(var(--border))" }],
 };
 
+// Cruzamento Status BC × Andamento — heatmap/matriz
+// Linhas = Status do BC; Colunas = Status de andamento
+// Destaque: projetos JÁ INICIADOS (Em Andamento + Atrasado) sem BC finalizado (não Ativo EPP / Validado)
+type AndamentoCol = "Em Andamento" | "Atrasado" | "A Iniciar" | "Backlog";
+type BCRow = "Ativo EPP / Validado" | "BC em Construção" | "Em Revisão" | "Sem BC";
+
+const bcVsAndamentoByClass: Record<Classificacao, Record<BCRow, Record<AndamentoCol, number>>> = {
+  "Institucional": {
+    "Ativo EPP / Validado":  { "Em Andamento": 11, "Atrasado": 1, "A Iniciar": 2, "Backlog": 1 },
+    "BC em Construção":      { "Em Andamento": 2,  "Atrasado": 1, "A Iniciar": 3, "Backlog": 4 },
+    "Em Revisão":            { "Em Andamento": 1,  "Atrasado": 0, "A Iniciar": 0, "Backlog": 2 },
+    "Sem BC":                { "Em Andamento": 0,  "Atrasado": 0, "A Iniciar": 0, "Backlog": 1 },
+  },
+  "Melhoria Contínua": {
+    "Ativo EPP / Validado":  { "Em Andamento": 5,  "Atrasado": 0, "A Iniciar": 1, "Backlog": 2 },
+    "BC em Construção":      { "Em Andamento": 4,  "Atrasado": 0, "A Iniciar": 3, "Backlog": 8 },
+    "Em Revisão":            { "Em Andamento": 8,  "Atrasado": 1, "A Iniciar": 1, "Backlog": 6 },
+    "Sem BC":                { "Em Andamento": 1,  "Atrasado": 0, "A Iniciar": 1, "Backlog": 6 },
+  },
+  "Melhoria Contínua com EPP": {
+    "Ativo EPP / Validado":  { "Em Andamento": 6,  "Atrasado": 0, "A Iniciar": 2, "Backlog": 3 },
+    "BC em Construção":      { "Em Andamento": 1,  "Atrasado": 1, "A Iniciar": 1, "Backlog": 5 },
+    "Em Revisão":            { "Em Andamento": 2,  "Atrasado": 0, "A Iniciar": 1, "Backlog": 4 },
+    "Sem BC":                { "Em Andamento": 0,  "Atrasado": 0, "A Iniciar": 0, "Backlog": 2 },
+  },
+  "Novo Produto": {
+    "Ativo EPP / Validado":  { "Em Andamento": 1,  "Atrasado": 0, "A Iniciar": 1, "Backlog": 2 },
+    "BC em Construção":      { "Em Andamento": 1,  "Atrasado": 0, "A Iniciar": 4, "Backlog": 10 },
+    "Em Revisão":            { "Em Andamento": 2,  "Atrasado": 0, "A Iniciar": 2, "Backlog": 12 },
+    "Sem BC":                { "Em Andamento": 0,  "Atrasado": 0, "A Iniciar": 1, "Backlog": 4 },
+  },
+};
+const BC_ROWS: BCRow[] = ["Ativo EPP / Validado", "BC em Construção", "Em Revisão", "Sem BC"];
+const ANDAMENTO_COLS: AndamentoCol[] = ["Em Andamento", "Atrasado", "A Iniciar", "Backlog"];
+// Linhas que indicam BC NÃO finalizado:
+const BC_NAO_FINALIZADO: BCRow[] = ["BC em Construção", "Em Revisão", "Sem BC"];
+// Colunas que indicam projeto JÁ iniciado:
+const JA_INICIADO: AndamentoCol[] = ["Em Andamento", "Atrasado"];
+
 const objCoberturaByClass: Record<Classificacao, { obj: string; n: number }[]> = {
   "Institucional":             [{ obj: "P.03", n: 22 }, { obj: "C.01", n: 18 }, { obj: "P.01", n: 16 }, { obj: "AC.03", n: 14 }, { obj: "F.01", n: 12 }, { obj: "C.02", n: 10 }, { obj: "F.02", n: 8 }, { obj: "C.03", n: 5 }],
   "Melhoria Contínua":         [{ obj: "F.01", n: 20 }, { obj: "F.02", n: 18 }, { obj: "AC.01", n: 16 }, { obj: "P.01", n: 14 }, { obj: "AC.03", n: 12 }, { obj: "P.02", n: 10 }, { obj: "C.02", n: 6 }, { obj: "C.03", n: 4 }],
@@ -180,6 +219,34 @@ export default function Dashboard() {
       .map(p => ({ nome: p.id, planejado: p.budget, realizado: p.realizado })),
     [filterClasses, isAll]
   );
+
+  // Matriz BC × Andamento — soma das classificações ativas
+  const bcAndamentoMatrix = useMemo(() => {
+    const m: Record<BCRow, Record<AndamentoCol, number>> = {
+      "Ativo EPP / Validado": { "Em Andamento": 0, "Atrasado": 0, "A Iniciar": 0, "Backlog": 0 },
+      "BC em Construção":     { "Em Andamento": 0, "Atrasado": 0, "A Iniciar": 0, "Backlog": 0 },
+      "Em Revisão":           { "Em Andamento": 0, "Atrasado": 0, "A Iniciar": 0, "Backlog": 0 },
+      "Sem BC":               { "Em Andamento": 0, "Atrasado": 0, "A Iniciar": 0, "Backlog": 0 },
+    };
+    activeClasses.forEach(c => {
+      BC_ROWS.forEach(r => ANDAMENTO_COLS.forEach(col => {
+        m[r][col] += bcVsAndamentoByClass[c][r][col];
+      }));
+    });
+    return m;
+  }, [activeClasses]);
+
+  const iniciadosSemBC = useMemo(() => {
+    let total = 0;
+    BC_NAO_FINALIZADO.forEach(r => JA_INICIADO.forEach(col => { total += bcAndamentoMatrix[r][col]; }));
+    return total;
+  }, [bcAndamentoMatrix]);
+
+  const totalMatrix = useMemo(() => {
+    let t = 0;
+    BC_ROWS.forEach(r => ANDAMENTO_COLS.forEach(c => { t += bcAndamentoMatrix[r][c]; }));
+    return t;
+  }, [bcAndamentoMatrix]);
 
   return (
     <div className="space-y-6">
@@ -499,9 +566,129 @@ export default function Dashboard() {
             </BarChart>
           </ResponsiveContainer>
         </Card>
-      </div>
 
-      {/* OKR coverage */}
+        {/* NOVO: Status BC × Andamento — destaca projetos iniciados sem BC finalizado */}
+        <Card className="p-5 shadow-card xl:col-span-2">
+          <div className="flex items-start justify-between mb-4 gap-3 flex-wrap">
+            <div>
+              <h3 className="font-semibold">Status do BC × Andamento do Projeto</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Cruzamento de maturidade do Business Case com a execução. Destaque para projetos já iniciados sem BC finalizado.</p>
+            </div>
+            <div className={cn(
+              "flex items-center gap-2 px-3 py-2 rounded-md border text-sm",
+              iniciadosSemBC > 0 ? "bg-destructive/10 border-destructive/30" : "bg-success-soft border-success/30"
+            )}>
+              <AlertTriangle className={cn("h-4 w-4", iniciadosSemBC > 0 ? "text-destructive" : "text-success")} />
+              <span className="text-xs">
+                <span className={cn("font-bold tabular-nums text-base", iniciadosSemBC > 0 ? "text-destructive" : "text-success")}>{iniciadosSemBC}</span>
+                <span className="text-muted-foreground ml-1.5">iniciados sem BC finalizado</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-separate border-spacing-0">
+              <thead>
+                <tr>
+                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground p-2 border-b border-border w-[180px]">Status BC ↓ / Andamento →</th>
+                  {ANDAMENTO_COLS.map(col => (
+                    <th key={col} className={cn(
+                      "text-center text-xs font-semibold uppercase tracking-wider p-2 border-b border-border",
+                      JA_INICIADO.includes(col) ? "text-foreground" : "text-muted-foreground"
+                    )}>
+                      {col}
+                      {JA_INICIADO.includes(col) && <div className="text-[9px] font-medium text-primary normal-case tracking-normal mt-0.5">já iniciado</div>}
+                    </th>
+                  ))}
+                  <th className="text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground p-2 border-b border-border w-[60px]">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {BC_ROWS.map(row => {
+                  const rowTotal = ANDAMENTO_COLS.reduce((s, c) => s + bcAndamentoMatrix[row][c], 0);
+                  const isRowRisco = BC_NAO_FINALIZADO.includes(row);
+                  return (
+                    <tr key={row}>
+                      <td className={cn(
+                        "p-2 font-medium border-b border-border/50 text-sm",
+                        isRowRisco ? "text-foreground" : "text-foreground"
+                      )}>
+                        <div className="flex items-center gap-2">
+                          <span className={cn(
+                            "h-2 w-2 rounded-full shrink-0",
+                            row === "Ativo EPP / Validado" && "bg-success",
+                            row === "BC em Construção" && "bg-info",
+                            row === "Em Revisão" && "bg-warning",
+                            row === "Sem BC" && "bg-neutral",
+                          )} />
+                          {row}
+                        </div>
+                      </td>
+                      {ANDAMENTO_COLS.map(col => {
+                        const v = bcAndamentoMatrix[row][col];
+                        const risco = isRowRisco && JA_INICIADO.includes(col) && v > 0;
+                        // Intensidade — heatmap baseado no max da célula
+                        const max = 15;
+                        const intensity = Math.min(1, v / max);
+                        return (
+                          <td key={col} className="p-1 border-b border-border/50">
+                            <div
+                              className={cn(
+                                "h-12 rounded-md grid place-items-center text-sm font-semibold tabular-nums transition-all relative",
+                                risco
+                                  ? "bg-destructive/15 border border-destructive/40 text-destructive"
+                                  : v === 0
+                                  ? "bg-muted/40 text-muted-foreground"
+                                  : "text-foreground"
+                              )}
+                              style={!risco && v > 0 ? {
+                                background: `hsl(var(--primary) / ${0.08 + intensity * 0.32})`,
+                                border: "1px solid hsl(var(--primary) / 0.2)",
+                              } : undefined}
+                              title={`${row} × ${col}: ${v} projeto(s)${risco ? " — RISCO: iniciado sem BC finalizado" : ""}`}
+                            >
+                              {v}
+                              {risco && (
+                                <span className="absolute top-0.5 right-0.5">
+                                  <AlertTriangle className="h-3 w-3 text-destructive" />
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                        );
+                      })}
+                      <td className="p-2 text-center font-bold tabular-nums border-b border-border/50">{rowTotal}</td>
+                    </tr>
+                  );
+                })}
+                <tr>
+                  <td className="p-2 text-xs uppercase tracking-wider text-muted-foreground font-semibold">Total</td>
+                  {ANDAMENTO_COLS.map(col => {
+                    const colTotal = BC_ROWS.reduce((s, r) => s + bcAndamentoMatrix[r][col], 0);
+                    return <td key={col} className="p-2 text-center font-bold tabular-nums">{colTotal}</td>;
+                  })}
+                  <td className="p-2 text-center font-bold tabular-nums text-primary">{totalMatrix}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-4 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <span className="h-3 w-3 rounded-sm bg-destructive/20 border border-destructive/40" />
+              Risco: já iniciado sem BC finalizado
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="h-3 w-3 rounded-sm" style={{ background: "hsl(var(--primary) / 0.3)", border: "1px solid hsl(var(--primary) / 0.2)" }} />
+              Volume normal — intensidade indica quantidade
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="h-3 w-3 rounded-sm bg-muted/40" />
+              Sem ocorrências
+            </div>
+          </div>
+        </Card>
+      </div>
       <Card className="p-5 shadow-card">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold">Aderência aos OKRs 2026/1</h3>

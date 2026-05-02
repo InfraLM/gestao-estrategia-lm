@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, Download, CircleDot, AlertCircle, ShieldAlert, Sparkles } from "lucide-react";
+import { ChevronDown, Download, CircleDot, AlertCircle, ShieldAlert, Sparkles, FilePlus2 } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { SaudeBadge } from "@/components/badges";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { ParecerDialog } from "@/components/ParecerDialog";
 
 const periodos = ["Semanal", "Quinzenal", "Mensal"] as const;
 type Periodo = typeof periodos[number];
@@ -16,6 +17,7 @@ const farolColor = { verde: "bg-success", amarelo: "bg-warning", vermelho: "bg-d
 export default function StatusReport() {
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
   const [expanded, setExpanded] = useState<string | null>(projetos.find(p => p.saude !== "On-Track")?.id ?? null);
+  const [parecerOpen, setParecerOpen] = useState(false);
 
   const ativos = projetos.filter(p => p.status === "Em Andamento" || p.status === "Em Avaliação");
   const onTrack = ativos.filter(p => p.saude === "On-Track").length;
@@ -35,9 +37,14 @@ export default function StatusReport() {
               <button key={p} onClick={() => setPeriodo(p)} className={cn("h-8 px-3 text-sm rounded", periodo === p ? "bg-foreground text-background" : "text-muted-foreground")}>{p}</button>
             ))}
           </div>
+          <Button onClick={() => setParecerOpen(true)} className="gap-2 bg-primary hover:bg-primary/90">
+            <FilePlus2 className="h-4 w-4" /> Adicionar Parecer
+          </Button>
           <Button variant="outline" className="gap-2" onClick={() => toast.success("Relatório PDF gerado")}><Download className="h-4 w-4" /> Gerar PDF</Button>
         </div>
       </div>
+
+      <ParecerDialog open={parecerOpen} onOpenChange={setParecerOpen} />
 
       {/* Semáforo */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
