@@ -85,6 +85,45 @@ const bcByClass: Record<Classificacao, { name: string; value: number; color: str
   "Novo Produto":              [{ name: "Em Revisão", value: 18, color: "hsl(var(--warning))" }, { name: "BC em Construção", value: 6,  color: "hsl(var(--info))" }, { name: "Ativo EPP", value: 2,  color: "hsl(var(--success))" }, { name: "Concluído", value: 1, color: "hsl(var(--wave-2))" }, { name: "Sem BC", value: 3, color: "hsl(var(--neutral))" }, { name: "Sem Informação", value: 70, color: "hsl(var(--border))" }],
 };
 
+// Cruzamento Status BC × Andamento — heatmap/matriz
+// Linhas = Status do BC; Colunas = Status de andamento
+// Destaque: projetos JÁ INICIADOS (Em Andamento + Atrasado) sem BC finalizado (não Ativo EPP / Validado)
+type AndamentoCol = "Em Andamento" | "Atrasado" | "A Iniciar" | "Backlog";
+type BCRow = "Ativo EPP / Validado" | "BC em Construção" | "Em Revisão" | "Sem BC";
+
+const bcVsAndamentoByClass: Record<Classificacao, Record<BCRow, Record<AndamentoCol, number>>> = {
+  "Institucional": {
+    "Ativo EPP / Validado":  { "Em Andamento": 11, "Atrasado": 1, "A Iniciar": 2, "Backlog": 1 },
+    "BC em Construção":      { "Em Andamento": 2,  "Atrasado": 1, "A Iniciar": 3, "Backlog": 4 },
+    "Em Revisão":            { "Em Andamento": 1,  "Atrasado": 0, "A Iniciar": 0, "Backlog": 2 },
+    "Sem BC":                { "Em Andamento": 0,  "Atrasado": 0, "A Iniciar": 0, "Backlog": 1 },
+  },
+  "Melhoria Contínua": {
+    "Ativo EPP / Validado":  { "Em Andamento": 5,  "Atrasado": 0, "A Iniciar": 1, "Backlog": 2 },
+    "BC em Construção":      { "Em Andamento": 4,  "Atrasado": 0, "A Iniciar": 3, "Backlog": 8 },
+    "Em Revisão":            { "Em Andamento": 8,  "Atrasado": 1, "A Iniciar": 1, "Backlog": 6 },
+    "Sem BC":                { "Em Andamento": 1,  "Atrasado": 0, "A Iniciar": 1, "Backlog": 6 },
+  },
+  "Melhoria Contínua com EPP": {
+    "Ativo EPP / Validado":  { "Em Andamento": 6,  "Atrasado": 0, "A Iniciar": 2, "Backlog": 3 },
+    "BC em Construção":      { "Em Andamento": 1,  "Atrasado": 1, "A Iniciar": 1, "Backlog": 5 },
+    "Em Revisão":            { "Em Andamento": 2,  "Atrasado": 0, "A Iniciar": 1, "Backlog": 4 },
+    "Sem BC":                { "Em Andamento": 0,  "Atrasado": 0, "A Iniciar": 0, "Backlog": 2 },
+  },
+  "Novo Produto": {
+    "Ativo EPP / Validado":  { "Em Andamento": 1,  "Atrasado": 0, "A Iniciar": 1, "Backlog": 2 },
+    "BC em Construção":      { "Em Andamento": 1,  "Atrasado": 0, "A Iniciar": 4, "Backlog": 10 },
+    "Em Revisão":            { "Em Andamento": 2,  "Atrasado": 0, "A Iniciar": 2, "Backlog": 12 },
+    "Sem BC":                { "Em Andamento": 0,  "Atrasado": 0, "A Iniciar": 1, "Backlog": 4 },
+  },
+};
+const BC_ROWS: BCRow[] = ["Ativo EPP / Validado", "BC em Construção", "Em Revisão", "Sem BC"];
+const ANDAMENTO_COLS: AndamentoCol[] = ["Em Andamento", "Atrasado", "A Iniciar", "Backlog"];
+// Linhas que indicam BC NÃO finalizado:
+const BC_NAO_FINALIZADO: BCRow[] = ["BC em Construção", "Em Revisão", "Sem BC"];
+// Colunas que indicam projeto JÁ iniciado:
+const JA_INICIADO: AndamentoCol[] = ["Em Andamento", "Atrasado"];
+
 const objCoberturaByClass: Record<Classificacao, { obj: string; n: number }[]> = {
   "Institucional":             [{ obj: "P.03", n: 22 }, { obj: "C.01", n: 18 }, { obj: "P.01", n: 16 }, { obj: "AC.03", n: 14 }, { obj: "F.01", n: 12 }, { obj: "C.02", n: 10 }, { obj: "F.02", n: 8 }, { obj: "C.03", n: 5 }],
   "Melhoria Contínua":         [{ obj: "F.01", n: 20 }, { obj: "F.02", n: 18 }, { obj: "AC.01", n: 16 }, { obj: "P.01", n: 14 }, { obj: "AC.03", n: 12 }, { obj: "P.02", n: 10 }, { obj: "C.02", n: 6 }, { obj: "C.03", n: 4 }],
