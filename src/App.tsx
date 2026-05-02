@@ -13,6 +13,7 @@ import GestaoProjeto from "./pages/GestaoProjeto";
 import Melhorias from "./pages/Melhorias";
 import MelhoriaDetalhe from "./pages/MelhoriaDetalhe";
 import Repositorio from "./pages/Repositorio";
+import Diagnostico from "./pages/Diagnostico";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
 
