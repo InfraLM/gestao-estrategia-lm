@@ -34,9 +34,11 @@ export default function Gestao() {
       {/* Header */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">Gestão de Projetos</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">Gestão de Projetos Institucionais</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Acesso individual a cada projeto iniciado — cronograma, EAP, riscos, desvios, custos e stakeholders.
+            Acesso individual a cada projeto institucional iniciado — cronograma, EAP, riscos, desvios, custos e stakeholders.
+            <br />
+            <span className="text-xs">Iniciativas de Melhoria Contínua estão em <Link to="/melhorias" className="underline text-primary">Gestão de Melhorias</Link>.</span>
           </p>
         </div>
         <div className="relative">
