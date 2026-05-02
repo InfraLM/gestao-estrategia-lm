@@ -776,10 +776,93 @@ export default function Dashboard() {
             </div>
           </div>
         </Card>
+
+        {/* ICE Quadrant — Quick Wins */}
+        <Card className="p-5 shadow-card xl:col-span-2">
+          <div className="flex items-start justify-between mb-4 gap-3 flex-wrap">
+            <div>
+              <h3 className="font-semibold">Quadrante ICE — Impacto × Complexidade</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Projetos no quadrante <span className="font-semibold text-success">Quick Win</span> (alto impacto · baixa complexidade) devem ser priorizados.</p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="px-2 py-1 rounded-md bg-success/10 border border-success/30 text-success font-semibold tabular-nums">Quick Win: {iceQuadrants.quickWin}</span>
+              <span className="px-2 py-1 rounded-md bg-info/10 border border-info/30 text-info font-semibold tabular-nums">Big Bets: {iceQuadrants.bigBets}</span>
+              <span className="px-2 py-1 rounded-md bg-muted/60 border border-border text-muted-foreground font-semibold tabular-nums">Fill-Ins: {iceQuadrants.fillIns}</span>
+              <span className="px-2 py-1 rounded-md bg-destructive/10 border border-destructive/30 text-destructive font-semibold tabular-nums">Evitar: {iceQuadrants.evitar}</span>
+            </div>
+          </div>
+
+          <div className="relative w-full" style={{ height: 380 }}>
+            {/* Quadrants background */}
+            <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-px rounded-md overflow-hidden border border-border">
+              <div className="bg-success/5 relative p-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-success">Quick Win</div>
+                <div className="text-[10px] text-muted-foreground">Alto impacto · Baixa complexidade</div>
+              </div>
+              <div className="bg-info/5 relative p-2 text-right">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-info">Big Bets</div>
+                <div className="text-[10px] text-muted-foreground">Alto impacto · Alta complexidade</div>
+              </div>
+              <div className="bg-muted/30 relative p-2">
+                <div className="absolute bottom-2 left-2">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fill-Ins</div>
+                  <div className="text-[10px] text-muted-foreground">Baixo impacto · Baixa complexidade</div>
+                </div>
+              </div>
+              <div className="bg-destructive/5 relative p-2 text-right">
+                <div className="absolute bottom-2 right-2">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-destructive">Evitar</div>
+                  <div className="text-[10px] text-muted-foreground">Baixo impacto · Alta complexidade</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Axes labels */}
+            <div className="absolute left-1/2 -translate-x-1/2 -bottom-5 text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Complexidade →</div>
+            <div className="absolute -left-2 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] text-muted-foreground font-medium uppercase tracking-wider whitespace-nowrap">Impacto (ICE) →</div>
+
+            {/* Plotted projects */}
+            {iceProjects.map(p => {
+              // x = complexidade (0..10), y = impacto (0..10)
+              const xPct = Math.max(2, Math.min(98, (p.complexidade / 10) * 100));
+              const yPct = Math.max(2, Math.min(98, 100 - (p.impacto / 10) * 100));
+              const isQuickWin = p.impacto >= 7 && p.complexidade < 5;
+              return (
+                <div
+                  key={p.id}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 group"
+                  style={{ left: `${xPct}%`, top: `${yPct}%` }}
+                  title={`${p.id} · ${p.nome} — Impacto ${p.impacto.toFixed(1)} / Complexidade ${p.complexidade.toFixed(1)}`}
+                >
+                  <div
+                    className={cn(
+                      "h-3.5 w-3.5 rounded-full border-2 border-background shadow-sm transition-transform hover:scale-150 cursor-pointer",
+                      isQuickWin && "ring-2 ring-success ring-offset-1 ring-offset-background"
+                    )}
+                    style={{ background: p.color }}
+                  />
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 hidden group-hover:block z-10 px-2 py-1 rounded bg-foreground text-background text-[10px] whitespace-nowrap">
+                    {p.id} · {p.nome}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-8 text-xs text-muted-foreground">
+            {ALL_CLASSES.map(c => (
+              <div key={c} className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: CLASS_COLORS[c] }} />
+                {CLASS_SHORT[c]}
+              </div>
+            ))}
+            <div className="flex items-center gap-1.5 ml-auto">
+              <span className="h-3 w-3 rounded-full ring-2 ring-success ring-offset-1 ring-offset-background bg-muted" />
+              Quick Win
+            </div>
+          </div>
+        </Card>
       </div>
-      <Card className="p-5 shadow-card">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Aderência aos OKRs 2026/1</h3>
           <span className="text-xs text-muted-foreground">Iniciativas vinculadas por KR</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
