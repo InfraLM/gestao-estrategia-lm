@@ -27,6 +27,21 @@ const titles: Record<string, string> = {
 export default function AppLayout() {
   const loc = useLocation();
   const title = titles[loc.pathname] ?? "PMO Estratégico";
+  const { user, signOut } = useAuth();
+  const [profile, setProfile] = useState<{ display_name?: string | null; cargo?: string | null; email?: string | null } | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) { setProfile(null); setIsAdmin(false); return; }
+    supabase.from("profiles").select("display_name,cargo,email").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => setProfile(data ?? { email: user.email }));
+    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle()
+      .then(({ data }) => setIsAdmin(!!data));
+  }, [user]);
+
+  const displayName = profile?.display_name || user?.email || "Convidado";
+  const cargo = profile?.cargo || (isAdmin ? "Administrador" : (user ? "Usuário" : ""));
+  const initials = displayName.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase();
 
   return (
     <div className="min-h-screen flex bg-surface">
