@@ -317,7 +317,7 @@ export default function Submissao() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Budget Estimado (R$)</Label>
-              <Input type="number" placeholder="0,00" className="mt-1" />
+              <Input type="number" value={budget} onChange={e => setBudget(e.target.value)} placeholder="0,00" className="mt-1" />
             </div>
             <div className="flex items-center justify-between gap-4 pt-6">
               <Label className="m-0">Possui Business Case?</Label>
