@@ -175,88 +175,24 @@ export default function GestaoProjeto() {
 
       {/* Tabs operacionais */}
       <Tabs defaultValue="cronograma">
-        <TabsList className="grid grid-cols-3 lg:grid-cols-6 w-full">
+        <TabsList className="grid grid-cols-4 lg:grid-cols-7 w-full">
           <TabsTrigger value="cronograma" className="gap-1.5"><GanttChart className="h-3.5 w-3.5" /> Cronograma</TabsTrigger>
           <TabsTrigger value="eap" className="gap-1.5"><ListChecks className="h-3.5 w-3.5" /> EAP</TabsTrigger>
           <TabsTrigger value="riscos" className="gap-1.5"><ShieldAlert className="h-3.5 w-3.5" /> Riscos</TabsTrigger>
           <TabsTrigger value="desvios" className="gap-1.5"><GitBranch className="h-3.5 w-3.5" /> Desvios</TabsTrigger>
           <TabsTrigger value="custos" className="gap-1.5"><DollarSign className="h-3.5 w-3.5" /> Custos</TabsTrigger>
           <TabsTrigger value="stakeholders" className="gap-1.5"><Users className="h-3.5 w-3.5" /> Stakeholders</TabsTrigger>
+          <TabsTrigger value="historico" className="gap-1.5"><History className="h-3.5 w-3.5" /> Histórico</TabsTrigger>
         </TabsList>
 
-        {/* CRONOGRAMA */}
+        {/* CRONOGRAMA — editável */}
         <TabsContent value="cronograma" className="mt-5">
-          <Card className="p-5 shadow-card">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">Linha do tempo · Marcos e dependências</h3>
-              <span className="text-xs text-muted-foreground">{data.cronograma.length} fases</span>
-            </div>
-            <div className="space-y-3">
-              {data.cronograma.map((f, i) => {
-                const total = f.previsto + f.extensao;
-                const execPct = (f.executado / total) * 100;
-                return (
-                  <div key={f.fase}>
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="font-medium flex items-center gap-2">
-                        <span className="text-muted-foreground tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                        {f.fase}
-                      </span>
-                      <span className="tabular-nums text-muted-foreground">
-                        {f.executado}/{f.previsto} sem {f.extensao > 0 && <span className="text-destructive font-semibold">+{f.extensao}</span>}
-                      </span>
-                    </div>
-                    <div className="h-5 rounded-md bg-muted/40 relative overflow-hidden border border-border">
-                      <div className="absolute inset-y-0 bg-neutral/60" style={{ width: `${(f.previsto / total) * 100}%` }} />
-                      <div className="absolute inset-y-0 bg-success/80" style={{ width: `${execPct}%` }} />
-                      {f.extensao > 0 && (
-                        <div className="absolute inset-y-0 bg-destructive/70" style={{ left: `${(f.previsto / total) * 100}%`, width: `${(f.extensao / total) * 100}%` }} />
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
+          <CronogramaEditavel editable={editable} />
         </TabsContent>
 
-        {/* EAP */}
+        {/* EAP — editável + submissão por entregável */}
         <TabsContent value="eap" className="mt-5">
-          <Card className="p-5 shadow-card">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">Estrutura Analítica do Projeto (EAP)</h3>
-              <span className="text-xs text-muted-foreground">Pacotes de trabalho · entregas</span>
-            </div>
-            <div className="space-y-2">
-              {data.eap.map(pacote => (
-                <div key={pacote.id} className="border border-border rounded-md overflow-hidden">
-                  <div className="flex items-center justify-between bg-surface-muted/40 px-3 py-2">
-                    <div className="flex items-center gap-3 text-sm">
-                      <span className="text-xs tabular-nums font-mono text-muted-foreground">{pacote.id}</span>
-                      <span className="font-semibold">{pacote.titulo}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs">
-                      <span className="text-muted-foreground tabular-nums">{pacote.entregas.filter(e => e.feito).length}/{pacote.entregas.length} entregas</span>
-                      <div className="w-24 h-1.5 rounded bg-muted overflow-hidden">
-                        <div className="h-full bg-primary" style={{ width: `${(pacote.entregas.filter(e => e.feito).length / pacote.entregas.length) * 100}%` }} />
-                      </div>
-                    </div>
-                  </div>
-                  <ul className="divide-y divide-border">
-                    {pacote.entregas.map(e => (
-                      <li key={e.id} className="px-3 py-2 flex items-center gap-3 text-sm">
-                        <CheckCircle2 className={cn("h-4 w-4 shrink-0", e.feito ? "text-success" : "text-muted-foreground/40")} />
-                        <span className="text-xs tabular-nums font-mono text-muted-foreground w-16">{e.id}</span>
-                        <span className={cn("flex-1", e.feito && "text-muted-foreground line-through")}>{e.titulo}</span>
-                        <span className="text-xs text-muted-foreground tabular-nums">{e.horas}h</span>
-                        <Badge variant="outline" className="text-[10px]">{e.responsavel}</Badge>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </Card>
+          <EapEditavel editable={editable} />
         </TabsContent>
 
         {/* MATRIZ DE RISCOS */}
