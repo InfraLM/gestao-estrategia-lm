@@ -863,6 +863,9 @@ export default function Dashboard() {
           </div>
         </Card>
       </div>
+      <Card className="p-5 shadow-card">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold">Aderência aos OKRs 2026/1</h3>
           <span className="text-xs text-muted-foreground">Iniciativas vinculadas por KR</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
