@@ -163,11 +163,17 @@ const tooltipStyle = { background: "hsl(var(--card))", border: "1px solid hsl(va
 
 export default function Dashboard() {
   const [filterClasses, setFilterClasses] = useState<Classificacao[]>([]); // vazio = todas
+  const [showList, setShowList] = useState(false);
   const isAll = filterClasses.length === 0;
   const activeClasses = isAll ? ALL_CLASSES : filterClasses;
 
   const toggleClass = (c: Classificacao) =>
     setFilterClasses(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
+
+  const projetosFiltrados = useMemo(
+    () => projetos.filter(p => isAll || filterClasses.includes(p.classificacao)),
+    [filterClasses, isAll]
+  );
 
   // KPIs derivados do filtro
   const totalFiltered = useMemo(() => activeClasses.reduce((s, c) => s + portfolioByClass[c], 0), [activeClasses]);
