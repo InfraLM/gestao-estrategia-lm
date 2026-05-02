@@ -363,7 +363,7 @@ export default function GestaoProjeto() {
                           "text-[10px]",
                           s.status === "Aprovada" && "bg-success-soft text-success border-success/30",
                           s.status === "Em análise" && "bg-info/15 text-info border-info/30",
-                          s.status === "Rejeitada" && "bg-destructive/15 text-destructive border-destructive/30",
+                          (s.status as string) === "Rejeitada" && "bg-destructive/15 text-destructive border-destructive/30",
                         )}>{s.status}</Badge>
                       </div>
                       <p className="text-muted-foreground">{s.justificativa}</p>
