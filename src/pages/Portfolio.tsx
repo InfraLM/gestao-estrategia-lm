@@ -23,17 +23,52 @@ export default function Portfolio() {
   const [filterClass, setFilterClass] = useState<string[]>([]);
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
   const [filterDir, setFilterDir] = useState<string[]>([]);
+  const [filterPeriodo, setFilterPeriodo] = useState<string[]>([]);
   const [editing, setEditing] = useState<Projeto | null>(null);
 
-  const filtered = useMemo(() => data.filter(p =>
-    (!search || p.nome.toLowerCase().includes(search.toLowerCase()) || p.id.toLowerCase().includes(search.toLowerCase())) &&
-    (!filterWave.length || filterWave.includes(p.wave)) &&
-    (!filterClass.length || filterClass.includes(p.classificacao)) &&
-    (!filterStatus.length || filterStatus.includes(p.status)) &&
-    (!filterDir.length || filterDir.includes(p.diretor))
-  ), [data, search, filterWave, filterClass, filterStatus, filterDir]);
+  // Build available year/semester options from project periods
+  const periodoOptions = useMemo(() => {
+    const set = new Set<string>();
+    data.forEach(p => {
+      const parse = (s: string) => {
+        const [y, sem] = s.split("/");
+        return { y: parseInt(y), s: parseInt(sem) };
+      };
+      const a = parse(p.inicio), b = parse(p.termino);
+      for (let y = a.y; y <= b.y; y++) {
+        const sStart = y === a.y ? a.s : 1;
+        const sEnd = y === b.y ? b.s : 2;
+        for (let s = sStart; s <= sEnd; s++) set.add(`${y}/${s}`);
+      }
+    });
+    return Array.from(set).sort();
+  }, [data]);
 
-  const clearAll = () => { setSearch(""); setFilterWave([]); setFilterClass([]); setFilterStatus([]); setFilterDir([]); };
+  const isInPeriodo = (p: Projeto, periodo: string) => {
+    const [py, ps] = periodo.split("/").map(Number);
+    const [iy, is] = p.inicio.split("/").map(Number);
+    const [ty, ts] = p.termino.split("/").map(Number);
+    const target = py * 2 + ps;
+    return iy * 2 + is <= target && target <= ty * 2 + ts;
+  };
+
+  const filtered = useMemo(() => {
+    const list = data.filter(p =>
+      (!search || p.nome.toLowerCase().includes(search.toLowerCase()) || p.id.toLowerCase().includes(search.toLowerCase())) &&
+      (!filterWave.length || filterWave.includes(p.wave)) &&
+      (!filterClass.length || filterClass.includes(p.classificacao)) &&
+      (!filterStatus.length || filterStatus.includes(p.status)) &&
+      (!filterDir.length || filterDir.includes(p.diretor)) &&
+      (!filterPeriodo.length || filterPeriodo.some(per => isInPeriodo(p, per)))
+    );
+    // Rank: when periodo filter is active, sort by ICE desc (priority within period)
+    if (filterPeriodo.length) {
+      return [...list].sort((a, b) => b.ice - a.ice);
+    }
+    return list;
+  }, [data, search, filterWave, filterClass, filterStatus, filterDir, filterPeriodo]);
+
+  const clearAll = () => { setSearch(""); setFilterWave([]); setFilterClass([]); setFilterStatus([]); setFilterDir([]); setFilterPeriodo([]); };
 
   const toggle = (arr: string[], v: string, set: (v: string[]) => void) =>
     set(arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]);
@@ -43,7 +78,10 @@ export default function Portfolio() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs text-muted-foreground mt-1">Exibindo <span className="font-semibold text-foreground">{filtered.length}</span> de 144 projetos</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Exibindo <span className="font-semibold text-foreground">{filtered.length}</span> de <span className="font-semibold text-foreground">{data.length}</span> projetos
+            {filterPeriodo.length > 0 && <span className="ml-2">· ranqueado por ICE em {filterPeriodo.join(", ")}</span>}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex rounded-md border border-border p-0.5 bg-background">
@@ -65,11 +103,12 @@ export default function Portfolio() {
           <FilterChip label="Classificação" options={["Institucional","Melhoria Contínua","Melhoria Contínua com EPP","Novo Produto"]} selected={filterClass} onToggle={(v) => toggle(filterClass, v, setFilterClass)} />
           <FilterChip label="Status" options={["Em Andamento","Atrasado","Pausado","Backlog","A Iniciar","Concluído","Em Avaliação"]} selected={filterStatus} onToggle={(v) => toggle(filterStatus, v, setFilterStatus)} />
           <FilterChip label="Diretor" options={diretores} selected={filterDir} onToggle={(v) => toggle(filterDir, v, setFilterDir)} />
+          <FilterChip label="Ano/Semestre" options={periodoOptions} selected={filterPeriodo} onToggle={(v) => toggle(filterPeriodo, v, setFilterPeriodo)} />
           <Button variant="ghost" size="sm" onClick={clearAll} className="gap-1"><X className="h-3.5 w-3.5" /> Limpar</Button>
         </div>
-        {(filterWave.length + filterClass.length + filterStatus.length + filterDir.length) > 0 && (
+        {(filterWave.length + filterClass.length + filterStatus.length + filterDir.length + filterPeriodo.length) > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border">
-            {[...filterWave, ...filterClass, ...filterStatus, ...filterDir].map(f => (
+            {[...filterWave, ...filterClass, ...filterStatus, ...filterDir, ...filterPeriodo].map(f => (
               <span key={f} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/30">
                 {f}
               </span>
