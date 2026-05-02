@@ -97,6 +97,38 @@ export default function Estrategia() {
         </CardContent>
       </Card>
 
+      {/* PILARES IMPRESCINDÍVEIS — sustentam a tese */}
+      <Card className="border-2 border-primary/40 bg-gradient-to-br from-primary/5 via-background to-warning/5">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-primary" />
+            <CardTitle className="text-lg">Pilares que Sustentam a Tese · Imprescindíveis</CardTitle>
+            <Badge variant="destructive" className="ml-auto">Não-negociáveis</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Sem qualquer um destes pilares, a tese estratégica LM não se sustenta. São condições necessárias para o moat e para o BHAG de 1M de vidas.
+          </p>
+        </CardHeader>
+        <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {[
+            { icon: Heart, titulo: "Prática hospitalar real supervisionada", desc: "Núcleo do método LM — não substituível por conteúdo digital. Define o diferencial percebido pelo médico early-career." },
+            { icon: Building2, titulo: "Rede hospitalar padronizada", desc: "Polos com método LM replicável. Sem padronização, escala destrói qualidade e mata a marca técnica." },
+            { icon: Users, titulo: "ICP estritamente respeitado", desc: "Médico early-career exposto ao paciente grave. Sair do ICP dilui posicionamento e abre flanco para Afya/Sanar." },
+            { icon: Trophy, titulo: "Autoridade técnica do corpo docente", desc: "Médicos ativos em plantão. Sem isso, vira plataforma de conteúdo genérica." },
+            { icon: Sparkles, titulo: "Comunidade e jornada longitudinal", desc: "Pertencimento + integração de portfólio = LTV alto. Fragmentar a jornada destrói o lock-in de carreira." },
+            { icon: DollarSign, titulo: "Disciplina premium · sem guerra de preço", desc: "Margem >35% e ticket high. Descontar preço corrói o moat e atrai o público errado." },
+          ].map((p) => (
+            <div key={p.titulo} className="p-3 rounded-lg bg-card border border-primary/20 hover:border-primary/50 transition-colors">
+              <div className="flex items-center gap-2 mb-1.5">
+                <p.icon className="h-4 w-4 text-primary shrink-0" />
+                <h4 className="font-semibold text-sm leading-tight">{p.titulo}</h4>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">{p.desc}</p>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
       {/* AMBICAO CARDS */}
       <div className="grid md:grid-cols-3 gap-4">
         {ambicaoCards.map((c) => (
