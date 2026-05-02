@@ -83,6 +83,33 @@ export default function Portfolio() {
     return list;
   }, [data, search, filterWave, filterClass, filterStatus, filterDir, filterPeriodo]);
 
+  const grouped = useMemo<{ key: string; items: Projeto[] }[]>(() => {
+    if (groupBy === "none") return [{ key: "", items: filtered }];
+    const map = new Map<string, Projeto[]>();
+    const push = (k: string, p: Projeto) => { if (!map.has(k)) map.set(k, []); map.get(k)!.push(p); };
+    filtered.forEach(p => {
+      if (groupBy === "periodo") {
+        const [iy, is] = p.inicio.split("/").map(Number);
+        const [ty, ts] = p.termino.split("/").map(Number);
+        const seen = new Set<string>();
+        for (let y = iy; y <= ty; y++) {
+          const sStart = y === iy ? is : 1;
+          const sEnd = y === ty ? ts : 2;
+          for (let s = sStart; s <= sEnd; s++) {
+            const k = `${y}/${s}`;
+            if (!seen.has(k)) { seen.add(k); push(k, p); }
+          }
+        }
+      } else {
+        push(String(p[groupBy as keyof Projeto] ?? "—"), p);
+      }
+    });
+    return Array.from(map.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, items]) => ({ key, items: [...items].sort((a, b) => b.ice - a.ice) }));
+  }, [filtered, groupBy]);
+
+
   const clearAll = () => { setSearch(""); setFilterWave([]); setFilterClass([]); setFilterStatus([]); setFilterDir([]); setFilterPeriodo([]); };
 
   const toggle = (arr: string[], v: string, set: (v: string[]) => void) =>
