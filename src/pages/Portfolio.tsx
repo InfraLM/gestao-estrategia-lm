@@ -250,6 +250,8 @@ export default function Portfolio() {
                       </div>
                     </td>
                   </tr>
+                    ))}
+                  </>
                 ))}
               </tbody>
             </table>
