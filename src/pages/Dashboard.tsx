@@ -4,7 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
 import { projetos, totaisPortfolio, okrs, waveColor, type Classificacao } from "@/data/mockData";
-import { BarChart3, FolderOpen, TrendingUp, ShieldCheck, AlertTriangle, Calendar, Filter, X, List } from "lucide-react";
+import { BarChart3, FolderOpen, TrendingUp, ShieldCheck, AlertTriangle, Calendar, Filter, X, List, Info } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Bar, BarChart, CartesianGrid, Cell, LabelList, Legend, Line, LineChart as RLineChart,
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
