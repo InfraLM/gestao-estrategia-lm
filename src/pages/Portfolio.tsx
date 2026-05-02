@@ -251,7 +251,7 @@ export default function Portfolio() {
                     </td>
                   </tr>
                     ))}
-                  </>
+                  </Fragment>
                 ))}
               </tbody>
             </table>
