@@ -566,9 +566,129 @@ export default function Dashboard() {
             </BarChart>
           </ResponsiveContainer>
         </Card>
-      </div>
 
-      {/* OKR coverage */}
+        {/* NOVO: Status BC × Andamento — destaca projetos iniciados sem BC finalizado */}
+        <Card className="p-5 shadow-card xl:col-span-2">
+          <div className="flex items-start justify-between mb-4 gap-3 flex-wrap">
+            <div>
+              <h3 className="font-semibold">Status do BC × Andamento do Projeto</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Cruzamento de maturidade do Business Case com a execução. Destaque para projetos já iniciados sem BC finalizado.</p>
+            </div>
+            <div className={cn(
+              "flex items-center gap-2 px-3 py-2 rounded-md border text-sm",
+              iniciadosSemBC > 0 ? "bg-destructive/10 border-destructive/30" : "bg-success-soft border-success/30"
+            )}>
+              <AlertTriangle className={cn("h-4 w-4", iniciadosSemBC > 0 ? "text-destructive" : "text-success")} />
+              <span className="text-xs">
+                <span className={cn("font-bold tabular-nums text-base", iniciadosSemBC > 0 ? "text-destructive" : "text-success")}>{iniciadosSemBC}</span>
+                <span className="text-muted-foreground ml-1.5">iniciados sem BC finalizado</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-separate border-spacing-0">
+              <thead>
+                <tr>
+                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground p-2 border-b border-border w-[180px]">Status BC ↓ / Andamento →</th>
+                  {ANDAMENTO_COLS.map(col => (
+                    <th key={col} className={cn(
+                      "text-center text-xs font-semibold uppercase tracking-wider p-2 border-b border-border",
+                      JA_INICIADO.includes(col) ? "text-foreground" : "text-muted-foreground"
+                    )}>
+                      {col}
+                      {JA_INICIADO.includes(col) && <div className="text-[9px] font-medium text-primary normal-case tracking-normal mt-0.5">já iniciado</div>}
+                    </th>
+                  ))}
+                  <th className="text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground p-2 border-b border-border w-[60px]">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {BC_ROWS.map(row => {
+                  const rowTotal = ANDAMENTO_COLS.reduce((s, c) => s + bcAndamentoMatrix[row][c], 0);
+                  const isRowRisco = BC_NAO_FINALIZADO.includes(row);
+                  return (
+                    <tr key={row}>
+                      <td className={cn(
+                        "p-2 font-medium border-b border-border/50 text-sm",
+                        isRowRisco ? "text-foreground" : "text-foreground"
+                      )}>
+                        <div className="flex items-center gap-2">
+                          <span className={cn(
+                            "h-2 w-2 rounded-full shrink-0",
+                            row === "Ativo EPP / Validado" && "bg-success",
+                            row === "BC em Construção" && "bg-info",
+                            row === "Em Revisão" && "bg-warning",
+                            row === "Sem BC" && "bg-neutral",
+                          )} />
+                          {row}
+                        </div>
+                      </td>
+                      {ANDAMENTO_COLS.map(col => {
+                        const v = bcAndamentoMatrix[row][col];
+                        const risco = isRowRisco && JA_INICIADO.includes(col) && v > 0;
+                        // Intensidade — heatmap baseado no max da célula
+                        const max = 15;
+                        const intensity = Math.min(1, v / max);
+                        return (
+                          <td key={col} className="p-1 border-b border-border/50">
+                            <div
+                              className={cn(
+                                "h-12 rounded-md grid place-items-center text-sm font-semibold tabular-nums transition-all relative",
+                                risco
+                                  ? "bg-destructive/15 border border-destructive/40 text-destructive"
+                                  : v === 0
+                                  ? "bg-muted/40 text-muted-foreground"
+                                  : "text-foreground"
+                              )}
+                              style={!risco && v > 0 ? {
+                                background: `hsl(var(--primary) / ${0.08 + intensity * 0.32})`,
+                                border: "1px solid hsl(var(--primary) / 0.2)",
+                              } : undefined}
+                              title={`${row} × ${col}: ${v} projeto(s)${risco ? " — RISCO: iniciado sem BC finalizado" : ""}`}
+                            >
+                              {v}
+                              {risco && (
+                                <span className="absolute top-0.5 right-0.5">
+                                  <AlertTriangle className="h-3 w-3 text-destructive" />
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                        );
+                      })}
+                      <td className="p-2 text-center font-bold tabular-nums border-b border-border/50">{rowTotal}</td>
+                    </tr>
+                  );
+                })}
+                <tr>
+                  <td className="p-2 text-xs uppercase tracking-wider text-muted-foreground font-semibold">Total</td>
+                  {ANDAMENTO_COLS.map(col => {
+                    const colTotal = BC_ROWS.reduce((s, r) => s + bcAndamentoMatrix[r][col], 0);
+                    return <td key={col} className="p-2 text-center font-bold tabular-nums">{colTotal}</td>;
+                  })}
+                  <td className="p-2 text-center font-bold tabular-nums text-primary">{totalMatrix}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-4 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <span className="h-3 w-3 rounded-sm bg-destructive/20 border border-destructive/40" />
+              Risco: já iniciado sem BC finalizado
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="h-3 w-3 rounded-sm" style={{ background: "hsl(var(--primary) / 0.3)", border: "1px solid hsl(var(--primary) / 0.2)" }} />
+              Volume normal — intensidade indica quantidade
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="h-3 w-3 rounded-sm bg-muted/40" />
+              Sem ocorrências
+            </div>
+          </div>
+        </Card>
+      </div>
       <Card className="p-5 shadow-card">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold">Aderência aos OKRs 2026/1</h3>
