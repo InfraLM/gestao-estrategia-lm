@@ -13,7 +13,10 @@ export default function Gestao() {
   const [q, setQ] = useState("");
 
   const iniciados = useMemo(
-    () => projetos.filter(p => p.status === "Em Andamento" || p.status === "Em Avaliação" || p.status === "Atrasado"),
+    () => projetos.filter(p =>
+      p.classificacao === "Institucional" &&
+      (p.status === "Em Andamento" || p.status === "Em Avaliação" || p.status === "Atrasado")
+    ),
     []
   );
 
