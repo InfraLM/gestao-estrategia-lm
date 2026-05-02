@@ -276,3 +276,17 @@ function FilterChip({ label, options, selected, onToggle }: { label: string; opt
     </div>
   );
 }
+
+function InlineSelect({ value, options, onChange, children }: { value: string; options: readonly string[]; onChange: (v: string) => void; children?: React.ReactNode }) {
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="h-auto min-h-8 border-transparent hover:border-border bg-transparent px-2 py-1 -mx-2 -my-1 focus:ring-1 focus:ring-ring/40 [&>span]:flex [&>span]:items-center">
+        {children ? <span>{children}</span> : <SelectValue />}
+      </SelectTrigger>
+      <SelectContent className="z-50 bg-popover">
+        {options.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+      </SelectContent>
+    </Select>
+  );
+}
+
