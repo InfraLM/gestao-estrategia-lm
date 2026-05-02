@@ -202,9 +202,9 @@ export default function Dashboard() {
     const run = async () => {
       setBLoading(true);
       let q = supabase.from("projetos").select("id,codigo,nome,diretor,classificacao,wave,status,status_bc,inicio,termino,budget,ice", { count: "exact" });
-      if (!isAll) q = q.in("classificacao", filterClasses as string[]);
-      if (bStatus !== "all") q = q.eq("status", bStatus);
-      if (bWave !== "all") q = q.eq("wave", bWave);
+      if (!isAll) q = q.in("classificacao", filterClasses as any);
+      if (bStatus !== "all") q = q.eq("status", bStatus as any);
+      if (bWave !== "all") q = q.eq("wave", bWave as any);
       if (bSearch.trim()) {
         const s = bSearch.trim().replace(/[,()]/g, " ");
         q = q.or(`nome.ilike.%${s}%,codigo.ilike.%${s}%,diretor.ilike.%${s}%`);
