@@ -12,6 +12,7 @@ import Gestao from "./pages/Gestao";
 import GestaoProjeto from "./pages/GestaoProjeto";
 import Repositorio from "./pages/Repositorio";
 import NotFound from "./pages/NotFound.tsx";
+import { AuthProvider } from "@/hooks/useAuth";
 
 const queryClient = new QueryClient();
 
@@ -21,18 +22,20 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/submissao" element={<Submissao />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/status-report" element={<StatusReport />} />
-            <Route path="/gestao" element={<Gestao />} />
-            <Route path="/gestao/:id" element={<GestaoProjeto />} />
-            <Route path="/repositorio" element={<Repositorio />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route element={<AppLayout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/submissao" element={<Submissao />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/status-report" element={<StatusReport />} />
+              <Route path="/gestao" element={<Gestao />} />
+              <Route path="/gestao/:id" element={<GestaoProjeto />} />
+              <Route path="/repositorio" element={<Repositorio />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
