@@ -7,9 +7,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers } from "lucide-react";
-import { projetos as initial, type Projeto, diretores } from "@/data/mockData";
+import { projetos as initial, type Projeto, diretores, objetivosBSC, okrs } from "@/data/mockData";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+const objetivoOpts = objetivosBSC.map(o => ({ value: o.id, label: `${o.id} · ${o.nome}` }));
+const krOpts = okrs.flatMap(o => o.krs).map(kr => ({ value: kr.id, label: `${kr.id} · ${kr.nome}` }));
 
 const waveOpts: Projeto["wave"][] = ["W1","W2","W3"];
 const classOpts: Projeto["classificacao"][] = ["Institucional","Melhoria Contínua","Melhoria Contínua com EPP","Novo Produto"];
