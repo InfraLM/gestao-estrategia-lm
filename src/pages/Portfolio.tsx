@@ -192,7 +192,7 @@ export default function Portfolio() {
           </div>
           <FilterChip label="Wave" options={["W1","W2","W3"]} selected={filterWave} onToggle={(v) => toggle(filterWave, v, setFilterWave)} />
           <FilterChip label="Classificação" options={["Institucional","Melhoria Contínua","Melhoria Contínua com EPP","Novo Produto"]} selected={filterClass} onToggle={(v) => toggle(filterClass, v, setFilterClass)} />
-          <FilterChip label="Status" options={["Em Andamento","Atrasado","Pausado","Backlog","A Iniciar","Concluído","Em Avaliação"]} selected={filterStatus} onToggle={(v) => toggle(filterStatus, v, setFilterStatus)} />
+          <FilterChip label="Status" options={statusOpts as unknown as string[]} selected={filterStatus} onToggle={(v) => toggle(filterStatus, v, setFilterStatus)} />
           <FilterChip label="Diretor" options={diretores} selected={filterDir} onToggle={(v) => toggle(filterDir, v, setFilterDir)} />
           <FilterChip label="Ano/Semestre" options={periodoOptions} selected={filterPeriodo} onToggle={(v) => toggle(filterPeriodo, v, setFilterPeriodo)} />
           <Button variant="ghost" size="sm" onClick={clearAll} className="gap-1"><X className="h-3.5 w-3.5" /> Limpar</Button>
