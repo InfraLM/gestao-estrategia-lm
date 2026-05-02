@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive } from "lucide-react";
+import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers } from "lucide-react";
 import { projetos as initial, type Projeto, diretores } from "@/data/mockData";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
