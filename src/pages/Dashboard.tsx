@@ -390,7 +390,7 @@ export default function Dashboard() {
                 {projetosFiltrados.map(p => (
                   <tr key={p.id} className="border-t border-border hover:bg-surface-muted/50">
                     <td className="px-3 py-2 text-xs text-muted-foreground tabular-nums">{p.id}</td>
-                    <td className="px-3 py-2 font-medium">{p.nome}</td>
+                    <td className="px-3 py-2 font-medium"><Link to={`/gestao/${p.id}`} className="hover:text-primary">{p.nome}</Link></td>
                     <td className="px-3 py-2 text-xs whitespace-nowrap">{p.diretor}</td>
                     <td className="px-3 py-2"><ClassBadge value={p.classificacao} /></td>
                     <td className="px-3 py-2"><WaveBadge wave={p.wave} /></td>
