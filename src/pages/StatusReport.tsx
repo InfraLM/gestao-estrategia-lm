@@ -37,9 +37,14 @@ export default function StatusReport() {
               <button key={p} onClick={() => setPeriodo(p)} className={cn("h-8 px-3 text-sm rounded", periodo === p ? "bg-foreground text-background" : "text-muted-foreground")}>{p}</button>
             ))}
           </div>
+          <Button onClick={() => setParecerOpen(true)} className="gap-2 bg-primary hover:bg-primary/90">
+            <FilePlus2 className="h-4 w-4" /> Adicionar Parecer
+          </Button>
           <Button variant="outline" className="gap-2" onClick={() => toast.success("Relatório PDF gerado")}><Download className="h-4 w-4" /> Gerar PDF</Button>
         </div>
       </div>
+
+      <ParecerDialog open={parecerOpen} onOpenChange={setParecerOpen} />
 
       {/* Semáforo */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
