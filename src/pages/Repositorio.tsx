@@ -23,6 +23,10 @@ import {
 } from "@/data/repositoryMock";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer, Cell,
+  PieChart, Pie, Legend,
+} from "recharts";
 
 const SCORE_STYLE: Record<string, string> = {
   "HEROIC GO":   "bg-success-soft text-success border-success/40",
