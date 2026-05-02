@@ -189,7 +189,7 @@ export default function Portfolio() {
               </thead>
               <tbody>
                 {grouped.map(g => (
-                  <>
+                  <Fragment key={g.key || "all"}>
                     {g.key && (
                       <tr key={`h-${g.key}`} className="bg-surface-muted/70 border-t border-border">
                         <td colSpan={12} className="px-3 py-2">
