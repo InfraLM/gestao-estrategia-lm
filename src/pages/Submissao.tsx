@@ -35,6 +35,8 @@ function FaroIcon({ s }: { s: FaroLight }) {
   return <XCircle className="h-5 w-5 text-destructive" />;
 }
 
+type Divergencia = { campo: string; manual: string; sugeridoIA: string; resolucao?: "manual" | "ia" };
+
 export default function Submissao() {
   const [impacto, setImpacto] = useState([7]);
   const [confianca, setConfianca] = useState([6]);
@@ -43,12 +45,103 @@ export default function Submissao() {
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzed, setAnalyzed] = useState(false);
 
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [extracting, setExtracting] = useState(false);
+  const [extracted, setExtracted] = useState<Record<string, string> | null>(null);
+  const [missing, setMissing] = useState<string[]>([]);
+  const [divergencias, setDivergencias] = useState<Divergencia[]>([]);
+
+  const [nome, setNome] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [diretor, setDiretor] = useState("");
+  const [gerente, setGerente] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [budget, setBudget] = useState("");
+
   const ice = ((impacto[0] + confianca[0] + facilidade[0]) / 3).toFixed(1);
 
   const onAnalyze = () => {
     setAnalyzing(true);
     setAnalyzed(false);
     setTimeout(() => { setAnalyzing(false); setAnalyzed(true); }, 1800);
+  };
+
+  const onPickFile = () => fileInput.current?.click();
+
+  const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setUploadedFile(f);
+    setExtracting(true);
+    setExtracted(null);
+    setMissing([]);
+    setDivergencias([]);
+
+    setTimeout(() => {
+      const ai = {
+        nome: "Plataforma de Provas Adaptativas com IA",
+        descricao: "Implementar plataforma própria de provas com correção e adaptação por IA, integrada ao LMS.",
+        diretor: "Iuri Eloi Franco",
+        categoria: "IA e Automação",
+        budget: "180000",
+        impacto: 9, confianca: 7, facilidade: 6,
+        objetivos: ["AC.03", "C.01"], krs: ["KR 3.1"],
+      };
+
+      const divs: Divergencia[] = [];
+      const checkDiv = (campo: string, manual: string, ia: string) => {
+        if (manual && ia && manual.trim().toLowerCase() !== ia.trim().toLowerCase())
+          divs.push({ campo, manual, sugeridoIA: ia });
+      };
+      checkDiv("Nome do Projeto", nome, ai.nome);
+      checkDiv("Diretor Responsável", diretor, ai.diretor);
+      checkDiv("Categoria Estratégica", categoria, ai.categoria);
+      checkDiv("Budget Estimado", budget, ai.budget);
+
+      if (!nome) setNome(ai.nome);
+      if (!descricao) setDescricao(ai.descricao);
+      if (!diretor) setDiretor(ai.diretor);
+      if (!categoria) setCategoria(ai.categoria);
+      if (!budget) setBudget(ai.budget);
+      setImpacto([ai.impacto]); setConfianca([ai.confianca]); setFacilidade([ai.facilidade]);
+
+      const miss: string[] = [];
+      if (!gerente) miss.push("Gerente do Projeto");
+
+      setExtracted({
+        nome: ai.nome, diretor: ai.diretor, categoria: ai.categoria, budget: ai.budget,
+        ice: ((ai.impacto + ai.confianca + ai.facilidade) / 3).toFixed(1),
+        objetivos: ai.objetivos.join(", "), krs: ai.krs.join(", "),
+      });
+      setMissing(miss);
+      setDivergencias(divs);
+      setExtracting(false);
+      setAnalyzed(true);
+      toast.success("Documento analisado pela IA");
+    }, 2000);
+  };
+
+  const resolverDivergencia = (idx: number, resolucao: "manual" | "ia") => {
+    const d = divergencias[idx];
+    setDivergencias(prev => prev.map((x, i) => i === idx ? { ...x, resolucao } : x));
+    if (resolucao === "ia") {
+      if (d.campo === "Nome do Projeto") setNome(d.sugeridoIA);
+      if (d.campo === "Diretor Responsável") setDiretor(d.sugeridoIA);
+      if (d.campo === "Categoria Estratégica") setCategoria(d.sugeridoIA);
+      if (d.campo === "Budget Estimado") setBudget(d.sugeridoIA);
+    }
+    toast.success(`Divergência resolvida: ${d.campo}`);
+  };
+
+  const onSubmit = () => {
+    const pendentes = divergencias.filter(d => !d.resolucao);
+    if (pendentes.length > 0) {
+      toast.error(`Resolva ${pendentes.length} divergência(s) apontada(s) pela IA antes de submeter`);
+      return;
+    }
+    if (missing.length > 0) toast.warning(`Submetido como INCOMPLETO — ${missing.length} campo(s) sem informação`);
+    else toast.success("Projeto submetido ao portfólio");
   };
 
   return (
