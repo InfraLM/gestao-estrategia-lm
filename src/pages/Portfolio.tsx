@@ -35,6 +35,35 @@ export default function Portfolio() {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const toggleGroup = (k: string) => setCollapsed(c => ({ ...c, [k]: !c[k] }));
 
+  const columns = ["ID","Projeto","Diretor","Classif.","Wave","Obj.","Status BC","Período","Budget","Status","ICE",""] as const;
+  const defaultWidths = [70, 260, 180, 170, 80, 110, 150, 130, 130, 140, 110, 110];
+  const [colWidths, setColWidths] = useState<number[]>(() => {
+    try {
+      const saved = localStorage.getItem("portfolio.colWidths");
+      if (saved) {
+        const arr = JSON.parse(saved);
+        if (Array.isArray(arr) && arr.length === defaultWidths.length) return arr;
+      }
+    } catch {}
+    return defaultWidths;
+  });
+  const startResize = (i: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = colWidths[i];
+    const onMove = (ev: MouseEvent) => {
+      const next = Math.max(60, startW + (ev.clientX - startX));
+      setColWidths(w => { const c = [...w]; c[i] = next; return c; });
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      setColWidths(w => { try { localStorage.setItem("portfolio.colWidths", JSON.stringify(w)); } catch {} return w; });
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
+
   const updateProject = (id: string, patch: Partial<Projeto>) => {
     setData(prev => prev.map(p => p.id === id ? { ...p, ...patch } : p));
     toast.success(`${id} atualizado`);
