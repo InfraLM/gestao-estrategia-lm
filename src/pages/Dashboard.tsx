@@ -181,6 +181,53 @@ export default function Dashboard() {
     [filterClasses, isAll]
   );
 
+  // ===== Backend-powered list (search + sort + pagination) =====
+  type SortKey = "codigo" | "nome" | "diretor" | "status" | "wave" | "ice" | "budget";
+  const [bSearch, setBSearch] = useState("");
+  const [bStatus, setBStatus] = useState<string>("all");
+  const [bWave, setBWave] = useState<string>("all");
+  const [bSort, setBSort] = useState<SortKey>("ice");
+  const [bDir, setBDir] = useState<"asc" | "desc">("desc");
+  const [bPage, setBPage] = useState(1);
+  const [bPageSize, setBPageSize] = useState(20);
+  const [bRows, setBRows] = useState<any[]>([]);
+  const [bTotal, setBTotal] = useState(0);
+  const [bLoading, setBLoading] = useState(false);
+
+  useEffect(() => { setBPage(1); }, [bSearch, bStatus, bWave, bSort, bDir, bPageSize, filterClasses, showList]);
+
+  useEffect(() => {
+    if (!showList) return;
+    let cancel = false;
+    const run = async () => {
+      setBLoading(true);
+      let q = supabase.from("projetos").select("id,codigo,nome,diretor,classificacao,wave,status,status_bc,inicio,termino,budget,ice", { count: "exact" });
+      if (!isAll) q = q.in("classificacao", filterClasses as string[]);
+      if (bStatus !== "all") q = q.eq("status", bStatus);
+      if (bWave !== "all") q = q.eq("wave", bWave);
+      if (bSearch.trim()) {
+        const s = bSearch.trim().replace(/[,()]/g, " ");
+        q = q.or(`nome.ilike.%${s}%,codigo.ilike.%${s}%,diretor.ilike.%${s}%`);
+      }
+      q = q.order(bSort, { ascending: bDir === "asc" });
+      const from = (bPage - 1) * bPageSize;
+      q = q.range(from, from + bPageSize - 1);
+      const { data, count, error } = await q;
+      if (cancel) return;
+      if (error) { setBRows([]); setBTotal(0); }
+      else { setBRows(data ?? []); setBTotal(count ?? 0); }
+      setBLoading(false);
+    };
+    run();
+    return () => { cancel = true; };
+  }, [showList, isAll, filterClasses, bStatus, bWave, bSearch, bSort, bDir, bPage, bPageSize]);
+
+  const toggleSort = (k: SortKey) => {
+    if (bSort === k) setBDir(d => d === "asc" ? "desc" : "asc");
+    else { setBSort(k); setBDir("desc"); }
+  };
+  const totalPages = Math.max(1, Math.ceil(bTotal / bPageSize));
+
   // KPIs derivados do filtro
   const totalFiltered = useMemo(() => activeClasses.reduce((s, c) => s + portfolioByClass[c], 0), [activeClasses]);
 
