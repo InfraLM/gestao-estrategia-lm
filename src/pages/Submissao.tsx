@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Sparkles, Bot, CheckCircle2, AlertTriangle, XCircle, Save, Send, RotateCcw } from "lucide-react";
+import { Sparkles, Bot, CheckCircle2, AlertTriangle, XCircle, Save, Send, RotateCcw, Upload, FileText, Loader2, FileWarning } from "lucide-react";
 import { diretores, objetivosBSC, okrs } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
