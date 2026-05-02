@@ -174,6 +174,10 @@ export default function Dashboard() {
     [activeClasses]
   );
 
+  const aIniciarFiltered = useMemo(() => activeClasses.reduce((s, c) => s + statusByClassRaw[c]["A Iniciar"], 0), [activeClasses]);
+  const backlogFiltered = useMemo(() => activeClasses.reduce((s, c) => s + statusByClassRaw[c].Backlog, 0), [activeClasses]);
+  const concluidosFiltered = useMemo(() => activeClasses.reduce((s, c) => s + statusByClassRaw[c].Concluídos, 0), [activeClasses]);
+
   const offTrackFiltered = useMemo(
     () => activeClasses.reduce((s, c) => s + statusByClassRaw[c].Atrasado, 0),
     [activeClasses]
