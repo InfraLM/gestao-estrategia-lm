@@ -286,6 +286,60 @@ export default function Diagnostico() {
         </div>
       </Card>
 
+      {/* Principais Saídas do Diagnóstico */}
+      <Card className="p-5 shadow-card border-l-4 border-l-primary">
+        <div className="flex items-center gap-2 mb-1">
+          <Lightbulb className="h-4 w-4 text-primary" />
+          <h3 className="font-semibold">Principais Saídas do Diagnóstico</h3>
+        </div>
+        <p className="text-xs text-muted-foreground mb-4">
+          Sínteses transversais que conectam PESTEL, Porter, RBV/VRIN, Oceano Azul, SWOT e Ansoff — base para a Formulação Estratégica.
+        </p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {[
+            {
+              titulo: "Onde jogar",
+              cor: "border-primary/30 bg-primary/5 text-primary",
+              texto: "Nicho premium de formação prática para o médico early-career exposto ao paciente grave — não competir em volume com Afya/Sanar.",
+            },
+            {
+              titulo: "Como vencer",
+              cor: "border-success/30 bg-success/5 text-success",
+              texto: "Prática hospitalar real supervisionada (método LM) + comunidade + jornada longitudinal — barreira difícil de copiar.",
+            },
+            {
+              titulo: "Moat a construir (VRIN)",
+              cor: "border-info/30 bg-info/5 text-info",
+              texto: "Rede hospitalar padronizada, marca técnica, integração longitudinal da carreira e parcerias âncora (ex.: Hosp. Jacob Facuri).",
+            },
+            {
+              titulo: "Riscos prioritários",
+              cor: "border-destructive/30 bg-destructive/5 text-destructive",
+              texto: "Substitutos gratuitos com IA, escala de Afya/Sanar, dependência operacional hospitalar e capital limitado.",
+            },
+            {
+              titulo: "Oportunidades a capturar",
+              cor: "border-warning/30 bg-warning/5 text-warning",
+              texto: "IA didática nativa, expansão geográfica via polos padronizados, internacionalização (LatAm) e novos produtos B2B com hospitais.",
+            },
+            {
+              titulo: "Avenidas de crescimento (Ansoff)",
+              cor: "border-accent/40 bg-accent/10 text-accent-foreground",
+              texto: "40% Penetração · 30% Desenvolvimento de Produto · 20% Desenvolvimento de Mercado · 10% Diversificação/Ecossistema.",
+            },
+          ].map((s) => (
+            <div key={s.titulo} className={cn("p-3 rounded-md border", s.cor)}>
+              <div className="text-xs font-bold uppercase tracking-wider mb-1">{s.titulo}</div>
+              <p className="text-xs text-foreground/80 leading-relaxed">{s.texto}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 p-3 rounded-md bg-surface-muted/50 border border-border text-xs text-muted-foreground">
+          <span className="font-semibold text-foreground">Síntese estratégica:</span> consolidar o método LM como infraestrutura de carreira do médico early-career,
+          transformando educação prática em vínculo longitudinal de alta margem — desdobrado na página <span className="font-semibold text-primary">Estratégia LM</span>.
+        </div>
+      </Card>
+
       {/* Tabs por framework */}
       <Tabs defaultValue="pestel" className="w-full">
         <TabsList className="grid grid-cols-3 lg:grid-cols-7 w-full">
