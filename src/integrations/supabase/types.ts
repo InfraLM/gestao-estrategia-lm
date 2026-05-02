@@ -398,6 +398,8 @@ export type Database = {
         | "Concluído"
         | "Cancelado"
         | "Em Avaliação"
+        | "Validação"
+        | "Encerramento"
       wave_enum: "W1" | "W2" | "W3"
     }
     CompositeTypes: {
@@ -560,6 +562,8 @@ export const Constants = {
         "Concluído",
         "Cancelado",
         "Em Avaliação",
+        "Validação",
+        "Encerramento",
       ],
       wave_enum: ["W1", "W2", "W3"],
     },
