@@ -9,6 +9,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive } from "lucide-react";
 import { projetos as initial, type Projeto, diretores } from "@/data/mockData";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const waveOpts: Projeto["wave"][] = ["W1","W2","W3"];
+const classOpts: Projeto["classificacao"][] = ["Institucional","Melhoria Contínua","Melhoria Contínua com EPP","Novo Produto"];
+const statusOpts: Projeto["status"][] = ["Backlog","A Iniciar","Em Andamento","Pausado","Atrasado","Concluído","Cancelado","Em Avaliação"];
+const bcOpts: Projeto["statusBC"][] = ["Em Revisão","BC em Construção","Ativo EPP","Projeto Concluído","BC não aplicável","Sem BC","Adiado","Validado"];
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -25,6 +31,12 @@ export default function Portfolio() {
   const [filterDir, setFilterDir] = useState<string[]>([]);
   const [filterPeriodo, setFilterPeriodo] = useState<string[]>([]);
   const [editing, setEditing] = useState<Projeto | null>(null);
+
+  const updateProject = (id: string, patch: Partial<Projeto>) => {
+    setData(prev => prev.map(p => p.id === id ? { ...p, ...patch } : p));
+    toast.success(`${id} atualizado`);
+  };
+
 
   // Build available year/semester options from project periods
   const periodoOptions = useMemo(() => {
@@ -134,14 +146,35 @@ export default function Portfolio() {
                   <tr key={p.id} className="border-t border-border hover:bg-surface-muted/50 transition-colors">
                     <td className="px-4 py-3 text-xs text-muted-foreground tabular-nums">{p.id}</td>
                     <td className="px-4 py-3"><Link to="#" className="font-semibold text-foreground hover:text-primary">{p.nome}</Link></td>
-                    <td className="px-4 py-3"><div className="flex items-center gap-2"><div className="h-7 w-7 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center text-xs font-semibold">{p.diretor.split(" ").map(n => n[0]).slice(0,2).join("")}</div><span className="whitespace-nowrap">{p.diretor}</span></div></td>
-                    <td className="px-4 py-3"><ClassBadge value={p.classificacao} /></td>
-                    <td className="px-4 py-3"><WaveBadge wave={p.wave} /></td>
+                    <td className="px-4 py-3">
+                      <InlineSelect value={p.diretor} options={diretores} onChange={(v) => updateProject(p.id, { diretor: v })}>
+                        <div className="flex items-center gap-2"><div className="h-7 w-7 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center text-xs font-semibold">{p.diretor.split(" ").map(n => n[0]).slice(0,2).join("")}</div><span className="whitespace-nowrap">{p.diretor}</span></div>
+                      </InlineSelect>
+                    </td>
+                    <td className="px-4 py-3">
+                      <InlineSelect value={p.classificacao} options={classOpts} onChange={(v) => updateProject(p.id, { classificacao: v as Projeto["classificacao"] })}>
+                        <ClassBadge value={p.classificacao} />
+                      </InlineSelect>
+                    </td>
+                    <td className="px-4 py-3">
+                      <InlineSelect value={p.wave} options={waveOpts} onChange={(v) => updateProject(p.id, { wave: v as Projeto["wave"] })}>
+                        <WaveBadge wave={p.wave} />
+                      </InlineSelect>
+                    </td>
                     <td className="px-4 py-3 text-xs font-medium">{p.objetivos.join(", ")}</td>
-                    <td className="px-4 py-3"><BCBadge status={p.statusBC} /></td>
+                    <td className="px-4 py-3">
+                      <InlineSelect value={p.statusBC} options={bcOpts} onChange={(v) => updateProject(p.id, { statusBC: v as Projeto["statusBC"] })}>
+                        <BCBadge status={p.statusBC} />
+                      </InlineSelect>
+                    </td>
                     <td className="px-4 py-3 text-xs whitespace-nowrap text-muted-foreground">{p.inicio} → {p.termino}</td>
                     <td className="px-4 py-3 text-xs font-medium tabular-nums whitespace-nowrap">R$ {p.budget.toLocaleString("pt-BR")}</td>
-                    <td className="px-4 py-3"><StatusBadge status={p.status} /></td>
+                    <td className="px-4 py-3">
+                      <InlineSelect value={p.status} options={statusOpts} onChange={(v) => updateProject(p.id, { status: v as Projeto["status"] })}>
+                        <StatusBadge status={p.status} />
+                      </InlineSelect>
+                    </td>
+
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2 min-w-[80px]">
                         <span className="text-xs font-semibold tabular-nums w-7">{p.ice.toFixed(1)}</span>
@@ -243,3 +276,17 @@ function FilterChip({ label, options, selected, onToggle }: { label: string; opt
     </div>
   );
 }
+
+function InlineSelect({ value, options, onChange, children }: { value: string; options: readonly string[]; onChange: (v: string) => void; children?: React.ReactNode }) {
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="h-auto min-h-8 border-transparent hover:border-border bg-transparent px-2 py-1 -mx-2 -my-1 focus:ring-1 focus:ring-ring/40 [&>span]:flex [&>span]:items-center">
+        {children ? <span>{children}</span> : <SelectValue />}
+      </SelectTrigger>
+      <SelectContent className="z-50 bg-popover">
+        {options.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+      </SelectContent>
+    </Select>
+  );
+}
+
