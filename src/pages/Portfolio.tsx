@@ -9,6 +9,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive } from "lucide-react";
 import { projetos as initial, type Projeto, diretores } from "@/data/mockData";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const waveOpts: Projeto["wave"][] = ["W1","W2","W3"];
+const classOpts: Projeto["classificacao"][] = ["Institucional","Melhoria Contínua","Melhoria Contínua com EPP","Novo Produto"];
+const statusOpts: Projeto["status"][] = ["Backlog","A Iniciar","Em Andamento","Pausado","Atrasado","Concluído","Cancelado","Em Avaliação"];
+const bcOpts: Projeto["statusBC"][] = ["Em Revisão","BC em Construção","Ativo EPP","Projeto Concluído","BC não aplicável","Sem BC","Adiado","Validado"];
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
