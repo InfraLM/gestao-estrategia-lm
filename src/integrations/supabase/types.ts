@@ -64,6 +64,57 @@ export type Database = {
           },
         ]
       }
+      diagnostico_insights: {
+        Row: {
+          ai_classificacao: Json | null
+          ai_resumo: string | null
+          ai_sugestoes: string | null
+          autor: string | null
+          autor_nome: string | null
+          categoria: string | null
+          conteudo: string
+          created_at: string
+          evidencias: string | null
+          framework: Database["public"]["Enums"]["diagnostico_framework"]
+          id: string
+          status: Database["public"]["Enums"]["diagnostico_insight_status"]
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          ai_classificacao?: Json | null
+          ai_resumo?: string | null
+          ai_sugestoes?: string | null
+          autor?: string | null
+          autor_nome?: string | null
+          categoria?: string | null
+          conteudo: string
+          created_at?: string
+          evidencias?: string | null
+          framework?: Database["public"]["Enums"]["diagnostico_framework"]
+          id?: string
+          status?: Database["public"]["Enums"]["diagnostico_insight_status"]
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          ai_classificacao?: Json | null
+          ai_resumo?: string | null
+          ai_sugestoes?: string | null
+          autor?: string | null
+          autor_nome?: string | null
+          categoria?: string | null
+          conteudo?: string
+          created_at?: string
+          evidencias?: string | null
+          framework?: Database["public"]["Enums"]["diagnostico_framework"]
+          id?: string
+          status?: Database["public"]["Enums"]["diagnostico_insight_status"]
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       eap_itens: {
         Row: {
           created_at: string
@@ -619,6 +670,15 @@ export type Database = {
         | "Em Andamento"
         | "Concluído"
         | "Atrasado"
+      diagnostico_framework:
+        | "PESTEL"
+        | "Porter"
+        | "RBV_VRIN"
+        | "Oceano_Azul"
+        | "SWOT"
+        | "Ansoff"
+        | "Geral"
+      diagnostico_insight_status: "pendente" | "aprovado" | "arquivado"
       draft_status_enum: "pendente" | "aprovado" | "rejeitado"
       eap_status_enum: "Pendente" | "Em Andamento" | "Concluído" | "Bloqueado"
       especialista_enum: "Rafaella Ferraz" | "Renata Campos" | "Não atribuída"
@@ -784,6 +844,16 @@ export const Constants = {
         "Concluído",
         "Atrasado",
       ],
+      diagnostico_framework: [
+        "PESTEL",
+        "Porter",
+        "RBV_VRIN",
+        "Oceano_Azul",
+        "SWOT",
+        "Ansoff",
+        "Geral",
+      ],
+      diagnostico_insight_status: ["pendente", "aprovado", "arquivado"],
       draft_status_enum: ["pendente", "aprovado", "rejeitado"],
       eap_status_enum: ["Pendente", "Em Andamento", "Concluído", "Bloqueado"],
       especialista_enum: ["Rafaella Ferraz", "Renata Campos", "Não atribuída"],

@@ -13,6 +13,7 @@ import GestaoProjeto from "./pages/GestaoProjeto";
 import Melhorias from "./pages/Melhorias";
 import MelhoriaDetalhe from "./pages/MelhoriaDetalhe";
 import Repositorio from "./pages/Repositorio";
+import Diagnostico from "./pages/Diagnostico";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
 
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/melhorias" element={<Melhorias />} />
               <Route path="/melhorias/:id" element={<MelhoriaDetalhe />} />
               <Route path="/repositorio" element={<Repositorio />} />
+              <Route path="/diagnostico" element={<Diagnostico />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
