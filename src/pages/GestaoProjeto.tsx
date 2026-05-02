@@ -501,8 +501,277 @@ function Bolinhas({ n }: { n: number }) {
 }
 
 // ============================================================
-// Mock data builder — gera dados consistentes por projeto
+// Componentes editáveis — Cronograma, EAP e Histórico
 // ============================================================
+type Editable = ReturnType<typeof useProjectEditableData>;
+
+const STATUS_CRON: CronogramaItem["status"][] = ["A iniciar", "Em andamento", "Concluído", "Atrasado"];
+const STATUS_ENTREGA: EntregaItem["status"][] = ["A iniciar", "Em andamento", "Concluído", "Bloqueado"];
+
+function statusColor(status: string) {
+  switch (status) {
+    case "Concluído": return "bg-success-soft text-success border-success/30";
+    case "Em andamento": return "bg-info/15 text-info border-info/30";
+    case "Atrasado":
+    case "Bloqueado": return "bg-destructive/15 text-destructive border-destructive/30";
+    default: return "bg-muted text-muted-foreground border-border";
+  }
+}
+
+function CronogramaEditavel({ editable }: { editable: Editable }) {
+  const { state, updateCronograma, addCronograma, removeCronograma } = editable;
+  return (
+    <Card className="p-5 shadow-card">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="font-semibold">Cronograma editável</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">Edite responsável, datas, semanas e status. Toda alteração é registrada no histórico.</p>
+        </div>
+        <Button size="sm" variant="outline" onClick={addCronograma} className="gap-1.5">
+          <Plus className="h-3.5 w-3.5" /> Nova fase
+        </Button>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
+              <th className="text-left px-2 py-2 font-semibold">Fase</th>
+              <th className="text-left px-2 py-2 font-semibold w-[160px]">Responsável</th>
+              <th className="text-left px-2 py-2 font-semibold w-[140px]">Data prevista</th>
+              <th className="text-left px-2 py-2 font-semibold w-[140px]">Data conclusão</th>
+              <th className="text-center px-2 py-2 font-semibold w-[70px]">Prev.</th>
+              <th className="text-center px-2 py-2 font-semibold w-[70px]">Exec.</th>
+              <th className="text-center px-2 py-2 font-semibold w-[70px]">Ext.</th>
+              <th className="text-left px-2 py-2 font-semibold w-[140px]">Status</th>
+              <th className="px-2 py-2 w-8" />
+            </tr>
+          </thead>
+          <tbody>
+            {state.cronograma.map(c => (
+              <tr key={c.id} className="border-b border-border/50">
+                <td className="px-2 py-1.5">
+                  <Input value={c.fase} onChange={e => updateCronograma(c.id, { fase: e.target.value })} className="h-8 text-sm" />
+                </td>
+                <td className="px-2 py-1.5">
+                  <Input value={c.responsavel} onChange={e => updateCronograma(c.id, { responsavel: e.target.value })} className="h-8 text-sm" />
+                </td>
+                <td className="px-2 py-1.5">
+                  <Input type="date" value={c.dataPrevista} onChange={e => updateCronograma(c.id, { dataPrevista: e.target.value })} className="h-8 text-xs" />
+                </td>
+                <td className="px-2 py-1.5">
+                  <Input type="date" value={c.dataConclusao ?? ""} onChange={e => updateCronograma(c.id, { dataConclusao: e.target.value || null })} className="h-8 text-xs" />
+                </td>
+                <td className="px-2 py-1.5">
+                  <Input type="number" min={0} value={c.previsto} onChange={e => updateCronograma(c.id, { previsto: Number(e.target.value) || 0 })} className="h-8 text-xs text-center tabular-nums" />
+                </td>
+                <td className="px-2 py-1.5">
+                  <Input type="number" min={0} value={c.executado} onChange={e => updateCronograma(c.id, { executado: Number(e.target.value) || 0 })} className="h-8 text-xs text-center tabular-nums" />
+                </td>
+                <td className="px-2 py-1.5">
+                  <Input type="number" min={0} value={c.extensao} onChange={e => updateCronograma(c.id, { extensao: Number(e.target.value) || 0 })} className="h-8 text-xs text-center tabular-nums" />
+                </td>
+                <td className="px-2 py-1.5">
+                  <Select value={c.status} onValueChange={(v) => updateCronograma(c.id, { status: v as CronogramaItem["status"] })}>
+                    <SelectTrigger className={cn("h-8 text-xs", statusColor(c.status))}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUS_CRON.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </td>
+                <td className="px-2 py-1.5">
+                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => removeCronograma(c.id)}>
+                    <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
+
+const TIPO_ICON_MAP: Record<SubmissaoDocumento["tipo"], typeof FileIcon> = {
+  planilha: FileSpreadsheet,
+  pdf: FileText,
+  texto: FileText,
+  gravacao: FileAudio,
+  outro: FileIcon,
+};
+
+function EapEditavel({ editable }: { editable: Editable }) {
+  const { state, updateEntrega, addEntrega, removeEntrega, submitDocumento } = editable;
+  return (
+    <Card className="p-5 shadow-card">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="font-semibold">Estrutura Analítica do Projeto (EAP) — editável</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">Cada entrega tem responsável, datas e botão de submissão de documentos (planilha, PDF, texto, gravação).</p>
+        </div>
+      </div>
+      <div className="space-y-4">
+        {state.eap.map(pacote => {
+          const concl = pacote.entregas.filter(e => e.feito).length;
+          return (
+            <div key={pacote.id} className="border border-border rounded-md overflow-hidden">
+              <div className="flex items-center justify-between bg-surface-muted/40 px-3 py-2 gap-3">
+                <div className="flex items-center gap-3 text-sm min-w-0">
+                  <span className="text-xs tabular-nums font-mono text-muted-foreground shrink-0">{pacote.id}</span>
+                  <span className="font-semibold truncate">{pacote.titulo}</span>
+                </div>
+                <div className="flex items-center gap-3 text-xs shrink-0">
+                  <span className="text-muted-foreground tabular-nums">{concl}/{pacote.entregas.length}</span>
+                  <div className="w-24 h-1.5 rounded bg-muted overflow-hidden">
+                    <div className="h-full bg-primary" style={{ width: `${pacote.entregas.length ? (concl / pacote.entregas.length) * 100 : 0}%` }} />
+                  </div>
+                  <Button size="sm" variant="outline" className="h-7 gap-1.5 text-xs" onClick={() => addEntrega(pacote.id)}>
+                    <Plus className="h-3 w-3" /> Entrega
+                  </Button>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
+                      <th className="text-left px-2 py-2 font-semibold w-12">ID</th>
+                      <th className="text-left px-2 py-2 font-semibold">Entrega</th>
+                      <th className="text-left px-2 py-2 font-semibold w-[160px]">Responsável</th>
+                      <th className="text-left px-2 py-2 font-semibold w-[140px]">Data prevista</th>
+                      <th className="text-left px-2 py-2 font-semibold w-[140px]">Data conclusão</th>
+                      <th className="text-center px-2 py-2 font-semibold w-16">Horas</th>
+                      <th className="text-left px-2 py-2 font-semibold w-[140px]">Status</th>
+                      <th className="text-center px-2 py-2 font-semibold w-[140px]">Submissões</th>
+                      <th className="px-2 py-2 w-8" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pacote.entregas.map(e => (
+                      <tr key={e.id} className="border-b border-border/50">
+                        <td className="px-2 py-1.5 text-xs font-mono text-muted-foreground tabular-nums">{e.id}</td>
+                        <td className="px-2 py-1.5">
+                          <Input value={e.titulo} onChange={ev => updateEntrega(pacote.id, e.id, { titulo: ev.target.value })} className="h-8 text-sm" />
+                        </td>
+                        <td className="px-2 py-1.5">
+                          <Input value={e.responsavel} onChange={ev => updateEntrega(pacote.id, e.id, { responsavel: ev.target.value })} className="h-8 text-sm" />
+                        </td>
+                        <td className="px-2 py-1.5">
+                          <Input type="date" value={e.dataPrevista} onChange={ev => updateEntrega(pacote.id, e.id, { dataPrevista: ev.target.value })} className="h-8 text-xs" />
+                        </td>
+                        <td className="px-2 py-1.5">
+                          <Input type="date" value={e.dataConclusao ?? ""} onChange={ev => updateEntrega(pacote.id, e.id, { dataConclusao: ev.target.value || null, feito: !!ev.target.value })} className="h-8 text-xs" />
+                        </td>
+                        <td className="px-2 py-1.5">
+                          <Input type="number" min={0} value={e.horas} onChange={ev => updateEntrega(pacote.id, e.id, { horas: Number(ev.target.value) || 0 })} className="h-8 text-xs text-center tabular-nums" />
+                        </td>
+                        <td className="px-2 py-1.5">
+                          <Select value={e.status} onValueChange={(v) => {
+                            const novo = v as EntregaItem["status"];
+                            updateEntrega(pacote.id, e.id, { status: novo, feito: novo === "Concluído", dataConclusao: novo === "Concluído" ? (e.dataConclusao ?? new Date().toISOString().slice(0, 10)) : null });
+                          }}>
+                            <SelectTrigger className={cn("h-8 text-xs", statusColor(e.status))}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {STATUS_ENTREGA.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        <td className="px-2 py-1.5 text-center">
+                          <SubmeterEntregaDialog
+                            entregaId={e.id}
+                            entregaTitulo={e.titulo}
+                            documentos={e.documentos}
+                            onSubmit={(doc) => submitDocumento(pacote.id, e.id, doc)}
+                          />
+                          {e.documentos.length > 0 && (
+                            <div className="flex items-center justify-center gap-1 mt-1">
+                              {e.documentos.slice(0, 3).map(d => {
+                                const Icon = TIPO_ICON_MAP[d.tipo];
+                                return <Icon key={d.id} className="h-3 w-3 text-muted-foreground" />;
+                              })}
+                              {e.documentos.length > 3 && <span className="text-[9px] text-muted-foreground">+{e.documentos.length - 3}</span>}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-2 py-1.5">
+                          <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => removeEntrega(pacote.id, e.id)}>
+                            <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </Card>
+  );
+}
+
+function HistoricoTab({ editable }: { editable: Editable }) {
+  const { state, reset } = editable;
+  return (
+    <Card className="p-5 shadow-card">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="font-semibold flex items-center gap-2"><History className="h-4 w-4 text-primary" /> Histórico de alterações</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">{state.historico.length} evento(s) registrado(s) — alterações de cronograma, EAP e submissões.</p>
+        </div>
+        <Button size="sm" variant="outline" onClick={() => { if (confirm("Restaurar dados padrão e limpar histórico?")) reset(); }}>
+          Restaurar padrão
+        </Button>
+      </div>
+      {state.historico.length === 0 ? (
+        <div className="py-12 text-center text-sm text-muted-foreground">
+          Nenhuma alteração registrada ainda. Edite uma fase ou entrega para começar.
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
+                <th className="text-left px-2 py-2 font-semibold w-[140px]">Data/hora</th>
+                <th className="text-left px-2 py-2 font-semibold w-[100px]">Autor</th>
+                <th className="text-left px-2 py-2 font-semibold w-[100px]">Alvo</th>
+                <th className="text-left px-2 py-2 font-semibold">Item</th>
+                <th className="text-left px-2 py-2 font-semibold w-[140px]">Campo</th>
+                <th className="text-left px-2 py-2 font-semibold">De → Para</th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.historico.map(h => (
+                <tr key={h.id} className="border-b border-border/50 align-top">
+                  <td className="px-2 py-2 text-xs tabular-nums text-muted-foreground whitespace-nowrap">
+                    {new Date(h.data).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                  </td>
+                  <td className="px-2 py-2 text-xs">{h.autor}</td>
+                  <td className="px-2 py-2"><Badge variant="outline" className="text-[10px] capitalize">{h.alvoTipo}</Badge></td>
+                  <td className="px-2 py-2 text-xs">
+                    <div className="font-medium">{h.alvoTitulo}</div>
+                    <div className="text-[10px] font-mono text-muted-foreground">{h.alvoId}</div>
+                  </td>
+                  <td className="px-2 py-2 text-xs"><Badge className="bg-muted text-foreground border-border text-[10px] capitalize">{h.campo}</Badge></td>
+                  <td className="px-2 py-2 text-xs">
+                    <span className="text-muted-foreground line-through mr-1.5">{h.valorAnterior}</span>
+                    <span className="text-foreground font-medium">→ {h.valorNovo}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+
 function buildProjectData(p: Projeto) {
   const seed = p.id.charCodeAt(1) + p.id.charCodeAt(3);
   const rand = (n: number, salt = 0) => ((seed * 9301 + 49297 + salt * 233) % 233280) / 233280 * n;
