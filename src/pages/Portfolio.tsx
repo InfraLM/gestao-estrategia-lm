@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive } from "lucide-react";
+import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers } from "lucide-react";
 import { projetos as initial, type Projeto, diretores } from "@/data/mockData";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -31,6 +31,9 @@ export default function Portfolio() {
   const [filterDir, setFilterDir] = useState<string[]>([]);
   const [filterPeriodo, setFilterPeriodo] = useState<string[]>([]);
   const [editing, setEditing] = useState<Projeto | null>(null);
+  const [groupBy, setGroupBy] = useState<"none" | "wave" | "periodo" | "diretor" | "classificacao" | "status" | "statusBC">("none");
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const toggleGroup = (k: string) => setCollapsed(c => ({ ...c, [k]: !c[k] }));
 
   const updateProject = (id: string, patch: Partial<Projeto>) => {
     setData(prev => prev.map(p => p.id === id ? { ...p, ...patch } : p));
@@ -80,6 +83,33 @@ export default function Portfolio() {
     return list;
   }, [data, search, filterWave, filterClass, filterStatus, filterDir, filterPeriodo]);
 
+  const grouped = useMemo<{ key: string; items: Projeto[] }[]>(() => {
+    if (groupBy === "none") return [{ key: "", items: filtered }];
+    const map = new Map<string, Projeto[]>();
+    const push = (k: string, p: Projeto) => { if (!map.has(k)) map.set(k, []); map.get(k)!.push(p); };
+    filtered.forEach(p => {
+      if (groupBy === "periodo") {
+        const [iy, is] = p.inicio.split("/").map(Number);
+        const [ty, ts] = p.termino.split("/").map(Number);
+        const seen = new Set<string>();
+        for (let y = iy; y <= ty; y++) {
+          const sStart = y === iy ? is : 1;
+          const sEnd = y === ty ? ts : 2;
+          for (let s = sStart; s <= sEnd; s++) {
+            const k = `${y}/${s}`;
+            if (!seen.has(k)) { seen.add(k); push(k, p); }
+          }
+        }
+      } else {
+        push(String(p[groupBy as keyof Projeto] ?? "—"), p);
+      }
+    });
+    return Array.from(map.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, items]) => ({ key, items: [...items].sort((a, b) => b.ice - a.ice) }));
+  }, [filtered, groupBy]);
+
+
   const clearAll = () => { setSearch(""); setFilterWave([]); setFilterClass([]); setFilterStatus([]); setFilterDir([]); setFilterPeriodo([]); };
 
   const toggle = (arr: string[], v: string, set: (v: string[]) => void) =>
@@ -96,6 +126,22 @@ export default function Portfolio() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 rounded-md border border-border bg-background px-2 h-9">
+            <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">Agrupar:</span>
+            <Select value={groupBy} onValueChange={(v) => setGroupBy(v as typeof groupBy)}>
+              <SelectTrigger className="h-7 border-none bg-transparent px-1 text-xs gap-1 focus:ring-0 w-[130px]"><SelectValue /></SelectTrigger>
+              <SelectContent className="z-50 bg-popover">
+                <SelectItem value="none">Nenhum</SelectItem>
+                <SelectItem value="wave">Wave</SelectItem>
+                <SelectItem value="periodo">Ano/Semestre</SelectItem>
+                <SelectItem value="diretor">Diretor</SelectItem>
+                <SelectItem value="classificacao">Classificação</SelectItem>
+                <SelectItem value="status">Status</SelectItem>
+                <SelectItem value="statusBC">Status BC</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex rounded-md border border-border p-0.5 bg-background">
             <button onClick={() => setView("tabela")} className={cn("h-8 px-3 rounded text-sm flex items-center gap-1.5", view === "tabela" ? "bg-foreground text-background" : "text-muted-foreground")}><LayoutList className="h-4 w-4" /> Tabela</button>
             <button onClick={() => setView("kanban")} className={cn("h-8 px-3 rounded text-sm flex items-center gap-1.5", view === "kanban" ? "bg-foreground text-background" : "text-muted-foreground")}><Columns3 className="h-4 w-4" /> Kanban</button>
@@ -142,7 +188,20 @@ export default function Portfolio() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map(p => (
+                {grouped.map(g => (
+                  <Fragment key={g.key || "all"}>
+                    {g.key && (
+                      <tr key={`h-${g.key}`} className="bg-surface-muted/70 border-t border-border">
+                        <td colSpan={12} className="px-3 py-2">
+                          <button onClick={() => toggleGroup(g.key)} className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground">
+                            {collapsed[g.key] ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                            <span>{g.key}</span>
+                            <span className="text-muted-foreground font-normal normal-case tracking-normal">· {g.items.length} {g.items.length === 1 ? "projeto" : "projetos"} · R$ {g.items.reduce((s, p) => s + p.budget, 0).toLocaleString("pt-BR")}</span>
+                          </button>
+                        </td>
+                      </tr>
+                    )}
+                    {!collapsed[g.key] && g.items.map(p => (
                   <tr key={p.id} className="border-t border-border hover:bg-surface-muted/50 transition-colors">
                     <td className="px-4 py-3 text-xs text-muted-foreground tabular-nums">{p.id}</td>
                     <td className="px-4 py-3"><Link to="#" className="font-semibold text-foreground hover:text-primary">{p.nome}</Link></td>
@@ -191,6 +250,8 @@ export default function Portfolio() {
                       </div>
                     </td>
                   </tr>
+                    ))}
+                  </Fragment>
                 ))}
               </tbody>
             </table>
