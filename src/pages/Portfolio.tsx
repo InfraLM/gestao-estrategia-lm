@@ -7,9 +7,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers } from "lucide-react";
-import { projetos as initial, type Projeto, diretores } from "@/data/mockData";
+import { projetos as initial, type Projeto, diretores, objetivosBSC, okrs } from "@/data/mockData";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+const objetivoOpts = objetivosBSC.map(o => ({ value: o.id, label: `${o.id} · ${o.nome}` }));
+const krOpts = okrs.flatMap(o => o.krs).map(kr => ({ value: kr.id, label: `${kr.id} · ${kr.nome}` }));
 
 const waveOpts: Projeto["wave"][] = ["W1","W2","W3"];
 const classOpts: Projeto["classificacao"][] = ["Institucional","Melhoria Contínua","Melhoria Contínua com EPP","Novo Produto"];
@@ -35,8 +39,8 @@ export default function Portfolio() {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const toggleGroup = (k: string) => setCollapsed(c => ({ ...c, [k]: !c[k] }));
 
-  const columns = ["ID","Projeto","Diretor","Classif.","Wave","Obj.","Status BC","Período","Budget","Status","ICE",""] as const;
-  const defaultWidths = [70, 260, 180, 170, 80, 110, 150, 130, 130, 140, 110, 110];
+  const columns = ["ID","Projeto","Diretor","Classif.","Wave","Objetivos","KRs","Status BC","Período","Budget","Status","ICE",""] as const;
+  const defaultWidths = [70, 240, 180, 160, 80, 160, 140, 140, 130, 120, 130, 110, 100];
   const [colWidths, setColWidths] = useState<number[]>(() => {
     try {
       const saved = localStorage.getItem("portfolio.colWidths");
@@ -233,7 +237,7 @@ export default function Portfolio() {
                   <Fragment key={g.key || "all"}>
                     {g.key && (
                       <tr key={`h-${g.key}`} className="bg-surface-muted/70 border-t border-border">
-                        <td colSpan={12} className="px-3 py-2">
+                        <td colSpan={13} className="px-3 py-2">
                           <button onClick={() => toggleGroup(g.key)} className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground">
                             {collapsed[g.key] ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                             <span>{g.key}</span>
@@ -261,7 +265,22 @@ export default function Portfolio() {
                         <WaveBadge wave={p.wave} />
                       </InlineSelect>
                     </td>
-                    <td className="px-4 py-3 overflow-hidden text-xs font-medium">{p.objetivos.join(", ")}</td>
+                    <td className="px-2 py-2 overflow-hidden">
+                      <MultiSelectPopover
+                        label="Objetivos"
+                        options={objetivoOpts}
+                        selected={p.objetivos}
+                        onChange={(vals) => updateProject(p.id, { objetivos: vals })}
+                      />
+                    </td>
+                    <td className="px-2 py-2 overflow-hidden">
+                      <MultiSelectPopover
+                        label="KRs"
+                        options={krOpts}
+                        selected={p.krs}
+                        onChange={(vals) => updateProject(p.id, { krs: vals })}
+                      />
+                    </td>
                     <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.statusBC} options={bcOpts} onChange={(v) => updateProject(p.id, { statusBC: v as Projeto["statusBC"] })}>
                         <BCBadge status={p.statusBC} />
@@ -389,6 +408,44 @@ function InlineSelect({ value, options, onChange, children }: { value: string; o
         {options.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
       </SelectContent>
     </Select>
+  );
+}
+
+function MultiSelectPopover({ label, options, selected, onChange }: { label: string; options: { value: string; label: string }[]; selected: string[]; onChange: (vals: string[]) => void }) {
+  const toggle = (v: string) => onChange(selected.includes(v) ? selected.filter(x => x !== v) : [...selected, v]);
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button type="button" className="w-full text-left text-xs px-2 py-1 rounded border border-transparent hover:border-border hover:bg-muted/50 transition-colors min-h-8">
+          {selected.length === 0 ? (
+            <span className="text-muted-foreground italic">+ {label}</span>
+          ) : (
+            <div className="flex flex-wrap gap-1">
+              {selected.map(v => (
+                <span key={v} className="inline-flex items-center px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-semibold border border-primary/30">{v}</span>
+              ))}
+            </div>
+          )}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-72 p-1 bg-popover z-50 max-h-72 overflow-auto">
+        <div className="px-2 py-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</div>
+        {options.map(o => {
+          const checked = selected.includes(o.value);
+          return (
+            <label key={o.value} className="flex items-start gap-2 px-2 py-1.5 rounded text-xs hover:bg-muted cursor-pointer">
+              <input type="checkbox" checked={checked} onChange={() => toggle(o.value)} className="mt-0.5 accent-primary" />
+              <span className="leading-snug">{o.label}</span>
+            </label>
+          );
+        })}
+        {selected.length > 0 && (
+          <div className="border-t border-border mt-1 pt-1 px-2">
+            <button onClick={() => onChange([])} className="text-[11px] text-muted-foreground hover:text-destructive py-1">Limpar seleção</button>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }
 
