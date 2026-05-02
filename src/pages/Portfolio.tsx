@@ -32,6 +32,12 @@ export default function Portfolio() {
   const [filterPeriodo, setFilterPeriodo] = useState<string[]>([]);
   const [editing, setEditing] = useState<Projeto | null>(null);
 
+  const updateProject = (id: string, patch: Partial<Projeto>) => {
+    setData(prev => prev.map(p => p.id === id ? { ...p, ...patch } : p));
+    toast.success(`${id} atualizado`);
+  };
+
+
   // Build available year/semester options from project periods
   const periodoOptions = useMemo(() => {
     const set = new Set<string>();
