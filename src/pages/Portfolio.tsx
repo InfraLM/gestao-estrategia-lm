@@ -265,7 +265,22 @@ export default function Portfolio() {
                         <WaveBadge wave={p.wave} />
                       </InlineSelect>
                     </td>
-                    <td className="px-4 py-3 overflow-hidden text-xs font-medium">{p.objetivos.join(", ")}</td>
+                    <td className="px-2 py-2 overflow-hidden">
+                      <MultiSelectPopover
+                        label="Objetivos"
+                        options={objetivoOpts}
+                        selected={p.objetivos}
+                        onChange={(vals) => updateProject(p.id, { objetivos: vals })}
+                      />
+                    </td>
+                    <td className="px-2 py-2 overflow-hidden">
+                      <MultiSelectPopover
+                        label="KRs"
+                        options={krOpts}
+                        selected={p.krs}
+                        onChange={(vals) => updateProject(p.id, { krs: vals })}
+                      />
+                    </td>
                     <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.statusBC} options={bcOpts} onChange={(v) => updateProject(p.id, { statusBC: v as Projeto["statusBC"] })}>
                         <BCBadge status={p.statusBC} />
