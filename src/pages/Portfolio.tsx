@@ -318,18 +318,28 @@ export default function Portfolio() {
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-4">
-          {statusCols.map(col => {
-            const items = filtered.filter(p => p.status === col);
+        (() => {
+          const statusStyles: Record<string, { bar: string; chip: string; text: string }> = {
+            "Backlog":      { bar: "bg-slate-400",   chip: "bg-slate-100 text-slate-700",     text: "text-slate-700" },
+            "A Iniciar":    { bar: "bg-info",        chip: "bg-info-soft text-info",          text: "text-info" },
+            "Em Andamento": { bar: "bg-success",     chip: "bg-success-soft text-success",    text: "text-success" },
+            "Validação":    { bar: "bg-violet-500",  chip: "bg-violet-100 text-violet-700",   text: "text-violet-700" },
+            "Encerramento": { bar: "bg-amber-500",   chip: "bg-amber-100 text-amber-800",     text: "text-amber-800" },
+            "Concluído":    { bar: "bg-emerald-600", chip: "bg-emerald-100 text-emerald-800", text: "text-emerald-800" },
+          };
+
+          const renderColumn = (col: Projeto["status"], items: Projeto[]) => {
+            const s = statusStyles[col] ?? statusStyles["Backlog"];
             return (
-              <Card key={col} className="p-3 shadow-card bg-surface-muted/40 min-h-[300px]">
-                <div className="flex items-center justify-between mb-3 px-1">
-                  <span className="text-xs font-semibold uppercase tracking-wider">{col}</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-background border border-border tabular-nums">{items.length}</span>
+              <Card key={col} className="p-3 shadow-card bg-surface-muted/40 min-h-[300px] w-[300px] shrink-0 flex flex-col">
+                <div className={cn("flex items-center justify-between mb-3 px-2 py-1.5 rounded-md border-l-4", s.chip)} style={{ borderLeftColor: "currentColor" }}>
+                  <span className={cn("text-xs font-bold uppercase tracking-wider", s.text)}>{col}</span>
+                  <span className={cn("text-xs px-2 py-0.5 rounded-full bg-background border border-border tabular-nums font-semibold", s.text)}>{items.length}</span>
                 </div>
                 <div className="space-y-2">
                   {items.map(p => (
-                    <div key={p.id} draggable onDragEnd={() => toast.info("Drag-and-drop simulado")} className="bg-card rounded-md p-3 shadow-card border border-border cursor-grab hover:shadow-elevated transition-shadow">
+                    <div key={p.id} draggable onDragEnd={() => toast.info("Drag-and-drop simulado")} className={cn("bg-card rounded-md p-3 shadow-card border border-border border-l-4 cursor-grab hover:shadow-elevated transition-shadow")} style={{ borderLeftColor: `var(--tw-${col})` }}>
+                      <div className={cn("h-1 w-full rounded-full mb-2", s.bar)} />
                       <div className="text-[10px] text-muted-foreground tabular-nums mb-1">{p.id}</div>
                       <Link to={`/gestao/${p.id}`} className="block font-semibold text-sm leading-snug mb-2 hover:text-primary">{p.nome}</Link>
                       <div className="flex flex-wrap gap-1 mb-2"><ClassBadge value={p.classificacao} /><WaveBadge wave={p.wave} /></div>
@@ -342,8 +352,48 @@ export default function Portfolio() {
                 </div>
               </Card>
             );
-          })}
-        </div>
+          };
+
+          // Cor para o cabeçalho do agrupamento
+          const groupHeaderColor = (key: string): string => {
+            // hash simples para cor consistente por chave
+            let h = 0;
+            for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) % 360;
+            return `hsl(${h}, 65%, 45%)`;
+          };
+
+          return (
+            <div className="space-y-5">
+              {grouped.map(g => {
+                const board = (
+                  <div className="overflow-x-auto pb-2">
+                    <div className="flex gap-4 min-w-min">
+                      {statusCols.map(col => renderColumn(col, g.items.filter(p => p.status === col)))}
+                    </div>
+                  </div>
+                );
+                if (!g.key) return <div key="all">{board}</div>;
+                const color = groupHeaderColor(g.key);
+                return (
+                  <div key={g.key} className="space-y-3">
+                    <button
+                      onClick={() => toggleGroup(g.key)}
+                      className="flex items-center gap-3 w-full px-3 py-2 rounded-md bg-card border border-border shadow-sm hover:bg-surface-muted/60 transition-colors"
+                      style={{ borderLeft: `4px solid ${color}` }}
+                    >
+                      {collapsed[g.key] ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      <span className="text-sm font-bold uppercase tracking-wider" style={{ color }}>{g.key}</span>
+                      <span className="text-xs text-muted-foreground font-normal">
+                        · {g.items.length} {g.items.length === 1 ? "projeto" : "projetos"} · R$ {g.items.reduce((s, p) => s + p.budget, 0).toLocaleString("pt-BR")}
+                      </span>
+                    </button>
+                    {!collapsed[g.key] && board}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()
       )}
 
       {/* Edit Drawer */}
