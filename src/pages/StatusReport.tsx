@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, Download, CircleDot, AlertCircle, ShieldAlert, Sparkles } from "lucide-react";
+import { ChevronDown, Download, CircleDot, AlertCircle, ShieldAlert, Sparkles, FilePlus2 } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { SaudeBadge } from "@/components/badges";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { ParecerDialog } from "@/components/ParecerDialog";
 
 const periodos = ["Semanal", "Quinzenal", "Mensal"] as const;
 type Periodo = typeof periodos[number];
