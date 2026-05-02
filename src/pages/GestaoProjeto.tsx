@@ -158,7 +158,7 @@ export default function GestaoProjeto() {
             </div>
           </div>
           <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={data.cronograma} layout="vertical" margin={{ left: 16, right: 24 }}>
+            <BarChart data={cronogramaChart} layout="vertical" margin={{ left: 16, right: 24 }}>
               <CartesianGrid horizontal={false} stroke="hsl(var(--border))" />
               <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `${v}sem`} />
               <YAxis dataKey="fase" type="category" tick={{ fontSize: 11 }} width={130} stroke="hsl(var(--muted-foreground))" />
