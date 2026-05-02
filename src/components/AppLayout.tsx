@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/diagnostico", label: "Diagnóstico Estratégico", icon: Compass },
   { to: "/submissao", label: "Submissão", icon: FilePlus2 },
   { to: "/portfolio", label: "Portfólio", icon: LayoutGrid },
   { to: "/status-report", label: "Status Report", icon: LineChart },
@@ -18,6 +19,7 @@ const navItems = [
 
 const titles: Record<string, string> = {
   "/": "Dashboard Estratégico",
+  "/diagnostico": "Diagnóstico Estratégico LM",
   "/submissao": "Submissão de Projetos",
   "/portfolio": "Portfólio Estratégico",
   "/status-report": "Status Report — Evolução",
