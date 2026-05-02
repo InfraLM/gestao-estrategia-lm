@@ -53,13 +53,29 @@ export default function StatusReport() {
         <SemaforoCard icon={ShieldAlert} title="Off-Track" subtitle="Desvios críticos" value={offTrack} tone="destructive" />
       </div>
 
-      {/* Resumo de avanços */}
+      {/* Resumo de avanços por projeto */}
       <Card className="p-5 shadow-card">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold">Resumo de Avanços do Período</h3>
+          <h3 className="font-semibold">Resumo de Avanços do Período · por Projeto</h3>
           <span className="text-xs text-muted-foreground">Editável pelo PMO</span>
         </div>
-        <Textarea rows={4} className="text-sm" defaultValue="• Credenciamento MEC: Planta baixa aprovada internamente.&#10;• Imersão SP: Contratação de manequins concluída.&#10;• Squad de IA: Definição do líder técnico em curso.&#10;• Orçamento 2026 ZBB: 70% das áreas concluíram input." />
+        <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
+          {ativos.map(p => (
+            <div key={p.id} className="border border-border rounded-md p-3 bg-surface-muted/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs text-muted-foreground tabular-nums">{p.id}</span>
+                <span className="font-medium text-sm flex-1 truncate">{p.nome}</span>
+                <SaudeBadge saude={p.saude} />
+              </div>
+              <Textarea
+                rows={2}
+                className="text-sm"
+                placeholder="Principais avanços do período…"
+                defaultValue={p.avancos ?? ""}
+              />
+            </div>
+          ))}
+        </div>
       </Card>
 
       {/* Projetos ativos */}
