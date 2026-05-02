@@ -126,6 +126,22 @@ export default function Portfolio() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 rounded-md border border-border bg-background px-2 h-9">
+            <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">Agrupar:</span>
+            <Select value={groupBy} onValueChange={(v) => setGroupBy(v as typeof groupBy)}>
+              <SelectTrigger className="h-7 border-none bg-transparent px-1 text-xs gap-1 focus:ring-0 w-[130px]"><SelectValue /></SelectTrigger>
+              <SelectContent className="z-50 bg-popover">
+                <SelectItem value="none">Nenhum</SelectItem>
+                <SelectItem value="wave">Wave</SelectItem>
+                <SelectItem value="periodo">Ano/Semestre</SelectItem>
+                <SelectItem value="diretor">Diretor</SelectItem>
+                <SelectItem value="classificacao">Classificação</SelectItem>
+                <SelectItem value="status">Status</SelectItem>
+                <SelectItem value="statusBC">Status BC</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex rounded-md border border-border p-0.5 bg-background">
             <button onClick={() => setView("tabela")} className={cn("h-8 px-3 rounded text-sm flex items-center gap-1.5", view === "tabela" ? "bg-foreground text-background" : "text-muted-foreground")}><LayoutList className="h-4 w-4" /> Tabela</button>
             <button onClick={() => setView("kanban")} className={cn("h-8 px-3 rounded text-sm flex items-center gap-1.5", view === "kanban" ? "bg-foreground text-background" : "text-muted-foreground")}><Columns3 className="h-4 w-4" /> Kanban</button>
