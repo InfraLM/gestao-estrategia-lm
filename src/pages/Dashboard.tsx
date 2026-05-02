@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
 import { projetos, totaisPortfolio, okrs, waveColor, type Classificacao } from "@/data/mockData";
-import { BarChart3, FolderOpen, TrendingUp, ShieldCheck, AlertTriangle, Calendar, Filter, X } from "lucide-react";
+import { BarChart3, FolderOpen, TrendingUp, ShieldCheck, AlertTriangle, Calendar, Filter, X, List } from "lucide-react";
 import {
   Bar, BarChart, CartesianGrid, Cell, LabelList, Legend, Line, LineChart as RLineChart,
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -160,11 +163,17 @@ const tooltipStyle = { background: "hsl(var(--card))", border: "1px solid hsl(va
 
 export default function Dashboard() {
   const [filterClasses, setFilterClasses] = useState<Classificacao[]>([]); // vazio = todas
+  const [showList, setShowList] = useState(false);
   const isAll = filterClasses.length === 0;
   const activeClasses = isAll ? ALL_CLASSES : filterClasses;
 
   const toggleClass = (c: Classificacao) =>
     setFilterClasses(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
+
+  const projetosFiltrados = useMemo(
+    () => projetos.filter(p => isAll || filterClasses.includes(p.classificacao)),
+    [filterClasses, isAll]
+  );
 
   // KPIs derivados do filtro
   const totalFiltered = useMemo(() => activeClasses.reduce((s, c) => s + portfolioByClass[c], 0), [activeClasses]);
@@ -339,13 +348,65 @@ export default function Dashboard() {
               </button>
             );
           })}
-          {!isAll && (
-            <button onClick={() => setFilterClasses([])} className="ml-auto text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
-              <X className="h-3 w-3" /> Limpar
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={() => setShowList(true)}
+              className="px-3 py-1.5 rounded-md text-xs font-medium border border-border bg-background hover:border-foreground/40 flex items-center gap-1.5"
+            >
+              <List className="h-3.5 w-3.5" /> Ver lista ({projetosFiltrados.length})
             </button>
-          )}
+            {!isAll && (
+              <button onClick={() => setFilterClasses([])} className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
+                <X className="h-3 w-3" /> Limpar
+              </button>
+            )}
+          </div>
         </div>
       </Card>
+
+      {/* Modal lista de projetos filtrados */}
+      <Dialog open={showList} onOpenChange={setShowList}>
+        <DialogContent className="max-w-5xl">
+          <DialogHeader>
+            <DialogTitle>
+              Projetos considerados no filtro
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                {isAll ? "Todas as classificações" : filterClasses.join(", ")} · {projetosFiltrados.length} projeto(s)
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[65vh]">
+            <table className="w-full text-sm">
+              <thead className="bg-surface-muted text-xs uppercase tracking-wider text-muted-foreground sticky top-0">
+                <tr>
+                  {["ID","Projeto","Diretor","Classif.","Wave","Status","Status BC","Período","Budget","ICE"].map(h => (
+                    <th key={h} className="text-left px-3 py-2 font-semibold whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {projetosFiltrados.map(p => (
+                  <tr key={p.id} className="border-t border-border hover:bg-surface-muted/50">
+                    <td className="px-3 py-2 text-xs text-muted-foreground tabular-nums">{p.id}</td>
+                    <td className="px-3 py-2 font-medium">{p.nome}</td>
+                    <td className="px-3 py-2 text-xs whitespace-nowrap">{p.diretor}</td>
+                    <td className="px-3 py-2"><ClassBadge value={p.classificacao} /></td>
+                    <td className="px-3 py-2"><WaveBadge wave={p.wave} /></td>
+                    <td className="px-3 py-2"><StatusBadge status={p.status} /></td>
+                    <td className="px-3 py-2"><BCBadge status={p.statusBC} /></td>
+                    <td className="px-3 py-2 text-xs whitespace-nowrap text-muted-foreground">{p.inicio} → {p.termino}</td>
+                    <td className="px-3 py-2 text-xs tabular-nums whitespace-nowrap">R$ {p.budget.toLocaleString("pt-BR")}</td>
+                    <td className="px-3 py-2 text-xs font-semibold tabular-nums">{p.ice.toFixed(1)}</td>
+                  </tr>
+                ))}
+                {projetosFiltrados.length === 0 && (
+                  <tr><td colSpan={10} className="text-center py-8 text-muted-foreground text-sm">Nenhum projeto encontrado.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
