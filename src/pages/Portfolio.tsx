@@ -188,7 +188,20 @@ export default function Portfolio() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map(p => (
+                {grouped.map(g => (
+                  <>
+                    {g.key && (
+                      <tr key={`h-${g.key}`} className="bg-surface-muted/70 border-t border-border">
+                        <td colSpan={12} className="px-3 py-2">
+                          <button onClick={() => toggleGroup(g.key)} className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground">
+                            {collapsed[g.key] ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                            <span>{g.key}</span>
+                            <span className="text-muted-foreground font-normal normal-case tracking-normal">· {g.items.length} {g.items.length === 1 ? "projeto" : "projetos"} · R$ {g.items.reduce((s, p) => s + p.budget, 0).toLocaleString("pt-BR")}</span>
+                          </button>
+                        </td>
+                      </tr>
+                    )}
+                    {!collapsed[g.key] && g.items.map(p => (
                   <tr key={p.id} className="border-t border-border hover:bg-surface-muted/50 transition-colors">
                     <td className="px-4 py-3 text-xs text-muted-foreground tabular-nums">{p.id}</td>
                     <td className="px-4 py-3"><Link to="#" className="font-semibold text-foreground hover:text-primary">{p.nome}</Link></td>
