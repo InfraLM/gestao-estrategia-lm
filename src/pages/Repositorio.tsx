@@ -602,3 +602,68 @@ function parseDate(d: string): Date {
   const [dd, mm, yyyy] = d.split("/").map(Number);
   return new Date(yyyy, (mm ?? 1) - 1, dd ?? 1);
 }
+
+// ============================================================
+// Consolidado gráfico — BC por status (Business Cases)
+// ============================================================
+const STATUS_COLORS: Record<string, string> = {
+  "Aprovado": "hsl(142 71% 45%)",
+  "Em Revisão": "hsl(38 92% 50%)",
+  "Em Construção": "hsl(199 89% 48%)",
+  "Adiado": "hsl(220 9% 60%)",
+  "Rejeitado": "hsl(0 84% 60%)",
+};
+
+function BCStatusChart() {
+  const counts = useMemo(() => {
+    const acc: Record<string, number> = {};
+    projetosBC.forEach(p => { acc[p.statusAtual] = (acc[p.statusAtual] ?? 0) + 1; });
+    return Object.entries(acc).map(([status, total]) => ({ status, total }));
+  }, []);
+  const total = counts.reduce((s, x) => s + x.total, 0);
+
+  return (
+    <Card className="p-5 shadow-card">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="font-semibold flex items-center gap-2">
+            <FileText className="h-4 w-4 text-primary" /> Consolidado de Business Cases por Status
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Total de {total} BC(s) — distribuição conforme status atual de cada projeto.
+          </p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={counts} margin={{ top: 8, right: 12, bottom: 0, left: -12 }}>
+              <XAxis dataKey="status" tick={{ fontSize: 11 }} interval={0} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+              <RTooltip cursor={{ fill: "hsl(var(--muted))" }} />
+              <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                {counts.map((c, i) => (
+                  <Cell key={i} fill={STATUS_COLORS[c.status] ?? "hsl(var(--primary))"} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie data={counts} dataKey="total" nameKey="status" innerRadius={50} outerRadius={90} paddingAngle={2}>
+                {counts.map((c, i) => (
+                  <Cell key={i} fill={STATUS_COLORS[c.status] ?? "hsl(var(--primary))"} />
+                ))}
+              </Pie>
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <RTooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
