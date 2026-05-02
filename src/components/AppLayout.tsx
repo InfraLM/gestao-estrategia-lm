@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles } from "lucide-react";
+import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
