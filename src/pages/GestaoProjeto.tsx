@@ -3,18 +3,23 @@ import { Link, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft, GanttChart, ListChecks, ShieldAlert, GitBranch,
-  DollarSign, Users, Clock, TrendingUp, AlertTriangle, CheckCircle2, Calendar,
+  DollarSign, Users, Clock, AlertTriangle, CheckCircle2,
+  Plus, Trash2, History, Paperclip, FileSpreadsheet, FileText, FileAudio, File as FileIcon,
 } from "lucide-react";
 import {
-  Bar, BarChart, CartesianGrid, Cell, LabelList, Legend, Line, LineChart as RLineChart,
+  Bar, BarChart, CartesianGrid, LabelList, Legend, Line, LineChart as RLineChart,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { projetos, type Projeto } from "@/data/mockData";
 import { SaudeBadge } from "@/components/badges";
 import { cn } from "@/lib/utils";
+import { useProjectEditableData, type CronogramaItem, type EntregaItem, type SubmissaoDocumento } from "@/hooks/useProjectEditableData";
+import { SubmeterEntregaDialog } from "@/components/SubmeterEntregaDialog";
 
 const tooltipStyle = {
   background: "hsl(var(--card))",
