@@ -249,7 +249,7 @@ export default function Portfolio() {
                     {!collapsed[g.key] && g.items.map(p => (
                   <tr key={p.id} className="border-t border-border hover:bg-surface-muted/50 transition-colors">
                     <td className="px-4 py-3 overflow-hidden text-xs text-muted-foreground tabular-nums">{p.id}</td>
-                    <td className="px-4 py-3 overflow-hidden"><Link to="#" className="font-semibold text-foreground hover:text-primary">{p.nome}</Link></td>
+                    <td className="px-4 py-3 overflow-hidden"><Link to={`/gestao/${p.id}`} className="font-semibold text-foreground hover:text-primary">{p.nome}</Link></td>
                     <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.diretor} options={diretores} onChange={(v) => updateProject(p.id, { diretor: v })}>
                         <div className="flex items-center gap-2"><div className="h-7 w-7 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center text-xs font-semibold">{p.diretor.split(" ").map(n => n[0]).slice(0,2).join("")}</div><span className="whitespace-nowrap">{p.diretor}</span></div>
@@ -331,7 +331,7 @@ export default function Portfolio() {
                   {items.map(p => (
                     <div key={p.id} draggable onDragEnd={() => toast.info("Drag-and-drop simulado")} className="bg-card rounded-md p-3 shadow-card border border-border cursor-grab hover:shadow-elevated transition-shadow">
                       <div className="text-[10px] text-muted-foreground tabular-nums mb-1">{p.id}</div>
-                      <div className="font-semibold text-sm leading-snug mb-2">{p.nome}</div>
+                      <Link to={`/gestao/${p.id}`} className="block font-semibold text-sm leading-snug mb-2 hover:text-primary">{p.nome}</Link>
                       <div className="flex flex-wrap gap-1 mb-2"><ClassBadge value={p.classificacao} /><WaveBadge wave={p.wave} /></div>
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground truncate">{p.diretor}</span>
