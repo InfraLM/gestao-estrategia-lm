@@ -458,6 +458,11 @@ export default function GestaoProjeto() {
             </Card>
           </div>
         </TabsContent>
+
+        {/* HISTÓRICO */}
+        <TabsContent value="historico" className="mt-5">
+          <HistoricoTab editable={editable} />
+        </TabsContent>
       </Tabs>
     </div>
   );
