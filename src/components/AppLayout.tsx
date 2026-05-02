@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ScrollNav from "./ScrollNav";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -96,6 +97,7 @@ export default function AppLayout() {
           <Outlet />
         </main>
       </div>
+      <ScrollNav />
     </div>
   );
 }
