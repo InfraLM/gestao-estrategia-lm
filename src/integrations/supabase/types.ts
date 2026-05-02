@@ -198,6 +198,93 @@ export type Database = {
         }
         Relationships: []
       }
+      melhoria_business_case: {
+        Row: {
+          amplitude_impacto_financeiro: boolean | null
+          amplitude_outra_area: boolean | null
+          amplitude_processo_corporativo: boolean | null
+          amplitude_sistema: boolean | null
+          area_responsavel: string | null
+          areas_envolvidas: string | null
+          created_at: string
+          criterio_sucesso: string | null
+          esforco_dependencias: string | null
+          esforco_recursos: string | null
+          esforco_tempo: string | null
+          hipotese_acao: string | null
+          hipotese_resultado: string | null
+          id: string
+          impacto_financeiro: string | null
+          impacto_produtividade: string | null
+          impacto_qualidade: string | null
+          impacto_tempo: string | null
+          kpis: Json
+          okr_links: Json
+          problema_descricao: string | null
+          problema_evidencias: string | null
+          processo_impactado: string | null
+          projeto_id: string
+          responsavel: string | null
+          updated_at: string
+        }
+        Insert: {
+          amplitude_impacto_financeiro?: boolean | null
+          amplitude_outra_area?: boolean | null
+          amplitude_processo_corporativo?: boolean | null
+          amplitude_sistema?: boolean | null
+          area_responsavel?: string | null
+          areas_envolvidas?: string | null
+          created_at?: string
+          criterio_sucesso?: string | null
+          esforco_dependencias?: string | null
+          esforco_recursos?: string | null
+          esforco_tempo?: string | null
+          hipotese_acao?: string | null
+          hipotese_resultado?: string | null
+          id?: string
+          impacto_financeiro?: string | null
+          impacto_produtividade?: string | null
+          impacto_qualidade?: string | null
+          impacto_tempo?: string | null
+          kpis?: Json
+          okr_links?: Json
+          problema_descricao?: string | null
+          problema_evidencias?: string | null
+          processo_impactado?: string | null
+          projeto_id: string
+          responsavel?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amplitude_impacto_financeiro?: boolean | null
+          amplitude_outra_area?: boolean | null
+          amplitude_processo_corporativo?: boolean | null
+          amplitude_sistema?: boolean | null
+          area_responsavel?: string | null
+          areas_envolvidas?: string | null
+          created_at?: string
+          criterio_sucesso?: string | null
+          esforco_dependencias?: string | null
+          esforco_recursos?: string | null
+          esforco_tempo?: string | null
+          hipotese_acao?: string | null
+          hipotese_resultado?: string | null
+          id?: string
+          impacto_financeiro?: string | null
+          impacto_produtividade?: string | null
+          impacto_qualidade?: string | null
+          impacto_tempo?: string | null
+          kpis?: Json
+          okr_links?: Json
+          problema_descricao?: string | null
+          problema_evidencias?: string | null
+          processo_impactado?: string | null
+          projeto_id?: string
+          responsavel?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           cargo: string | null
