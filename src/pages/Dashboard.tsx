@@ -44,11 +44,27 @@ const visao2026ByClass: Record<Classificacao, number> = {
 };
 
 // Status por classificação (para gráfico de barras empilhadas filtrável)
-const statusByClassRaw: Record<Classificacao, { "Em Andamento": number; "A Iniciar": number; Backlog: number; Atrasado: number }> = {
-  "Institucional": { "Em Andamento": 14, "A Iniciar": 5, Backlog: 8, Atrasado: 2 },
-  "Melhoria Contínua": { "Em Andamento": 18, "A Iniciar": 6, Backlog: 22, Atrasado: 1 },
-  "Melhoria Contínua com EPP": { "Em Andamento": 9, "A Iniciar": 4, Backlog: 14, Atrasado: 1 },
-  "Novo Produto": { "Em Andamento": 4, "A Iniciar": 8, Backlog: 28, Atrasado: 0 },
+const statusByClassRaw: Record<Classificacao, { "Em Andamento": number; "A Iniciar": number; Backlog: number; Atrasado: number; Concluídos: number }> = {
+  "Institucional": { "Em Andamento": 14, "A Iniciar": 5, Backlog: 4, Atrasado: 2, Concluídos: 4 },
+  "Melhoria Contínua": { "Em Andamento": 18, "A Iniciar": 6, Backlog: 18, Atrasado: 1, Concluídos: 4 },
+  "Melhoria Contínua com EPP": { "Em Andamento": 9, "A Iniciar": 4, Backlog: 11, Atrasado: 1, Concluídos: 3 },
+  "Novo Produto": { "Em Andamento": 4, "A Iniciar": 8, Backlog: 26, Atrasado: 0, Concluídos: 2 },
+};
+
+// Budget por ano (R$)
+const budgetByYear: { ano: string; valor: number }[] = [
+  { ano: "2026", valor: 1_320_000 },
+  { ano: "2027", valor: 1_080_000 },
+  { ano: "2028", valor: 620_000 },
+];
+
+// ICE Quadrant — derive complexidade from budget bucket
+const complexidadeFromBudget = (b: number) => {
+  if (b >= 400_000) return 8.5;
+  if (b >= 200_000) return 6.5;
+  if (b >= 80_000) return 4.5;
+  if (b > 0) return 3;
+  return 2;
 };
 
 const distSemestreRaw: Record<Classificacao, { sem: string; W1: number; W2: number; W3: number }[]> = {
@@ -158,6 +174,10 @@ export default function Dashboard() {
     [activeClasses]
   );
 
+  const aIniciarFiltered = useMemo(() => activeClasses.reduce((s, c) => s + statusByClassRaw[c]["A Iniciar"], 0), [activeClasses]);
+  const backlogFiltered = useMemo(() => activeClasses.reduce((s, c) => s + statusByClassRaw[c].Backlog, 0), [activeClasses]);
+  const concluidosFiltered = useMemo(() => activeClasses.reduce((s, c) => s + statusByClassRaw[c].Concluídos, 0), [activeClasses]);
+
   const offTrackFiltered = useMemo(
     () => activeClasses.reduce((s, c) => s + statusByClassRaw[c].Atrasado, 0),
     [activeClasses]
@@ -248,6 +268,41 @@ export default function Dashboard() {
     return t;
   }, [bcAndamentoMatrix]);
 
+  // % BCs em aberto de projetos JÁ iniciados (sem BC finalizado / total iniciados)
+  const bcAbertoPct = useMemo(() => {
+    let iniciados = 0;
+    BC_ROWS.forEach(r => JA_INICIADO.forEach(col => { iniciados += bcAndamentoMatrix[r][col]; }));
+    if (iniciados === 0) return 0;
+    return Math.round((iniciadosSemBC / iniciados) * 100);
+  }, [bcAndamentoMatrix, iniciadosSemBC]);
+
+  // ICE Quadrant — projetos plotados (Impacto = ICE × 1.1, Complexidade = derivada do budget)
+  const iceProjects = useMemo(() => {
+    return projetos
+      .filter(p => isAll || filterClasses.includes(p.classificacao))
+      .map(p => ({
+        id: p.id,
+        nome: p.nome,
+        impacto: Math.min(10, p.ice),
+        complexidade: complexidadeFromBudget(p.budget),
+        classificacao: p.classificacao,
+        color: CLASS_COLORS[p.classificacao],
+      }));
+  }, [filterClasses, isAll]);
+
+  const iceQuadrants = useMemo(() => {
+    const q = { quickWin: 0, bigBets: 0, fillIns: 0, evitar: 0 };
+    iceProjects.forEach(p => {
+      const altoImpacto = p.impacto >= 7;
+      const altaComplex = p.complexidade >= 5;
+      if (altoImpacto && !altaComplex) q.quickWin++;
+      else if (altoImpacto && altaComplex) q.bigBets++;
+      else if (!altoImpacto && !altaComplex) q.fillIns++;
+      else q.evitar++;
+    });
+    return q;
+  }, [iceProjects]);
+
   return (
     <div className="space-y-6">
       {/* Filtro por classificação */}
@@ -325,22 +380,42 @@ export default function Dashboard() {
         </Card>
 
         <Card className="p-5 shadow-card hover:shadow-elevated transition-shadow">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between mb-3">
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Em Andamento</div>
               <div className="mt-2 text-3xl font-semibold tracking-tight tabular-nums text-success">{ativosFiltered}</div>
             </div>
             <TrendingUp className="h-5 w-5 text-success" />
           </div>
+          <div className="space-y-1.5 pt-3 border-t border-border text-xs">
+            <div className="flex items-center justify-between"><span className="text-muted-foreground">Backlog</span><span className="tabular-nums font-semibold">{backlogFiltered}</span></div>
+            <div className="flex items-center justify-between"><span className="text-muted-foreground">A Iniciar</span><span className="tabular-nums font-semibold text-info">{aIniciarFiltered}</span></div>
+            <div className="flex items-center justify-between"><span className="text-muted-foreground">Em Andamento</span><span className="tabular-nums font-semibold text-success">{ativosFiltered}</span></div>
+            <div className="flex items-center justify-between"><span className="text-muted-foreground">Concluídos</span><span className="tabular-nums font-semibold">{concluidosFiltered}</span></div>
+          </div>
         </Card>
 
         <Card className="p-5 shadow-card hover:shadow-elevated transition-shadow">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between mb-3">
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Budget Levantado</div>
               <div className="mt-2 text-3xl font-semibold tracking-tight">{fmtBRL(totaisPortfolio.budgetTotal)}</div>
             </div>
             <BarChart3 className="h-5 w-5 text-foreground" />
+          </div>
+          <div className="space-y-1.5 pt-3 border-t border-border text-xs">
+            {budgetByYear.map(b => {
+              const pct = Math.round((b.valor / totaisPortfolio.budgetTotal) * 100);
+              return (
+                <div key={b.ano} className="flex items-center gap-2">
+                  <span className="text-muted-foreground w-10">{b.ano}</span>
+                  <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
+                  </div>
+                  <span className="tabular-nums font-semibold w-14 text-right">{fmtBRL(b.valor)}</span>
+                </div>
+              );
+            })}
           </div>
         </Card>
 
@@ -351,6 +426,16 @@ export default function Dashboard() {
               <div className="mt-2 text-3xl font-semibold tracking-tight text-info">{totaisPortfolio.bcAprovadoPct}%</div>
             </div>
             <ShieldCheck className="h-5 w-5 text-info" />
+          </div>
+          <div className="pt-3 mt-3 border-t border-border">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">BCs em aberto · iniciados</span>
+              <span className={cn("tabular-nums font-semibold", bcAbertoPct > 30 ? "text-destructive" : bcAbertoPct > 15 ? "text-warning" : "text-success")}>{bcAbertoPct}%</span>
+            </div>
+            <div className="mt-1.5 h-1.5 w-full rounded-full bg-muted overflow-hidden">
+              <div className={cn("h-full", bcAbertoPct > 30 ? "bg-destructive" : bcAbertoPct > 15 ? "bg-warning" : "bg-success")} style={{ width: `${bcAbertoPct}%` }} />
+            </div>
+            <div className="text-[10px] text-muted-foreground mt-1.5 tabular-nums">{iniciadosSemBC} projeto(s) iniciados sem BC finalizado</div>
           </div>
         </Card>
       </div>
@@ -424,11 +509,14 @@ export default function Dashboard() {
                 <LabelList dataKey="Backlog" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 2 ? v : ""} />
               </Bar>
               <Bar dataKey="Atrasado" stackId="a" fill="hsl(var(--destructive))">
+                <LabelList dataKey="Atrasado" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+              </Bar>
+              <Bar dataKey="Concluídos" stackId="a" fill="hsl(var(--wave-2))">
                 <LabelList position="right" style={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 600 }}
                   formatter={(_v: any, _n: any, entry: any) => {
                     if (!entry?.payload) return "";
                     const p = entry.payload;
-                    return p["Em Andamento"] + p["A Iniciar"] + p.Backlog + p.Atrasado;
+                    return p["Em Andamento"] + p["A Iniciar"] + p.Backlog + p.Atrasado + p["Concluídos"];
                   }}
                 />
               </Bar>
@@ -685,6 +773,92 @@ export default function Dashboard() {
             <div className="flex items-center gap-1.5">
               <span className="h-3 w-3 rounded-sm bg-muted/40" />
               Sem ocorrências
+            </div>
+          </div>
+        </Card>
+
+        {/* ICE Quadrant — Quick Wins */}
+        <Card className="p-5 shadow-card xl:col-span-2">
+          <div className="flex items-start justify-between mb-4 gap-3 flex-wrap">
+            <div>
+              <h3 className="font-semibold">Quadrante ICE — Impacto × Complexidade</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Projetos no quadrante <span className="font-semibold text-success">Quick Win</span> (alto impacto · baixa complexidade) devem ser priorizados.</p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="px-2 py-1 rounded-md bg-success/10 border border-success/30 text-success font-semibold tabular-nums">Quick Win: {iceQuadrants.quickWin}</span>
+              <span className="px-2 py-1 rounded-md bg-info/10 border border-info/30 text-info font-semibold tabular-nums">Big Bets: {iceQuadrants.bigBets}</span>
+              <span className="px-2 py-1 rounded-md bg-muted/60 border border-border text-muted-foreground font-semibold tabular-nums">Fill-Ins: {iceQuadrants.fillIns}</span>
+              <span className="px-2 py-1 rounded-md bg-destructive/10 border border-destructive/30 text-destructive font-semibold tabular-nums">Evitar: {iceQuadrants.evitar}</span>
+            </div>
+          </div>
+
+          <div className="relative w-full" style={{ height: 380 }}>
+            {/* Quadrants background */}
+            <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-px rounded-md overflow-hidden border border-border">
+              <div className="bg-success/5 relative p-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-success">Quick Win</div>
+                <div className="text-[10px] text-muted-foreground">Alto impacto · Baixa complexidade</div>
+              </div>
+              <div className="bg-info/5 relative p-2 text-right">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-info">Big Bets</div>
+                <div className="text-[10px] text-muted-foreground">Alto impacto · Alta complexidade</div>
+              </div>
+              <div className="bg-muted/30 relative p-2">
+                <div className="absolute bottom-2 left-2">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fill-Ins</div>
+                  <div className="text-[10px] text-muted-foreground">Baixo impacto · Baixa complexidade</div>
+                </div>
+              </div>
+              <div className="bg-destructive/5 relative p-2 text-right">
+                <div className="absolute bottom-2 right-2">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-destructive">Evitar</div>
+                  <div className="text-[10px] text-muted-foreground">Baixo impacto · Alta complexidade</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Axes labels */}
+            <div className="absolute left-1/2 -translate-x-1/2 -bottom-5 text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Complexidade →</div>
+            <div className="absolute -left-2 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] text-muted-foreground font-medium uppercase tracking-wider whitespace-nowrap">Impacto (ICE) →</div>
+
+            {/* Plotted projects */}
+            {iceProjects.map(p => {
+              // x = complexidade (0..10), y = impacto (0..10)
+              const xPct = Math.max(2, Math.min(98, (p.complexidade / 10) * 100));
+              const yPct = Math.max(2, Math.min(98, 100 - (p.impacto / 10) * 100));
+              const isQuickWin = p.impacto >= 7 && p.complexidade < 5;
+              return (
+                <div
+                  key={p.id}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 group"
+                  style={{ left: `${xPct}%`, top: `${yPct}%` }}
+                  title={`${p.id} · ${p.nome} — Impacto ${p.impacto.toFixed(1)} / Complexidade ${p.complexidade.toFixed(1)}`}
+                >
+                  <div
+                    className={cn(
+                      "h-3.5 w-3.5 rounded-full border-2 border-background shadow-sm transition-transform hover:scale-150 cursor-pointer",
+                      isQuickWin && "ring-2 ring-success ring-offset-1 ring-offset-background"
+                    )}
+                    style={{ background: p.color }}
+                  />
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 hidden group-hover:block z-10 px-2 py-1 rounded bg-foreground text-background text-[10px] whitespace-nowrap">
+                    {p.id} · {p.nome}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-8 text-xs text-muted-foreground">
+            {ALL_CLASSES.map(c => (
+              <div key={c} className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: CLASS_COLORS[c] }} />
+                {CLASS_SHORT[c]}
+              </div>
+            ))}
+            <div className="flex items-center gap-1.5 ml-auto">
+              <span className="h-3 w-3 rounded-full ring-2 ring-success ring-offset-1 ring-offset-background bg-muted" />
+              Quick Win
             </div>
           </div>
         </Card>
