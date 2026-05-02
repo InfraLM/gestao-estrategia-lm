@@ -331,7 +331,7 @@ export default function Portfolio() {
                   {items.map(p => (
                     <div key={p.id} draggable onDragEnd={() => toast.info("Drag-and-drop simulado")} className="bg-card rounded-md p-3 shadow-card border border-border cursor-grab hover:shadow-elevated transition-shadow">
                       <div className="text-[10px] text-muted-foreground tabular-nums mb-1">{p.id}</div>
-                      <div className="font-semibold text-sm leading-snug mb-2">{p.nome}</div>
+                      <Link to={`/gestao/${p.id}`} className="block font-semibold text-sm leading-snug mb-2 hover:text-primary">{p.nome}</Link>
                       <div className="flex flex-wrap gap-1 mb-2"><ClassBadge value={p.classificacao} /><WaveBadge wave={p.wave} /></div>
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground truncate">{p.diretor}</span>
