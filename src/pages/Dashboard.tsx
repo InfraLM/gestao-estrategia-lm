@@ -509,11 +509,14 @@ export default function Dashboard() {
                 <LabelList dataKey="Backlog" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 2 ? v : ""} />
               </Bar>
               <Bar dataKey="Atrasado" stackId="a" fill="hsl(var(--destructive))">
+                <LabelList dataKey="Atrasado" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+              </Bar>
+              <Bar dataKey="Concluídos" stackId="a" fill="hsl(var(--wave-2))">
                 <LabelList position="right" style={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 600 }}
                   formatter={(_v: any, _n: any, entry: any) => {
                     if (!entry?.payload) return "";
                     const p = entry.payload;
-                    return p["Em Andamento"] + p["A Iniciar"] + p.Backlog + p.Atrasado;
+                    return p["Em Andamento"] + p["A Iniciar"] + p.Backlog + p.Atrasado + p["Concluídos"];
                   }}
                 />
               </Bar>
