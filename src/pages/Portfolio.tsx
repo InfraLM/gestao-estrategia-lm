@@ -208,11 +208,23 @@ export default function Portfolio() {
       {view === "tabela" ? (
         <Card className="shadow-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
+              <colgroup>
+                {colWidths.map((w, i) => <col key={i} style={{ width: `${w}px` }} />)}
+              </colgroup>
               <thead className="bg-surface-muted text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  {["ID","Projeto","Diretor","Classif.","Wave","Obj.","Status BC","Período","Budget","Status","ICE",""].map(h => (
-                    <th key={h} className="text-left px-4 py-3 font-semibold whitespace-nowrap">{h}</th>
+                  {columns.map((h, i) => (
+                    <th key={h || `c${i}`} className="text-left px-4 py-3 font-semibold whitespace-nowrap relative truncate select-none">
+                      {h}
+                      {i < columns.length - 1 && (
+                        <span
+                          onMouseDown={(e) => startResize(i, e)}
+                          className="absolute right-0 top-0 h-full w-1.5 cursor-col-resize hover:bg-primary/40 active:bg-primary"
+                          aria-label="Redimensionar coluna"
+                        />
+                      )}
+                    </th>
                   ))}
                 </tr>
               </thead>
