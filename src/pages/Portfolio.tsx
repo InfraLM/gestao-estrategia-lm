@@ -411,3 +411,41 @@ function InlineSelect({ value, options, onChange, children }: { value: string; o
   );
 }
 
+function MultiSelectPopover({ label, options, selected, onChange }: { label: string; options: { value: string; label: string }[]; selected: string[]; onChange: (vals: string[]) => void }) {
+  const toggle = (v: string) => onChange(selected.includes(v) ? selected.filter(x => x !== v) : [...selected, v]);
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button type="button" className="w-full text-left text-xs px-2 py-1 rounded border border-transparent hover:border-border hover:bg-muted/50 transition-colors min-h-8">
+          {selected.length === 0 ? (
+            <span className="text-muted-foreground italic">+ {label}</span>
+          ) : (
+            <div className="flex flex-wrap gap-1">
+              {selected.map(v => (
+                <span key={v} className="inline-flex items-center px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-semibold border border-primary/30">{v}</span>
+              ))}
+            </div>
+          )}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-72 p-1 bg-popover z-50 max-h-72 overflow-auto">
+        <div className="px-2 py-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</div>
+        {options.map(o => {
+          const checked = selected.includes(o.value);
+          return (
+            <label key={o.value} className="flex items-start gap-2 px-2 py-1.5 rounded text-xs hover:bg-muted cursor-pointer">
+              <input type="checkbox" checked={checked} onChange={() => toggle(o.value)} className="mt-0.5 accent-primary" />
+              <span className="leading-snug">{o.label}</span>
+            </label>
+          );
+        })}
+        {selected.length > 0 && (
+          <div className="border-t border-border mt-1 pt-1 px-2">
+            <button onClick={() => onChange([])} className="text-[11px] text-muted-foreground hover:text-destructive py-1">Limpar seleção</button>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
