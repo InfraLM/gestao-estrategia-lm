@@ -1,5 +1,12 @@
 import { cn } from "@/lib/utils";
 import { type StatusExecucao, type StatusBC, type Classificacao, type Wave, type Saude } from "@/data/mockData";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
+export const WAVE_DESCRIPTIONS: Record<Wave, { titulo: string; periodo: string; foco: string }> = {
+  W1: { titulo: "Wave 1 — Fundamentos & Quick Wins", periodo: "2026", foco: "Estruturação da PMO, governança e iniciativas de impacto rápido com baixa complexidade." },
+  W2: { titulo: "Wave 2 — Crescimento & Escala",     periodo: "2027 – 2028", foco: "Expansão de produtos institucionais, integração de processos e ganho de escala operacional." },
+  W3: { titulo: "Wave 3 — Inovação & Expansão",      periodo: "2029 – 2030", foco: "Novos modelos de negócio, transformação digital avançada e diversificação do portfolio." },
+};
 
 const baseClass = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-medium border whitespace-nowrap";
 
@@ -49,7 +56,21 @@ export function WaveBadge({ wave }: { wave: Wave }) {
     W2: "bg-[hsl(var(--wave-2))]/10 text-[hsl(var(--wave-2))] border-[hsl(var(--wave-2))]/30",
     W3: "bg-[hsl(var(--wave-3))]/10 text-[hsl(var(--wave-3))] border-[hsl(var(--wave-3))]/30",
   };
-  return <span className={cn(baseClass, map[wave])}>{wave}</span>;
+  const info = WAVE_DESCRIPTIONS[wave];
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className={cn(baseClass, map[wave], "cursor-help")} aria-label={info.titulo}>{wave}</span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-xs">
+        <div className="space-y-1">
+          <div className="font-semibold text-sm">{info.titulo}</div>
+          <div className="text-xs text-muted-foreground">{info.periodo}</div>
+          <p className="text-xs leading-relaxed">{info.foco}</p>
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
 }
 
 export function SaudeBadge({ saude }: { saude: Saude }) {

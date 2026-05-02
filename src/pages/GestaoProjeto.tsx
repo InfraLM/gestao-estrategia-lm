@@ -104,8 +104,12 @@ export default function GestaoProjeto() {
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} stroke="hsl(var(--muted-foreground))" />
               <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `R$ ${v.toLocaleString("pt-BR")}`} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="bc" name="BC" fill="hsl(var(--neutral))" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="orcado" name="Orçado" fill="hsl(var(--info))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="bc" name="BC" fill="hsl(var(--neutral))" radius={[4, 4, 0, 0]}>
+                <LabelList dataKey="bc" position="top" style={{ fill: "hsl(var(--neutral))", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? `${(v / 1000).toFixed(0)}k` : ""} />
+              </Bar>
+              <Bar dataKey="orcado" name="Orçado" fill="hsl(var(--info))" radius={[4, 4, 0, 0]}>
+                <LabelList dataKey="orcado" position="top" style={{ fill: "hsl(var(--info))", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? `${(v / 1000).toFixed(0)}k` : ""} />
+              </Bar>
               <Bar dataKey="realizado" name="Realizado" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]}>
                 <LabelList dataKey="realizado" position="top" style={{ fill: "hsl(var(--primary))", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? `${(v / 1000).toFixed(0)}k` : ""} />
               </Bar>
@@ -163,8 +167,12 @@ export default function GestaoProjeto() {
               <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `${v}sem`} />
               <YAxis dataKey="fase" type="category" tick={{ fontSize: 11 }} width={130} stroke="hsl(var(--muted-foreground))" />
               <Tooltip contentStyle={tooltipStyle} formatter={(v: number, n: string) => [`${v} sem`, n]} cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }} />
-              <Bar dataKey="previsto" name="Previsto" fill="hsl(var(--neutral))" stackId="x" />
-              <Bar dataKey="executado" name="Executado" fill="hsl(var(--success))" stackId="y" />
+              <Bar dataKey="previsto" name="Previsto" fill="hsl(var(--neutral))" stackId="x">
+                <LabelList dataKey="previsto" position="right" style={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? `${v}sem` : ""} />
+              </Bar>
+              <Bar dataKey="executado" name="Executado" fill="hsl(var(--success))" stackId="y">
+                <LabelList dataKey="executado" position="insideRight" style={{ fill: "white", fontSize: 10, fontWeight: 700 }} formatter={(v: number) => v > 0 ? `${v}sem` : ""} />
+              </Bar>
               <Bar dataKey="extensao" name="Extensão" fill="hsl(var(--destructive))" stackId="y">
                 <LabelList dataKey="extensao" position="right" style={{ fill: "hsl(var(--destructive))", fontSize: 10, fontWeight: 700 }} formatter={(v: number) => v > 0 ? `+${v}sem` : ""} />
               </Bar>
@@ -382,8 +390,12 @@ export default function GestaoProjeto() {
                   <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} stroke="hsl(var(--muted-foreground))" />
                   <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `R$ ${v.toLocaleString("pt-BR")}`} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
-                  <Line type="monotone" dataKey="planejado" name="Planejado" stroke="hsl(var(--neutral))" strokeDasharray="5 5" dot={{ r: 2 }} />
-                  <Line type="monotone" dataKey="realizado" name="Realizado" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={{ r: 2 }} />
+                  <Line type="monotone" dataKey="planejado" name="Planejado" stroke="hsl(var(--neutral))" strokeDasharray="5 5" dot={{ r: 2 }}>
+                    <LabelList dataKey="planejado" position="top" style={{ fill: "hsl(var(--muted-foreground))", fontSize: 9 }} formatter={(v: number) => v > 0 ? `${(v / 1000).toFixed(0)}k` : ""} />
+                  </Line>
+                  <Line type="monotone" dataKey="realizado" name="Realizado" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={{ r: 2 }}>
+                    <LabelList dataKey="realizado" position="bottom" style={{ fill: "hsl(var(--primary))", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? `${(v / 1000).toFixed(0)}k` : ""} />
+                  </Line>
                 </RLineChart>
               </ResponsiveContainer>
             </Card>
