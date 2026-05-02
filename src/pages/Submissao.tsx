@@ -448,7 +448,7 @@ export default function Submissao() {
               </Card>
 
               <div className="grid grid-cols-2 gap-2">
-                <Button className="bg-success hover:bg-success/90 text-success-foreground gap-2" onClick={() => toast.success("Projeto submetido ao portfólio")}>
+                <Button className="bg-success hover:bg-success/90 text-success-foreground gap-2" onClick={onSubmit}>
                   <Send className="h-4 w-4" /> Aprovar e Submeter
                 </Button>
                 <Button variant="outline" className="gap-2"><RotateCcw className="h-4 w-4" /> Revisar Escopo</Button>
