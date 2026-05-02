@@ -31,48 +31,52 @@ export interface Projeto {
 }
 
 export const objetivosBSC = [
-  { id: "F.01", nome: "Maximizar LTV e NRR via Ecossistema", perspectiva: "Financeira" },
-  { id: "F.02", nome: "Blindar Margem Premium e Eficiência Operacional", perspectiva: "Financeira" },
-  { id: "C.01", nome: "Segurança Clínica e Redução de Risco", perspectiva: "Cliente" },
-  { id: "C.02", nome: "Pertencimento, Identidade e Confiança na Marca", perspectiva: "Cliente" },
-  { id: "C.03", nome: "Sucesso na Carreira e Empregabilidade", perspectiva: "Cliente" },
-  { id: "P.01", nome: "Execução Impecável dos Processos Sagrados", perspectiva: "Processos" },
-  { id: "P.02", nome: "Aquisição Disciplinada e Gestão de ICP", perspectiva: "Processos" },
-  { id: "P.03", nome: "Expansão da Prática Hospitalar", perspectiva: "Processos" },
-  { id: "AC.01", nome: "Execução do Método LIVRE", perspectiva: "Aprendizado" },
-  { id: "AC.02", nome: "Maturidade de Talentos / Bar Raisers", perspectiva: "Aprendizado" },
-  { id: "AC.03", nome: "Tecnologia Human-First, AI-Amplified", perspectiva: "Aprendizado" },
+  { id: "F.01", nome: "Maximizar LTV e NRR via Ecossistema", perspectiva: "Financeira", descricao: "Aumentar o valor vitalício do aluno (LTV) e a receita líquida recorrente (NRR) por meio da venda cruzada e expansão entre produtos do ecossistema (residência, especializações, hospitalar e comunidade)." },
+  { id: "F.02", nome: "Blindar Margem Premium e Eficiência Operacional", perspectiva: "Financeira", descricao: "Proteger a margem bruta premium da operação via disciplina de custo, gestão ativa de unit economics e eficiência nos processos sagrados (matrícula, entrega e suporte)." },
+  { id: "C.01", nome: "Segurança Clínica e Redução de Risco", perspectiva: "Cliente", descricao: "Garantir que a formação entregue reduza eventos adversos e aumente segurança clínica percebida pelo aluno e pelo paciente final, sustentando o posicionamento de excelência da marca." },
+  { id: "C.02", nome: "Pertencimento, Identidade e Confiança na Marca", perspectiva: "Cliente", descricao: "Fortalecer o vínculo emocional do aluno com a marca por meio de comunidade, ritos e identidade compartilhada — gerando NPS alto, defesa espontânea e lealdade." },
+  { id: "C.03", nome: "Sucesso na Carreira e Empregabilidade", perspectiva: "Cliente", descricao: "Acelerar o tempo até o primeiro resultado de carreira (aprovação, emprego, plantão, publicação) e medir o impacto da formação na trajetória profissional do aluno." },
+  { id: "P.01", nome: "Execução Impecável dos Processos Sagrados", perspectiva: "Processos", descricao: "Padronizar e auditar os processos críticos da operação (matrícula, onboarding, entrega de aula, avaliação, certificação) com SLA, dono e métrica clara." },
+  { id: "P.02", nome: "Aquisição Disciplinada e Gestão de ICP", perspectiva: "Processos", descricao: "Adquirir alunos certos (ICP) com CAC saudável, taxa de conversão previsível e funil instrumentado por etapa, evitando crescimento de baixa qualidade." },
+  { id: "P.03", nome: "Expansão da Prática Hospitalar", perspectiva: "Processos", descricao: "Escalar a vertical hospitalar (parcerias, rodízios, simulação, residência) como motor de diferenciação e novas fontes de receita." },
+  { id: "AC.01", nome: "Execução do Método LIVRE", perspectiva: "Aprendizado", descricao: "Disseminar e medir a aplicação do método pedagógico LIVRE em toda a entrega — garantindo consistência didática e eficácia comprovada." },
+  { id: "AC.02", nome: "Maturidade de Talentos / Bar Raisers", perspectiva: "Aprendizado", descricao: "Elevar a régua interna via processo de Bar Raisers, planos de sucessão e desenvolvimento contínuo de líderes, professores e operadores." },
+  { id: "AC.03", nome: "Tecnologia Human-First, AI-Amplified", perspectiva: "Aprendizado", descricao: "Construir uma stack tecnológica centrada no humano e amplificada por IA, automatizando o repetitivo e liberando tempo para o que exige julgamento clínico/educacional." },
 ];
 
 export const okrs = [
   {
     id: "OKR1", nome: "Blindagem Financeira", subtitulo: "Cofre de Vidro",
+    descricao: "Tornar a operação financeira transparente, previsível e à prova de surpresas — com governança de gate, visibilidade granular de caixa e disciplina na geração de receita.",
     krs: [
-      { id: "KR 1.1", nome: "Previsibilidade", iniciativas: 8 },
-      { id: "KR 1.2", nome: "Governança/Gate", iniciativas: 6 },
-      { id: "KR 1.3", nome: "Visibilidade Granular", iniciativas: 7 },
-      { id: "KR 1.4", nome: "Segurança", iniciativas: 2 },
-      { id: "KR 1.5", nome: "Geração de Caixa", iniciativas: 9 },
+      { id: "KR 1.1", nome: "Previsibilidade", iniciativas: 8, descricao: "Atingir desvio máximo de ±5% entre forecast e realizado mensal de receita e custo, com revisão quinzenal." },
+      { id: "KR 1.2", nome: "Governança/Gate", iniciativas: 6, descricao: "Implementar gates obrigatórios de aprovação (BC, escopo, orçamento) para 100% dos projetos acima de R$50k antes do início da execução." },
+      { id: "KR 1.3", nome: "Visibilidade Granular", iniciativas: 7, descricao: "Disponibilizar dashboard de receita, custo e margem por produto, turma e canal com atualização diária e drill-down até a transação." },
+      { id: "KR 1.4", nome: "Segurança", iniciativas: 2, descricao: "Eliminar achados críticos de auditoria financeira e implementar segregação de função em pagamentos e conciliação." },
+      { id: "KR 1.5", nome: "Geração de Caixa", iniciativas: 9, descricao: "Aumentar a geração de caixa operacional em X% via redução do ciclo de recebimento e renegociação de prazos com fornecedores." },
     ],
   },
   {
     id: "OKR2", nome: "Governança Institucional", subtitulo: "Fim do Heroísmo",
+    descricao: "Substituir decisões individuais e dependentes de heróis por rituais, dados confiáveis e responsabilidades claras — para que a empresa funcione mesmo quando ninguém está olhando.",
     krs: [
-      { id: "KR 2.1", nome: "Verdade Única", iniciativas: 11 },
-      { id: "KR 2.2", nome: "Decisões Irreversíveis", iniciativas: 5 },
-      { id: "KR 2.3", nome: "Disciplina de Rituais", iniciativas: 4 },
+      { id: "KR 2.1", nome: "Verdade Única", iniciativas: 11, descricao: "Consolidar fontes de dados conflitantes em um único data warehouse certificado, com dicionário de métricas e ownership por domínio." },
+      { id: "KR 2.2", nome: "Decisões Irreversíveis", iniciativas: 5, descricao: "Documentar e revisar decisões irreversíveis (Tipo 1) em comitê semanal, garantindo registro de premissas, alternativas e responsável." },
+      { id: "KR 2.3", nome: "Disciplina de Rituais", iniciativas: 4, descricao: "Atingir 95% de aderência aos rituais críticos da casa (planejamento, status, retro, BC review) com ata, decisão e follow-up." },
     ],
   },
   {
     id: "OKR3", nome: "Jornada do Aluno", subtitulo: "Balde Furado",
+    descricao: "Fechar os furos do balde — reduzir churn, acelerar ativação e maximizar LTV ao longo da jornada do aluno, do primeiro contato à formatura e além.",
     krs: [
-      { id: "KR 3.1", nome: "Ativação/TTFV", iniciativas: 10 },
-      { id: "KR 3.2", nome: "Retenção Financeira", iniciativas: 7 },
-      { id: "KR 3.3", nome: "Inteligência de LTV", iniciativas: 6 },
-      { id: "KR 3.4", nome: "Segmentação", iniciativas: 3 },
+      { id: "KR 3.1", nome: "Ativação/TTFV", iniciativas: 10, descricao: "Reduzir o time-to-first-value (primeiro marco percebido de valor) para menos de 7 dias após matrícula em 100% dos produtos." },
+      { id: "KR 3.2", nome: "Retenção Financeira", iniciativas: 7, descricao: "Reduzir inadimplência e cancelamento financeiro em X p.p. com cobrança proativa, retenção via CSM e ofertas de upgrade." },
+      { id: "KR 3.3", nome: "Inteligência de LTV", iniciativas: 6, descricao: "Modelar LTV por coorte, produto e canal — e usar o modelo para priorização de investimento em aquisição e retenção." },
+      { id: "KR 3.4", nome: "Segmentação", iniciativas: 3, descricao: "Segmentar a base ativa em personas acionáveis e personalizar comunicação, oferta e suporte por segmento." },
     ],
   },
 ];
+
 
 export const waves = [
   { id: "W1" as Wave, nome: "Estrutura Mínima", periodo: "2026" },
