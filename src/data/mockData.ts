@@ -2,7 +2,7 @@
 
 export type Wave = "W1" | "W2" | "W3";
 export type Classificacao = "Institucional" | "Melhoria Contínua" | "Melhoria Contínua com EPP" | "Novo Produto";
-export type StatusExecucao = "Backlog" | "A Iniciar" | "Em Andamento" | "Pausado" | "Atrasado" | "Concluído" | "Cancelado" | "Em Avaliação";
+export type StatusExecucao = "Backlog" | "A Iniciar" | "Em Andamento" | "Validação" | "Encerramento" | "Concluído" | "Pausado" | "Atrasado" | "Cancelado" | "Em Avaliação";
 export type StatusBC = "Em Revisão" | "BC em Construção" | "Ativo EPP" | "Projeto Concluído" | "BC não aplicável" | "Sem BC" | "Adiado" | "Validado";
 export type Saude = "On-Track" | "Alerta" | "Off-Track";
 
