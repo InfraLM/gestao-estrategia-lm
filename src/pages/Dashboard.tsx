@@ -220,6 +220,34 @@ export default function Dashboard() {
     [filterClasses, isAll]
   );
 
+  // Matriz BC × Andamento — soma das classificações ativas
+  const bcAndamentoMatrix = useMemo(() => {
+    const m: Record<BCRow, Record<AndamentoCol, number>> = {
+      "Ativo EPP / Validado": { "Em Andamento": 0, "Atrasado": 0, "A Iniciar": 0, "Backlog": 0 },
+      "BC em Construção":     { "Em Andamento": 0, "Atrasado": 0, "A Iniciar": 0, "Backlog": 0 },
+      "Em Revisão":           { "Em Andamento": 0, "Atrasado": 0, "A Iniciar": 0, "Backlog": 0 },
+      "Sem BC":               { "Em Andamento": 0, "Atrasado": 0, "A Iniciar": 0, "Backlog": 0 },
+    };
+    activeClasses.forEach(c => {
+      BC_ROWS.forEach(r => ANDAMENTO_COLS.forEach(col => {
+        m[r][col] += bcVsAndamentoByClass[c][r][col];
+      }));
+    });
+    return m;
+  }, [activeClasses]);
+
+  const iniciadosSemBC = useMemo(() => {
+    let total = 0;
+    BC_NAO_FINALIZADO.forEach(r => JA_INICIADO.forEach(col => { total += bcAndamentoMatrix[r][col]; }));
+    return total;
+  }, [bcAndamentoMatrix]);
+
+  const totalMatrix = useMemo(() => {
+    let t = 0;
+    BC_ROWS.forEach(r => ANDAMENTO_COLS.forEach(c => { t += bcAndamentoMatrix[r][c]; }));
+    return t;
+  }, [bcAndamentoMatrix]);
+
   return (
     <div className="space-y-6">
       {/* Filtro por classificação */}
