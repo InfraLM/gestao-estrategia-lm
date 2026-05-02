@@ -249,7 +249,7 @@ export default function Portfolio() {
                     {!collapsed[g.key] && g.items.map(p => (
                   <tr key={p.id} className="border-t border-border hover:bg-surface-muted/50 transition-colors">
                     <td className="px-4 py-3 overflow-hidden text-xs text-muted-foreground tabular-nums">{p.id}</td>
-                    <td className="px-4 py-3 overflow-hidden"><Link to="#" className="font-semibold text-foreground hover:text-primary">{p.nome}</Link></td>
+                    <td className="px-4 py-3 overflow-hidden"><Link to={`/gestao/${p.id}`} className="font-semibold text-foreground hover:text-primary">{p.nome}</Link></td>
                     <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.diretor} options={diretores} onChange={(v) => updateProject(p.id, { diretor: v })}>
                         <div className="flex items-center gap-2"><div className="h-7 w-7 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center text-xs font-semibold">{p.diretor.split(" ").map(n => n[0]).slice(0,2).join("")}</div><span className="whitespace-nowrap">{p.diretor}</span></div>
