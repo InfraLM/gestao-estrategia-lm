@@ -104,8 +104,12 @@ export default function GestaoProjeto() {
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} stroke="hsl(var(--muted-foreground))" />
               <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `R$ ${v.toLocaleString("pt-BR")}`} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="bc" name="BC" fill="hsl(var(--neutral))" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="orcado" name="Orçado" fill="hsl(var(--info))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="bc" name="BC" fill="hsl(var(--neutral))" radius={[4, 4, 0, 0]}>
+                <LabelList dataKey="bc" position="top" style={{ fill: "hsl(var(--neutral))", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? `${(v / 1000).toFixed(0)}k` : ""} />
+              </Bar>
+              <Bar dataKey="orcado" name="Orçado" fill="hsl(var(--info))" radius={[4, 4, 0, 0]}>
+                <LabelList dataKey="orcado" position="top" style={{ fill: "hsl(var(--info))", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? `${(v / 1000).toFixed(0)}k` : ""} />
+              </Bar>
               <Bar dataKey="realizado" name="Realizado" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]}>
                 <LabelList dataKey="realizado" position="top" style={{ fill: "hsl(var(--primary))", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? `${(v / 1000).toFixed(0)}k` : ""} />
               </Bar>
