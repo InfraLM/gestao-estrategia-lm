@@ -9,6 +9,7 @@ import Submissao from "./pages/Submissao";
 import Portfolio from "./pages/Portfolio";
 import StatusReport from "./pages/StatusReport";
 import Gestao from "./pages/Gestao";
+import GestaoProjeto from "./pages/GestaoProjeto";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/status-report" element={<StatusReport />} />
             <Route path="/gestao" element={<Gestao />} />
+            <Route path="/gestao/:id" element={<GestaoProjeto />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
