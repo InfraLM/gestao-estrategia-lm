@@ -268,6 +268,41 @@ export default function Dashboard() {
     return t;
   }, [bcAndamentoMatrix]);
 
+  // % BCs em aberto de projetos JÁ iniciados (sem BC finalizado / total iniciados)
+  const bcAbertoPct = useMemo(() => {
+    let iniciados = 0;
+    BC_ROWS.forEach(r => JA_INICIADO.forEach(col => { iniciados += bcAndamentoMatrix[r][col]; }));
+    if (iniciados === 0) return 0;
+    return Math.round((iniciadosSemBC / iniciados) * 100);
+  }, [bcAndamentoMatrix, iniciadosSemBC]);
+
+  // ICE Quadrant — projetos plotados (Impacto = ICE × 1.1, Complexidade = derivada do budget)
+  const iceProjects = useMemo(() => {
+    return projetos
+      .filter(p => isAll || filterClasses.includes(p.classificacao))
+      .map(p => ({
+        id: p.id,
+        nome: p.nome,
+        impacto: Math.min(10, p.ice),
+        complexidade: complexidadeFromBudget(p.budget),
+        classificacao: p.classificacao,
+        color: CLASS_COLORS[p.classificacao],
+      }));
+  }, [filterClasses, isAll]);
+
+  const iceQuadrants = useMemo(() => {
+    const q = { quickWin: 0, bigBets: 0, fillIns: 0, evitar: 0 };
+    iceProjects.forEach(p => {
+      const altoImpacto = p.impacto >= 7;
+      const altaComplex = p.complexidade >= 5;
+      if (altoImpacto && !altaComplex) q.quickWin++;
+      else if (altoImpacto && altaComplex) q.bigBets++;
+      else if (!altoImpacto && !altaComplex) q.fillIns++;
+      else q.evitar++;
+    });
+    return q;
+  }, [iceProjects]);
+
   return (
     <div className="space-y-6">
       {/* Filtro por classificação */}
