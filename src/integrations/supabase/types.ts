@@ -174,6 +174,30 @@ export type Database = {
           },
         ]
       }
+      gmail_processados: {
+        Row: {
+          draft_id: string | null
+          message_id: string
+          processed_at: string
+          resultado: string
+          thread_id: string | null
+        }
+        Insert: {
+          draft_id?: string | null
+          message_id: string
+          processed_at?: string
+          resultado?: string
+          thread_id?: string | null
+        }
+        Update: {
+          draft_id?: string | null
+          message_id?: string
+          processed_at?: string
+          resultado?: string
+          thread_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           cargo: string | null
@@ -204,6 +228,60 @@ export type Database = {
         }
         Relationships: []
       }
+      projeto_reunioes: {
+        Row: {
+          calendar_id: string | null
+          cor: string | null
+          created_at: string
+          criado_por: string | null
+          descricao: string | null
+          fim: string
+          google_event_id: string | null
+          html_link: string | null
+          id: string
+          inicio: string
+          meet_link: string | null
+          participantes: Json
+          projeto_id: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          calendar_id?: string | null
+          cor?: string | null
+          created_at?: string
+          criado_por?: string | null
+          descricao?: string | null
+          fim: string
+          google_event_id?: string | null
+          html_link?: string | null
+          id?: string
+          inicio: string
+          meet_link?: string | null
+          participantes?: Json
+          projeto_id: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          calendar_id?: string | null
+          cor?: string | null
+          created_at?: string
+          criado_por?: string | null
+          descricao?: string | null
+          fim?: string
+          google_event_id?: string | null
+          html_link?: string | null
+          id?: string
+          inicio?: string
+          meet_link?: string | null
+          participantes?: Json
+          projeto_id?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       projetos: {
         Row: {
           avancos: string | null
@@ -215,6 +293,8 @@ export type Database = {
           created_by: string | null
           descricao: string | null
           diretor: string | null
+          email_alias: string | null
+          especialista: Database["public"]["Enums"]["especialista_enum"]
           gerente: string | null
           ice: number
           id: string
@@ -241,6 +321,8 @@ export type Database = {
           created_by?: string | null
           descricao?: string | null
           diretor?: string | null
+          email_alias?: string | null
+          especialista?: Database["public"]["Enums"]["especialista_enum"]
           gerente?: string | null
           ice?: number
           id?: string
@@ -267,6 +349,8 @@ export type Database = {
           created_by?: string | null
           descricao?: string | null
           diretor?: string | null
+          email_alias?: string | null
+          especialista?: Database["public"]["Enums"]["especialista_enum"]
           gerente?: string | null
           ice?: number
           id?: string
@@ -282,6 +366,69 @@ export type Database = {
           termino?: string | null
           updated_at?: string
           wave?: Database["public"]["Enums"]["wave_enum"]
+        }
+        Relationships: []
+      }
+      status_report_drafts: {
+        Row: {
+          anexos: Json
+          aprovado_em: string | null
+          aprovado_por: string | null
+          assunto: string | null
+          corpo_html: string | null
+          corpo_texto: string | null
+          created_at: string
+          gmail_message_id: string | null
+          id: string
+          observacoes_aprovacao: string | null
+          origem: string
+          periodo: string | null
+          projeto_id: string
+          recebido_em: string
+          remetente: string | null
+          status: Database["public"]["Enums"]["draft_status_enum"]
+          status_report_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          anexos?: Json
+          aprovado_em?: string | null
+          aprovado_por?: string | null
+          assunto?: string | null
+          corpo_html?: string | null
+          corpo_texto?: string | null
+          created_at?: string
+          gmail_message_id?: string | null
+          id?: string
+          observacoes_aprovacao?: string | null
+          origem?: string
+          periodo?: string | null
+          projeto_id: string
+          recebido_em?: string
+          remetente?: string | null
+          status?: Database["public"]["Enums"]["draft_status_enum"]
+          status_report_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          anexos?: Json
+          aprovado_em?: string | null
+          aprovado_por?: string | null
+          assunto?: string | null
+          corpo_html?: string | null
+          corpo_texto?: string | null
+          created_at?: string
+          gmail_message_id?: string | null
+          id?: string
+          observacoes_aprovacao?: string | null
+          origem?: string
+          periodo?: string | null
+          projeto_id?: string
+          recebido_em?: string
+          remetente?: string | null
+          status?: Database["public"]["Enums"]["draft_status_enum"]
+          status_report_id?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -368,6 +515,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_especialista_of: {
+        Args: { _projeto_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "pmo" | "viewer"
@@ -381,7 +532,9 @@ export type Database = {
         | "Em Andamento"
         | "Concluído"
         | "Atrasado"
+      draft_status_enum: "pendente" | "aprovado" | "rejeitado"
       eap_status_enum: "Pendente" | "Em Andamento" | "Concluído" | "Bloqueado"
+      especialista_enum: "Rafaella Ferraz" | "Renata Campos" | "Não atribuída"
       saude_enum: "On-Track" | "Alerta" | "Off-Track"
       status_bc_enum:
         | "Em Revisão"
@@ -544,7 +697,9 @@ export const Constants = {
         "Concluído",
         "Atrasado",
       ],
+      draft_status_enum: ["pendente", "aprovado", "rejeitado"],
       eap_status_enum: ["Pendente", "Em Andamento", "Concluído", "Bloqueado"],
+      especialista_enum: ["Rafaella Ferraz", "Renata Campos", "Não atribuída"],
       saude_enum: ["On-Track", "Alerta", "Off-Track"],
       status_bc_enum: [
         "Em Revisão",
