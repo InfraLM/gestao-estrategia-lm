@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, ArrowLeft, Plus, Trash2, FileText, AlertTriangle, GitBranch, Target, ClipboardList, Workflow, Link2 } from "lucide-react";
+import { Search, ArrowLeft, Plus, Trash2, FileText, AlertTriangle, GitBranch, Target, ClipboardList, Workflow, Link2, Bot } from "lucide-react";
 
 type Processo = {
   id: string;
