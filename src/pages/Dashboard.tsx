@@ -737,16 +737,74 @@ export default function Dashboard() {
         </Card>
 
         <Card className="p-5 shadow-card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Distribuição por Wave e Semestre</h3>
-            <span className="text-xs text-muted-foreground">Início previsto</span>
+          <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+            <h3 className="font-semibold">Distribuição de Waves por Semestre</h3>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <Filter className="h-3.5 w-3.5" />
+                  {waveChartClasses.length === 0 ? "Todas classificações" : `${waveChartClasses.length} selecionada(s)`}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-64 p-2">
+                <div className="text-xs font-medium px-2 py-1 text-muted-foreground">Filtrar por classificação</div>
+                {ALL_CLASSES.map(c => (
+                  <label key={c} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted cursor-pointer text-sm">
+                    <input
+                      type="checkbox"
+                      checked={waveChartClasses.includes(c)}
+                      onChange={() => toggleWaveChartClass(c)}
+                    />
+                    <span className="h-2.5 w-2.5 rounded-sm" style={{ background: CLASS_COLORS[c] }} />
+                    {CLASS_SHORT[c]}
+                  </label>
+                ))}
+                {waveChartClasses.length > 0 && (
+                  <Button variant="ghost" size="sm" className="w-full mt-1 h-7 text-xs" onClick={() => setWaveChartClasses([])}>
+                    Limpar filtro
+                  </Button>
+                )}
+              </PopoverContent>
+            </Popover>
           </div>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={distSemestre} margin={{ top: 24 }}>
               <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
               <XAxis dataKey="sem" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }} />
+              <Tooltip
+                cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }}
+                content={({ active, payload, label }: any) => {
+                  if (!active || !payload?.length) return null;
+                  const row = payload[0]?.payload;
+                  if (!row) return null;
+                  return (
+                    <div className="rounded-md border bg-popover text-popover-foreground shadow-lg p-3 text-xs max-w-[340px]">
+                      <div className="font-semibold mb-2">{label}</div>
+                      {(["W1", "W2", "W3"] as const).map(w => {
+                        const list = row[`${w}_list`] as { id: string; nome: string }[];
+                        if (!list?.length) return null;
+                        return (
+                          <div key={w} className="mb-2 last:mb-0">
+                            <div className="flex items-center gap-1.5 font-medium mb-1">
+                              <span className="h-2 w-2 rounded-sm" style={{ background: waveColor[w] }} />
+                              {w} · {list.length} projeto(s)
+                            </div>
+                            <ul className="pl-3 space-y-0.5 list-disc text-muted-foreground max-h-40 overflow-auto">
+                              {list.slice(0, 12).map(p => (
+                                <li key={p.id} className="leading-snug">
+                                  <span className="text-foreground/80">{p.id}</span> — {p.nome}
+                                </li>
+                              ))}
+                              {list.length > 12 && <li>+ {list.length - 12} outros…</li>}
+                            </ul>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }}
+              />
               <Legend wrapperStyle={{ fontSize: 11 }} />
               <Bar dataKey="W1" stackId="b" fill={waveColor.W1}>
                 <LabelList dataKey="W1" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
