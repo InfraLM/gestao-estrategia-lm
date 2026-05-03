@@ -96,6 +96,7 @@ const titles: Record<string, string> = {
   "/repositorios/processos-publicados": "Processos Publicados · Repositório Controlado",
   "/repositorios/documentos-controlados": "Documentos Controlados · Controle de Qualidade",
   "/repositorios/politicas-institucionais": "Políticas Institucionais · Repositório Controlado",
+  "/repositorios/gestao": "Gestão do Repositório · Controle de Revisão e Aprovações",
 };
 
 export default function AppLayout() {
