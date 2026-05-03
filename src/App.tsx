@@ -15,6 +15,7 @@ import MelhoriaDetalhe from "./pages/MelhoriaDetalhe";
 import Repositorio from "./pages/Repositorio";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
+import BacklogEstrategico from "./pages/BacklogEstrategico";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
 
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/repositorio" element={<Repositorio />} />
               <Route path="/diagnostico" element={<Diagnostico />} />
               <Route path="/estrategia" element={<Estrategia />} />
+              <Route path="/backlog-estrategico" element={<BacklogEstrategico />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
