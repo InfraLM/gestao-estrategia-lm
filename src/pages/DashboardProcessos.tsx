@@ -107,7 +107,7 @@ export default function DashboardProcessos() {
 
   const e2eCobertura = useMemo(() => {
     return E2E_ZONES.map(z => {
-      const procs = processos.filter(p => zonesForProcesso(p.id, p.nome).some(x => x.id === z.id));
+      const procs = processos.filter(p => zonesForProcesso(p.nome).some(x => x.id === z.id));
       const vigentes = procs.filter(p => p.status === "REVISÃO CONCLUÍDA VIGENTE").length;
       const matVals = procs.map(p => p.maturidade).filter((v): v is number => !!v);
       const matAvg = matVals.length ? (matVals.reduce((a, b) => a + b, 0) / matVals.length) : 0;
