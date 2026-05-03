@@ -10,10 +10,20 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw, Target, Workflow, ShieldAlert, AlertTriangle } from "lucide-react";
 import { E2E_ZONES, zonesForProcesso, type E2EZone } from "@/data/e2eZones";
 
-type Processo = (typeof processosSeed)[number] & {
+type Processo = {
+  id: string;
+  nome: string;
+  nivel: string;
+  revisao: number | null;
+  diretor: string;
+  dono: string;
+  status: string;
+  fornecedores: string[];
+  clientes: string[];
+  documentos: any[];
   maturidade?: number;
   kpiValor?: number;
-  vinculo?: Record<string, number>; // codigo objetivo -> 0..3
+  vinculo?: Record<string, number>;
 };
 
 const STORAGE_KEY = "matriz-processos-edits-v1";
