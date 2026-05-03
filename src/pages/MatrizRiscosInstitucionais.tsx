@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ShieldAlert, AlertTriangle, ArrowRight, Building2, Workflow, FolderKanban } from "lucide-react";
+import { UploadRiscosInstitucionais } from "@/components/UploadRiscosInstitucionais";
 
 type RiscoNivel = "Extremo" | "Alto" | "Moderado" | "Baixo";
 type Natureza = "Variação" | "Ambiguidade" | "Evento" | "Condição de incerteza";
@@ -53,7 +54,7 @@ function fmtBRL(v?: number) {
 export default function MatrizRiscosInstitucionais() {
   const [gestao, setGestao] = useState<Record<string, any>>({});
   const [filtroNivel, setFiltroNivel] = useState<string>("todos");
-  const { data: riscosInst } = useRiscosInstitucionaisDB();
+  const { data: riscosInst, refetch } = useRiscosInstitucionaisDB();
   const { data: processos } = useProcessosDB();
   const { data: projetos } = useProjetosDB();
 
@@ -100,13 +101,16 @@ export default function MatrizRiscosInstitucionais() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-          <ShieldAlert className="h-6 w-6 text-primary" /> Matriz de Riscos Institucionais
-        </h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Visão consolidada dos riscos institucionais, riscos críticos de processos e riscos críticos de projetos.
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+            <ShieldAlert className="h-6 w-6 text-primary" /> Matriz de Riscos Institucionais
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Visão consolidada dos riscos institucionais, riscos críticos de processos e riscos críticos de projetos.
+          </p>
+        </div>
+        <UploadRiscosInstitucionais onDone={refetch} />
       </div>
 
       {/* KPIs */}
