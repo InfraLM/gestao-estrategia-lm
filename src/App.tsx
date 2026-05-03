@@ -17,6 +17,7 @@ import PlaceholderDoc from "./pages/PlaceholderDoc";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
 import BacklogEstrategico from "./pages/BacklogEstrategico";
+import ImpactoEstrategico from "./pages/ImpactoEstrategico";
 import MatrizProcessos from "./pages/MatrizProcessos";
 import GestaoProcessos from "./pages/GestaoProcessos";
 import DashboardProcessos from "./pages/DashboardProcessos";
@@ -59,6 +60,7 @@ const App = () => (
               <Route path="/diagnostico" element={<Diagnostico />} />
               <Route path="/estrategia" element={<Estrategia />} />
               <Route path="/backlog-estrategico" element={<BacklogEstrategico />} />
+              <Route path="/impacto-estrategico" element={<ImpactoEstrategico />} />
               <Route path="/matriz-processos" element={<MatrizProcessos />} />
               <Route path="/gestao-processos" element={<GestaoProcessos />} />
               <Route path="/dashboard-processos" element={<DashboardProcessos />} />

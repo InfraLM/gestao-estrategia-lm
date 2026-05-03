@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server } from "lucide-react";
+import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,6 +20,7 @@ const navGroups: NavGroup[] = [
       { to: "/estrategia", label: "Estratégia LM", icon: Target },
       { to: "/matriz-riscos", label: "Matriz de Riscos Institucionais", icon: ShieldAlert },
       { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
+      { to: "/impacto-estrategico", label: "Impacto Estratégico", icon: TrendingUp },
     ],
   },
   {
@@ -74,6 +75,7 @@ const titles: Record<string, string> = {
   "/diagnostico": "Diagnóstico Estratégico LM",
   "/estrategia": "Estratégia LM · Formulação + Planejamento",
   "/backlog-estrategico": "Backlog Estratégico · Plano de Ação Institucional",
+  "/impacto-estrategico": "Impacto Estratégico · Consolidação por Objetivo BSC",
   "/submissao": "Submissão de Projetos",
   "/portfolio": "Portfólio Estratégico",
   "/status-report": "Status Report de Projetos — Evolução",
