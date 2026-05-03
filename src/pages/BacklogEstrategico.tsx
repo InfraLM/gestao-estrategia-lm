@@ -292,13 +292,16 @@ export default function BacklogEstrategico() {
   }
 
   const filtradas = useMemo(() => {
-    return lista.filter((i) => {
-      const t = tipoFiltro === "Todos" || i.tipo === tipoFiltro;
-      const o = origemFiltro === "Todas" || i.origem.includes(origemFiltro);
-      const q = busca.trim().toLowerCase();
-      const matchQ = !q || [i.titulo, i.acao, i.responsavel, i.vinculo].some(s => s.toLowerCase().includes(q));
-      return t && o && matchQ;
-    });
+    const waveOrder: Record<Wave, number> = { W1: 0, W2: 1, W3: 2 };
+    return lista
+      .filter((i) => {
+        const t = tipoFiltro === "Todos" || i.tipo === tipoFiltro;
+        const o = origemFiltro === "Todas" || i.origem.includes(origemFiltro);
+        const q = busca.trim().toLowerCase();
+        const matchQ = !q || [i.titulo, i.acao, i.responsavel, i.vinculo].some(s => s.toLowerCase().includes(q));
+        return t && o && matchQ;
+      })
+      .sort((a, b) => (waveOrder[a.wave] - waveOrder[b.wave]) || (b.ice - a.ice));
   }, [busca, tipoFiltro, origemFiltro, lista]);
 
   const counts = useMemo(() => {
