@@ -66,6 +66,7 @@ const navGroups: NavGroup[] = [
       { to: "/repositorios/processos-publicados", label: "Processos Publicados", icon: FileCheck2 },
       { to: "/repositorios/documentos-controlados", label: "Documentos Controlados", icon: FolderArchive },
       { to: "/repositorios/politicas-institucionais", label: "Políticas Institucionais", icon: ShieldCheck },
+      { to: "/repositorios/gestao", label: "Gestão do Repositório", icon: Settings2 },
     ],
   },
 ];
