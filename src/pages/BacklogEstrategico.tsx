@@ -532,6 +532,9 @@ export default function BacklogEstrategico() {
               </Card>
             );
           })}
+              </div>
+            );
+          })}
           {filtradas.length === 0 && (
             <Card><CardContent className="py-10 text-center text-sm text-muted-foreground">Nenhuma iniciativa para os filtros selecionados.</CardContent></Card>
           )}
