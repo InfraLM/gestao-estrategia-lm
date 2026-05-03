@@ -538,6 +538,10 @@ export default function MatrizProcessos() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="e2e">
+          <E2EDashboard processos={data} />
+        </TabsContent>
       </Tabs>
 
       <Dialog open={!!selected} onOpenChange={o => !o && setSelected(null)}>
