@@ -772,46 +772,35 @@ export default function Dashboard() {
               <XAxis dataKey="sem" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <Tooltip
+                shared={false}
                 cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }}
                 content={({ active, payload, label }: any) => {
                   if (!active || !payload?.length) return null;
-                  const row = payload[0]?.payload;
-                  if (!row) return null;
+                  const item = payload[0];
+                  const row = item?.payload;
+                  const key = item?.dataKey as string | undefined;
+                  if (!row || !key) return null;
+                  const [classe, wave] = key.split("__") as [Classificacao, "W1" | "W2" | "W3"];
+                  const list = (row[`${key}_list`] || []) as { id: string; nome: string }[];
+                  if (!list.length) return null;
                   return (
-                    <div className="rounded-md border bg-popover text-popover-foreground shadow-lg p-3 text-xs max-w-[380px]">
-                      <div className="font-semibold mb-2">{label}</div>
-                      {waveChartActive.map(c => {
-                        const total = (["W1", "W2", "W3"] as const).reduce((s, w) => s + (row[`${c}__${w}`] || 0), 0);
-                        if (!total) return null;
-                        return (
-                          <div key={c} className="mb-2 last:mb-0">
-                            <div className="flex items-center gap-1.5 font-medium mb-1">
-                              <span className="h-2 w-2 rounded-sm" style={{ background: CLASS_COLORS[c] }} />
-                              {CLASS_SHORT[c]} · {total}
-                            </div>
-                            {(["W1", "W2", "W3"] as const).map(w => {
-                              const list = (row[`${c}__${w}_list`] || []) as { id: string; nome: string }[];
-                              if (!list.length) return null;
-                              return (
-                                <div key={w} className="pl-3 mb-1">
-                                  <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                                    <span className="h-1.5 w-1.5 rounded-sm" style={{ background: waveColor[w] }} />
-                                    {w} · {list.length}
-                                  </div>
-                                  <ul className="pl-3 list-disc text-muted-foreground max-h-32 overflow-auto">
-                                    {list.slice(0, 8).map(p => (
-                                      <li key={p.id} className="leading-snug">
-                                        <span className="text-foreground/80">{p.id}</span> — {p.nome}
-                                      </li>
-                                    ))}
-                                    {list.length > 8 && <li>+ {list.length - 8} outros…</li>}
-                                  </ul>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        );
-                      })}
+                    <div className="rounded-md border bg-popover text-popover-foreground shadow-lg p-3 text-xs max-w-[360px]">
+                      <div className="font-semibold mb-1">{label}</div>
+                      <div className="flex items-center gap-1.5 mb-2 text-[11px]">
+                        <span className="h-2 w-2 rounded-sm" style={{ background: CLASS_COLORS[classe] }} />
+                        <span className="font-medium">{CLASS_SHORT[classe]}</span>
+                        <span className="text-muted-foreground">·</span>
+                        <span className="h-2 w-2 rounded-sm" style={{ background: waveColor[wave] }} />
+                        <span className="font-medium">{wave}</span>
+                        <span className="text-muted-foreground">· {list.length} projeto(s)</span>
+                      </div>
+                      <ul className="pl-3 list-disc text-muted-foreground max-h-56 overflow-auto space-y-0.5">
+                        {list.map(p => (
+                          <li key={p.id} className="leading-snug">
+                            <span className="text-foreground/80">{p.id}</span> — {p.nome}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   );
                 }}
