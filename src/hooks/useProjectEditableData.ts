@@ -15,6 +15,18 @@ export interface CronogramaItem {
   status: "A iniciar" | "Em andamento" | "Concluído" | "Atrasado";
 }
 
+export type PredecessoraOrigem = "interna" | "projeto" | "melhoria-estrategica" | "melhoria-continua";
+
+export interface Predecessora {
+  /** id local da entrega (interna) ou ID externo (P012, ME-P004, MC-001) */
+  refId: string;
+  origem: PredecessoraOrigem;
+  /** rótulo amigável para exibir (ex: nome do projeto/entrega) */
+  label: string;
+  /** Concluído na origem? Para internas é recalculado em runtime; para externas é capturado no momento do vínculo */
+  concluido?: boolean;
+}
+
 export interface EntregaItem {
   id: string;
   titulo: string;
@@ -25,6 +37,7 @@ export interface EntregaItem {
   feito: boolean;
   status: "A iniciar" | "Em andamento" | "Concluído" | "Bloqueado";
   documentos: SubmissaoDocumento[];
+  predecessoras: Predecessora[];
 }
 
 export interface PacoteEAP {
