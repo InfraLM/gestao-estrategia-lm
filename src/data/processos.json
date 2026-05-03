@@ -44,7 +44,20 @@
       "01.03.03 - Priorizar, Evoluir ou Descontinuar Produtos e Iniciativas",
       "01.04.03 - Gerir Projetos Estratégicos"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 2,
+      "F.02": 0,
+      "C.01": 2,
+      "C.02": 0,
+      "C.03": 1,
+      "P.01": 1,
+      "P.02": 0,
+      "P.03": 0,
+      "AC.01": 3,
+      "AC.02": 2,
+      "AC.03": 2
+    }
   },
   {
     "id": "86ae9ptkp",
@@ -228,7 +241,20 @@
       "02.05.01 - Planejar Conteúdo Educacional",
       "02.06.01 - Criar, Configurar e Submeter Cursos"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 0,
+      "F.02": 0,
+      "C.01": 0,
+      "C.02": 1,
+      "C.03": 0,
+      "P.01": 2,
+      "P.02": 0,
+      "P.03": 0,
+      "AC.01": 0,
+      "AC.02": 1,
+      "AC.03": 0
+    }
   },
   {
     "id": "86ae9ptcu",
@@ -277,7 +303,20 @@
       "02.06.01 - Criar, Configurar e Submeter Cursos",
       "02.06.03 - Garantir Acesso e Estabilidade da Plataforma"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 1,
+      "F.02": 0,
+      "C.01": 1,
+      "C.02": 2,
+      "C.03": 1,
+      "P.01": 0,
+      "P.02": 0,
+      "P.03": 1,
+      "AC.01": 0,
+      "AC.02": 0,
+      "AC.03": 0
+    }
   },
   {
     "id": "86ae9prn2",
@@ -289,7 +328,20 @@
     "status": "MAPEAMENTO AS-IS/TO-BE",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 1,
+      "F.02": 0,
+      "C.01": 1,
+      "C.02": 1,
+      "C.03": 0,
+      "P.01": 1,
+      "P.02": 0,
+      "P.03": 0,
+      "AC.01": 0,
+      "AC.02": 0,
+      "AC.03": 0
+    }
   },
   {
     "id": "86ae9pqya",
@@ -359,7 +411,20 @@
     "clientes": [
       "02.04.03 - Avaliar e Melhorar Continuamente o Produto Educacional"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 2,
+      "F.02": 2,
+      "C.01": 1,
+      "C.02": 1,
+      "C.03": 2,
+      "P.01": 2,
+      "P.02": 2,
+      "P.03": 0,
+      "AC.01": 1,
+      "AC.02": 2,
+      "AC.03": 0
+    }
   },
   {
     "id": "86ae9pt97",
@@ -520,7 +585,20 @@
     "clientes": [
       "02.08.02 - Realizar venda"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 2,
+      "F.02": 0,
+      "C.01": 1,
+      "C.02": 0,
+      "C.03": 1,
+      "P.01": 0,
+      "P.02": 3,
+      "P.03": 0,
+      "AC.01": 2,
+      "AC.02": 1,
+      "AC.03": 2
+    }
   },
   {
     "id": "86ae9prf5",
@@ -812,7 +890,20 @@
       "02.04.02 - Estruturar Produto e Jornada Educacional",
       "02.10.06 – Operar Experiência, Suporte e Sucesso do Aluno"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 2,
+      "F.02": 1,
+      "C.01": 0,
+      "C.02": 0,
+      "C.03": 2,
+      "P.01": 1,
+      "P.02": 0,
+      "P.03": 2,
+      "AC.01": 3,
+      "AC.02": 1,
+      "AC.03": 1
+    }
   },
   {
     "id": "86ae9yy6f",
@@ -828,7 +919,20 @@
     "clientes": [
       "01.03.01 - Gerir Portfólio do Ecossistema e Inovação Estratégica"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 2,
+      "F.02": 0,
+      "C.01": 1,
+      "C.02": 1,
+      "C.03": 2,
+      "P.01": 0,
+      "P.02": 0,
+      "P.03": 2,
+      "AC.01": 3,
+      "AC.02": 0,
+      "AC.03": 0
+    }
   },
   {
     "id": "86ae9yy8t",
@@ -844,7 +948,20 @@
     "clientes": [
       "02.04.02 - Estruturar Produto e Jornada Educacional"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 2,
+      "F.02": 0,
+      "C.01": 1,
+      "C.02": 0,
+      "C.03": 0,
+      "P.01": 0,
+      "P.02": 1,
+      "P.03": 0,
+      "AC.01": 3,
+      "AC.02": 2,
+      "AC.03": 2
+    }
   },
   {
     "id": "86ae9yyfv",
@@ -1002,7 +1119,20 @@
     "clientes": [
       "02.10.04 - Acompanhar Progressão e Retenção no Ecossistema"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 2,
+      "F.02": 0,
+      "C.01": 3,
+      "C.02": 0,
+      "C.03": 1,
+      "P.01": 1,
+      "P.02": 3,
+      "P.03": 3,
+      "AC.01": 3,
+      "AC.02": 0,
+      "AC.03": 1
+    }
   },
   {
     "id": "86ae9z3b8",
@@ -1201,7 +1331,20 @@
     "status": "BACKLOG",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 1,
+      "F.02": 0,
+      "C.01": 1,
+      "C.02": 0,
+      "C.03": 2,
+      "P.01": 0,
+      "P.02": 0,
+      "P.03": 1,
+      "AC.01": 0,
+      "AC.02": 1,
+      "AC.03": 0
+    }
   },
   {
     "id": "86aea09kf",
@@ -1229,7 +1372,20 @@
     "clientes": [
       "02.10.02 - Orientar Decisões de Carreira e Evolução Profissional"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 0,
+      "F.02": 1,
+      "C.01": 1,
+      "C.02": 2,
+      "C.03": 0,
+      "P.01": 2,
+      "P.02": 2,
+      "P.03": 0,
+      "AC.01": 0,
+      "AC.02": 2,
+      "AC.03": 0
+    }
   },
   {
     "id": "86aea0a7u",
@@ -1245,7 +1401,20 @@
     "clientes": [
       "02.10.03 - Conectar Produtos, Prática e Oportunidades do Ecossistema"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 1,
+      "F.02": 0,
+      "C.01": 0,
+      "C.02": 1,
+      "C.03": 1,
+      "P.01": 0,
+      "P.02": 0,
+      "P.03": 0,
+      "AC.01": 0,
+      "AC.02": 1,
+      "AC.03": 2
+    }
   },
   {
     "id": "86aea0aw7",
@@ -1278,7 +1447,20 @@
     "clientes": [
       "02.10.05 - Acompanhar Evolução Profissional dos Médicos"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 0,
+      "F.02": 0,
+      "C.01": 0,
+      "C.02": 0,
+      "C.03": 2,
+      "P.01": 2,
+      "P.02": 0,
+      "P.03": 1,
+      "AC.01": 2,
+      "AC.02": 0,
+      "AC.03": 0
+    }
   },
   {
     "id": "86aea0bj6",
@@ -1481,7 +1663,20 @@
     "clientes": [
       "02.10.06 – Operar Experiência, Suporte e Sucesso do Aluno"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 2,
+      "F.02": 1,
+      "C.01": 1,
+      "C.02": 1,
+      "C.03": 0,
+      "P.01": 1,
+      "P.02": 3,
+      "P.03": 2,
+      "AC.01": 0,
+      "AC.02": 1,
+      "AC.03": 0
+    }
   },
   {
     "id": "86ag7rzqb",
@@ -1522,7 +1717,20 @@
     "clientes": [
       "01.04.02 - Monitorar Performance e Resultados"
     ],
-    "documentos": []
+    "documentos": [],
+    "vinculo": {
+      "F.01": 2,
+      "F.02": 2,
+      "C.01": 0,
+      "C.02": 0,
+      "C.03": 0,
+      "P.01": 2,
+      "P.02": 3,
+      "P.03": 0,
+      "AC.01": 0,
+      "AC.02": 0,
+      "AC.03": 1
+    }
   },
   {
     "id": "86agf2bxh",
