@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp } from "lucide-react";
+import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
