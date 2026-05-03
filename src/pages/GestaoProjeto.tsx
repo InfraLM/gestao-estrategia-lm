@@ -20,6 +20,8 @@ import { SaudeBadge } from "@/components/badges";
 import { cn } from "@/lib/utils";
 import { useProjectEditableData, type CronogramaItem, type EntregaItem, type SubmissaoDocumento } from "@/hooks/useProjectEditableData";
 import { SubmeterEntregaDialog } from "@/components/SubmeterEntregaDialog";
+import { useColumnWidths, ResizeHandle } from "@/hooks/useColumnWidths";
+import { PredecessoraDialog, PredecessorBadge, isEntregaBloqueada } from "@/components/PredecessoraDialog";
 
 const tooltipStyle = {
   background: "hsl(var(--card))",
