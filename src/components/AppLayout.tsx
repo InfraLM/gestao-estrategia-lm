@@ -80,6 +80,7 @@ export default function AppLayout() {
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<{ display_name?: string | null; cargo?: string | null; email?: string | null } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!user) { setProfile(null); setIsAdmin(false); return; }
