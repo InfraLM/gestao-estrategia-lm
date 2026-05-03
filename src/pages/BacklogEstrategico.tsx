@@ -530,7 +530,9 @@ export default function BacklogEstrategico() {
                     <TableHead>Prioridade</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Responsável</TableHead>
+                    <TableHead>Vínculos</TableHead>
                     <TableHead className="text-right">ICE</TableHead>
+                    <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -553,7 +555,28 @@ export default function BacklogEstrategico() {
                       <TableCell><Badge className={`text-[10px] ${prioridadeMeta[i.prioridade]}`}>{i.prioridade}</Badge></TableCell>
                       <TableCell><Badge variant="outline" className={`text-[10px] ${statusMeta[i.status]}`}>{i.status}</Badge></TableCell>
                       <TableCell className="text-xs">{i.responsavel}</TableCell>
+                      <TableCell>
+                        {i.vinculos && i.vinculos.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {i.vinculos.map(v => {
+                              const FIcon = fonteMeta[v.fonte].icon;
+                              return (
+                                <Badge key={`${v.fonte}-${v.refId}`} variant="outline" className={`text-[10px] ${fonteMeta[v.fonte].cor}`} title={`${v.fonte} · ${v.titulo}`}>
+                                  <FIcon className="h-3 w-3 mr-1" />{v.refId}
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <span className="text-[11px] text-muted-foreground italic">—</span>
+                        )}
+                      </TableCell>
                       <TableCell className="text-right font-mono text-sm">{i.ice.toFixed(1)}</TableCell>
+                      <TableCell>
+                        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => openEdit(i)}>
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
