@@ -128,6 +128,17 @@ export default function GestaoProjeto() {
         <div className="text-right">
           <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Período</div>
           <div className="text-sm font-medium mt-1 tabular-nums">{projeto.inicio} → {projeto.termino}</div>
+          <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
+            <div className="rounded-md border border-border bg-muted/30 px-2 py-1 text-left">
+              <div className="uppercase tracking-wider font-semibold">Início real</div>
+              <div className="text-foreground font-medium tabular-nums mt-0.5">{fmtDate(datasReais.inicioReal)}</div>
+            </div>
+            <div className="rounded-md border border-border bg-muted/30 px-2 py-1 text-left">
+              <div className="uppercase tracking-wider font-semibold">Término previsto</div>
+              <div className="text-foreground font-medium tabular-nums mt-0.5">{fmtDate(datasReais.terminoPrevisto)}</div>
+            </div>
+          </div>
+          <div className="text-[10px] text-muted-foreground mt-1">Conforme cronograma</div>
         </div>
       </div>
 
