@@ -51,6 +51,55 @@ export default function GestaoProjeto() {
   const editable = useProjectEditableData(projeto.id, projeto.inicio, projeto.saude);
   const cronogramaChart = editable.cronogramaChart;
 
+  // Datas reais a partir do cronograma editável
+  const datasReais = useMemo(() => {
+    const cron = editable.state.cronograma;
+    if (!cron.length) return { inicioReal: null as string | null, terminoPrevisto: null as string | null };
+    const concluidas = cron.map(c => c.dataConclusao).filter(Boolean) as string[];
+    const inicioReal = concluidas.length
+      ? concluidas.sort()[0]
+      : cron.map(c => c.dataPrevista).filter(Boolean).sort()[0] ?? null;
+    const terminoPrevisto = cron.map(c => c.dataPrevista).filter(Boolean).sort().slice(-1)[0] ?? null;
+    return { inicioReal, terminoPrevisto };
+  }, [editable.state.cronograma]);
+
+  // Execução do escopo (EAP) — cumulativo planejado x realizado por mês
+  const escopoExecucao = useMemo(() => {
+    const entregas = editable.state.eap.flatMap(p => p.entregas);
+    if (!entregas.length) return [] as { mes: string; planejado: number; realizado: number }[];
+    const ymKey = (iso: string) => iso.slice(0, 7); // yyyy-mm
+    const mesesSet = new Set<string>();
+    entregas.forEach(e => {
+      if (e.dataPrevista) mesesSet.add(ymKey(e.dataPrevista));
+      if (e.dataConclusao) mesesSet.add(ymKey(e.dataConclusao));
+    });
+    const meses = Array.from(mesesSet).sort();
+    const total = entregas.length;
+    const hoje = new Date().toISOString().slice(0, 7);
+    return meses.map(m => {
+      const planejadasAteAqui = entregas.filter(e => e.dataPrevista && ymKey(e.dataPrevista) <= m).length;
+      const realizadasAteAqui = entregas.filter(e => e.dataConclusao && ymKey(e.dataConclusao) <= m).length;
+      const isFuturo = m > hoje;
+      const mesLabel = (() => {
+        const [y, mo] = m.split("-");
+        return `${mo}/${y.slice(2)}`;
+      })();
+      return {
+        mes: mesLabel,
+        planejado: Math.round((planejadasAteAqui / total) * 100),
+        // Não mostra realizado em meses futuros (linha "para")
+        realizado: isFuturo ? null as any : Math.round((realizadasAteAqui / total) * 100),
+      };
+    });
+  }, [editable.state.eap]);
+
+  const fmtDate = (iso: string | null) => {
+    if (!iso) return "—";
+    const [y, m, d] = iso.split("-");
+    return `${d}/${m}/${y}`;
+  };
+
+
   return (
     <div className="space-y-6">
       {/* Header */}
