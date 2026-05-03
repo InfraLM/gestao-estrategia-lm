@@ -424,49 +424,68 @@ export default function Melhorias() {
                 </Select>
               </Card>
 
-              <Card className="shadow-card overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[180px]">Classificação</TableHead>
-                      <TableHead>O que fazer?</TableHead>
-                      <TableHead>Justificativa</TableHead>
-                      <TableHead>Resultado esperado</TableHead>
-                      <TableHead className="w-[200px]">Vínculo OKR</TableHead>
-                      <TableHead className="w-[160px]">Responsável</TableHead>
-                      <TableHead className="w-[110px]">Prevista</TableHead>
-                      <TableHead className="w-[110px]">Conclusão</TableHead>
-                      <TableHead className="w-[120px]">Status</TableHead>
-                      <TableHead className="w-[80px]"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {lista.map(i => (
-                      <TableRow key={i.id}>
-                        <TableCell>
-                          <Badge variant="outline" className={cn("text-[10px] font-normal", CLASSIF_COLORS[i.classificacao])}>
-                            {i.classificacao === "Melhoria Contínua com EPP" ? "Com EPP" : "Local"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-medium">{i.oQueFazer}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground line-clamp-2 max-w-[260px]">{i.justificativa || "—"}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground line-clamp-2 max-w-[220px]">{i.resultadoEsperado || "—"}</TableCell>
-                        <TableCell>
-                          {(i.objetivos && i.objetivos.length > 0) ? (
+              <Card className="shadow-card overflow-x-auto">
+                <table className="text-sm border-collapse" style={{ width: colWidths.reduce((a,b)=>a+b,0) }}>
+                  <colgroup>
+                    {colWidths.map((w, i) => <col key={i} style={{ width: w }} />)}
+                  </colgroup>
+                  <thead>
+                    <tr className="bg-muted/40 border-b">
+                      {COLS.map((c, i) => (
+                        <th key={c.key} className="relative text-left text-xs font-medium text-muted-foreground px-3 py-2 select-none">
+                          {c.label}
+                          {i < COLS.length - 1 && (
+                            <span
+                              onMouseDown={(e) => startResize(i, e)}
+                              className="absolute top-0 right-0 h-full w-1.5 cursor-col-resize hover:bg-primary/40"
+                            />
+                          )}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {lista.map(i => {
+                      const krsLegacy = (i.krs ?? []).filter(k => !k.includes("::"));
+                      return (
+                      <tr key={i.id} className="border-b hover:bg-muted/20 align-top">
+                        <td className="px-3 py-2">
+                          <Select value={i.classificacao} onValueChange={v => updateItem(i.id, { classificacao: v as Classif })}>
+                            <SelectTrigger className="h-7 text-[11px]"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Melhoria Contínua">Local</SelectItem>
+                              <SelectItem value="Melhoria Contínua com EPP">Com EPP</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        <td className="px-2 py-1">
+                          <Textarea value={i.oQueFazer} rows={2} onChange={e => updateItem(i.id, { oQueFazer: e.target.value })} className="text-sm font-medium min-h-[36px] resize-none" />
+                        </td>
+                        <td className="px-2 py-1">
+                          <Textarea value={i.justificativa} rows={2} onChange={e => updateItem(i.id, { justificativa: e.target.value })} className="text-xs min-h-[36px] resize-none" />
+                        </td>
+                        <td className="px-2 py-1">
+                          <Textarea value={i.resultadoEsperado} rows={2} onChange={e => updateItem(i.id, { resultadoEsperado: e.target.value })} className="text-xs min-h-[36px] resize-none" />
+                        </td>
+                        <td className="px-3 py-2">
+                          {(i.objetivos && i.objetivos.length > 0) || krsLegacy.length > 0 ? (
                             <Popover>
                               <PopoverTrigger asChild>
-                                <button className="flex flex-wrap gap-1 max-w-[200px] hover:opacity-80">
-                                  {i.objetivos.slice(0, 3).map(cod => {
+                                <button className="flex flex-wrap gap-1 hover:opacity-80 text-left">
+                                  {(i.objetivos ?? []).slice(0, 3).map(cod => {
                                     const o = OBJETIVOS_ESTRATEGICOS.find(x => x.codigo === cod);
                                     return (
                                       <Badge key={cod} variant="outline" className={cn("text-[10px]", o && PERSP_BADGE[o.perspectiva])}>{cod}</Badge>
                                     );
                                   })}
-                                  {i.objetivos.length > 3 && <Badge variant="outline" className="text-[10px]">+{i.objetivos.length - 3}</Badge>}
+                                  {(i.objetivos?.length ?? 0) > 3 && <Badge variant="outline" className="text-[10px]">+{(i.objetivos!.length - 3)}</Badge>}
+                                  {krsLegacy.slice(0, 3).map(k => (
+                                    <Badge key={k} variant="outline" className="text-[10px] bg-amber-50 border-amber-200 text-amber-800">{k}</Badge>
+                                  ))}
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent className="w-80 p-3 space-y-2">
-                                {i.objetivos.map(cod => {
+                                {(i.objetivos ?? []).map(cod => {
                                   const o = OBJETIVOS_ESTRATEGICOS.find(x => x.codigo === cod);
                                   if (!o) return null;
                                   const krs = (i.krs ?? []).filter(k => k.startsWith(`${cod}::`)).map(k => k.split("::")[1]);
@@ -484,17 +503,39 @@ export default function Melhorias() {
                                     </div>
                                   );
                                 })}
+                                {krsLegacy.length > 0 && (
+                                  <div className="text-xs pt-1 border-t">
+                                    <div className="font-medium mb-1">KRs vinculados</div>
+                                    <div className="flex flex-wrap gap-1">
+                                      {krsLegacy.map(k => <Badge key={k} variant="outline" className="text-[10px] bg-amber-50 border-amber-200 text-amber-800">{k}</Badge>)}
+                                    </div>
+                                  </div>
+                                )}
+                                <button onClick={() => { setDraft({ ...i }); setVinculoFor(i.id); }} className="text-[11px] text-primary hover:underline">Editar vínculo…</button>
                               </PopoverContent>
                             </Popover>
-                          ) : <span className="text-xs text-muted-foreground">—</span>}
-                        </TableCell>
-                        <TableCell className="text-sm">{i.responsavel || "—"}</TableCell>
-                        <TableCell className="text-sm tabular-nums">{i.dataPrevista || "—"}</TableCell>
-                        <TableCell className="text-sm tabular-nums">{i.dataConclusao || "—"}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={cn("text-[10px]", STATUS_COLORS[i.status])}>{i.status}</Badge>
-                        </TableCell>
-                        <TableCell>
+                          ) : (
+                            <button onClick={() => { setDraft({ ...i }); setVinculoFor(i.id); }} className="text-xs text-primary hover:underline">+ vincular</button>
+                          )}
+                        </td>
+                        <td className="px-2 py-1">
+                          <Input value={i.responsavel} onChange={e => updateItem(i.id, { responsavel: e.target.value })} className="h-7 text-xs" />
+                        </td>
+                        <td className="px-2 py-1">
+                          <Input type="date" value={i.dataPrevista} onChange={e => updateItem(i.id, { dataPrevista: e.target.value })} className="h-7 text-xs" />
+                        </td>
+                        <td className="px-2 py-1">
+                          <Input type="date" value={i.dataConclusao ?? ""} onChange={e => updateItem(i.id, { dataConclusao: e.target.value })} className="h-7 text-xs" />
+                        </td>
+                        <td className="px-3 py-2">
+                          <Select value={i.status} onValueChange={v => updateItem(i.id, { status: v as Status })}>
+                            <SelectTrigger className={cn("h-7 text-[11px]", STATUS_COLORS[i.status])}><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {(["Backlog","A Iniciar","Em Andamento","Validação","Concluído","Pausado"] as Status[]).map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        <td className="px-2 py-2">
                           {i.projetoId && (
                             <Link to={`/melhorias/${i.projetoId}`}>
                               <Button size="sm" variant="ghost" className="gap-1 h-7 px-2 text-xs">
@@ -502,19 +543,75 @@ export default function Melhorias() {
                               </Button>
                             </Link>
                           )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                        </td>
+                      </tr>
+                      );
+                    })}
                     {lista.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={10} className="text-center text-muted-foreground py-10">
+                      <tr>
+                        <td colSpan={COLS.length} className="text-center text-muted-foreground py-10">
                           Nenhuma melhoria estratégica para esta área. Clique em <strong>Nova melhoria estratégica</strong>.
-                        </TableCell>
-                      </TableRow>
+                        </td>
+                      </tr>
                     )}
-                  </TableBody>
-                </Table>
+                  </tbody>
+                </table>
               </Card>
+
+              {/* Dialog edição de vínculo OKR/KR */}
+              <Dialog open={vinculoFor !== null} onOpenChange={(v) => { if (!v) setVinculoFor(null); }}>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Editar Vínculo Estratégico</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
+                    {OBJETIVOS_ESTRATEGICOS.map(o => {
+                      const selected = (draft.objetivos ?? []).includes(o.codigo);
+                      return (
+                        <div key={o.codigo} className={cn("rounded-md border p-2", selected && "border-primary bg-primary/5")}>
+                          <label className="flex items-start gap-2 cursor-pointer">
+                            <input type="checkbox" className="mt-0.5" checked={selected} onChange={e => {
+                              const cur = new Set(draft.objetivos ?? []);
+                              if (e.target.checked) cur.add(o.codigo); else cur.delete(o.codigo);
+                              setDraft(d => ({ ...d, objetivos: Array.from(cur) }));
+                            }} />
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <Badge variant="outline" className={cn("text-[10px]", PERSP_BADGE[o.perspectiva])}>{o.codigo}</Badge>
+                                <span className="text-sm font-medium">{o.nome}</span>
+                              </div>
+                              {selected && (
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                  {o.krs.map(kr => {
+                                    const krKey = `${o.codigo}::${kr}`;
+                                    const krSel = (draft.krs ?? []).includes(krKey);
+                                    return (
+                                      <button type="button" key={kr} onClick={() => {
+                                        const cur = new Set(draft.krs ?? []);
+                                        if (krSel) cur.delete(krKey); else cur.add(krKey);
+                                        setDraft(d => ({ ...d, krs: Array.from(cur) }));
+                                      }} className={cn("text-[11px] px-2 py-0.5 rounded border", krSel ? "bg-primary text-primary-foreground border-primary" : "bg-background hover:bg-muted")}>
+                                        {krSel && <Check className="h-2.5 w-2.5 inline mr-1" />}{kr}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          </label>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setVinculoFor(null)}>Cancelar</Button>
+                    <Button onClick={() => {
+                      if (vinculoFor) updateItem(vinculoFor, { objetivos: draft.objetivos ?? [], krs: draft.krs ?? [] });
+                      setVinculoFor(null);
+                    }}>Salvar vínculo</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </>
           )}
         </TabsContent>
