@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ShieldAlert, AlertTriangle, ArrowRight, Building2, Workflow, FolderKanban } from "lucide-react";
+import { UploadRiscosInstitucionais } from "@/components/UploadRiscosInstitucionais";
 
 type RiscoNivel = "Extremo" | "Alto" | "Moderado" | "Baixo";
 type Natureza = "Variação" | "Ambiguidade" | "Evento" | "Condição de incerteza";
