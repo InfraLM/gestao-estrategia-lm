@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import processos from "@/data/processos.json";
+import { useEffect, useMemo, useState } from "react";
+import processosSeed from "@/data/processos.json";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -7,9 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, Network, FileText, Users, ArrowRight, ArrowLeft } from "lucide-react";
+import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw } from "lucide-react";
 
-type Processo = (typeof processos)[number];
+type Processo = (typeof processosSeed)[number] & {
+  maturidade?: number; // 1-5 CMMI
+  kpiValor?: number; // 0-100 % entrega de valor
+};
+
+const STORAGE_KEY = "matriz-processos-edits-v1";
 
 const statusColors: Record<string, string> = {
   "BACKLOG": "bg-muted text-muted-foreground",
@@ -28,10 +33,31 @@ const nivelColors: Record<string, string> = {
   "Suporte": "bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-500/30",
 };
 
+const NIVEIS = ["Finalístico", "Gerencial", "Suporte"];
+const DIRETORES = ["Iuri", "Naira", "Ian", "Yuri", "Bruno"];
+const STATUSES = [
+  "BACKLOG", "A INICIAR", "MAPEAMENTO AS-IS/TO-BE", "MELHORIAS/ ANÁLISE",
+  "VALIDAÇÃO INTERNA", "APROVAÇÃO DIRETORIA", "REVISÃO CONCLUÍDA VIGENTE", "PARALISADO",
+];
+const MATURIDADES = [
+  { v: 1, label: "1 · Inicial", color: "bg-red-500/15 text-red-700 dark:text-red-300" },
+  { v: 2, label: "2 · Repetível", color: "bg-orange-500/15 text-orange-700 dark:text-orange-300" },
+  { v: 3, label: "3 · Definido", color: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+  { v: 4, label: "4 · Gerenciado", color: "bg-blue-500/15 text-blue-700 dark:text-blue-300" },
+  { v: 5, label: "5 · Otimizado", color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+];
+
 function getMacro(nome: string) {
   const m = nome.match(/^(\d{2})\.(\d{2})/);
   if (!m) return { macro: "—", sub: "—" };
   return { macro: m[1], sub: `${m[1]}.${m[2]}` };
+}
+
+function kpiColor(v?: number) {
+  if (v == null) return "text-muted-foreground";
+  if (v >= 80) return "text-emerald-600";
+  if (v >= 50) return "text-amber-600";
+  return "text-red-600";
 }
 
 export default function MatrizProcessos() {
@@ -40,40 +66,79 @@ export default function MatrizProcessos() {
   const [diretor, setDiretor] = useState<string>("todos");
   const [status, setStatus] = useState<string>("todos");
   const [selected, setSelected] = useState<Processo | null>(null);
+  const [data, setData] = useState<Processo[]>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const edits: Record<string, Partial<Processo>> = raw ? JSON.parse(raw) : {};
+      return (processosSeed as Processo[]).map(p => ({ ...p, ...edits[p.id] }));
+    } catch {
+      return processosSeed as Processo[];
+    }
+  });
 
-  const diretores = useMemo(() => Array.from(new Set(processos.map(p => p.diretor).filter(Boolean))).sort(), []);
-  const niveis = ["Finalístico", "Gerencial", "Suporte"];
-  const statuses = useMemo(() => Array.from(new Set(processos.map(p => p.status).filter(Boolean))).sort(), []);
+  useEffect(() => {
+    const edits: Record<string, Partial<Processo>> = {};
+    data.forEach(p => {
+      const seed = (processosSeed as Processo[]).find(s => s.id === p.id)!;
+      const diff: Partial<Processo> = {};
+      (["nivel", "diretor", "status", "maturidade", "kpiValor"] as const).forEach(k => {
+        if ((p as any)[k] !== (seed as any)[k]) (diff as any)[k] = (p as any)[k];
+      });
+      if (Object.keys(diff).length) edits[p.id] = diff;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+  }, [data]);
+
+  const updateField = (id: string, field: keyof Processo, value: any) => {
+    setData(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
+  };
+
+  const resetAll = () => {
+    if (!confirm("Resetar todas as edições da matriz?")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    setData(processosSeed as Processo[]);
+  };
+
+  const diretores = DIRETORES;
+  const niveis = NIVEIS;
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
-    return (processos as Processo[]).filter(p => {
+    return data.filter(p => {
       if (nivel !== "todos" && p.nivel !== nivel) return false;
       if (diretor !== "todos" && p.diretor !== diretor) return false;
       if (status !== "todos" && p.status !== status) return false;
       if (q && !p.nome.toLowerCase().includes(q) && !p.dono.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [search, nivel, diretor, status]);
+  }, [search, nivel, diretor, status, data]);
 
   const stats = useMemo(() => {
-    const total = processos.length;
-    const byNivel = niveis.map(n => ({ n, c: processos.filter(p => p.nivel === n).length }));
-    const vigentes = processos.filter(p => p.status === "REVISÃO CONCLUÍDA VIGENTE").length;
-    return { total, byNivel, vigentes };
-  }, []);
+    const total = data.length;
+    const byNivel = niveis.map(n => ({ n, c: data.filter(p => p.nivel === n).length }));
+    const vigentes = data.filter(p => p.status === "REVISÃO CONCLUÍDA VIGENTE").length;
+    const matAvg = (() => {
+      const vals = data.map(p => p.maturidade).filter((v): v is number => !!v);
+      return vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : "—";
+    })();
+    const kpiAvg = (() => {
+      const vals = data.map(p => p.kpiValor).filter((v): v is number => v != null);
+      return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) + "%" : "—";
+    })();
+    return { total, byNivel, vigentes, matAvg, kpiAvg };
+  }, [data]);
 
-  // Cadeia de valor: agrupar por macro
   const macroGroups = useMemo(() => {
     const groups: Record<string, { nivel: string; subs: Record<string, Processo[]> }> = {};
-    (processos as Processo[]).forEach(p => {
+    data.forEach(p => {
       const { macro, sub } = getMacro(p.nome);
       if (!groups[macro]) groups[macro] = { nivel: p.nivel, subs: {} };
       if (!groups[macro].subs[sub]) groups[macro].subs[sub] = [];
       groups[macro].subs[sub].push(p);
     });
     return groups;
-  }, []);
+  }, [data]);
+
 
   return (
     <div className="space-y-6">
