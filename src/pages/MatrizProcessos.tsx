@@ -143,9 +143,9 @@ export default function MatrizProcessos() {
   return (
     <div className="space-y-6">
       {/* KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         <Card><CardContent className="p-4">
-          <div className="text-xs text-muted-foreground">Total de Processos</div>
+          <div className="text-xs text-muted-foreground">Total</div>
           <div className="text-2xl font-semibold mt-1">{stats.total}</div>
         </CardContent></Card>
         {stats.byNivel.map(b => (
@@ -158,11 +158,19 @@ export default function MatrizProcessos() {
           <div className="text-xs text-muted-foreground">Vigentes</div>
           <div className="text-2xl font-semibold mt-1 text-emerald-600">{stats.vigentes}</div>
         </CardContent></Card>
+        <Card><CardContent className="p-4">
+          <div className="text-xs text-muted-foreground">Maturidade média</div>
+          <div className="text-2xl font-semibold mt-1">{stats.matAvg}</div>
+        </CardContent></Card>
+        <Card><CardContent className="p-4">
+          <div className="text-xs text-muted-foreground">KPI valor médio</div>
+          <div className="text-2xl font-semibold mt-1">{stats.kpiAvg}</div>
+        </CardContent></Card>
       </div>
 
       {/* Filtros */}
       <Card>
-        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-5 gap-3">
+        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-6 gap-3">
           <div className="relative md:col-span-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Buscar processo ou dono..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
@@ -185,9 +193,12 @@ export default function MatrizProcessos() {
             <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todos os status</SelectItem>
-              {statuses.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              {STATUSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
             </SelectContent>
           </Select>
+          <button onClick={resetAll} className="flex items-center justify-center gap-2 text-xs px-3 rounded-md border border-border hover:bg-surface-muted transition-colors">
+            <RotateCcw className="h-3.5 w-3.5" /> Resetar edições
+          </button>
         </CardContent>
       </Card>
 
@@ -200,33 +211,80 @@ export default function MatrizProcessos() {
         <TabsContent value="lista">
           <Card>
             <CardHeader className="py-3">
-              <CardTitle className="text-base">Matriz de Processos · {filtered.length} processo(s)</CardTitle>
+              <CardTitle className="text-base">Matriz de Processos · {filtered.length} processo(s) · edição inline</CardTitle>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Processo</TableHead>
-                    <TableHead>Nível</TableHead>
-                    <TableHead>Diretor</TableHead>
-                    <TableHead>Dono</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-center">Rev.</TableHead>
+                    <TableHead className="min-w-[280px]">Processo</TableHead>
+                    <TableHead className="w-[140px]">Nível</TableHead>
+                    <TableHead className="w-[120px]">Diretor</TableHead>
+                    <TableHead className="min-w-[160px]">Dono</TableHead>
+                    <TableHead className="w-[200px]">Status</TableHead>
+                    <TableHead className="w-[160px]">Maturidade</TableHead>
+                    <TableHead className="w-[140px]">KPI valor (%)</TableHead>
+                    <TableHead className="text-center w-[60px]">Rev.</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map(p => (
-                    <TableRow key={p.id} className="cursor-pointer" onClick={() => setSelected(p)}>
-                      <TableCell className="font-medium max-w-md">{p.nome}</TableCell>
-                      <TableCell>
-                        {p.nivel && <Badge variant="outline" className={nivelColors[p.nivel]}>{p.nivel}</Badge>}
+                    <TableRow key={p.id}>
+                      <TableCell className="font-medium">
+                        <button onClick={() => setSelected(p)} className="text-left hover:underline">{p.nome}</button>
                       </TableCell>
-                      <TableCell>{p.diretor}</TableCell>
+                      <TableCell>
+                        <Select value={p.nivel || ""} onValueChange={v => updateField(p.id, "nivel", v)}>
+                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            {NIVEIS.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Select value={p.diretor || ""} onValueChange={v => updateField(p.id, "diretor", v)}>
+                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            {DIRETORES.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
                       <TableCell className="text-sm text-muted-foreground">{p.dono}</TableCell>
                       <TableCell>
-                        <Badge className={statusColors[p.status] || "bg-muted"}>{p.status}</Badge>
+                        <Select value={p.status || ""} onValueChange={v => updateField(p.id, "status", v)}>
+                          <SelectTrigger className={`h-8 text-xs ${statusColors[p.status] || ""}`}><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            {STATUSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                       </TableCell>
-                      <TableCell className="text-center">{p.revisao ?? "—"}</TableCell>
+                      <TableCell>
+                        <Select value={p.maturidade ? String(p.maturidade) : ""} onValueChange={v => updateField(p.id, "maturidade", Number(v))}>
+                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            {MATURIDADES.map(m => <SelectItem key={m.v} value={String(m.v)}>{m.label}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="number"
+                            min={0}
+                            max={100}
+                            value={p.kpiValor ?? ""}
+                            onChange={e => {
+                              const v = e.target.value === "" ? undefined : Math.max(0, Math.min(100, Number(e.target.value)));
+                              updateField(p.id, "kpiValor", v);
+                            }}
+                            className="h-8 text-xs w-16"
+                          />
+                          <span className={`text-xs font-medium ${kpiColor(p.kpiValor)}`}>
+                            {p.kpiValor != null ? `${p.kpiValor}%` : "—"}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center text-xs">{p.revisao ?? "—"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
