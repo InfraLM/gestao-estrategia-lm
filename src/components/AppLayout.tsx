@@ -12,13 +12,14 @@ const navItems = [
   { to: "/estrategia", label: "Estratégia LM", icon: Target },
   { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
   { to: "/portfolio", label: "Portfólio Estratégico", icon: LayoutGrid },
-  { to: "/status-report", label: "Status Report", icon: LineChart },
+  { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
   { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
   { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
   { to: "/melhoria-continua", label: "Melhoria Contínua", icon: Repeat },
   { to: "/dashboard-processos", label: "Dashboard de Processos", icon: LayoutDashboard },
   { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
   { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
+  { to: "/status-report-processos", label: "Status Report de Processos", icon: LineChart },
   { to: "/repositorio", label: "Repositório", icon: FolderArchive },
 ];
 
