@@ -885,16 +885,21 @@ function EapEditavel({ editable, projetoId }: { editable: Editable; projetoId: s
 
 function HistoricoTab({ editable }: { editable: Editable }) {
   const { state, reset } = editable;
+  // projetoId não é passado; usamos o primeiro id do histórico ou um genérico
+  const { widths, startResize, reset: resetWidths } = useColumnWidths(`historico`, HIST_COL_DEFAULTS);
   return (
     <Card className="p-5 shadow-card">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 gap-3">
         <div>
           <h3 className="font-semibold flex items-center gap-2"><History className="h-4 w-4 text-primary" /> Histórico de alterações</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">{state.historico.length} evento(s) registrado(s) — alterações de cronograma, EAP e submissões.</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{state.historico.length} evento(s) registrado(s) — alterações de cronograma, EAP e submissões. Colunas redimensionáveis.</p>
         </div>
-        <Button size="sm" variant="outline" onClick={() => { if (confirm("Restaurar dados padrão e limpar histórico?")) reset(); }}>
-          Restaurar padrão
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="ghost" onClick={resetWidths} className="text-xs h-7">Resetar larguras</Button>
+          <Button size="sm" variant="outline" onClick={() => { if (confirm("Restaurar dados padrão e limpar histórico?")) reset(); }}>
+            Restaurar padrão
+          </Button>
+        </div>
       </div>
       {state.historico.length === 0 ? (
         <div className="py-12 text-center text-sm text-muted-foreground">
@@ -902,15 +907,18 @@ function HistoricoTab({ editable }: { editable: Editable }) {
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="text-sm" style={{ tableLayout: "fixed", width: "max-content", minWidth: "100%" }}>
+            <colgroup>
+              {HIST_COLS.map(c => <col key={c.key} style={{ width: `${widths[c.key]}px` }} />)}
+            </colgroup>
             <thead>
               <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
-                <th className="text-left px-2 py-2 font-semibold w-[140px]">Data/hora</th>
-                <th className="text-left px-2 py-2 font-semibold w-[100px]">Autor</th>
-                <th className="text-left px-2 py-2 font-semibold w-[100px]">Alvo</th>
-                <th className="text-left px-2 py-2 font-semibold">Item</th>
-                <th className="text-left px-2 py-2 font-semibold w-[140px]">Campo</th>
-                <th className="text-left px-2 py-2 font-semibold">De → Para</th>
+                {HIST_COLS.map(c => (
+                  <th key={c.key} className="px-2 py-2 font-semibold text-left relative">
+                    <span className="block truncate pr-1.5">{c.label}</span>
+                    <ResizeHandle onMouseDown={(e) => startResize(c.key as string, e)} />
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -922,8 +930,8 @@ function HistoricoTab({ editable }: { editable: Editable }) {
                   <td className="px-2 py-2 text-xs">{h.autor}</td>
                   <td className="px-2 py-2"><Badge variant="outline" className="text-[10px] capitalize">{h.alvoTipo}</Badge></td>
                   <td className="px-2 py-2 text-xs">
-                    <div className="font-medium">{h.alvoTitulo}</div>
-                    <div className="text-[10px] font-mono text-muted-foreground">{h.alvoId}</div>
+                    <div className="font-medium truncate">{h.alvoTitulo}</div>
+                    <div className="text-[10px] font-mono text-muted-foreground truncate">{h.alvoId}</div>
                   </td>
                   <td className="px-2 py-2 text-xs"><Badge className="bg-muted text-foreground border-border text-[10px] capitalize">{h.campo}</Badge></td>
                   <td className="px-2 py-2 text-xs">
@@ -939,6 +947,164 @@ function HistoricoTab({ editable }: { editable: Editable }) {
     </Card>
   );
 }
+
+// ============================================================
+// Custos & Stakeholders & Histórico — column defs
+// ============================================================
+const CUSTOS_COL_DEFAULTS: Record<string, number> = {
+  categoria: 220, bc: 130, orcado: 130, realizado: 140, delta: 110, exec: 140,
+};
+const CUSTOS_COLS: { key: keyof typeof CUSTOS_COL_DEFAULTS; label: string; align?: "left" | "right" | "center" }[] = [
+  { key: "categoria", label: "Categoria" },
+  { key: "bc", label: "BC", align: "right" },
+  { key: "orcado", label: "Orçado", align: "right" },
+  { key: "realizado", label: "Realizado", align: "right" },
+  { key: "delta", label: "Δ vs BC", align: "right" },
+  { key: "exec", label: "Execução", align: "center" },
+];
+
+function CustosEditavel({
+  matrizCustos, totais, projetoId,
+}: {
+  matrizCustos: ReturnType<typeof buildProjectData>["matrizCustos"];
+  totais: ReturnType<typeof buildProjectData>["totais"];
+  projetoId: string;
+}) {
+  const { widths, startResize, reset } = useColumnWidths(`${projetoId}-custos`, CUSTOS_COL_DEFAULTS);
+  return (
+    <Card className="p-5 shadow-card">
+      <div className="flex items-center justify-between mb-4 gap-3">
+        <div>
+          <h3 className="font-semibold">Matriz de Custos por Categoria</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">BC × Orçado × Realizado · colunas redimensionáveis</p>
+        </div>
+        <Button size="sm" variant="ghost" onClick={reset} className="text-xs h-7">Resetar larguras</Button>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="text-sm" style={{ tableLayout: "fixed", width: "max-content", minWidth: "100%" }}>
+          <colgroup>
+            {CUSTOS_COLS.map(c => <col key={c.key} style={{ width: `${widths[c.key]}px` }} />)}
+          </colgroup>
+          <thead>
+            <tr className="text-xs uppercase tracking-wider text-muted-foreground border-b border-border">
+              {CUSTOS_COLS.map(c => (
+                <th key={c.key} className={cn("px-2 py-2 font-semibold relative",
+                  c.align === "right" ? "text-right" : c.align === "center" ? "text-center" : "text-left")}>
+                  <span className="block truncate pr-1.5">{c.label}</span>
+                  <ResizeHandle onMouseDown={(e) => startResize(c.key as string, e)} />
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {matrizCustos.map(c => {
+              const delta = c.realizado - c.bc;
+              const exec = c.orcado > 0 ? (c.realizado / c.orcado) * 100 : 0;
+              return (
+                <tr key={c.categoria} className="border-b border-border/50">
+                  <td className="px-2 py-2.5 font-medium truncate">{c.categoria}</td>
+                  <td className="px-2 py-2 text-right tabular-nums text-muted-foreground">R$ {c.bc.toLocaleString("pt-BR")}</td>
+                  <td className="px-2 py-2 text-right tabular-nums">R$ {c.orcado.toLocaleString("pt-BR")}</td>
+                  <td className="px-2 py-2 text-right tabular-nums font-semibold">R$ {c.realizado.toLocaleString("pt-BR")}</td>
+                  <td className={cn("px-2 py-2 text-right tabular-nums font-semibold", delta > 0 ? "text-destructive" : "text-success")}>
+                    {delta > 0 ? "+" : ""}{((delta / Math.max(1, c.bc)) * 100).toFixed(1)}%
+                  </td>
+                  <td className="px-2 py-2">
+                    <div className="h-2 rounded-full bg-muted overflow-hidden">
+                      <div className={cn("h-full", exec > 100 ? "bg-destructive" : exec > 80 ? "bg-warning" : "bg-success")} style={{ width: `${Math.min(100, exec)}%` }} />
+                    </div>
+                    <div className="text-[10px] text-muted-foreground tabular-nums text-center mt-0.5">{exec.toFixed(0)}%</div>
+                  </td>
+                </tr>
+              );
+            })}
+            <tr className="bg-surface-muted/40">
+              <td className="px-2 py-2.5 font-bold">Total</td>
+              <td className="px-2 py-2 text-right tabular-nums font-bold">R$ {totais.bc.toLocaleString("pt-BR")}</td>
+              <td className="px-2 py-2 text-right tabular-nums font-bold">R$ {totais.orcado.toLocaleString("pt-BR")}</td>
+              <td className="px-2 py-2 text-right tabular-nums font-bold">R$ {totais.realizado.toLocaleString("pt-BR")}</td>
+              <td className="px-2 py-2 text-right" />
+              <td className="px-2 py-2 text-right" />
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
+
+const STK_COL_DEFAULTS: Record<string, number> = {
+  nome: 200, papel: 220, influencia: 110, interesse: 110, estrategia: 200,
+};
+const STK_COLS: { key: keyof typeof STK_COL_DEFAULTS; label: string; align?: "left" | "center" }[] = [
+  { key: "nome", label: "Stakeholder" },
+  { key: "papel", label: "Papel" },
+  { key: "influencia", label: "Influência", align: "center" },
+  { key: "interesse", label: "Interesse", align: "center" },
+  { key: "estrategia", label: "Estratégia" },
+];
+
+function StakeholdersEditavel({
+  stakeholders, projetoId,
+}: {
+  stakeholders: ReturnType<typeof buildProjectData>["stakeholders"];
+  projetoId: string;
+}) {
+  const { widths, startResize, reset } = useColumnWidths(`${projetoId}-stk`, STK_COL_DEFAULTS);
+  return (
+    <Card className="p-5 shadow-card">
+      <div className="flex items-center justify-between mb-4 gap-3">
+        <div>
+          <h3 className="font-semibold">Stakeholders · Influência × Interesse</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">{stakeholders.length} pessoas · colunas redimensionáveis</p>
+        </div>
+        <Button size="sm" variant="ghost" onClick={reset} className="text-xs h-7">Resetar larguras</Button>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="text-sm" style={{ tableLayout: "fixed", width: "max-content", minWidth: "100%" }}>
+          <colgroup>
+            {STK_COLS.map(c => <col key={c.key} style={{ width: `${widths[c.key]}px` }} />)}
+          </colgroup>
+          <thead>
+            <tr className="text-xs uppercase tracking-wider text-muted-foreground border-b border-border">
+              {STK_COLS.map(c => (
+                <th key={c.key} className={cn("px-2 py-2 font-semibold relative", c.align === "center" ? "text-center" : "text-left")}>
+                  <span className="block truncate pr-1.5">{c.label}</span>
+                  <ResizeHandle onMouseDown={(e) => startResize(c.key as string, e)} />
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {stakeholders.map(s => (
+              <tr key={s.nome} className="border-b border-border/50">
+                <td className="px-2 py-2.5 font-medium truncate">{s.nome}</td>
+                <td className="px-2 py-2 text-muted-foreground text-xs truncate">{s.papel}</td>
+                <td className="px-2 py-2 text-center"><Bolinhas n={s.influencia} /></td>
+                <td className="px-2 py-2 text-center"><Bolinhas n={s.interesse} /></td>
+                <td className="px-2 py-2 text-xs">
+                  <Badge variant="outline" className="text-[10px]">{s.estrategia}</Badge>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
+
+const HIST_COL_DEFAULTS: Record<string, number> = {
+  data: 150, autor: 110, alvo: 110, item: 280, campo: 150, valor: 320,
+};
+const HIST_COLS: { key: keyof typeof HIST_COL_DEFAULTS; label: string }[] = [
+  { key: "data", label: "Data/hora" },
+  { key: "autor", label: "Autor" },
+  { key: "alvo", label: "Alvo" },
+  { key: "item", label: "Item" },
+  { key: "campo", label: "Campo" },
+  { key: "valor", label: "De → Para" },
+];
 
 
 function buildProjectData(p: Projeto) {
