@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/", label: "Dashboard Estratégico", icon: LayoutDashboard },
   { to: "/diagnostico", label: "Diagnóstico Estratégico", icon: Compass },
   { to: "/estrategia", label: "Estratégia LM", icon: Target },
   { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
@@ -16,6 +16,7 @@ const navItems = [
   { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
   { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
   { to: "/melhoria-continua", label: "Melhoria Contínua", icon: Repeat },
+  { to: "/dashboard-processos", label: "Dashboard de Processos", icon: LayoutDashboard },
   { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
   { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
   { to: "/repositorio", label: "Repositório", icon: FolderArchive },
@@ -32,6 +33,7 @@ const titles: Record<string, string> = {
   "/gestao": "Gestão de Projetos Institucionais",
   "/melhorias": "Gestão de Melhorias Estratégicas",
   "/melhoria-continua": "Gestão de Melhoria Contínua · Por Área",
+  "/dashboard-processos": "Dashboard de Processos · Visão Consolidada",
   "/matriz-processos": "Matriz de Processos · Cadeia de Valor LM",
   "/gestao-processos": "Gestão de Processos · Mapeamento e Análise",
   "/repositorio": "Repositório · BCs e Documentos",
