@@ -1275,12 +1275,26 @@ export default function Dashboard() {
               <Bar dataKey="W2" stackId="r" fill={waveColor.W2}>
                 <LabelList dataKey="W2" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
               </Bar>
-              <Bar dataKey="W3" stackId="r" fill={waveColor.W3} radius={[6, 6, 0, 0]}>
-                <LabelList position="top" style={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 700 }}
-                  formatter={(_v: any, _n: any, entry: any) => {
-                    if (!entry?.payload) return "";
-                    const p = entry.payload;
-                    return `${p.W1 + p.W2 + p.W3}M`;
+              <Bar dataKey="W3" stackId="r" fill={waveColor.W3} radius={[4, 4, 0, 0]}>
+                <LabelList dataKey="W3" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+                <LabelList
+                  position="top"
+                  content={(props: any) => {
+                    const { x, y, width, index } = props;
+                    const p = ROI_BASE[index];
+                    if (!p) return null;
+                    const total = (p as any).W1 + (p as any).W2 + (p as any).W3;
+                    if (!total) return null;
+                    const cx = x + width / 2;
+                    const cy = y - 12;
+                    const label = `${total}M`;
+                    const w = label.length * 7 + 12;
+                    return (
+                      <g>
+                        <rect x={cx - w / 2} y={cy - 9} width={w} height={18} rx={9} fill="hsl(var(--primary))" />
+                        <text x={cx} y={cy + 3} textAnchor="middle" fontSize={11} fontWeight={700} fill="hsl(var(--primary-foreground))">{label}</text>
+                      </g>
+                    );
                   }}
                 />
               </Bar>
