@@ -442,8 +442,13 @@ export default function GestaoProjeto() {
             </Card>
 
             <Card className="p-5 shadow-card">
-              <h3 className="font-semibold mb-4">Burn-rate acumulado</h3>
-              <ResponsiveContainer width="100%" height={240}>
+              <div className="mb-4">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-primary" /> Execução Financeira
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Burn-rate acumulado · Planejado vs Realizado (R$)</p>
+              </div>
+              <ResponsiveContainer width="100%" height={220}>
                 <RLineChart data={data.burnRate} margin={{ top: 16, right: 16 }}>
                   <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
                   <XAxis dataKey="mes" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" />
@@ -458,6 +463,57 @@ export default function GestaoProjeto() {
                   </Line>
                 </RLineChart>
               </ResponsiveContainer>
+            </Card>
+
+            {/* Execução do Escopo (EAP) — espelha a financeira */}
+            <Card className="p-5 shadow-card xl:col-span-3">
+              <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+                <div>
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <ListChecks className="h-4 w-4 text-info" /> Execução do Escopo (EAP)
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    % cumulativo de entregas · Planejado vs Realizado (com base nas datas previstas e de conclusão da EAP)
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 text-xs">
+                  {(() => {
+                    const entregas = editable.state.eap.flatMap(p => p.entregas);
+                    const total = entregas.length || 1;
+                    const concluidas = entregas.filter(e => e.dataConclusao).length;
+                    const hoje = new Date().toISOString().slice(0, 10);
+                    const planAteHoje = entregas.filter(e => e.dataPrevista && e.dataPrevista <= hoje).length;
+                    return (
+                      <>
+                        <Resumo label="Concluído" value={Math.round((concluidas / total) * 100)} color="hsl(var(--info))" suffix="%" />
+                        <Resumo label="Planejado até hoje" value={Math.round((planAteHoje / total) * 100)} color="hsl(var(--neutral))" suffix="%" />
+                        <Resumo label="Entregas" value={`${concluidas}/${total}` as any} color="hsl(var(--primary))" />
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+              {escopoExecucao.length > 0 ? (
+                <ResponsiveContainer width="100%" height={240}>
+                  <RLineChart data={escopoExecucao} margin={{ top: 16, right: 24 }}>
+                    <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
+                    <XAxis dataKey="mes" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                    <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}%`} domain={[0, 100]} stroke="hsl(var(--muted-foreground))" />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => v == null ? "—" : `${v}%`} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Line type="monotone" dataKey="planejado" name="Planejado" stroke="hsl(var(--neutral))" strokeDasharray="5 5" dot={{ r: 2 }}>
+                      <LabelList dataKey="planejado" position="top" style={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} formatter={(v: number) => v != null ? `${v}%` : ""} />
+                    </Line>
+                    <Line type="monotone" dataKey="realizado" name="Realizado" stroke="hsl(var(--info))" strokeWidth={2.5} dot={{ r: 3 }} connectNulls={false}>
+                      <LabelList dataKey="realizado" position="bottom" style={{ fill: "hsl(var(--info))", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v != null ? `${v}%` : ""} />
+                    </Line>
+                  </RLineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="text-center text-sm text-muted-foreground py-10">
+                  Sem entregas cadastradas na EAP para calcular execução do escopo.
+                </div>
+              )}
             </Card>
           </div>
         </TabsContent>
