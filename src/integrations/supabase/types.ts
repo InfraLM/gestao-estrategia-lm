@@ -713,6 +713,75 @@ export type Database = {
         }
         Relationships: []
       }
+      repositorio_documentos: {
+        Row: {
+          aprovado_em: string | null
+          aprovado_por: string | null
+          aprovado_por_nome: string | null
+          arquivo_nome: string | null
+          arquivo_path: string | null
+          arquivo_tamanho: number | null
+          arquivo_tipo: string | null
+          created_at: string
+          id: string
+          motivo_rejeicao: string | null
+          nome: string
+          observacoes: string | null
+          origem: string | null
+          proxima_revisao: string | null
+          repositorio: string
+          status: string
+          submitted_by: string
+          submitted_by_nome: string | null
+          updated_at: string
+          versao: string
+        }
+        Insert: {
+          aprovado_em?: string | null
+          aprovado_por?: string | null
+          aprovado_por_nome?: string | null
+          arquivo_nome?: string | null
+          arquivo_path?: string | null
+          arquivo_tamanho?: number | null
+          arquivo_tipo?: string | null
+          created_at?: string
+          id?: string
+          motivo_rejeicao?: string | null
+          nome: string
+          observacoes?: string | null
+          origem?: string | null
+          proxima_revisao?: string | null
+          repositorio: string
+          status?: string
+          submitted_by: string
+          submitted_by_nome?: string | null
+          updated_at?: string
+          versao?: string
+        }
+        Update: {
+          aprovado_em?: string | null
+          aprovado_por?: string | null
+          aprovado_por_nome?: string | null
+          arquivo_nome?: string | null
+          arquivo_path?: string | null
+          arquivo_tamanho?: number | null
+          arquivo_tipo?: string | null
+          created_at?: string
+          id?: string
+          motivo_rejeicao?: string | null
+          nome?: string
+          observacoes?: string | null
+          origem?: string | null
+          proxima_revisao?: string | null
+          repositorio?: string
+          status?: string
+          submitted_by?: string
+          submitted_by_nome?: string | null
+          updated_at?: string
+          versao?: string
+        }
+        Relationships: []
+      }
       riscos_institucionais: {
         Row: {
           acoes_mitigadoras: string | null
