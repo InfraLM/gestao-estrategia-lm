@@ -159,6 +159,8 @@ export default function Melhorias() {
       dataPrevista: draft.dataPrevista ?? "",
       dataConclusao: draft.dataConclusao,
       status: (draft.status as Status) ?? "Backlog",
+      objetivos: draft.objetivos ?? [],
+      krs: draft.krs ?? [],
     }]);
     setDraft({ classificacao: "Melhoria Contínua", status: "Backlog", area: areaSel ?? undefined });
     setOpen(false);
