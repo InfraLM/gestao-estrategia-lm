@@ -53,29 +53,32 @@ function fmtBRL(v?: number) {
 export default function MatrizRiscosInstitucionais() {
   const [gestao, setGestao] = useState<Record<string, any>>({});
   const [filtroNivel, setFiltroNivel] = useState<string>("todos");
+  const { data: riscosInst } = useRiscosInstitucionaisDB();
+  const { data: processos } = useProcessosDB();
+  const { data: projetos } = useProjetosDB();
 
   useEffect(() => {
     try { setGestao(JSON.parse(localStorage.getItem(GP_KEY) || "{}")); } catch { setGestao({}); }
   }, []);
 
   const riscosInstFiltrados = useMemo(() => {
-    return RISCOS_INSTITUCIONAIS
+    return riscosInst
       .map(r => ({ r, n: nivelDe(r.impacto, r.ocorrencia) }))
       .filter(x => filtroNivel === "todos" || x.n.nivel === filtroNivel)
       .sort((a, b) => b.n.valor - a.n.valor);
-  }, [filtroNivel]);
+  }, [filtroNivel, riscosInst]);
 
   const stats = useMemo(() => {
-    const totalInst = RISCOS_INSTITUCIONAIS.length;
-    const extremos = RISCOS_INSTITUCIONAIS.filter(r => r.impacto * r.ocorrencia >= 15).length;
-    const altos = RISCOS_INSTITUCIONAIS.filter(r => r.impacto * r.ocorrencia >= 10 && r.impacto * r.ocorrencia < 15).length;
-    const expFin = RISCOS_INSTITUCIONAIS.reduce((a, r) => a + (r.impactoFinanceiro || 0), 0);
+    const totalInst = riscosInst.length;
+    const extremos = riscosInst.filter(r => r.impacto * r.ocorrencia >= 15).length;
+    const altos = riscosInst.filter(r => r.impacto * r.ocorrencia >= 10 && r.impacto * r.ocorrencia < 15).length;
+    const expFin = riscosInst.reduce((a, r) => a + (r.impactoFinanceiro || 0), 0);
     return { totalInst, extremos, altos, expFin };
-  }, []);
+  }, [riscosInst]);
 
   // Riscos críticos vindos da matriz de riscos de PROCESSOS (apenas Alto/Extremo)
   const riscosProcessosCriticos = useMemo(() => {
-    const procsMap = new Map((processosSeed as any[]).map(p => [p.id, p]));
+    const procsMap = new Map(processos.map(p => [p.id, p]));
     const out: { processo: any; risco: any; n: ReturnType<typeof nivelDe> }[] = [];
     Object.entries(gestao).forEach(([pid, d]: any) => {
       (d?.riscos || []).forEach((r: any) => {
@@ -86,14 +89,14 @@ export default function MatrizRiscosInstitucionais() {
       });
     });
     return out.sort((a, b) => b.n.valor - a.n.valor);
-  }, [gestao]);
+  }, [gestao, processos]);
 
   // Riscos críticos vindos do controle de PROJETOS (saúde Off-Track ou desvio Riscos vermelho)
   const projetosCriticos = useMemo(() => {
     return projetos
       .filter(p => p.saude === "Off-Track" || (p.desvios || []).some(d => d.dimensao === "Riscos" && d.status === "vermelho"))
       .map(p => ({ p, riscoDesvio: (p.desvios || []).find(d => d.dimensao === "Riscos") }));
-  }, []);
+  }, [projetos]);
 
   return (
     <div className="space-y-6">
