@@ -7,14 +7,57 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw } from "lucide-react";
+import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw, Target } from "lucide-react";
 
 type Processo = (typeof processosSeed)[number] & {
-  maturidade?: number; // 1-5 CMMI
-  kpiValor?: number; // 0-100 % entrega de valor
+  maturidade?: number;
+  kpiValor?: number;
+  vinculo?: Record<string, number>; // codigo objetivo -> 0..3
 };
 
 const STORAGE_KEY = "matriz-processos-edits-v1";
+
+// Objetivos estratégicos (BSC LM)
+const OBJETIVOS = [
+  { codigo: "F.01", nome: "Previsibilidade de Caixa", perspectiva: "Financeira" },
+  { codigo: "F.02", nome: "Crescimento Rentável", perspectiva: "Financeira" },
+  { codigo: "C.01", nome: "Experiência WOW", perspectiva: "Cliente" },
+  { codigo: "C.02", nome: "Penetração de Mercado", perspectiva: "Cliente" },
+  { codigo: "C.03", nome: "Marca & Autoridade", perspectiva: "Cliente" },
+  { codigo: "P.01", nome: "Conversão Comercial", perspectiva: "Processos" },
+  { codigo: "P.02", nome: "Eficiência de Cobrança", perspectiva: "Processos" },
+  { codigo: "P.03", nome: "Automação de Processos Core", perspectiva: "Processos" },
+  { codigo: "AC.01", nome: "Cultura & Performance", perspectiva: "Aprendizagem" },
+  { codigo: "AC.02", nome: "Capacitação & Talentos", perspectiva: "Aprendizagem" },
+  { codigo: "AC.03", nome: "AI First · Human First", perspectiva: "Aprendizagem" },
+] as const;
+
+const PERSP_COLORS: Record<string, string> = {
+  "Financeira": "bg-emerald-500/15 text-emerald-700",
+  "Cliente": "bg-primary/15 text-primary",
+  "Processos": "bg-blue-500/15 text-blue-700",
+  "Aprendizagem": "bg-amber-500/15 text-amber-700",
+};
+
+function impactoFromTotal(total: number) {
+  if (total >= 12) return { label: "Forte", color: "bg-emerald-500/20 text-emerald-700 border-emerald-500/40" };
+  if (total >= 8)  return { label: "Moderado", color: "bg-blue-500/20 text-blue-700 border-blue-500/40" };
+  if (total >= 5)  return { label: "Fraco", color: "bg-amber-500/20 text-amber-700 border-amber-500/40" };
+  if (total > 0)   return { label: "Muito fraco", color: "bg-red-500/20 text-red-700 border-red-500/40" };
+  return { label: "Sem vínculo", color: "bg-muted text-muted-foreground border-border" };
+}
+
+function totalVinculo(p: Processo) {
+  return Object.values(p.vinculo || {}).reduce((a, b) => a + (Number(b) || 0), 0);
+}
+
+const VINC_CELL: Record<number, string> = {
+  0: "bg-muted/30 text-muted-foreground",
+  1: "bg-amber-500/15 text-amber-700",
+  2: "bg-blue-500/20 text-blue-700",
+  3: "bg-emerald-500/25 text-emerald-700 font-semibold",
+};
+
 
 const statusColors: Record<string, string> = {
   "BACKLOG": "bg-muted text-muted-foreground",
@@ -81,7 +124,7 @@ export default function MatrizProcessos() {
     data.forEach(p => {
       const seed = (processosSeed as Processo[]).find(s => s.id === p.id)!;
       const diff: Partial<Processo> = {};
-      (["nivel", "diretor", "status", "maturidade", "kpiValor"] as const).forEach(k => {
+      (["nivel", "diretor", "status", "maturidade", "kpiValor", "vinculo"] as const).forEach(k => {
         if ((p as any)[k] !== (seed as any)[k]) (diff as any)[k] = (p as any)[k];
       });
       if (Object.keys(diff).length) edits[p.id] = diff;
@@ -206,6 +249,7 @@ export default function MatrizProcessos() {
         <TabsList>
           <TabsTrigger value="lista">Lista</TabsTrigger>
           <TabsTrigger value="cadeia">Cadeia de Valor</TabsTrigger>
+          <TabsTrigger value="vinculo"><Target className="h-3.5 w-3.5 mr-1" />Vínculo Estratégico</TabsTrigger>
         </TabsList>
 
         <TabsContent value="lista">
@@ -332,6 +376,144 @@ export default function MatrizProcessos() {
             );
           })}
         </TabsContent>
+
+        <TabsContent value="vinculo">
+          <Card>
+            <CardHeader className="py-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Target className="h-4 w-4 text-primary" /> Vínculo Estratégico · Processos × Objetivos BSC
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">
+                Pontue 0 (sem vínculo), 1 (fraco), 2 (moderado) ou 3 (forte) o quanto cada processo contribui para cada objetivo. O impacto estratégico é calculado pela soma.
+              </p>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Tabs defaultValue="Financeira" className="w-full">
+                <div className="px-4 pt-2">
+                  <TabsList className="flex-wrap h-auto">
+                    {Array.from(new Set(OBJETIVOS.map(o => o.perspectiva))).map(p => (
+                      <TabsTrigger key={p} value={p} className="text-xs">
+                        <Badge variant="outline" className={`${PERSP_COLORS[p]} mr-1.5 px-1.5 py-0 text-[10px] border-0`}>
+                          {OBJETIVOS.filter(o => o.perspectiva === p).length}
+                        </Badge>
+                        {p}
+                      </TabsTrigger>
+                    ))}
+                    <TabsTrigger value="resumo" className="text-xs">Resumo</TabsTrigger>
+                  </TabsList>
+                </div>
+
+                {Array.from(new Set(OBJETIVOS.map(o => o.perspectiva))).map(persp => {
+                  const objs = OBJETIVOS.filter(o => o.perspectiva === persp);
+                  return (
+                    <TabsContent key={persp} value={persp} className="mt-0">
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="min-w-[280px] sticky left-0 bg-background z-10">Processo</TableHead>
+                              {objs.map(o => (
+                                <TableHead key={o.codigo} className="text-center w-[110px]">
+                                  <div className="font-semibold">{o.codigo}</div>
+                                  <div className="text-[10px] font-normal text-muted-foreground leading-tight mt-0.5">{o.nome}</div>
+                                </TableHead>
+                              ))}
+                              <TableHead className="text-center w-[100px]">Subtotal</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {filtered.map(p => (
+                              <TableRow key={p.id}>
+                                <TableCell className="font-medium text-xs sticky left-0 bg-background z-10">
+                                  <button onClick={() => setSelected(p)} className="text-left hover:underline">{p.nome}</button>
+                                </TableCell>
+                                {objs.map(o => {
+                                  const v = p.vinculo?.[o.codigo] ?? 0;
+                                  return (
+                                    <TableCell key={o.codigo} className="p-1">
+                                      <Select
+                                        value={String(v)}
+                                        onValueChange={val => updateField(p.id, "vinculo", { ...(p.vinculo || {}), [o.codigo]: Number(val) })}
+                                      >
+                                        <SelectTrigger className={`h-8 text-xs justify-center ${VINC_CELL[v]}`}>
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="0">0 · Sem vínculo</SelectItem>
+                                          <SelectItem value="1">1 · Fraco</SelectItem>
+                                          <SelectItem value="2">2 · Moderado</SelectItem>
+                                          <SelectItem value="3">3 · Forte</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </TableCell>
+                                  );
+                                })}
+                                <TableCell className="text-center text-xs font-semibold tabular-nums">
+                                  {objs.reduce((a, o) => a + (p.vinculo?.[o.codigo] ?? 0), 0)}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </TabsContent>
+                  );
+                })}
+
+                <TabsContent value="resumo" className="mt-0 p-4">
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="min-w-[280px]">Processo</TableHead>
+                          <TableHead className="w-[120px]">Diretor</TableHead>
+                          <TableHead className="text-center w-[100px]">Total</TableHead>
+                          <TableHead className="w-[160px]">Impacto Estratégico</TableHead>
+                          <TableHead className="text-left">Distribuição por perspectiva</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {[...filtered].sort((a, b) => totalVinculo(b) - totalVinculo(a)).map(p => {
+                          const total = totalVinculo(p);
+                          const imp = impactoFromTotal(total);
+                          const byPersp = Array.from(new Set(OBJETIVOS.map(o => o.perspectiva))).map(persp => ({
+                            persp,
+                            v: OBJETIVOS.filter(o => o.perspectiva === persp).reduce((a, o) => a + (p.vinculo?.[o.codigo] ?? 0), 0),
+                          }));
+                          const max = Math.max(1, ...byPersp.map(b => b.v));
+                          return (
+                            <TableRow key={p.id}>
+                              <TableCell className="font-medium text-xs">
+                                <button onClick={() => setSelected(p)} className="text-left hover:underline">{p.nome}</button>
+                              </TableCell>
+                              <TableCell className="text-xs">{p.diretor || "—"}</TableCell>
+                              <TableCell className="text-center font-semibold tabular-nums">{total}</TableCell>
+                              <TableCell><Badge variant="outline" className={`text-xs ${imp.color}`}>{imp.label}</Badge></TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  {byPersp.map(b => (
+                                    <div key={b.persp} className="flex-1 min-w-[60px]">
+                                      <div className="text-[10px] text-muted-foreground mb-0.5 flex justify-between">
+                                        <span>{b.persp.slice(0,4)}</span><span className="tabular-nums">{b.v}</span>
+                                      </div>
+                                      <div className="h-1.5 bg-surface-muted rounded-full overflow-hidden">
+                                        <div className={`h-full rounded-full ${PERSP_COLORS[b.persp]?.split(" ")[0] || "bg-primary"}`} style={{ width: `${(b.v / (max || 1)) * 100}%` }} />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       <Dialog open={!!selected} onOpenChange={o => !o && setSelected(null)}>
@@ -346,6 +528,7 @@ export default function MatrizProcessos() {
                   {selected.nivel && <Badge variant="outline" className={nivelColors[selected.nivel]}>{selected.nivel}</Badge>}
                   <Badge className={statusColors[selected.status] || "bg-muted"}>{selected.status}</Badge>
                   {selected.revisao && <Badge variant="outline">Revisão {selected.revisao}</Badge>}
+                  {(() => { const imp = impactoFromTotal(totalVinculo(selected)); return <Badge variant="outline" className={imp.color}><Target className="h-3 w-3 mr-1" />{imp.label} · {totalVinculo(selected)}</Badge>; })()}
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
