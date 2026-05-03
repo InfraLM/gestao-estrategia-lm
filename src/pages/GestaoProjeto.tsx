@@ -350,57 +350,9 @@ export default function GestaoProjeto() {
         {/* MATRIZ DE CUSTOS */}
         <TabsContent value="custos" className="mt-5">
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-            <Card className="p-5 shadow-card xl:col-span-2">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold">Matriz de Custos por Categoria</h3>
-                <span className="text-xs text-muted-foreground">BC × Orçado × Realizado</span>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-xs uppercase tracking-wider text-muted-foreground border-b border-border">
-                      <th className="text-left px-2 py-2 font-semibold">Categoria</th>
-                      <th className="text-right px-2 py-2 font-semibold">BC</th>
-                      <th className="text-right px-2 py-2 font-semibold">Orçado</th>
-                      <th className="text-right px-2 py-2 font-semibold">Realizado</th>
-                      <th className="text-right px-2 py-2 font-semibold">Δ vs BC</th>
-                      <th className="text-center px-2 py-2 font-semibold w-32">Execução</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.matrizCustos.map(c => {
-                      const delta = c.realizado - c.bc;
-                      const exec = c.orcado > 0 ? (c.realizado / c.orcado) * 100 : 0;
-                      return (
-                        <tr key={c.categoria} className="border-b border-border/50">
-                          <td className="px-2 py-2.5 font-medium">{c.categoria}</td>
-                          <td className="px-2 py-2 text-right tabular-nums text-muted-foreground">R$ {c.bc.toLocaleString("pt-BR")}</td>
-                          <td className="px-2 py-2 text-right tabular-nums">R$ {c.orcado.toLocaleString("pt-BR")}</td>
-                          <td className="px-2 py-2 text-right tabular-nums font-semibold">R$ {c.realizado.toLocaleString("pt-BR")}</td>
-                          <td className={cn("px-2 py-2 text-right tabular-nums font-semibold", delta > 0 ? "text-destructive" : "text-success")}>
-                            {delta > 0 ? "+" : ""}{((delta / Math.max(1, c.bc)) * 100).toFixed(1)}%
-                          </td>
-                          <td className="px-2 py-2">
-                            <div className="h-2 rounded-full bg-muted overflow-hidden">
-                              <div className={cn("h-full", exec > 100 ? "bg-destructive" : exec > 80 ? "bg-warning" : "bg-success")} style={{ width: `${Math.min(100, exec)}%` }} />
-                            </div>
-                            <div className="text-[10px] text-muted-foreground tabular-nums text-center mt-0.5">{exec.toFixed(0)}%</div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    <tr className="bg-surface-muted/40">
-                      <td className="px-2 py-2.5 font-bold">Total</td>
-                      <td className="px-2 py-2 text-right tabular-nums font-bold">R$ {data.totais.bc.toLocaleString("pt-BR")}</td>
-                      <td className="px-2 py-2 text-right tabular-nums font-bold">R$ {data.totais.orcado.toLocaleString("pt-BR")}</td>
-                      <td className="px-2 py-2 text-right tabular-nums font-bold">R$ {data.totais.realizado.toLocaleString("pt-BR")}</td>
-                      <td className="px-2 py-2 text-right" />
-                      <td className="px-2 py-2 text-right" />
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </Card>
+            <div className="xl:col-span-2">
+              <CustosEditavel matrizCustos={data.matrizCustos} totais={data.totais} projetoId={projeto.id} />
+            </div>
 
             <Card className="p-5 shadow-card">
               <div className="mb-4">
