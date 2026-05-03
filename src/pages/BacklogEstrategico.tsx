@@ -441,6 +441,9 @@ export default function BacklogEstrategico() {
                         </p>
                       </div>
                     </div>
+                    <Button size="sm" variant="outline" className="h-8" onClick={() => openEdit(i)}>
+                      <Pencil className="h-3.5 w-3.5 mr-1" /> Editar
+                    </Button>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-3 text-xs">
@@ -452,6 +455,45 @@ export default function BacklogEstrategico() {
                       <div className="font-semibold text-muted-foreground mb-1">Resultado Esperado</div>
                       <p>{i.resultadoEsperado}</p>
                     </div>
+                  </div>
+
+                  {/* Vínculos com iniciativas existentes */}
+                  <div className="mt-3 rounded-md border border-dashed border-primary/30 bg-primary/5 p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-1.5 text-[11px] font-semibold text-primary">
+                        <Link2 className="h-3.5 w-3.5" /> Iniciativas vinculadas
+                        <span className="text-muted-foreground font-normal">
+                          (Portfólio · Melhorias Estratégicas · Melhoria Contínua)
+                        </span>
+                      </div>
+                      <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => openEdit(i)}>
+                        <Plus className="h-3 w-3 mr-1" /> Vincular
+                      </Button>
+                    </div>
+                    {i.vinculos && i.vinculos.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {i.vinculos.map((v) => {
+                          const FIcon = fonteMeta[v.fonte].icon;
+                          const inner = (
+                            <Badge variant="outline" className={`text-[10px] ${fonteMeta[v.fonte].cor}`} title={`${v.fonte} · ${v.refId}`}>
+                              <FIcon className="h-3 w-3 mr-1" />
+                              <span className="font-mono mr-1">{v.refId}</span>
+                              <span className="truncate max-w-[220px]">{v.titulo}</span>
+                              {v.href && <ExternalLink className="h-2.5 w-2.5 ml-1 opacity-60" />}
+                            </Badge>
+                          );
+                          return v.href ? (
+                            <Link key={`${v.fonte}-${v.refId}`} to={v.href}>{inner}</Link>
+                          ) : (
+                            <span key={`${v.fonte}-${v.refId}`}>{inner}</span>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-muted-foreground italic">
+                        Nenhuma iniciativa vinculada. Use <strong>Vincular</strong> para conectar projetos do portfólio, melhorias estratégicas ou ações de melhoria contínua que sustentam ou executam esta iniciativa.
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap items-center gap-1.5 mt-3">
