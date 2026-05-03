@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow } from "lucide-react";
+import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,6 +20,7 @@ const navItems = [
   { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
   { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
   { to: "/status-report-processos", label: "Status Report de Processos", icon: LineChart },
+  { to: "/matriz-riscos", label: "Matriz de Riscos Institucionais", icon: ShieldAlert },
   { to: "/repositorio", label: "Repositório", icon: FolderArchive },
 ];
 
@@ -38,6 +39,7 @@ const titles: Record<string, string> = {
   "/dashboard-processos": "Dashboard de Processos · Visão Consolidada",
   "/matriz-processos": "Matriz de Processos · Cadeia de Valor LM",
   "/gestao-processos": "Gestão de Processos · Mapeamento e Análise",
+  "/matriz-riscos": "Matriz de Riscos Institucionais",
   "/repositorio": "Repositório · BCs e Documentos",
 };
 

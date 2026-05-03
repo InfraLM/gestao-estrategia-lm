@@ -21,6 +21,7 @@ import MatrizProcessos from "./pages/MatrizProcessos";
 import GestaoProcessos from "./pages/GestaoProcessos";
 import DashboardProcessos from "./pages/DashboardProcessos";
 import StatusReportProcessos from "./pages/StatusReportProcessos";
+import MatrizRiscosInstitucionais from "./pages/MatrizRiscosInstitucionais";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
 
@@ -52,6 +53,7 @@ const App = () => (
               <Route path="/gestao-processos" element={<GestaoProcessos />} />
               <Route path="/dashboard-processos" element={<DashboardProcessos />} />
               <Route path="/status-report-processos" element={<StatusReportProcessos />} />
+              <Route path="/matriz-riscos" element={<MatrizRiscosInstitucionais />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
