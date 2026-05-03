@@ -33,13 +33,13 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function DashboardProcessos() {
-  const [processos, setProcessos] = useState<Processo[]>([]);
+  const { data: processos } = useProcessosDB();
   const [gestao, setGestao] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    setProcessos(loadProcessos());
     setGestao(loadGestao());
   }, []);
+
 
   const stats = useMemo(() => {
     const total = processos.length;
