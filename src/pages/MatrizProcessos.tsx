@@ -119,6 +119,7 @@ export default function MatrizProcessos() {
   const [nivel, setNivel] = useState<string>("todos");
   const [diretor, setDiretor] = useState<string>("todos");
   const [status, setStatus] = useState<string>("todos");
+  const [zonaE2E, setZonaE2E] = useState<string>("todos");
   const [selected, setSelected] = useState<Processo | null>(null);
   const [data, setData] = useState<Processo[]>(() => {
     try {
