@@ -1,27 +1,58 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert } from "lucide-react";
+import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const navItems = [
-  { to: "/", label: "Dashboard Estratégico", icon: LayoutDashboard },
-  { to: "/diagnostico", label: "Diagnóstico Estratégico", icon: Compass },
-  { to: "/estrategia", label: "Estratégia LM", icon: Target },
-  { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
-  { to: "/portfolio", label: "Portfólio Estratégico", icon: LayoutGrid },
-  { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
-  { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
-  { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
-  { to: "/melhoria-continua", label: "Melhoria Contínua", icon: Repeat },
-  { to: "/dashboard-processos", label: "Dashboard de Processos", icon: LayoutDashboard },
-  { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
-  { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
-  { to: "/status-report-processos", label: "Status Report de Processos", icon: LineChart },
-  { to: "/matriz-riscos", label: "Matriz de Riscos Institucionais", icon: ShieldAlert },
-  { to: "/repositorio", label: "Repositório", icon: FolderArchive },
+type NavChild = { to: string; label: string; icon: any };
+type NavGroup = { id: string; label: string; icon: any; children: NavChild[] };
+
+const navGroups: NavGroup[] = [
+  {
+    id: "estrategia",
+    label: "Estratégia",
+    icon: Target,
+    children: [
+      { to: "/", label: "Dashboard Estratégico", icon: LayoutDashboard },
+      { to: "/diagnostico", label: "Diagnóstico Estratégico", icon: Compass },
+      { to: "/estrategia", label: "Estratégia LM", icon: Target },
+      { to: "/matriz-riscos", label: "Matriz de Riscos Institucionais", icon: ShieldAlert },
+      { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
+    ],
+  },
+  {
+    id: "pmo",
+    label: "PMO",
+    icon: Briefcase,
+    children: [
+      { to: "/portfolio", label: "Portfólio Estratégico", icon: LayoutGrid },
+      { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
+      { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
+      { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
+    ],
+  },
+  {
+    id: "bpmo",
+    label: "BPMO",
+    icon: GitBranch,
+    children: [
+      { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
+      { to: "/dashboard-processos", label: "Dashboard de Processos", icon: LayoutDashboard },
+      { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
+      { to: "/status-report-processos", label: "Status Report de Processos", icon: LineChart },
+      { to: "/melhoria-continua", label: "Melhoria Contínua", icon: Repeat },
+    ],
+  },
+  {
+    id: "outros",
+    label: "Repositório",
+    icon: FolderArchive,
+    children: [
+      { to: "/repositorio", label: "Repositório", icon: FolderArchive },
+    ],
+  },
 ];
 
 const titles: Record<string, string> = {
@@ -49,6 +80,7 @@ export default function AppLayout() {
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<{ display_name?: string | null; cargo?: string | null; email?: string | null } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!user) { setProfile(null); setIsAdmin(false); return; }
@@ -75,25 +107,54 @@ export default function AppLayout() {
             <div className="text-xs text-sidebar-foreground/60">Liberdade Médica</div>
           </div>
         </div>
-        <nav className="flex-1 px-3 py-5 space-y-1">
-          {navItems.map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === "/"}
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
-                  isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground border-l-2 border-primary"
-                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
-                )
-              }
-            >
-              <Icon className="h-4 w-4" />
-              <span>{label}</span>
-            </NavLink>
-          ))}
+        <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+          {navGroups.map((group) => {
+            const isGroupActive = group.children.some((c) =>
+              c.to === "/" ? loc.pathname === "/" : loc.pathname.startsWith(c.to)
+            );
+            const isOpen = openGroups[group.id] ?? isGroupActive;
+            const GroupIcon = group.icon;
+            return (
+              <div key={group.id} className="space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => setOpenGroups((s) => ({ ...s, [group.id]: !isOpen }))}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-colors",
+                    isGroupActive
+                      ? "text-sidebar-foreground"
+                      : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60"
+                  )}
+                >
+                  <GroupIcon className="h-4 w-4" />
+                  <span className="flex-1 text-left">{group.label}</span>
+                  <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-0" : "-rotate-90")} />
+                </button>
+                {isOpen && (
+                  <div className="ml-3 pl-3 border-l border-sidebar-border/60 space-y-0.5">
+                    {group.children.map(({ to, label, icon: Icon }) => (
+                      <NavLink
+                        key={to}
+                        to={to}
+                        end={to === "/"}
+                        className={({ isActive }) =>
+                          cn(
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                            isActive
+                              ? "bg-sidebar-accent text-sidebar-accent-foreground border-l-2 border-primary"
+                              : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+                          )
+                        }
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span>{label}</span>
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
         <div className="px-4 py-4 border-t border-sidebar-border text-xs text-sidebar-foreground/50">
           v1.0 · Wave 1 · 2026
