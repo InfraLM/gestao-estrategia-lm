@@ -182,9 +182,30 @@ export default function Portfolio() {
             <button onClick={() => setView("tabela")} className={cn("h-8 px-3 rounded text-sm flex items-center gap-1.5", view === "tabela" ? "bg-foreground text-background" : "text-muted-foreground")}><LayoutList className="h-4 w-4" /> Tabela</button>
             <button onClick={() => setView("kanban")} className={cn("h-8 px-3 rounded text-sm flex items-center gap-1.5", view === "kanban" ? "bg-foreground text-background" : "text-muted-foreground")}><Columns3 className="h-4 w-4" /> Kanban</button>
           </div>
-          <Button onClick={() => nav("/submissao")} className="gap-2 shadow-primary"><Plus className="h-4 w-4" /> Novo Projeto</Button>
+          <Button onClick={() => setSubmitOpen(o => !o)} className="gap-2 shadow-primary">
+            <Plus className="h-4 w-4" /> Novo Projeto Estratégico
+            {submitOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </Button>
         </div>
       </div>
+
+      {/* Submissão de Projeto Estratégico (oculto por padrão) */}
+      <Collapsible open={submitOpen} onOpenChange={setSubmitOpen}>
+        <CollapsibleContent className="data-[state=open]:animate-fade-in">
+          <Card className="p-4 md:p-6 shadow-card border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="font-semibold flex items-center gap-2"><Plus className="h-4 w-4 text-primary" /> Submeter Projeto Estratégico ao Portfólio</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Preencha o formulário abaixo. A IA auxilia no preenchimento e na avaliação.</p>
+              </div>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1.5"><ChevronUp className="h-3.5 w-3.5" /> Recolher</Button>
+              </CollapsibleTrigger>
+            </div>
+            <Submissao />
+          </Card>
+        </CollapsibleContent>
+      </Collapsible>
 
       {/* Filters */}
       <Card className="p-4 shadow-card">
