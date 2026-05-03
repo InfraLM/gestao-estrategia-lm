@@ -85,7 +85,14 @@ const titles: Record<string, string> = {
   "/matriz-processos": "Matriz de Processos · Cadeia de Valor LM",
   "/gestao-processos": "Gestão de Processos · Mapeamento e Análise",
   "/matriz-riscos": "Matriz de Riscos Institucionais",
-  "/repositorio": "Repositório · BCs e Documentos",
+  "/historico/projetos": "Histórico de Projetos · Versões de Documentos",
+  "/historico/processos": "Histórico de Processos · Versões de Documentos",
+  "/historico/governanca": "Histórico de Governança · Atas e Deliberações",
+  "/historico/infra-tech": "Histórico de Infra & Tech · Arquiteturas e Runbooks",
+  "/repositorios/frameworks": "Frameworks Vigentes · Repositório Controlado",
+  "/repositorios/processos-publicados": "Processos Publicados · Repositório Controlado",
+  "/repositorios/documentos-controlados": "Documentos Controlados · Controle de Qualidade",
+  "/repositorios/politicas-institucionais": "Políticas Institucionais · Repositório Controlado",
 };
 
 export default function AppLayout() {
