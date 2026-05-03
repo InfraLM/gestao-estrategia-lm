@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Target, Compass, Trophy, Telescope, Rocket, Layers, Shield, TrendingUp, Users, Cog, GraduationCap, Heart, DollarSign, Building2, Sparkles } from "lucide-react";
+import { Target, Compass, Trophy, Telescope, Rocket, Layers, Shield, TrendingUp, Users, Cog, GraduationCap, Heart, DollarSign, Building2, Sparkles, Lightbulb, Grid2x2 } from "lucide-react";
 import EstrategiaToolInsights from "@/components/EstrategiaToolInsights";
 
 const FERRAMENTAS = {
@@ -110,6 +110,169 @@ const vrin = [
   { ativo: "Integração longitudinal da jornada", risco: "Fragmentação destrói LTV" },
   { ativo: "Cultura e comunidade", risco: "Sem rituais, comunidade esvazia" },
   { ativo: "Parceria âncora (Hosp. Jacob Facuri)", risco: "Sem legitimidade externa, vira selo interno fraco" },
+];
+
+const FERRAMENTAS_SWOT = {
+  descricao: "Síntese de Forças e Fraquezas (internas) e Oportunidades e Ameaças (externas). O cruzamento entre quadrantes (FO/FA/WO/WT) gera as hipóteses estratégicas que alimentam o BSC, OKRs e o backlog de iniciativas.",
+  referencia: "Albert Humphrey — Stanford SRI (1960s); Andrews — The Concept of Corporate Strategy (1971); Weihrich — TOWS Matrix, Long Range Planning (1982).",
+};
+
+// SWOT consolidado (extraído de Construcao_Estratégia_LM)
+const swot = {
+  forcas: [
+    "Propósito claro: formar médicos para salvar vidas",
+    "Imersões clínicas supervisionadas + centro de simulação próprio",
+    "Time médico fundador com vivência prática e credibilidade",
+    "Foco em raciocínio clínico aplicado + simulação",
+    "Abordagem híbrida (presencial + EAD) com potencial em IA médica",
+    "Time ágil com alta adaptabilidade",
+    "Alinhamento à exigência de pós lato sensu de 1.800h",
+    "Marca forte no nicho e melhor avaliação Google da categoria",
+    "Maior carga horária do mercado, plantão flexível, dupla certificação",
+    "NPS alto, prova social forte e autoridade no mercado",
+    "Equipe e cultura: time comercial engajado",
+    "Margem alta do produto",
+    "Flexibilidade e ambiente que incentiva autonomia",
+  ],
+  fraquezas: [
+    "Processos internos não padronizados, dificultando escala",
+    "Escassez de professores médicos disponíveis",
+    "Falta de reconhecimento formal por MEC/CFM",
+    "Baixa presença de indicadores de impacto clínico (KPIs)",
+    "Custo elevado de simulação e tecnologia",
+    "Dependência da infraestrutura do hospital parceiro em Goiânia",
+    "Time de automação limitado frente à demanda; time júnior",
+    "Inadimplência alta",
+    "Falta de KPIs internos e gestão da informação; base não confiável",
+    "Concentração de know-how em pessoas-chave (gestão do conhecimento frágil)",
+    "Ausência de governança corporativa e de planejamento estratégico",
+    "Falta de clareza de papéis e estrutura organizacional",
+    "Churn alto e retenção do time fragilizada",
+    "Falta de canal de comunicação confiável e gestão planejado x realizado",
+    "Ausência de portfólio de produtos e de gestão de sistemas/acessos",
+    "Time muito próximo (amigos) — risco de imaturidade decisória",
+  ],
+  oportunidades: [
+    "Edtech ~17% a.a.; educação médica +18,4% a.a. (2025–2029)",
+    "Demanda contínua por atualização clínico-tecnológica e IA em saúde",
+    "Brasil: alta abertura de médicos a IA na prática clínica",
+    "Preferência por formatos híbridos, modulares e flexíveis",
+    "Capital robusto para healthtech (US$ 3 bi nos EUA no 1T25)",
+    "Novas DCNs: ≥10% de carga horária tecnológica; PBL e prática SUS",
+    "Expansão do Mais Médicos (15 mil vagas) reforça paciente grave",
+    "Telemedicina institucionalizada (Lei 14.510/2022 + SUS Digital)",
+    "ENAMED valoriza cursos robustos; 40 mil recém-formados/ano frágeis",
+    "Sandbox ANS/ANVISA para simulação e VR",
+    "Pressão ESG (COP-30) favorece polos regionais",
+    "Demanda por emergencistas/intensivistas (envelhecimento)",
+    "Geração Z médica espera formatos híbridos e acessíveis",
+    "Fundos públicos/privados (FINEP, Start-Ed, Start-Up Brasil)",
+    "Produtos financeiros para alunos e remuneração variável para o time",
+    "Produtos de comunidade e parcerias B2B (ex.: POCUS)",
+  ],
+  ameacas: [
+    "Pressão regulatória (ANVISA, LGPD, marco legal de IA)",
+    "Concorrência capitalizada nacional/internacional (Sanar, Afya etc.)",
+    "Escassez de formadores em IA, ética e simulação avançada",
+    "Cibersegurança e vazamento de dados sensíveis",
+    "Desigualdades regionais de infraestrutura limitam adesão",
+    "Possível endurecimento de regras CFM/MEC para cursos livres",
+    "Sensibilidade a preço de estudantes e jovens médicos",
+    "Expectativa elevada de aplicabilidade clínica imediata",
+    "Obsolescência tecnológica rápida sem atualização constante",
+    "Alto custo de manter infra física, simuladores e parcerias",
+    "Substituição por conteúdos gratuitos (YouTube, apps, grupos)",
+    "Entrada constante de novos players em educação médica",
+    "Poder de barganha alto dos médicos-clientes",
+    "CFM 2.386/2024: transparência obrigatória em patrocínios",
+    "Dependência excessiva de canais digitais para captação",
+    "Comunidade médica deslegitimando modelos inovadores",
+    "Risco ético no uso de IA em produtos com IA nativa",
+  ],
+};
+
+// Hipóteses estratégicas — cruzamentos SWOT (4 cenários)
+const hipoteses = [
+  {
+    cenario: "Cenário 1 · Alavancagem (F + O)",
+    descricao: "Potencializar oportunidades com forças internas. Cenário favorável a investimento e expansão.",
+    cor: "border-success/40 bg-success/5",
+    badge: "bg-success/10 text-success border-success/30",
+    itens: [
+      { cruzamento: "Centro de simulação próprio + DCNs valorizam prática e tecnologia", hipotese: "Posicionar o centro como laboratório de referência e ofertar serviço B2B/B2G a IES, ET-SUS e prefeituras (Cuiabá, Inhumas)." },
+      { cruzamento: "Propósito de salvar vidas + políticas públicas de digitalização", hipotese: "Parcerias com UNA-SUS e hospitais-escola, capturando verba direcionada à saúde." },
+      { cruzamento: "Equipe médica fundadora + demanda por IA em saúde", hipotese: "Cursos de IA médica liderados por médicos reais, com selo de curadoria clínica." },
+      { cruzamento: "Imersões clínicas + nova geração busca prática + tech", hipotese: "Trilha híbrida e gamificada (simulação + telemedicina + prática) e produto preparatório para Teste de Proficiência Médica." },
+      { cruzamento: "Centro de simulação + sandbox ANS/ANVISA", hipotese: "Consolidar o centro como polo regulado de testes e educação médica digital." },
+      { cruzamento: "Pós robusta (1.800h) + fiscalização sobre lato sensu fracos", hipotese: "Selo próprio de qualidade + buscar selos MEC/ICP/internacionais como benchmark do setor." },
+      { cruzamento: "Demanda no sudeste + diferencial do produto", hipotese: "Abrir filial da LM em São Paulo." },
+      { cruzamento: "Canais digitais com LTV/CAC > 30", hipotese: "Dobrar investimento nos 3 canais com maior ROAS (+40% lead qualificado, redução de CPL)." },
+      { cruzamento: "Volume alto de alunos + NPS > 90", hipotese: "Programa de indicação gamificado pós-NPS: 20% das matrículas via referral, CAC -25%." },
+      { cruzamento: "Prática 1.800h + DCN exige uso de tecnologia", hipotese: "Transformar horas práticas em módulo de IA no centro de simulação." },
+      { cruzamento: "Mais Médicos 15k + autoridade em paciente grave", hipotese: "Módulo B2G “Critical Care Upskill” para prefeituras." },
+      { cruzamento: "Expansão geográfica das imersões", hipotese: "Firmar hospital-convênio em SP e Recife (1 ciclo de imersão por hub)." },
+      { cruzamento: "Marca forte + portfólio + time engajado", hipotese: "Lançar Clube da Liberdade — produto de comunidade." },
+      { cruzamento: "Autoridade em emergência + Lei 14.510/22 + marco IA", hipotese: "1º certificado brasileiro integrando telemedicina, IA clínica e ética digital em decisões críticas." },
+      { cruzamento: "CFM define o que é especialista + maior carga horária prática", hipotese: "Capturar mercado de prova de título e proficiência médica com a Pós LM." },
+      { cruzamento: "Diferenciação prática + sustentabilidade", hipotese: "Levar dupla certificação a polos regionais, reduzindo custo logístico e impacto ambiental." },
+      { cruzamento: "Foco no aluno + comunidade longitudinal", hipotese: "Ampliar LM Club como comunidade de alumni com monetização recorrente." },
+      { cruzamento: "Governança e IA nativa", hipotese: "Contratar CTO para estruturar governança de IA e alavancar iniciativas com IA na empresa." },
+    ],
+  },
+  {
+    cenario: "Cenário 2 · Defesa (F + A)",
+    descricao: "Mitigar ameaças usando forças. Estratégia de blindagem — proteger ativos até a ameaça passar.",
+    cor: "border-info/40 bg-info/5",
+    badge: "bg-info/10 text-info border-info/30",
+    itens: [
+      { cruzamento: "Centro de simulação + ameaça regulatória em prática hospitalar", hipotese: "Garantir prática via simulação própria e formalizar parcerias com hospitais universitários/IES como escudo regulatório." },
+      { cruzamento: "Equipe médica experiente + risco de substituição por apps gratuitos", hipotese: "Diferenciação por professores reais e prática presencial de excelência (conteúdo + experiência insubstituível)." },
+      { cruzamento: "Marca com propósito + obsolescência tecnológica", hipotese: "Célula de inovação contínua olhando portfólio para o ICP, com time tech/parcerias para produtos com IA nativa." },
+      { cruzamento: "Imersão prática + concorrência com grandes players", hipotese: "Programa premium com selo de excelência clínica não replicável por players genéricos." },
+      { cruzamento: "Simulação com IA + regulação de IA médica", hipotese: "Núcleo de governança algorítmica com documentação ética/técnica e parceria CEIA-UFG." },
+      { cruzamento: "Marca ética + regulação CFM sobre patrocínios", hipotese: "Política de transparência de parceiros e patrocínios com compliance preventivo (CFM 2.386/2024)." },
+      { cruzamento: "Autoridade clínica + endurecimento MEC para híbridos", hipotese: "Escudo regulatório: chancela via faculdade própria + selo de tecnologia confiável (segurança algorítmica)." },
+      { cruzamento: "Sensibilidade a preço (S+T #2)", hipotese: "Camadas de produto acessíveis e premium — Preço Justo & Valor Clínico." },
+      { cruzamento: "Obsolescência tecnológica (S+T #3)", hipotese: "Innovation Squad 90-Day: revisar 30% dos módulos críticos a cada 3 anos; ciclo 12→3 meses; NPS ≥ 80." },
+      { cruzamento: "Dependência de key-people (S+T #5)", hipotese: "Backup de Conhecimento & Instrutor-Mentor: SOPs + shadow week → -50% dependência em 6 meses." },
+      { cruzamento: "Posicionamento ESG (S+T #6)", hipotese: "ESG-Ready Hospital Partnership: contrato 3 anos com créditos de carbono → previsibilidade + selo ESG." },
+    ],
+  },
+  {
+    cenario: "Cenário 3 · Limitação (W + O)",
+    descricao: "Fraquezas atrapalham aproveitar oportunidades. Reforçar capacidades para destravar avenidas.",
+    cor: "border-warning/40 bg-warning/5",
+    badge: "bg-warning/10 text-warning border-warning/30",
+    itens: [
+      { cruzamento: "Processos não padronizados + editais Start-Ed/FINEP (W+O #1)", hipotese: "ProcessOps Grant: mapear 10 processos-chave, SOPs ClickUp + automações n8n financiadas → -30% lead-time." },
+      { cruzamento: "Escassez de docentes + trilhas de IA e digital", hipotese: "Usar IA para acelerar produção de conteúdo base com revisão médica posterior (projeto CEIA)." },
+      { cruzamento: "Ausência de KPIs clínicos + ENAMED", hipotese: "Dashboards de desempenho do aluno por competências médicas reais, posicionando como suporte ao ENAMED." },
+      { cruzamento: "Baixa escalabilidade prática + fundos públicos de inovação", hipotese: "Captar FINEP/Start-Ed para escalar plataforma com impacto social e validação clínica." },
+      { cruzamento: "W+O #2 — Faculty Cloud", hipotese: "Marketplace de Professores remotos com micro-aulas → dobrar corpo docente, -20% custo/hora." },
+      { cruzamento: "W+O #6 — Comms One-Stop", hipotese: "Centralizar comunicação em ClickUp Chat + Check-In 15’ semanal → -30% ruído e retrabalho." },
+      { cruzamento: "Processos não padronizados + polos regionais", hipotese: "Padronizar protocolos de entrega para replicar polos com qualidade controlada." },
+      { cruzamento: "Falta de reconhecimento formal + Estratégia SUS Digital", hipotese: "Convênios com hospitais públicos e universidades para validar módulos online práticos." },
+    ],
+  },
+  {
+    cenario: "Cenário 4 · Vulnerabilidade (W + A)",
+    descricao: "Fraquezas potencializam ameaças. Repensar negócio/operação — sobrevivência e blindagem mínima.",
+    cor: "border-destructive/40 bg-destructive/5",
+    badge: "bg-destructive/10 text-destructive border-destructive/30",
+    itens: [
+      { cruzamento: "Falta de reconhecimento formal + fiscalização crescente", hipotese: "Convênios com instituições reconhecidas como extensão oficial da formação médica (respaldo jurídico)." },
+      { cruzamento: "Baixo controle LGPD + risco legal por dados sensíveis", hipotese: "Núcleo de compliance digital com políticas de proteção, consentimento e auditoria." },
+      { cruzamento: "Dependência de poucos especialistas + pressão por escala", hipotese: "Rede de mentores clínicos replicável (capacitação interna + franquia de conteúdo supervisionado)." },
+      { cruzamento: "Custo de simulação + concorrência por preço/substitutos gratuitos", hipotese: "Acesso modular e assinatura recorrente — formatos acessíveis sem perder valor clínico." },
+      { cruzamento: "Críticas por deslocamento + pressão ambiental", hipotese: "Compensar carbono e lançar polos regionais, integrando ESG à narrativa institucional." },
+      { cruzamento: "Falta de KPIs + regulação futura de IA", hipotese: "Sistema de medição de eficácia clínica nos simuladores com dados anonimizados para auditorias." },
+      { cruzamento: "W+T #1 — Plano Anti-Inadimplência", hipotese: "Estruturar time financeiro + responsável por cobrança + avaliação de crédito do aluno." },
+      { cruzamento: "W+T #2 — MEC Fast-Track", hipotese: "Consultoria regulatória + protocolar lato sensu até Q1/26 (continuidade + selo premium)." },
+      { cruzamento: "W+T #6 — Faculty Retention Shield", hipotese: "Programa de experiência do mentor para reter docentes contra Sanar/Afya." },
+      { cruzamento: "W+T #3 — Ops Automation Surge", hipotese: "Sprints RPA low-code com parceiro n8n certificado para cobrir backlog 2025 (Zeev)." },
+      { cruzamento: "W+T #4 — Knowledge Vault", hipotese: "Repositório GitBook + vídeo SOP + Instrutor-Mentor → -50% dependência em 6 meses." },
+    ],
+  },
 ];
 
 export default function Estrategia() {
@@ -325,6 +488,74 @@ export default function Estrategia() {
                 ))}
               </div>
               <EstrategiaToolInsights ferramenta="VRIN / RBV" {...FERRAMENTAS.VRIN} />
+            </CardContent>
+          </Card>
+
+          {/* SWOT */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Grid2x2 className="h-5 w-5 text-primary" />
+                <CardTitle>Matriz SWOT</CardTitle>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Diagnóstico interno (Forças/Fraquezas) e externo (Oportunidades/Ameaças) consolidado a partir de PESTEL, 5 Forças e RBV. Base para gerar as hipóteses estratégicas.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                {[
+                  { titulo: "Forças", itens: swot.forcas, cor: "border-success/40 bg-success/5", chip: "bg-success/15 text-success" },
+                  { titulo: "Fraquezas", itens: swot.fraquezas, cor: "border-destructive/40 bg-destructive/5", chip: "bg-destructive/15 text-destructive" },
+                  { titulo: "Oportunidades", itens: swot.oportunidades, cor: "border-info/40 bg-info/5", chip: "bg-info/15 text-info" },
+                  { titulo: "Ameaças", itens: swot.ameacas, cor: "border-warning/40 bg-warning/5", chip: "bg-warning/15 text-warning" },
+                ].map((q) => (
+                  <div key={q.titulo} className={`p-4 rounded-lg border ${q.cor}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-semibold text-sm uppercase tracking-wide">{q.titulo}</h4>
+                      <Badge variant="outline" className={`text-[10px] ${q.chip} border-0`}>{q.itens.length}</Badge>
+                    </div>
+                    <ul className="space-y-1.5 text-xs text-muted-foreground leading-relaxed">
+                      {q.itens.map((i) => <li key={i} className="flex gap-2"><span className="text-foreground/60 mt-0.5">·</span><span>{i}</span></li>)}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+              <EstrategiaToolInsights ferramenta="Matriz SWOT" {...FERRAMENTAS_SWOT} />
+            </CardContent>
+          </Card>
+
+          {/* HIPÓTESES ESTRATÉGICAS */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Lightbulb className="h-5 w-5 text-primary" />
+                <CardTitle>Hipóteses Estratégicas · Cruzamentos SWOT</CardTitle>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Combinação de variáveis SWOT em 4 cenários para gerar possibilidades de ação. As hipóteses validadas alimentam OKRs, business cases e o backlog estratégico.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {hipoteses.map((c) => (
+                <div key={c.cenario} className={`rounded-lg border p-4 ${c.cor}`}>
+                  <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
+                    <h4 className="font-semibold text-sm">{c.cenario}</h4>
+                    <Badge variant="outline" className={`text-[10px] ${c.badge}`}>{c.itens.length} hipóteses</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{c.descricao}</p>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {c.itens.map((h, idx) => (
+                      <div key={idx} className="p-3 rounded-md bg-card border border-border">
+                        <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">Cruzamento</div>
+                        <p className="text-xs mb-2 leading-snug">{h.cruzamento}</p>
+                        <div className="text-[11px] font-semibold text-primary uppercase tracking-wide mb-1">Hipótese</div>
+                        <p className="text-xs text-foreground/80 leading-snug">{h.hipotese}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </CardContent>
           </Card>
         </TabsContent>
