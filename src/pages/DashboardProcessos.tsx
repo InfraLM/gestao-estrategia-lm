@@ -221,7 +221,7 @@ export default function DashboardProcessos() {
                 <Badge variant="outline" className="text-[10px]">{z.zona.id}</Badge>
                 <span className="text-[10px] text-muted-foreground">{z.total} proc.</span>
               </div>
-              <div className="text-sm font-medium mt-1 leading-tight">{z.zona.nome}</div>
+              <div className="text-sm font-medium mt-1 leading-tight">{z.zona.titulo}</div>
               <div className="mt-2 flex items-center justify-between text-xs">
                 <span className="text-muted-foreground">Vigentes</span>
                 <span className="font-medium text-emerald-700">{z.vigentes}/{z.total}</span>
