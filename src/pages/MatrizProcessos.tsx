@@ -163,10 +163,14 @@ export default function MatrizProcessos() {
       if (nivel !== "todos" && p.nivel !== nivel) return false;
       if (diretor !== "todos" && p.diretor !== diretor) return false;
       if (status !== "todos" && p.status !== status) return false;
+      if (zonaE2E !== "todos") {
+        const zs = zonesForProcesso(p.nome).map(z => z.id);
+        if (!zs.includes(zonaE2E)) return false;
+      }
       if (q && !p.nome.toLowerCase().includes(q) && !p.dono.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [search, nivel, diretor, status, data]);
+  }, [search, nivel, diretor, status, zonaE2E, data]);
 
   const stats = useMemo(() => {
     const total = data.length;
