@@ -54,7 +54,7 @@ export default function Auth() {
     <div className="min-h-screen grid place-items-center p-6 bg-gradient-to-br from-background to-muted/30">
       <Card className="w-full max-w-md p-8 shadow-elevated">
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">PMO Liberdade Médica</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">NextLevel LM</h1>
           <p className="text-sm text-muted-foreground mt-1">Entre para acessar o portfólio</p>
         </div>
         <Tabs defaultValue="signin">
