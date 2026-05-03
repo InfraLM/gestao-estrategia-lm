@@ -1,15 +1,27 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Popover, PopoverContent, PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   ListChecks, ShieldAlert, Sword, Sparkles, Compass, Filter,
   Building2, Gavel, AlertTriangle, Target, Zap, TrendingUp,
+  Link2, Pencil, Plus, X, Briefcase, Repeat, GitBranch, ExternalLink,
 } from "lucide-react";
+import { projetos } from "@/data/mockData";
 
 // ===== Tipagem =====
 type Tipo = "Reforço de Fraqueza" | "Defesa Identificada" | "Potencializar Força" | "Explorar Oportunidade";
