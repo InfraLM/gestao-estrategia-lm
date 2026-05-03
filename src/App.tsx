@@ -51,6 +51,7 @@ const App = () => (
               <Route path="/matriz-processos" element={<MatrizProcessos />} />
               <Route path="/gestao-processos" element={<GestaoProcessos />} />
               <Route path="/dashboard-processos" element={<DashboardProcessos />} />
+              <Route path="/status-report-processos" element={<StatusReportProcessos />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
