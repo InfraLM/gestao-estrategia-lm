@@ -20,6 +20,7 @@ import BacklogEstrategico from "./pages/BacklogEstrategico";
 import MatrizProcessos from "./pages/MatrizProcessos";
 import GestaoProcessos from "./pages/GestaoProcessos";
 import DashboardProcessos from "./pages/DashboardProcessos";
+import StatusReportProcessos from "./pages/StatusReportProcessos";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
 
