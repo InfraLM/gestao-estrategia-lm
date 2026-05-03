@@ -2,6 +2,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Target, Compass, Trophy, Telescope, Rocket, Layers, Shield, TrendingUp, Users, Cog, GraduationCap, Heart, DollarSign, Building2, Sparkles } from "lucide-react";
+import EstrategiaToolInsights from "@/components/EstrategiaToolInsights";
+
+const FERRAMENTAS = {
+  ICP: {
+    descricao: "Perfil de Cliente Ideal (ICP) define quem é o cliente que mais se beneficia da oferta e gera maior LTV. Foca esforços de aquisição, produto e atendimento no segmento com melhor fit estratégico, evitando dispersão.",
+    referencia: "Lincoln Murphy — Sales Acceleration Formula / Customer Success: How Innovative Companies Are Reducing Churn (2016).",
+  },
+  PlayToWin: {
+    descricao: "Framework de cinco escolhas integradas: Aspiração vencedora, Onde Jogar, Como Vencer, Capacidades necessárias, Sistemas de gestão. Garante coerência entre escopo competitivo e diferenciação.",
+    referencia: "A. G. Lafley & Roger L. Martin — Playing to Win: How Strategy Really Works (Harvard Business Review Press, 2013).",
+  },
+  Ansoff: {
+    descricao: "Matriz que cruza produtos (existentes/novos) com mercados (existentes/novos), gerando 4 avenidas de crescimento: Penetração, Desenvolvimento de Mercado, Desenvolvimento de Produto e Diversificação. Permite balancear risco e ambição.",
+    referencia: "H. Igor Ansoff — Strategies for Diversification, Harvard Business Review (1957); Corporate Strategy (McGraw-Hill, 1965).",
+  },
+  OceanoAzul: {
+    descricao: "Matriz ERRC (Eliminar, Reduzir, Elevar, Criar) reconfigura a curva de valor do setor para tornar a concorrência irrelevante, criando demanda em espaço de mercado novo (oceano azul) em vez de competir em mercado saturado (oceano vermelho).",
+    referencia: "W. Chan Kim & Renée Mauborgne — Blue Ocean Strategy (Harvard Business Review Press, 2005; ed. expandida 2015).",
+  },
+  VRIN: {
+    descricao: "Visão Baseada em Recursos (RBV) avalia se um recurso é fonte de vantagem competitiva sustentável pelos critérios VRIN: Valioso, Raro, Inimitável e Não-substituível (também conhecido como VRIO).",
+    referencia: "Jay B. Barney — Firm Resources and Sustained Competitive Advantage, Journal of Management (1991); Gaining and Sustaining Competitive Advantage (Pearson, 2014).",
+  },
+  BSC: {
+    descricao: "Balanced Scorecard traduz a estratégia em objetivos e indicadores em 4 perspectivas equilibradas: Financeira, Cliente, Processos Internos e Aprendizado & Crescimento, conectados por relações de causa e efeito (mapa estratégico).",
+    referencia: "Robert S. Kaplan & David P. Norton — The Balanced Scorecard: Translating Strategy into Action (Harvard Business School Press, 1996); Strategy Maps (2004).",
+  },
+  Pilares: {
+    descricao: "Pilares estratégicos não-negociáveis: condições necessárias (must-haves) que sustentam a tese. Se qualquer um falhar, a vantagem competitiva colapsa. Análoga ao conceito de 'core competencies' e 'must-win battles'.",
+    referencia: "Hamel & Prahalad — The Core Competence of the Corporation, HBR (1990); Killing & Malnight — Must-Win Battles (Wharton, 2005).",
+  },
+};
+
 
 const ambicaoCards = [
   { icon: Compass, title: "Norte Estratégico", text: "Construir um ecossistema educacional médico que desenvolve competência clínica real, reduz risco assistencial e sustenta vínculo econômico recorrente, com ambição explícita de impacto social mensurável (1M de vidas salvas)." },
