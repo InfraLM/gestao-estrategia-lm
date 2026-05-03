@@ -418,7 +418,28 @@ export default function BacklogEstrategico() {
         </TabsList>
 
         <TabsContent value="cards" className="space-y-3 mt-4">
-          {filtradas.map((i) => {
+          {(["W1", "W2", "W3"] as Wave[]).map(w => {
+            const grupo = filtradas.filter(i => i.wave === w);
+            if (!grupo.length) return null;
+            const waveTone: Record<Wave, string> = {
+              W1: "bg-success/10 text-success border-success/30",
+              W2: "bg-info/10 text-info border-info/30",
+              W3: "bg-muted text-foreground border-border",
+            };
+            const waveLabel: Record<Wave, string> = {
+              W1: "Wave 1 · Foundation (curto prazo)",
+              W2: "Wave 2 · Scale (médio prazo)",
+              W3: "Wave 3 · Expansion (longo prazo)",
+            };
+            return (
+              <div key={w} className="space-y-3">
+                <div className="sticky top-0 z-10 -mx-1 px-1 py-2 bg-background/95 backdrop-blur flex items-center gap-2">
+                  <Badge variant="outline" className={`text-xs font-semibold ${waveTone[w]}`}>{w}</Badge>
+                  <span className="text-sm font-semibold">{waveLabel[w]}</span>
+                  <span className="text-xs text-muted-foreground">· {grupo.length} iniciativa(s)</span>
+                  <div className="flex-1 h-px bg-border ml-2" />
+                </div>
+                {grupo.map((i) => {
             const Icon = tipoMeta[i.tipo].icon;
             return (
               <Card key={i.id} className={`border-l-4 ${tipoMeta[i.tipo].cor}`}>
