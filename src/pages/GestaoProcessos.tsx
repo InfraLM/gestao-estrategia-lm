@@ -310,6 +310,7 @@ export default function GestaoProcessos() {
         <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="escopo"><FileText className="h-3.5 w-3.5 mr-1" />Escopo do mapeamento</TabsTrigger>
           <TabsTrigger value="analise"><ClipboardList className="h-3.5 w-3.5 mr-1" />Análise do processo</TabsTrigger>
+          <TabsTrigger value="atividades"><Bot className="h-3.5 w-3.5 mr-1" />Análise de atividades</TabsTrigger>
           <TabsTrigger value="riscos"><AlertTriangle className="h-3.5 w-3.5 mr-1" />Matriz de riscos</TabsTrigger>
           <TabsTrigger value="asis"><GitBranch className="h-3.5 w-3.5 mr-1" />Mapeamento AS-IS</TabsTrigger>
           <TabsTrigger value="tobe"><Target className="h-3.5 w-3.5 mr-1" />Mapeamento TO-BE</TabsTrigger>
