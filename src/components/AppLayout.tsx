@@ -1,5 +1,6 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp, Settings2 } from "lucide-react";
+import { NavLink, Outlet, useLocation, Link } from "react-router-dom";
+import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp, Settings2, LogIn, KeyRound, UserCog, User as UserIcon } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
@@ -204,21 +205,47 @@ export default function AppLayout() {
                 <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary" />
               </button>
               <div className="flex items-center gap-3 pl-3 border-l border-border">
-                <div className="text-right hidden sm:block">
-                  <div className="text-sm font-medium flex items-center gap-1.5 justify-end">
-                    {displayName}
-                    {isAdmin && <ShieldCheck className="h-3.5 w-3.5 text-primary" aria-label="Admin" />}
-                  </div>
-                  <div className="text-xs text-muted-foreground">{cargo}</div>
-                </div>
-                <div className="h-9 w-9 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center text-sm font-semibold">
-                  {initials || "?"}
-                </div>
-                {user && (
-                  <button onClick={() => signOut()} title="Sair" className="h-9 w-9 grid place-items-center rounded-md hover:bg-surface-muted text-muted-foreground">
-                    <LogOut className="h-4 w-4" />
-                  </button>
-                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                      <div className="text-right hidden sm:block">
+                        <div className="text-sm font-medium flex items-center gap-1.5 justify-end">
+                          {displayName}
+                          {isAdmin && <ShieldCheck className="h-3.5 w-3.5 text-primary" aria-label="Admin" />}
+                        </div>
+                        <div className="text-xs text-muted-foreground">{cargo}</div>
+                      </div>
+                      <div className="h-9 w-9 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center text-sm font-semibold">
+                        {initials || "?"}
+                      </div>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>
+                      <div className="text-sm font-medium">{displayName}</div>
+                      <div className="text-xs text-muted-foreground font-normal">{user?.email ?? "Não autenticado"}</div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {user ? (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/minhas-permissoes"><KeyRound className="h-4 w-4 mr-2" />Minhas permissões</Link>
+                        </DropdownMenuItem>
+                        {isAdmin && (
+                          <DropdownMenuItem asChild>
+                            <Link to="/gestao-usuarios"><UserCog className="h-4 w-4 mr-2" />Gerenciar usuários</Link>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => signOut()}><LogOut className="h-4 w-4 mr-2" />Sair</DropdownMenuItem>
+                      </>
+                    ) : (
+                      <DropdownMenuItem asChild>
+                        <Link to="/auth"><LogIn className="h-4 w-4 mr-2" />Realizar login</Link>
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </div>
