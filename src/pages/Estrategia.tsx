@@ -159,8 +159,14 @@ export default function Estrategia() {
               <p className="text-xs text-muted-foreground leading-relaxed">{p.desc}</p>
             </div>
           ))}
-        </CardContent>
-      </Card>
+          <div className="md:col-span-2 lg:col-span-3">
+            <EstrategiaToolInsights ferramenta="Pilares Imprescindíveis" {...FERRAMENTAS.Pilares} />
+              </div>
+              <div className="md:col-span-3">
+                <EstrategiaToolInsights ferramenta="ICP" {...FERRAMENTAS.ICP} />
+              </div>
+            </CardContent>
+          </Card>
 
       {/* AMBICAO CARDS */}
       <div className="grid md:grid-cols-3 gap-4">
@@ -238,6 +244,9 @@ export default function Estrategia() {
                   </ul>
                 </div>
               ))}
+              <div className="md:col-span-2">
+                <EstrategiaToolInsights ferramenta="Play to Win" {...FERRAMENTAS.PlayToWin} />
+              </div>
             </CardContent>
           </Card>
 
@@ -259,6 +268,9 @@ export default function Estrategia() {
                   <p className="text-xs leading-relaxed opacity-90">{a.desc}</p>
                 </div>
               ))}
+              <div className="md:col-span-2 lg:col-span-4">
+                <EstrategiaToolInsights ferramenta="Ansoff" {...FERRAMENTAS.Ansoff} />
+              </div>
             </CardContent>
           </Card>
 
@@ -279,6 +291,9 @@ export default function Estrategia() {
                   </ul>
                 </div>
               ))}
+              <div className="md:col-span-2 lg:col-span-4">
+                <EstrategiaToolInsights ferramenta="Oceano Azul / ERRC" {...FERRAMENTAS.OceanoAzul} />
+              </div>
             </CardContent>
           </Card>
 
@@ -301,6 +316,7 @@ export default function Estrategia() {
                   </div>
                 ))}
               </div>
+              <EstrategiaToolInsights ferramenta="VRIN / RBV" {...FERRAMENTAS.VRIN} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -315,6 +331,9 @@ export default function Estrategia() {
               </div>
               <p className="text-sm text-muted-foreground mt-1">O que precisa acontecer para a estratégia virar realidade?</p>
             </CardHeader>
+            <CardContent>
+              <EstrategiaToolInsights ferramenta="Balanced Scorecard (BSC)" {...FERRAMENTAS.BSC} />
+            </CardContent>
           </Card>
 
           {bsc.map((p) => (
