@@ -15,6 +15,7 @@ type Periodo = typeof periodos[number];
 const farolColor = { verde: "bg-success", amarelo: "bg-warning", vermelho: "bg-destructive" } as const;
 
 export default function StatusReport() {
+  const { data: projetos } = useProjetosDB();
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
   const [expanded, setExpanded] = useState<string | null>(projetos.find(p => p.saude !== "On-Track")?.id ?? null);
   const [parecerOpen, setParecerOpen] = useState(false);
