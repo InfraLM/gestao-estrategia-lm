@@ -389,6 +389,14 @@ export default function GestaoProcessos() {
           </Card>
         </TabsContent>
 
+        {/* ANÁLISE DE ATIVIDADES */}
+        <TabsContent value="atividades">
+          <AtividadesTab
+            items={data.atividades}
+            onChange={items => updateData({ atividades: items })}
+          />
+        </TabsContent>
+
         {/* RISCOS */}
         <TabsContent value="riscos">
           <Card>
