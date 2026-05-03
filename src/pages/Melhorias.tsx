@@ -414,6 +414,43 @@ export default function Melhorias() {
                         <TableCell className="font-medium">{i.oQueFazer}</TableCell>
                         <TableCell className="text-sm text-muted-foreground line-clamp-2 max-w-[260px]">{i.justificativa || "—"}</TableCell>
                         <TableCell className="text-sm text-muted-foreground line-clamp-2 max-w-[220px]">{i.resultadoEsperado || "—"}</TableCell>
+                        <TableCell>
+                          {(i.objetivos && i.objetivos.length > 0) ? (
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <button className="flex flex-wrap gap-1 max-w-[200px] hover:opacity-80">
+                                  {i.objetivos.slice(0, 3).map(cod => {
+                                    const o = OBJETIVOS_ESTRATEGICOS.find(x => x.codigo === cod);
+                                    return (
+                                      <Badge key={cod} variant="outline" className={cn("text-[10px]", o && PERSP_BADGE[o.perspectiva])}>{cod}</Badge>
+                                    );
+                                  })}
+                                  {i.objetivos.length > 3 && <Badge variant="outline" className="text-[10px]">+{i.objetivos.length - 3}</Badge>}
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-80 p-3 space-y-2">
+                                {i.objetivos.map(cod => {
+                                  const o = OBJETIVOS_ESTRATEGICOS.find(x => x.codigo === cod);
+                                  if (!o) return null;
+                                  const krs = (i.krs ?? []).filter(k => k.startsWith(`${cod}::`)).map(k => k.split("::")[1]);
+                                  return (
+                                    <div key={cod} className="text-xs">
+                                      <div className="flex items-center gap-2">
+                                        <Badge variant="outline" className={cn("text-[10px]", PERSP_BADGE[o.perspectiva])}>{cod}</Badge>
+                                        <span className="font-medium">{o.nome}</span>
+                                      </div>
+                                      {krs.length > 0 && (
+                                        <ul className="mt-1 ml-2 list-disc list-inside text-muted-foreground">
+                                          {krs.map(kr => <li key={kr}>{kr}</li>)}
+                                        </ul>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </PopoverContent>
+                            </Popover>
+                          ) : <span className="text-xs text-muted-foreground">—</span>}
+                        </TableCell>
                         <TableCell className="text-sm">{i.responsavel || "—"}</TableCell>
                         <TableCell className="text-sm tabular-nums">{i.dataPrevista || "—"}</TableCell>
                         <TableCell className="text-sm tabular-nums">{i.dataConclusao || "—"}</TableCell>
