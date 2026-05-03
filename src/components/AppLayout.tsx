@@ -39,6 +39,8 @@ const titles: Record<string, string> = {
   "/dashboard-processos": "Dashboard de Processos · Visão Consolidada",
   "/matriz-processos": "Matriz de Processos · Cadeia de Valor LM",
   "/gestao-processos": "Gestão de Processos · Mapeamento e Análise",
+  "/status-report-processos": "Status Report de Processos — Mapeamento, Riscos e Melhorias",
+  "/matriz-riscos": "Matriz de Riscos Institucionais",
   "/repositorio": "Repositório · BCs e Documentos",
 };
 
