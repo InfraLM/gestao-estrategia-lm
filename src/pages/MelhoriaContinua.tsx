@@ -26,6 +26,7 @@ const AREAS = [
   "PFO em Hospitais",
   "Produtos",
   "Novos Produtos",
+  "Growth",
 ] as const;
 
 type Area = typeof AREAS[number];
