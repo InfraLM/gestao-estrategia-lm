@@ -14,6 +14,113 @@ export type Database = {
   }
   public: {
     Tables: {
+      backlog_propostas_ia: {
+        Row: {
+          acao: string
+          confianca: number | null
+          created_at: string
+          id: string
+          iniciativa_ref: string | null
+          justificativa: string | null
+          observacao_revisao: string | null
+          payload: Json
+          revisado_em: string | null
+          revisado_por: string | null
+          status: string
+          submissao_id: string
+          updated_at: string
+        }
+        Insert: {
+          acao: string
+          confianca?: number | null
+          created_at?: string
+          id?: string
+          iniciativa_ref?: string | null
+          justificativa?: string | null
+          observacao_revisao?: string | null
+          payload?: Json
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          submissao_id: string
+          updated_at?: string
+        }
+        Update: {
+          acao?: string
+          confianca?: number | null
+          created_at?: string
+          id?: string
+          iniciativa_ref?: string | null
+          justificativa?: string | null
+          observacao_revisao?: string | null
+          payload?: Json
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          submissao_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backlog_propostas_ia_submissao_id_fkey"
+            columns: ["submissao_id"]
+            isOneToOne: false
+            referencedRelation: "backlog_submissoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backlog_submissoes: {
+        Row: {
+          arquivo_nome: string
+          arquivo_path: string
+          arquivo_tamanho: number | null
+          arquivo_tipo: string | null
+          created_at: string
+          descricao: string | null
+          erro: string | null
+          id: string
+          resumo_ia: string | null
+          status: string
+          submitted_by: string
+          submitted_by_nome: string | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          arquivo_nome: string
+          arquivo_path: string
+          arquivo_tamanho?: number | null
+          arquivo_tipo?: string | null
+          created_at?: string
+          descricao?: string | null
+          erro?: string | null
+          id?: string
+          resumo_ia?: string | null
+          status?: string
+          submitted_by: string
+          submitted_by_nome?: string | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          arquivo_nome?: string
+          arquivo_path?: string
+          arquivo_tamanho?: number | null
+          arquivo_tipo?: string | null
+          created_at?: string
+          descricao?: string | null
+          erro?: string | null
+          id?: string
+          resumo_ia?: string | null
+          status?: string
+          submitted_by?: string
+          submitted_by_nome?: string | null
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cronograma_itens: {
         Row: {
           created_at: string
