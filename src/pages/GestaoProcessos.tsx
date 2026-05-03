@@ -10,7 +10,21 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, ArrowLeft, Plus, Trash2, FileText, AlertTriangle, GitBranch, Target, ClipboardList, Workflow, Link2 } from "lucide-react";
 
-type Processo = (typeof processosSeed)[number];
+type Processo = {
+  id: string;
+  nome: string;
+  nivel: string;
+  revisao: number | null;
+  diretor: string;
+  dono: string;
+  status: string;
+  fornecedores: string[];
+  clientes: string[];
+  documentos: any[];
+  vinculo?: Record<string, number>;
+  maturidade?: number;
+  kpiValor?: number;
+};
 
 const MATRIZ_EDITS_KEY = "matriz-processos-edits-v1";
 const STORAGE_KEY = "gestao-processos-v1";
