@@ -602,6 +602,169 @@ export default function BacklogEstrategico() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Dialog: editar ação, resultado esperado e vínculos */}
+      <Dialog open={!!editId} onOpenChange={(o) => !o && setEditId(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Pencil className="h-4 w-4 text-primary" />
+              Editar iniciativa {editing && <span className="font-mono text-xs text-muted-foreground">· {editing.id}</span>}
+            </DialogTitle>
+          </DialogHeader>
+          {editing && (
+            <div className="space-y-5 pt-2">
+              <div className="rounded-md bg-muted/40 border border-border p-3">
+                <div className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1">Iniciativa</div>
+                <div className="font-semibold text-sm">{editing.titulo}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">{editing.vinculo} · {editing.tipo}</div>
+              </div>
+
+              <div>
+                <Label className="text-xs">Ação</Label>
+                <Textarea
+                  value={draft.acao}
+                  onChange={(e) => setDraft(d => ({ ...d, acao: e.target.value }))}
+                  rows={3}
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label className="text-xs">Resultado esperado</Label>
+                <Textarea
+                  value={draft.resultadoEsperado}
+                  onChange={(e) => setDraft(d => ({ ...d, resultadoEsperado: e.target.value }))}
+                  rows={3}
+                  className="mt-1"
+                />
+              </div>
+
+              {/* Vínculos */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-xs flex items-center gap-1.5">
+                    <Link2 className="h-3.5 w-3.5 text-primary" />
+                    Iniciativas vinculadas
+                  </Label>
+                  <span className="text-[11px] text-muted-foreground">{draft.vinculos.length} selecionada(s)</span>
+                </div>
+
+                {/* Selecionadas */}
+                {draft.vinculos.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {draft.vinculos.map(v => {
+                      const FIcon = fonteMeta[v.fonte].icon;
+                      return (
+                        <Badge key={`sel-${v.fonte}-${v.refId}`} variant="outline" className={`text-[10px] ${fonteMeta[v.fonte].cor}`}>
+                          <FIcon className="h-3 w-3 mr-1" />
+                          <span className="font-mono mr-1">{v.refId}</span>
+                          <span className="truncate max-w-[200px]">{v.titulo}</span>
+                          <button
+                            type="button"
+                            className="ml-1.5 hover:text-destructive"
+                            onClick={() => toggleVinculo(v)}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Seletor por fonte */}
+                <Tabs defaultValue="Portfólio Estratégico" className="w-full">
+                  <TabsList className="grid grid-cols-3 w-full">
+                    <TabsTrigger value="Portfólio Estratégico" className="text-xs">
+                      <Briefcase className="h-3 w-3 mr-1" /> Portfólio ({portfolioOpts.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="Melhorias Estratégicas" className="text-xs">
+                      <GitBranch className="h-3 w-3 mr-1" /> Melh. Estratégicas ({melhoriasEstrategicasOpts.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="Melhoria Contínua" className="text-xs">
+                      <Repeat className="h-3 w-3 mr-1" /> Melh. Contínua ({melhoriaContinuaOpts.length})
+                    </TabsTrigger>
+                  </TabsList>
+
+                  {(["Portfólio Estratégico", "Melhorias Estratégicas", "Melhoria Contínua"] as FonteIniciativa[]).map(fonte => {
+                    const opts = fonte === "Portfólio Estratégico" ? portfolioOpts
+                      : fonte === "Melhorias Estratégicas" ? melhoriasEstrategicasOpts
+                      : melhoriaContinuaOpts;
+                    return (
+                      <TabsContent key={fonte} value={fonte} className="mt-3">
+                        <SeletorVinculos
+                          opts={opts}
+                          selecionadas={draft.vinculos}
+                          onToggle={toggleVinculo}
+                        />
+                      </TabsContent>
+                    );
+                  })}
+                </Tabs>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditId(null)}>Cancelar</Button>
+            <Button onClick={saveEdit}>Salvar alterações</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+// ===== Seletor de vínculos com busca =====
+function SeletorVinculos({
+  opts, selecionadas, onToggle,
+}: {
+  opts: VinculoIniciativa[];
+  selecionadas: VinculoIniciativa[];
+  onToggle: (v: VinculoIniciativa) => void;
+}) {
+  const [q, setQ] = useState("");
+  const filtered = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    const arr = !s ? opts : opts.filter(o =>
+      o.titulo.toLowerCase().includes(s) || o.refId.toLowerCase().includes(s)
+    );
+    return arr.slice(0, 80);
+  }, [opts, q]);
+
+  return (
+    <div className="space-y-2">
+      <Input
+        placeholder="Buscar por nome ou ID…"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        className="h-8 text-xs"
+      />
+      <div className="max-h-64 overflow-y-auto rounded-md border border-border divide-y divide-border">
+        {filtered.length === 0 && (
+          <div className="text-center text-xs text-muted-foreground py-6">Nada encontrado</div>
+        )}
+        {filtered.map(v => {
+          const checked = selecionadas.some(s => s.refId === v.refId && s.fonte === v.fonte);
+          return (
+            <button
+              key={`${v.fonte}-${v.refId}`}
+              type="button"
+              onClick={() => onToggle(v)}
+              className={`w-full text-left px-3 py-2 text-xs hover:bg-muted/50 flex items-start gap-2 ${checked ? "bg-primary/5" : ""}`}
+            >
+              <input type="checkbox" readOnly checked={checked} className="mt-0.5" />
+              <div className="min-w-0">
+                <div className="font-mono text-[10px] text-muted-foreground">{v.refId}</div>
+                <div className="text-foreground line-clamp-2">{v.titulo}</div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+      <p className="text-[10px] text-muted-foreground">
+        Mostrando {filtered.length} de {opts.length} iniciativas.
+      </p>
     </div>
   );
 }
