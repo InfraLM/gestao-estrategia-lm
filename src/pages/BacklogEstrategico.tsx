@@ -256,6 +256,29 @@ const resumoTipos: { tipo: Tipo; descricao: string }[] = [
 ];
 
 export default function BacklogEstrategico() {
+  const { data: projetosDB } = useProjetosDB();
+  const projetoMap = useMemo(() => {
+    const m = new Map<string, { status: string; saude: string; termino: string }>();
+    projetosDB.forEach(p => m.set(p.id, { status: p.status, saude: p.saude, termino: p.termino || "" }));
+    // Fallback para o mock (caso o vínculo aponte para id que ainda não está no banco)
+    projetos.forEach(p => { if (!m.has(p.id)) m.set(p.id, { status: p.status, saude: p.saude, termino: p.termino || "" }); });
+    return m;
+  }, [projetosDB]);
+
+  const statusTone: Record<string, string> = {
+    "Em Andamento": "bg-success/10 text-success border-success/30",
+    "A Iniciar": "bg-info/10 text-info border-info/30",
+    "Backlog": "bg-muted text-foreground border-border",
+    "Pausado": "bg-warning/10 text-warning border-warning/30",
+    "Concluído": "bg-primary/10 text-primary border-primary/30",
+    "Cancelado": "bg-destructive/10 text-destructive border-destructive/30",
+  };
+  const saudeTone: Record<string, string> = {
+    "On-Track": "text-success",
+    "Alerta": "text-warning",
+    "Off-Track": "text-destructive",
+  };
+
   const [busca, setBusca] = useState("");
   const [tipoFiltro, setTipoFiltro] = useState<Tipo | "Todos">("Todos");
   const [origemFiltro, setOrigemFiltro] = useState<Origem | "Todas">("Todas");
