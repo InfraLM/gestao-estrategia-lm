@@ -75,6 +75,7 @@ const titles: Record<string, string> = {
   "/diagnostico": "Diagnóstico Estratégico LM",
   "/estrategia": "Estratégia LM · Formulação + Planejamento",
   "/backlog-estrategico": "Backlog Estratégico · Plano de Ação Institucional",
+  "/impacto-estrategico": "Impacto Estratégico · Consolidação por Objetivo BSC",
   "/submissao": "Submissão de Projetos",
   "/portfolio": "Portfólio Estratégico",
   "/status-report": "Status Report de Projetos — Evolução",
