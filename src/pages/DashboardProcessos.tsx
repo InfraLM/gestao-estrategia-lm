@@ -14,16 +14,8 @@ type Processo = {
   maturidade?: number; kpiValor?: number; vinculo?: Record<string, number>;
 };
 
-const MATRIZ_EDITS_KEY = "matriz-processos-edits-v1";
 const GP_KEY = "gestao-processos-v1";
 
-function loadProcessos(): Processo[] {
-  try {
-    const raw = localStorage.getItem(MATRIZ_EDITS_KEY);
-    const edits: Record<string, Partial<Processo>> = raw ? JSON.parse(raw) : {};
-    return (processosSeed as Processo[]).map(p => ({ ...p, ...edits[p.id] }));
-  } catch { return processosSeed as Processo[]; }
-}
 
 function loadGestao(): Record<string, any> {
   try { return JSON.parse(localStorage.getItem(GP_KEY) || "{}"); } catch { return {}; }
