@@ -9,9 +9,30 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, ArrowRight, Plus, Search, Sparkles, GitBranch, ClipboardList, Users, Calendar, Target } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Search, Sparkles, GitBranch, ClipboardList, Users, Calendar, Target, Check } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { projetos } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+
+// Objetivos Estratégicos (BSC) — fonte: Estrategia.tsx
+export const OBJETIVOS_ESTRATEGICOS = [
+  { codigo: "F.01", nome: "Previsibilidade de Caixa", perspectiva: "Financeira", krs: ["NRR > 115%", "Inadimplência >30d ≤ 6%", "Previsão DFC ±5%"] },
+  { codigo: "F.02", nome: "Crescimento com Rentabilidade Sustentável", perspectiva: "Financeira", krs: ["OPEX ratio < 43%", "Margem contribuição > 65%", "Forecast DRE ±5%"] },
+  { codigo: "C.01", nome: "Experiência WOW", perspectiva: "Cliente", krs: ["CSAT > 4,75", ">30% alunos em 3+ pilares", ">95% tickets ≤30min"] },
+  { codigo: "C.02", nome: "Penetração de Mercado", perspectiva: "Cliente", krs: ["8.030 leads", "4.000 alunos", "Lançamento por praça <30 dias"] },
+  { codigo: "P.01", nome: "Conversão Comercial High-Ticket", perspectiva: "Processos", krs: ["SQL→Matrícula >35%", "MQL→SQL ≥20%", "No-show <20%"] },
+  { codigo: "P.02", nome: "Eficiência de Cobrança", perspectiva: "Processos", krs: ["Recuperação >50%", "Recorrência cartão >90%"] },
+  { codigo: "P.03", nome: "Automação de Processos Core", perspectiva: "Processos", krs: ["Lead time -25%", "30% portfólio com IA", "100% BPM"] },
+  { codigo: "P.04", nome: "AI First · Human First", perspectiva: "Processos", krs: ["Copilotos por área", "Produtos com IA", "Trilhas personalizadas"] },
+  { codigo: "AC.01", nome: "Cultura Viva & Alta Performance", perspectiva: "Aprendizagem", krs: ["100% áreas com OKRs", "85% rituais", "100% gestão à vista"] },
+] as const;
+
+const PERSP_BADGE: Record<string, string> = {
+  "Financeira": "bg-emerald-100 text-emerald-800 border-emerald-200",
+  "Cliente": "bg-primary/10 text-primary border-primary/30",
+  "Processos": "bg-blue-100 text-blue-800 border-blue-200",
+  "Aprendizagem": "bg-amber-100 text-amber-800 border-amber-200",
+};
 
 const AREAS = [
   "Comercial",
@@ -46,7 +67,9 @@ interface MelhoriaEstrategica {
   dataPrevista: string;
   dataConclusao?: string;
   status: Status;
-  projetoId?: string; // vínculo com projeto existente
+  projetoId?: string;
+  objetivos?: string[]; // códigos de objetivos estratégicos vinculados
+  krs?: string[]; // KRs específicos selecionados
 }
 
 // Mapeia diretor → área (aproximação para seed inicial)
@@ -136,6 +159,8 @@ export default function Melhorias() {
       dataPrevista: draft.dataPrevista ?? "",
       dataConclusao: draft.dataConclusao,
       status: (draft.status as Status) ?? "Backlog",
+      objetivos: draft.objetivos ?? [],
+      krs: draft.krs ?? [],
     }]);
     setDraft({ classificacao: "Melhoria Contínua", status: "Backlog", area: areaSel ?? undefined });
     setOpen(false);
@@ -275,6 +300,62 @@ export default function Melhorias() {
                           <Input type="date" value={draft.dataConclusao ?? ""} onChange={e => setDraft(d => ({ ...d, dataConclusao: e.target.value }))} />
                         </div>
                       </div>
+                      <div className="border-t pt-3">
+                        <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"><Target className="h-3.5 w-3.5" /> Vínculo Estratégico (Objetivos & KRs)</label>
+                        <p className="text-[11px] text-muted-foreground mb-2">Selecione um ou mais objetivos do BSC e os KRs específicos que esta melhoria contribui.</p>
+                        <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                          {OBJETIVOS_ESTRATEGICOS.map(o => {
+                            const selected = (draft.objetivos ?? []).includes(o.codigo);
+                            return (
+                              <div key={o.codigo} className={cn("rounded-md border p-2", selected && "border-primary bg-primary/5")}>
+                                <label className="flex items-start gap-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    className="mt-0.5"
+                                    checked={selected}
+                                    onChange={e => {
+                                      const cur = new Set(draft.objetivos ?? []);
+                                      if (e.target.checked) cur.add(o.codigo); else cur.delete(o.codigo);
+                                      setDraft(d => ({ ...d, objetivos: Array.from(cur) }));
+                                    }}
+                                  />
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <Badge variant="outline" className={cn("text-[10px]", PERSP_BADGE[o.perspectiva])}>{o.codigo}</Badge>
+                                      <span className="text-sm font-medium">{o.nome}</span>
+                                    </div>
+                                    {selected && (
+                                      <div className="mt-2 flex flex-wrap gap-1.5">
+                                        {o.krs.map(kr => {
+                                          const krKey = `${o.codigo}::${kr}`;
+                                          const krSel = (draft.krs ?? []).includes(krKey);
+                                          return (
+                                            <button
+                                              type="button"
+                                              key={kr}
+                                              onClick={() => {
+                                                const cur = new Set(draft.krs ?? []);
+                                                if (krSel) cur.delete(krKey); else cur.add(krKey);
+                                                setDraft(d => ({ ...d, krs: Array.from(cur) }));
+                                              }}
+                                              className={cn(
+                                                "text-[11px] px-2 py-0.5 rounded border transition-colors",
+                                                krSel ? "bg-primary text-primary-foreground border-primary" : "bg-background hover:bg-muted"
+                                              )}
+                                            >
+                                              {krSel && <Check className="h-2.5 w-2.5 inline mr-1" />}{kr}
+                                            </button>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+                                  </div>
+                                </label>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
@@ -314,6 +395,7 @@ export default function Melhorias() {
                       <TableHead>O que fazer?</TableHead>
                       <TableHead>Justificativa</TableHead>
                       <TableHead>Resultado esperado</TableHead>
+                      <TableHead className="w-[200px]">Vínculo OKR</TableHead>
                       <TableHead className="w-[160px]">Responsável</TableHead>
                       <TableHead className="w-[110px]">Prevista</TableHead>
                       <TableHead className="w-[110px]">Conclusão</TableHead>
@@ -332,6 +414,43 @@ export default function Melhorias() {
                         <TableCell className="font-medium">{i.oQueFazer}</TableCell>
                         <TableCell className="text-sm text-muted-foreground line-clamp-2 max-w-[260px]">{i.justificativa || "—"}</TableCell>
                         <TableCell className="text-sm text-muted-foreground line-clamp-2 max-w-[220px]">{i.resultadoEsperado || "—"}</TableCell>
+                        <TableCell>
+                          {(i.objetivos && i.objetivos.length > 0) ? (
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <button className="flex flex-wrap gap-1 max-w-[200px] hover:opacity-80">
+                                  {i.objetivos.slice(0, 3).map(cod => {
+                                    const o = OBJETIVOS_ESTRATEGICOS.find(x => x.codigo === cod);
+                                    return (
+                                      <Badge key={cod} variant="outline" className={cn("text-[10px]", o && PERSP_BADGE[o.perspectiva])}>{cod}</Badge>
+                                    );
+                                  })}
+                                  {i.objetivos.length > 3 && <Badge variant="outline" className="text-[10px]">+{i.objetivos.length - 3}</Badge>}
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-80 p-3 space-y-2">
+                                {i.objetivos.map(cod => {
+                                  const o = OBJETIVOS_ESTRATEGICOS.find(x => x.codigo === cod);
+                                  if (!o) return null;
+                                  const krs = (i.krs ?? []).filter(k => k.startsWith(`${cod}::`)).map(k => k.split("::")[1]);
+                                  return (
+                                    <div key={cod} className="text-xs">
+                                      <div className="flex items-center gap-2">
+                                        <Badge variant="outline" className={cn("text-[10px]", PERSP_BADGE[o.perspectiva])}>{cod}</Badge>
+                                        <span className="font-medium">{o.nome}</span>
+                                      </div>
+                                      {krs.length > 0 && (
+                                        <ul className="mt-1 ml-2 list-disc list-inside text-muted-foreground">
+                                          {krs.map(kr => <li key={kr}>{kr}</li>)}
+                                        </ul>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </PopoverContent>
+                            </Popover>
+                          ) : <span className="text-xs text-muted-foreground">—</span>}
+                        </TableCell>
                         <TableCell className="text-sm">{i.responsavel || "—"}</TableCell>
                         <TableCell className="text-sm tabular-nums">{i.dataPrevista || "—"}</TableCell>
                         <TableCell className="text-sm tabular-nums">{i.dataConclusao || "—"}</TableCell>
@@ -351,7 +470,7 @@ export default function Melhorias() {
                     ))}
                     {lista.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={9} className="text-center text-muted-foreground py-10">
+                        <TableCell colSpan={10} className="text-center text-muted-foreground py-10">
                           Nenhuma melhoria estratégica para esta área. Clique em <strong>Nova melhoria estratégica</strong>.
                         </TableCell>
                       </TableRow>
