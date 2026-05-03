@@ -616,32 +616,52 @@ function statusColor(status: string) {
   }
 }
 
-function CronogramaEditavel({ editable }: { editable: Editable }) {
+const CRON_COL_DEFAULTS: Record<string, number> = {
+  fase: 280, responsavel: 160, dataPrev: 140, dataConcl: 140,
+  prev: 70, exec: 70, ext: 70, status: 140, acoes: 40,
+};
+const CRON_COLS: { key: keyof typeof CRON_COL_DEFAULTS; label: string; align?: "left" | "center" }[] = [
+  { key: "fase", label: "Fase" },
+  { key: "responsavel", label: "Responsável" },
+  { key: "dataPrev", label: "Data prevista" },
+  { key: "dataConcl", label: "Data conclusão" },
+  { key: "prev", label: "Prev.", align: "center" },
+  { key: "exec", label: "Exec.", align: "center" },
+  { key: "ext", label: "Ext.", align: "center" },
+  { key: "status", label: "Status" },
+  { key: "acoes", label: "" },
+];
+
+function CronogramaEditavel({ editable, projetoId }: { editable: Editable; projetoId: string }) {
   const { state, updateCronograma, addCronograma, removeCronograma } = editable;
+  const { widths, startResize, reset } = useColumnWidths(`${projetoId}-cron`, CRON_COL_DEFAULTS);
   return (
     <Card className="p-5 shadow-card">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 gap-3">
         <div>
           <h3 className="font-semibold">Cronograma editável</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">Edite responsável, datas, semanas e status. Toda alteração é registrada no histórico.</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Colunas redimensionáveis (arraste a borda direita). Toda alteração é registrada no histórico.</p>
         </div>
-        <Button size="sm" variant="outline" onClick={addCronograma} className="gap-1.5">
-          <Plus className="h-3.5 w-3.5" /> Nova fase
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="ghost" onClick={reset} className="text-xs h-7">Resetar larguras</Button>
+          <Button size="sm" variant="outline" onClick={addCronograma} className="gap-1.5">
+            <Plus className="h-3.5 w-3.5" /> Nova fase
+          </Button>
+        </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="text-sm" style={{ tableLayout: "fixed", width: "max-content", minWidth: "100%" }}>
+          <colgroup>
+            {CRON_COLS.map(c => <col key={c.key} style={{ width: `${widths[c.key]}px` }} />)}
+          </colgroup>
           <thead>
             <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
-              <th className="text-left px-2 py-2 font-semibold">Fase</th>
-              <th className="text-left px-2 py-2 font-semibold w-[160px]">Responsável</th>
-              <th className="text-left px-2 py-2 font-semibold w-[140px]">Data prevista</th>
-              <th className="text-left px-2 py-2 font-semibold w-[140px]">Data conclusão</th>
-              <th className="text-center px-2 py-2 font-semibold w-[70px]">Prev.</th>
-              <th className="text-center px-2 py-2 font-semibold w-[70px]">Exec.</th>
-              <th className="text-center px-2 py-2 font-semibold w-[70px]">Ext.</th>
-              <th className="text-left px-2 py-2 font-semibold w-[140px]">Status</th>
-              <th className="px-2 py-2 w-8" />
+              {CRON_COLS.map(c => (
+                <th key={c.key} className={cn("px-2 py-2 font-semibold relative", c.align === "center" ? "text-center" : "text-left")}>
+                  <span className="block truncate pr-1.5">{c.label}</span>
+                  {c.key !== "acoes" && <ResizeHandle onMouseDown={(e) => startResize(c.key as string, e)} />}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -685,6 +705,80 @@ function CronogramaEditavel({ editable }: { editable: Editable }) {
                 </td>
               </tr>
             ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
+
+// ============================================================
+// Riscos — colunas redimensionáveis (somente larguras)
+// ============================================================
+const RISCO_COL_DEFAULTS: Record<string, number> = {
+  risco: 320, prob: 80, impacto: 90, score: 90, mitigacao: 360,
+};
+const RISCO_COLS: { key: keyof typeof RISCO_COL_DEFAULTS; label: string; align?: "left" | "center" }[] = [
+  { key: "risco", label: "Risco" },
+  { key: "prob", label: "Prob.", align: "center" },
+  { key: "impacto", label: "Impacto", align: "center" },
+  { key: "score", label: "Score", align: "center" },
+  { key: "mitigacao", label: "Mitigação" },
+];
+
+function RiscosEditavel({ riscos, projetoId }: { riscos: ReturnType<typeof buildProjectData>["riscos"]; projetoId: string }) {
+  const { widths, startResize, reset } = useColumnWidths(`${projetoId}-riscos`, RISCO_COL_DEFAULTS);
+  return (
+    <Card className="p-5 shadow-card">
+      <div className="flex items-center justify-between mb-4 gap-3">
+        <div>
+          <h3 className="font-semibold">Registro de Riscos</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">Colunas redimensionáveis (arraste a borda direita).</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="ghost" onClick={reset} className="text-xs h-7">Resetar larguras</Button>
+          <span className="text-xs text-muted-foreground">{riscos.length} riscos</span>
+        </div>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="text-sm" style={{ tableLayout: "fixed", width: "max-content", minWidth: "100%" }}>
+          <colgroup>
+            {RISCO_COLS.map(c => <col key={c.key} style={{ width: `${widths[c.key]}px` }} />)}
+          </colgroup>
+          <thead>
+            <tr className="text-xs uppercase tracking-wider text-muted-foreground border-b border-border">
+              {RISCO_COLS.map(c => (
+                <th key={c.key} className={cn("px-2 py-2 font-semibold relative", c.align === "center" ? "text-center" : "text-left")}>
+                  <span className="block truncate pr-1.5">{c.label}</span>
+                  <ResizeHandle onMouseDown={(e) => startResize(c.key as string, e)} />
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {riscos.map(r => {
+              const score = r.prob * r.impacto;
+              const tier = score >= 12 ? "alto" : score >= 6 ? "medio" : "baixo";
+              return (
+                <tr key={r.id} className="border-b border-border/50">
+                  <td className="px-2 py-2.5">
+                    <div className="font-medium">{r.titulo}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{r.categoria}</div>
+                  </td>
+                  <td className="px-2 py-2 text-center tabular-nums">{r.prob}</td>
+                  <td className="px-2 py-2 text-center tabular-nums">{r.impacto}</td>
+                  <td className="px-2 py-2 text-center">
+                    <Badge className={cn(
+                      "tabular-nums font-semibold",
+                      tier === "alto" && "bg-destructive/15 text-destructive border-destructive/30 hover:bg-destructive/15",
+                      tier === "medio" && "bg-warning/20 text-warning-foreground border-warning/40 hover:bg-warning/20",
+                      tier === "baixo" && "bg-success-soft text-success border-success/30 hover:bg-success-soft",
+                    )}>{score}</Badge>
+                  </td>
+                  <td className="px-2 py-2.5 text-xs text-muted-foreground">{r.mitigacao}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
