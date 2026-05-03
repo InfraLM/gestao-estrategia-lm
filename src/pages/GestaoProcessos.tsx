@@ -598,3 +598,121 @@ function MapaTab({ title, items, onChange, copyFromAsIs }: { title: string; item
     </Card>
   );
 }
+
+const POT_COLORS: Record<string, string> = {
+  "Alto": "bg-emerald-500/15 text-emerald-700 border-emerald-500/30",
+  "Médio": "bg-amber-500/15 text-amber-700 border-amber-500/30",
+  "Baixo": "bg-blue-500/15 text-blue-700 border-blue-500/30",
+  "Não se Aplica": "bg-muted text-muted-foreground border-border",
+};
+
+const CLASSIF_INFO: Record<"TAV" | "TNAV" | "TNAVN", { label: string; color: string; full: string }> = {
+  TAV: { label: "TAV", color: "bg-emerald-500/15 text-emerald-700 border-emerald-500/30", full: "Agrega Valor" },
+  TNAVN: { label: "TNAVN", color: "bg-amber-500/15 text-amber-700 border-amber-500/30", full: "Não Agrega mas é Necessária" },
+  TNAV: { label: "TNAV", color: "bg-red-500/15 text-red-700 border-red-500/30", full: "Não Agrega Valor" },
+};
+
+function AtividadesTab({ items, onChange }: { items: AtividadeAnalise[]; onChange: (i: AtividadeAnalise[]) => void }) {
+  const upd = (id: string, patch: Partial<AtividadeAnalise>) => onChange(items.map(x => x.id === id ? { ...x, ...patch } : x));
+  const del = (id: string) => onChange(items.filter(x => x.id !== id));
+  const add = (classificacao: "TAV" | "TNAV" | "TNAVN" = "TAV") => onChange([...items, {
+    id: uid(), taskName: "", classificacao, potencialAutomacao: "Não se Aplica", potencialIA: "Não se Aplica",
+  }]);
+
+  const stats = useMemo(() => {
+    const total = items.length || 1;
+    const byClass = { TAV: 0, TNAV: 0, TNAVN: 0 } as Record<string, number>;
+    const autoAlto = items.filter(i => i.potencialAutomacao === "Alto").length;
+    const iaAlto = items.filter(i => i.potencialIA === "Alto").length;
+    items.forEach(i => { byClass[i.classificacao] = (byClass[i.classificacao] || 0) + 1; });
+    return { total: items.length, byClass, autoAlto, iaAlto, pctTAV: Math.round((byClass.TAV / total) * 100) };
+  }, [items]);
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <Card className="p-3"><div className="text-[11px] text-muted-foreground uppercase tracking-wide">Atividades</div><div className="text-2xl font-semibold tabular-nums">{stats.total}</div></Card>
+        <Card className="p-3"><div className="text-[11px] text-emerald-700 uppercase tracking-wide">TAV</div><div className="text-2xl font-semibold tabular-nums text-emerald-700">{stats.byClass.TAV || 0}</div></Card>
+        <Card className="p-3"><div className="text-[11px] text-amber-700 uppercase tracking-wide">TNAVN</div><div className="text-2xl font-semibold tabular-nums text-amber-700">{stats.byClass.TNAVN || 0}</div></Card>
+        <Card className="p-3"><div className="text-[11px] text-red-700 uppercase tracking-wide">TNAV</div><div className="text-2xl font-semibold tabular-nums text-red-700">{stats.byClass.TNAV || 0}</div></Card>
+        <Card className="p-3"><div className="text-[11px] text-muted-foreground uppercase tracking-wide">Alto Automação / IA</div><div className="text-2xl font-semibold tabular-nums">{stats.autoAlto}<span className="text-sm text-muted-foreground"> / {stats.iaAlto}</span></div></Card>
+      </div>
+
+      <Card>
+        <CardHeader className="py-3 flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-base flex items-center gap-2"><Bot className="h-4 w-4" /> Análise de Atividades · Potencial de Automação & IA</CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">Classifique cada atividade quanto a agregação de valor (TAV / TNAVN / TNAV) e potencial de automação e IA.</p>
+          </div>
+          <Button size="sm" onClick={() => add("TAV")}><Plus className="h-3.5 w-3.5 mr-1" /> Adicionar atividade</Button>
+        </CardHeader>
+        <CardContent className="p-0 overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[110px]">Task ID</TableHead>
+                <TableHead className="min-w-[220px]">Atividade</TableHead>
+                <TableHead className="min-w-[180px]">Caminho</TableHead>
+                <TableHead className="w-[140px]">Área Responsável</TableHead>
+                <TableHead className="w-[140px]">Pot. Automação</TableHead>
+                <TableHead className="w-[140px]">Pot. IA</TableHead>
+                <TableHead className="w-[150px]">Tipo</TableHead>
+                <TableHead className="w-[120px]">Classificação</TableHead>
+                <TableHead className="w-[40px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {items.map(a => (
+                <TableRow key={a.id}>
+                  <TableCell><Input value={a.taskId || ""} onChange={ev => upd(a.id, { taskId: ev.target.value })} className="h-8 text-xs font-mono" /></TableCell>
+                  <TableCell><Textarea rows={2} value={a.taskName} onChange={ev => upd(a.id, { taskName: ev.target.value })} className="text-xs" /></TableCell>
+                  <TableCell><Input value={a.caminho || ""} onChange={ev => upd(a.id, { caminho: ev.target.value })} className="h-8 text-xs" /></TableCell>
+                  <TableCell><Input value={a.area || ""} onChange={ev => upd(a.id, { area: ev.target.value })} className="h-8 text-xs" /></TableCell>
+                  <TableCell>
+                    <Select value={a.potencialAutomacao} onValueChange={v => upd(a.id, { potencialAutomacao: v as any })}>
+                      <SelectTrigger className={`h-8 text-xs ${POT_COLORS[a.potencialAutomacao]}`}><SelectValue /></SelectTrigger>
+                      <SelectContent>{["Não se Aplica", "Baixo", "Médio", "Alto"].map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Select value={a.potencialIA} onValueChange={v => upd(a.id, { potencialIA: v as any })}>
+                      <SelectTrigger className={`h-8 text-xs ${POT_COLORS[a.potencialIA]}`}><SelectValue /></SelectTrigger>
+                      <SelectContent>{["Não se Aplica", "Baixo", "Médio", "Alto"].map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Select value={a.tipo || ""} onValueChange={v => upd(a.id, { tipo: v })}>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                      <SelectContent>{["Cognitiva Repetitiva", "Cognitiva Analítica", "Cognitiva Criativa", "Manual Repetitiva", "Manual Não Repetitiva"].map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Select value={a.classificacao} onValueChange={v => upd(a.id, { classificacao: v as any })}>
+                      <SelectTrigger className={`h-8 text-xs ${CLASSIF_INFO[a.classificacao].color}`}><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="TAV">TAV — Agrega Valor</SelectItem>
+                        <SelectItem value="TNAVN">TNAVN — Não Agrega mas é Necessária</SelectItem>
+                        <SelectItem value="TNAV">TNAV — Não Agrega Valor</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell><Button variant="ghost" size="icon" onClick={() => del(a.id)}><Trash2 className="h-4 w-4 text-muted-foreground" /></Button></TableCell>
+                </TableRow>
+              ))}
+              {!items.length && <TableRow><TableCell colSpan={9} className="text-center text-sm text-muted-foreground py-8">Nenhuma atividade analisada. Clique em <strong>Adicionar atividade</strong>.</TableCell></TableRow>}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Card className="p-4">
+        <div className="text-xs text-muted-foreground mb-2">Legenda</div>
+        <div className="flex flex-wrap gap-3 text-xs">
+          {(["TAV","TNAVN","TNAV"] as const).map(k => (
+            <Badge key={k} variant="outline" className={CLASSIF_INFO[k].color}>{CLASSIF_INFO[k].label} · {CLASSIF_INFO[k].full}</Badge>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
