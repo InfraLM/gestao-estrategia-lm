@@ -19,6 +19,7 @@ import {
   Link2, Pencil, Plus, X, Briefcase, Repeat, GitBranch, ExternalLink,
 } from "lucide-react";
 import { projetos } from "@/data/mockData";
+import { useProjetosDB } from "@/hooks/useProjetosDB";
 
 // ===== Tipagem =====
 type Tipo = "Reforço de Fraqueza" | "Defesa Identificada" | "Potencializar Força" | "Explorar Oportunidade";
