@@ -11,6 +11,7 @@ import StatusReport from "./pages/StatusReport";
 import Gestao from "./pages/Gestao";
 import GestaoProjeto from "./pages/GestaoProjeto";
 import Melhorias from "./pages/Melhorias";
+import MelhoriaContinua from "./pages/MelhoriaContinua";
 import MelhoriaDetalhe from "./pages/MelhoriaDetalhe";
 import Repositorio from "./pages/Repositorio";
 import Diagnostico from "./pages/Diagnostico";
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="/gestao" element={<Gestao />} />
               <Route path="/gestao/:id" element={<GestaoProjeto />} />
               <Route path="/melhorias" element={<Melhorias />} />
+              <Route path="/melhoria-continua" element={<MelhoriaContinua />} />
               <Route path="/melhorias/:id" element={<MelhoriaDetalhe />} />
               <Route path="/repositorio" element={<Repositorio />} />
               <Route path="/diagnostico" element={<Diagnostico />} />

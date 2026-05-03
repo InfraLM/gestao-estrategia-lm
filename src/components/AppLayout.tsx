@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks } from "lucide-react";
+import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,7 +15,8 @@ const navItems = [
   { to: "/portfolio", label: "Portfólio", icon: LayoutGrid },
   { to: "/status-report", label: "Status Report", icon: LineChart },
   { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
-  { to: "/melhorias", label: "Gestão de Melhorias", icon: Sparkles },
+  { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
+  { to: "/melhoria-continua", label: "Melhoria Contínua", icon: Repeat },
   { to: "/repositorio", label: "Repositório", icon: FolderArchive },
 ];
 
@@ -28,7 +29,8 @@ const titles: Record<string, string> = {
   "/portfolio": "Portfólio Estratégico",
   "/status-report": "Status Report — Evolução",
   "/gestao": "Gestão de Projetos Institucionais",
-  "/melhorias": "Gestão de Melhorias Contínuas",
+  "/melhorias": "Gestão de Melhorias Estratégicas",
+  "/melhoria-continua": "Gestão de Melhoria Contínua · Por Área",
   "/repositorio": "Repositório · BCs e Documentos",
 };
 
