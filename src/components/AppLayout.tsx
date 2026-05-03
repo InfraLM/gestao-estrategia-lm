@@ -101,7 +101,7 @@ const titles: Record<string, string> = {
 
 export default function AppLayout() {
   const loc = useLocation();
-  const title = titles[loc.pathname] ?? "PMO Estratégico";
+  const title = titles[loc.pathname] ?? "NextLevel LM";
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<{ display_name?: string | null; cargo?: string | null; email?: string | null } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -128,7 +128,7 @@ export default function AppLayout() {
             LM
           </div>
           <div className="leading-tight">
-            <div className="font-semibold text-sm">PMO Estratégico</div>
+            <div className="font-semibold text-sm">NextLevel LM</div>
             <div className="text-xs text-sidebar-foreground/60">Liberdade Médica</div>
           </div>
         </div>
