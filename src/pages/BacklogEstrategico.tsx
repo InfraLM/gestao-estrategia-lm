@@ -205,6 +205,50 @@ const iniciativas: Iniciativa[] = [
   },
 ];
 
+// ===== Catálogo de iniciativas vinculáveis =====
+// Portfólio Estratégico (projetos institucionais e novos produtos)
+const portfolioOpts: VinculoIniciativa[] = projetos
+  .filter(p => p.classificacao === "Institucional" || p.classificacao === "Novo Produto")
+  .map(p => ({
+    fonte: "Portfólio Estratégico" as const,
+    refId: p.id,
+    titulo: p.nome,
+    href: `/gestao/${p.id}`,
+  }));
+
+// Melhorias Estratégicas (Melhoria Contínua com EPP)
+const melhoriasEstrategicasOpts: VinculoIniciativa[] = projetos
+  .filter(p => p.classificacao === "Melhoria Contínua com EPP")
+  .map(p => ({
+    fonte: "Melhorias Estratégicas" as const,
+    refId: p.id,
+    titulo: p.nome,
+    href: `/melhorias/${p.id}`,
+  }));
+
+// Melhoria Contínua (operacional, gerida pelas áreas)
+const melhoriaContinuaOpts: VinculoIniciativa[] = projetos
+  .filter(p => p.classificacao === "Melhoria Contínua")
+  .map(p => ({
+    fonte: "Melhoria Contínua" as const,
+    refId: p.id,
+    titulo: p.nome,
+    href: `/melhoria-continua`,
+  }));
+
+const catalogoVinculos: VinculoIniciativa[] = [
+  ...portfolioOpts,
+  ...melhoriasEstrategicasOpts,
+  ...melhoriaContinuaOpts,
+];
+
+const fonteMeta: Record<FonteIniciativa, { icon: any; cor: string }> = {
+  "Portfólio Estratégico": { icon: Briefcase, cor: "bg-primary/10 text-primary border-primary/30" },
+  "Melhorias Estratégicas": { icon: GitBranch, cor: "bg-info/10 text-info border-info/30" },
+  "Melhoria Contínua": { icon: Repeat, cor: "bg-success/10 text-success border-success/30" },
+};
+
+
 // ===== Resumo por tipo =====
 const resumoTipos: { tipo: Tipo; descricao: string }[] = [
   { tipo: "Potencializar Força", descricao: "Aprofundar vantagens já existentes (método LM, comunidade, marca técnica)." },
