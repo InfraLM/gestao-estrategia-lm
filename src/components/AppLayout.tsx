@@ -1,27 +1,58 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert } from "lucide-react";
+import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const navItems = [
-  { to: "/", label: "Dashboard Estratégico", icon: LayoutDashboard },
-  { to: "/diagnostico", label: "Diagnóstico Estratégico", icon: Compass },
-  { to: "/estrategia", label: "Estratégia LM", icon: Target },
-  { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
-  { to: "/portfolio", label: "Portfólio Estratégico", icon: LayoutGrid },
-  { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
-  { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
-  { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
-  { to: "/melhoria-continua", label: "Melhoria Contínua", icon: Repeat },
-  { to: "/dashboard-processos", label: "Dashboard de Processos", icon: LayoutDashboard },
-  { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
-  { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
-  { to: "/status-report-processos", label: "Status Report de Processos", icon: LineChart },
-  { to: "/matriz-riscos", label: "Matriz de Riscos Institucionais", icon: ShieldAlert },
-  { to: "/repositorio", label: "Repositório", icon: FolderArchive },
+type NavChild = { to: string; label: string; icon: any };
+type NavGroup = { id: string; label: string; icon: any; children: NavChild[] };
+
+const navGroups: NavGroup[] = [
+  {
+    id: "estrategia",
+    label: "Estratégia",
+    icon: Target,
+    children: [
+      { to: "/", label: "Dashboard Estratégico", icon: LayoutDashboard },
+      { to: "/diagnostico", label: "Diagnóstico Estratégico", icon: Compass },
+      { to: "/estrategia", label: "Estratégia LM", icon: Target },
+      { to: "/matriz-riscos", label: "Matriz de Riscos Institucionais", icon: ShieldAlert },
+      { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
+    ],
+  },
+  {
+    id: "pmo",
+    label: "PMO",
+    icon: Briefcase,
+    children: [
+      { to: "/portfolio", label: "Portfólio Estratégico", icon: LayoutGrid },
+      { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
+      { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
+      { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
+    ],
+  },
+  {
+    id: "bpmo",
+    label: "BPMO",
+    icon: GitBranch,
+    children: [
+      { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
+      { to: "/dashboard-processos", label: "Dashboard de Processos", icon: LayoutDashboard },
+      { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
+      { to: "/status-report-processos", label: "Status Report de Processos", icon: LineChart },
+      { to: "/melhoria-continua", label: "Melhoria Contínua", icon: Repeat },
+    ],
+  },
+  {
+    id: "outros",
+    label: "Repositório",
+    icon: FolderArchive,
+    children: [
+      { to: "/repositorio", label: "Repositório", icon: FolderArchive },
+    ],
+  },
 ];
 
 const titles: Record<string, string> = {
