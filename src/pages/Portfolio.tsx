@@ -6,8 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers } from "lucide-react";
+import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers, ChevronUp } from "lucide-react";
 import { projetos as initial, type Projeto, diretores, objetivosBSC, okrs } from "@/data/mockData";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import Submissao from "./Submissao";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -27,6 +29,7 @@ const statusCols: Projeto["status"][] = ["Backlog", "A Iniciar", "Em Andamento",
 export default function Portfolio() {
   const nav = useNavigate();
   const [view, setView] = useState<"tabela" | "kanban">("tabela");
+  const [submitOpen, setSubmitOpen] = useState(false);
   const [data, setData] = useState<Projeto[]>(initial);
   const [search, setSearch] = useState("");
   const [filterWave, setFilterWave] = useState<string[]>([]);
