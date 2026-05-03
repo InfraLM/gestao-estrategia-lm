@@ -23,6 +23,7 @@ import GestaoProcessos from "./pages/GestaoProcessos";
 import DashboardProcessos from "./pages/DashboardProcessos";
 import StatusReportProcessos from "./pages/StatusReportProcessos";
 import MatrizRiscosInstitucionais from "./pages/MatrizRiscosInstitucionais";
+import ProcessosPublicados from "./pages/ProcessosPublicados";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
 
@@ -54,7 +55,7 @@ const App = () => (
 
               {/* Repositórios — apenas a versão vigente de cada documento */}
               <Route path="/repositorios/frameworks" element={<PlaceholderDoc titulo="Frameworks Vigentes" descricao="Repositório controlado dos frameworks institucionais em uso (estratégia, BSC, OKRs, ICE, EAP, BC). Apenas a última versão aprovada é exibida." bullets={["Última versão vigente de cada framework", "Controle de revisão (versão, autor, data de aprovação)", "Versões anteriores arquivadas no Histórico", "Sinalização de revisão anual obrigatória", "Alçadas de aprovação (vínculo futuro com Zeev)"]} />} />
-              <Route path="/repositorios/processos-publicados" element={<PlaceholderDoc titulo="Processos Publicados" descricao="Repositório dos processos formalmente publicados e em vigor. Apenas a versão vigente é visível aos usuários." bullets={["Catálogo de processos publicados", "Controle de revisão e validade", "Versões substituídas movem para Histórico de Processos", "Sinalização de revisão anual", "Alçadas de aprovação por dono do processo (Zeev)"]} />} />
+              <Route path="/repositorios/processos-publicados" element={<ProcessosPublicados />} />
               <Route path="/repositorios/documentos-controlados" element={<PlaceholderDoc titulo="Documentos Controlados" descricao="Documentos sob controle de qualidade (POPs, instruções de trabalho, manuais, checklists). Apenas a versão vigente disponível ao usuário final." bullets={["Numeração e código de controle", "Versão vigente única e auditável", "Workflow de aprovação por alçada", "Revisão anual obrigatória com alerta automático", "Histórico restrito a PMO/Admin"]} />} />
               <Route path="/repositorios/politicas-institucionais" element={<PlaceholderDoc titulo="Políticas Institucionais" descricao="Políticas oficiais da Liberdade Médica. Apenas a versão vigente é publicada; revisões antigas ficam no Histórico de Governança." bullets={["Política vigente única por tema", "Aprovação por excom/diretoria (alçada Zeev)", "Ciclo de revisão anual", "Aceite eletrônico por colaborador (futuro)", "Trilha de auditoria completa"]} />} />
               <Route path="/diagnostico" element={<Diagnostico />} />
