@@ -67,7 +67,9 @@ interface MelhoriaEstrategica {
   dataPrevista: string;
   dataConclusao?: string;
   status: Status;
-  projetoId?: string; // vínculo com projeto existente
+  projetoId?: string;
+  objetivos?: string[]; // códigos de objetivos estratégicos vinculados
+  krs?: string[]; // KRs específicos selecionados
 }
 
 // Mapeia diretor → área (aproximação para seed inicial)
