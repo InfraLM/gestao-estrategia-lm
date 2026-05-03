@@ -298,6 +298,62 @@ export default function Melhorias() {
                           <Input type="date" value={draft.dataConclusao ?? ""} onChange={e => setDraft(d => ({ ...d, dataConclusao: e.target.value }))} />
                         </div>
                       </div>
+                      <div className="border-t pt-3">
+                        <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"><Target className="h-3.5 w-3.5" /> Vínculo Estratégico (Objetivos & KRs)</label>
+                        <p className="text-[11px] text-muted-foreground mb-2">Selecione um ou mais objetivos do BSC e os KRs específicos que esta melhoria contribui.</p>
+                        <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                          {OBJETIVOS_ESTRATEGICOS.map(o => {
+                            const selected = (draft.objetivos ?? []).includes(o.codigo);
+                            return (
+                              <div key={o.codigo} className={cn("rounded-md border p-2", selected && "border-primary bg-primary/5")}>
+                                <label className="flex items-start gap-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    className="mt-0.5"
+                                    checked={selected}
+                                    onChange={e => {
+                                      const cur = new Set(draft.objetivos ?? []);
+                                      if (e.target.checked) cur.add(o.codigo); else cur.delete(o.codigo);
+                                      setDraft(d => ({ ...d, objetivos: Array.from(cur) }));
+                                    }}
+                                  />
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <Badge variant="outline" className={cn("text-[10px]", PERSP_BADGE[o.perspectiva])}>{o.codigo}</Badge>
+                                      <span className="text-sm font-medium">{o.nome}</span>
+                                    </div>
+                                    {selected && (
+                                      <div className="mt-2 flex flex-wrap gap-1.5">
+                                        {o.krs.map(kr => {
+                                          const krKey = `${o.codigo}::${kr}`;
+                                          const krSel = (draft.krs ?? []).includes(krKey);
+                                          return (
+                                            <button
+                                              type="button"
+                                              key={kr}
+                                              onClick={() => {
+                                                const cur = new Set(draft.krs ?? []);
+                                                if (krSel) cur.delete(krKey); else cur.add(krKey);
+                                                setDraft(d => ({ ...d, krs: Array.from(cur) }));
+                                              }}
+                                              className={cn(
+                                                "text-[11px] px-2 py-0.5 rounded border transition-colors",
+                                                krSel ? "bg-primary text-primary-foreground border-primary" : "bg-background hover:bg-muted"
+                                              )}
+                                            >
+                                              {krSel && <Check className="h-2.5 w-2.5 inline mr-1" />}{kr}
+                                            </button>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+                                  </div>
+                                </label>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
