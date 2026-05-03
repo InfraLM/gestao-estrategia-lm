@@ -40,6 +40,15 @@ type Wave = "W1" | "W2" | "W3";
 type Status = "Backlog" | "Priorizado" | "Em Execução" | "Concluído";
 type Prioridade = "Crítica" | "Alta" | "Média" | "Baixa";
 
+type FonteIniciativa = "Portfólio Estratégico" | "Melhorias Estratégicas" | "Melhoria Contínua";
+
+interface VinculoIniciativa {
+  fonte: FonteIniciativa;
+  refId: string;     // ID da iniciativa associada (ex.: P012, MC-002)
+  titulo: string;    // título legível
+  href?: string;     // rota de detalhe, se houver
+}
+
 interface Iniciativa {
   id: string;
   titulo: string;
@@ -54,6 +63,7 @@ interface Iniciativa {
   vinculo: string; // KR/objetivo ligado
   acao: string;
   resultadoEsperado: string;
+  vinculos?: VinculoIniciativa[];
 }
 
 // ===== Tokens visuais =====
