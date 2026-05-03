@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Search, FolderKanban, TrendingUp, AlertTriangle, Clock } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { SaudeBadge } from "@/components/badges";
+import { SubmissaoProjetoDialog } from "@/components/SubmissaoProjetoDialog";
+import { Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Gestao() {
@@ -147,11 +149,24 @@ export default function Gestao() {
                     <Badge variant="outline" className="text-[10px] font-normal">BC: {p.statusBC}</Badge>
                     <Badge variant="outline" className="text-[10px] font-normal">{p.status}</Badge>
                   </div>
-                  <Link to={`/gestao/${p.id}`}>
-                    <Button size="sm" className="gap-1.5 group-hover:bg-primary group-hover:text-primary-foreground">
-                      Abrir gestão <ArrowRight className="h-3.5 w-3.5" />
-                    </Button>
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <SubmissaoProjetoDialog
+                      projetoId={p.id}
+                      projetoNome={p.nome}
+                      inicio={p.inicio}
+                      saude={p.saude}
+                      trigger={
+                        <Button size="sm" variant="outline" className="gap-1.5">
+                          <Upload className="h-3.5 w-3.5" /> Submeter
+                        </Button>
+                      }
+                    />
+                    <Link to={`/gestao/${p.id}`}>
+                      <Button size="sm" className="gap-1.5 group-hover:bg-primary group-hover:text-primary-foreground">
+                        Abrir gestão <ArrowRight className="h-3.5 w-3.5" />
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </Card>
             );

@@ -20,6 +20,8 @@ import { SaudeBadge } from "@/components/badges";
 import { cn } from "@/lib/utils";
 import { useProjectEditableData, type CronogramaItem, type EntregaItem, type SubmissaoDocumento } from "@/hooks/useProjectEditableData";
 import { SubmeterEntregaDialog } from "@/components/SubmeterEntregaDialog";
+import { SubmissaoProjetoDialog } from "@/components/SubmissaoProjetoDialog";
+import { Upload } from "lucide-react";
 import { useColumnWidths, ResizeHandle } from "@/hooks/useColumnWidths";
 import { PredecessoraDialog, PredecessorBadge, isEntregaBloqueada } from "@/components/PredecessoraDialog";
 
@@ -124,6 +126,17 @@ export default function GestaoProjeto() {
               <Badge variant="outline" className="text-[10px]">BC: {projeto.statusBC}</Badge>
               <Badge variant="outline" className="text-[10px]">{projeto.status}</Badge>
               <Badge variant="outline" className="text-[10px]">Diretor: {projeto.diretor}</Badge>
+              <SubmissaoProjetoDialog
+                projetoId={projeto.id}
+                projetoNome={projeto.nome}
+                inicio={projeto.inicio}
+                saude={projeto.saude}
+                trigger={
+                  <Button size="sm" variant="outline" className="h-6 text-xs gap-1.5 ml-1">
+                    <Upload className="h-3 w-3" /> Submeter documento
+                  </Button>
+                }
+              />
             </div>
           </div>
         </div>
@@ -245,13 +258,14 @@ export default function GestaoProjeto() {
 
       {/* Tabs operacionais */}
       <Tabs defaultValue="cronograma">
-        <TabsList className="grid grid-cols-4 lg:grid-cols-7 w-full">
+        <TabsList className="grid grid-cols-4 lg:grid-cols-8 w-full">
           <TabsTrigger value="cronograma" className="gap-1.5"><GanttChart className="h-3.5 w-3.5" /> Cronograma</TabsTrigger>
           <TabsTrigger value="eap" className="gap-1.5"><ListChecks className="h-3.5 w-3.5" /> EAP</TabsTrigger>
           <TabsTrigger value="riscos" className="gap-1.5"><ShieldAlert className="h-3.5 w-3.5" /> Riscos</TabsTrigger>
           <TabsTrigger value="desvios" className="gap-1.5"><GitBranch className="h-3.5 w-3.5" /> Desvios</TabsTrigger>
           <TabsTrigger value="custos" className="gap-1.5"><DollarSign className="h-3.5 w-3.5" /> Custos</TabsTrigger>
           <TabsTrigger value="stakeholders" className="gap-1.5"><Users className="h-3.5 w-3.5" /> Stakeholders</TabsTrigger>
+          <TabsTrigger value="submissoes" className="gap-1.5"><Upload className="h-3.5 w-3.5" /> Submissões</TabsTrigger>
           <TabsTrigger value="historico" className="gap-1.5"><History className="h-3.5 w-3.5" /> Histórico</TabsTrigger>
         </TabsList>
 
@@ -263,6 +277,11 @@ export default function GestaoProjeto() {
         {/* EAP — editável + submissão por entregável */}
         <TabsContent value="eap" className="mt-5">
           <EapEditavel editable={editable} projetoId={projeto.id} />
+        </TabsContent>
+
+        {/* SUBMISSÕES — visão consolidada */}
+        <TabsContent value="submissoes" className="mt-5">
+          <SubmissoesTab editable={editable} projeto={projeto} />
         </TabsContent>
 
         {/* MATRIZ DE RISCOS */}
@@ -1272,4 +1291,109 @@ function buildProjectData(p: Projeto) {
   ];
 
   return { matrizCustos, totais, custos, burnRate, horasTime, cronograma, eap, riscos, desvios, stakeholders };
+}
+
+// ============================================================
+// SUBMISSÕES — visão consolidada de documentos do projeto
+// ============================================================
+function SubmissoesTab({ editable, projeto }: { editable: Editable; projeto: Projeto }) {
+  const { state, submitDocumento } = editable;
+  const docs = state.eap
+    .flatMap(p => p.entregas.flatMap(e => e.documentos.map(d => ({
+      ...d, pacoteId: p.id, pacoteTitulo: p.titulo, entregaId: e.id, entregaTitulo: e.titulo,
+    }))))
+    .sort((a, b) => b.data.localeCompare(a.data));
+
+  const totaisPorTipo = docs.reduce((acc, d) => { acc[d.tipo] = (acc[d.tipo] || 0) + 1; return acc; }, {} as Record<string, number>);
+  const entregasComDoc = new Set(docs.map(d => `${d.pacoteId}/${d.entregaId}`)).size;
+  const entregasTotais = state.eap.reduce((s, p) => s + p.entregas.length, 0);
+
+  return (
+    <div className="space-y-5">
+      <Card className="p-5 shadow-card">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h3 className="font-semibold flex items-center gap-2"><Upload className="h-4 w-4 text-primary" /> Submissões do projeto</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Atualize qualquer entregável da EAP submetendo planilha, PDF, texto ou gravação. Todas as submissões aparecem também no histórico do projeto.
+            </p>
+          </div>
+          <SubmissaoProjetoDialog
+            projetoId={projeto.id}
+            projetoNome={projeto.nome}
+            inicio={projeto.inicio}
+            saude={projeto.saude}
+            trigger={<Button size="sm" className="gap-1.5"><Upload className="h-3.5 w-3.5" /> Nova submissão</Button>}
+          />
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-4">
+          <div className="p-3 rounded-md border"><div className="text-[10px] uppercase text-muted-foreground">Total de docs</div><div className="text-2xl font-semibold tabular-nums">{docs.length}</div></div>
+          <div className="p-3 rounded-md border"><div className="text-[10px] uppercase text-muted-foreground">Entregas c/ submissão</div><div className="text-2xl font-semibold tabular-nums">{entregasComDoc}<span className="text-xs text-muted-foreground"> / {entregasTotais}</span></div></div>
+          {(["planilha", "pdf", "texto", "gravacao"] as SubmissaoDocumento["tipo"][]).map(t => (
+            <div key={t} className="p-3 rounded-md border">
+              <div className="text-[10px] uppercase text-muted-foreground">{t}</div>
+              <div className="text-2xl font-semibold tabular-nums">{totaisPorTipo[t] || 0}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card className="p-5 shadow-card">
+        <h3 className="font-semibold mb-3">Histórico de submissões</h3>
+        {docs.length === 0 ? (
+          <div className="py-12 text-center text-sm text-muted-foreground">
+            Nenhum documento submetido ainda. Clique em "Nova submissão" para anexar uma evidência a um entregável.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="text-sm w-full">
+              <thead>
+                <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
+                  <th className="px-2 py-2 text-left font-semibold">Documento</th>
+                  <th className="px-2 py-2 text-left font-semibold">Entregável (EAP)</th>
+                  <th className="px-2 py-2 text-left font-semibold">Tipo</th>
+                  <th className="px-2 py-2 text-left font-semibold">Resumo</th>
+                  <th className="px-2 py-2 text-right font-semibold">Autor · Data</th>
+                  <th className="px-2 py-2 text-right font-semibold">Ação</th>
+                </tr>
+              </thead>
+              <tbody>
+                {docs.map(d => {
+                  const Icon = TIPO_ICON_MAP[d.tipo];
+                  return (
+                    <tr key={d.id} className="border-b border-border/50">
+                      <td className="px-2 py-2">
+                        <div className="flex items-center gap-2">
+                          <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
+                          <span className="font-medium truncate">{d.nome}</span>
+                        </div>
+                      </td>
+                      <td className="px-2 py-2 text-xs">
+                        <div className="font-mono text-muted-foreground">{d.pacoteId} → {d.entregaId}</div>
+                        <div className="truncate">{d.entregaTitulo}</div>
+                      </td>
+                      <td className="px-2 py-2"><Badge variant="outline" className="text-[10px] capitalize">{d.tipo}</Badge></td>
+                      <td className="px-2 py-2 text-xs text-muted-foreground max-w-md truncate">{d.resumo || "—"}</td>
+                      <td className="px-2 py-2 text-xs text-right text-muted-foreground tabular-nums whitespace-nowrap">
+                        {d.autor} · {new Date(d.data).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                      </td>
+                      <td className="px-2 py-2 text-right">
+                        <SubmeterEntregaDialog
+                          entregaId={d.entregaId}
+                          entregaTitulo={d.entregaTitulo}
+                          documentos={[]}
+                          onSubmit={(doc) => submitDocumento(d.pacoteId, d.entregaId, doc)}
+                          trigger={<Button size="sm" variant="ghost" className="h-7 text-xs gap-1.5"><Upload className="h-3 w-3" /> Atualizar</Button>}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
 }
