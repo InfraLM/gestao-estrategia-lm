@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
+import SubmissaoBacklogDialog from "@/components/SubmissaoBacklogDialog";
+import PropostasIABacklog from "@/components/PropostasIABacklog";
 
 // ===== Tipagem =====
 type Tipo = "Reforço de Fraqueza" | "Defesa Identificada" | "Potencializar Força" | "Explorar Oportunidade";
