@@ -1,5 +1,5 @@
 import { Fragment, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,7 @@ import { toast } from "sonner";
 const statusCols: Projeto["status"][] = ["Backlog", "A Iniciar", "Em Andamento", "Validação", "Encerramento", "Concluído"];
 
 export default function Portfolio() {
-  const nav = useNavigate();
+  
   const [view, setView] = useState<"tabela" | "kanban">("tabela");
   const [submitOpen, setSubmitOpen] = useState(false);
   const [data, setData] = useState<Projeto[]>(initial);
