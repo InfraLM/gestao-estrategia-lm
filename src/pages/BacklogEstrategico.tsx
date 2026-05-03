@@ -459,9 +459,9 @@ export default function BacklogEstrategico() {
               W3: "bg-muted text-foreground border-border",
             };
             const waveLabel: Record<Wave, string> = {
-              W1: "Wave 1 · Foundation (curto prazo)",
-              W2: "Wave 2 · Scale (médio prazo)",
-              W3: "Wave 3 · Expansion (longo prazo)",
+              W1: "Wave 1 · Estrutura mínima (remove risco sistêmico)",
+              W2: "Wave 2 · Escala com controle (previsibilidade e repetição)",
+              W3: "Wave 3 · Aceleração e diferenciação (vantagem competitiva)",
             };
             return (
               <div key={w} className="space-y-3">

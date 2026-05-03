@@ -2,10 +2,26 @@ import { cn } from "@/lib/utils";
 import { type StatusExecucao, type StatusBC, type Classificacao, type Wave, type Saude } from "@/data/mockData";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
+// Conceito Wave (LM): agrupamento intencional e sequenciado de iniciativas que
+// remove restrições críticas, instala capacidades organizacionais e habilita o
+// próximo nível de execução da estratégia — respeitando dependências, risco e
+// capacidade de absorção. Wave ordena capacidades (lógica), não cronograma.
 export const WAVE_DESCRIPTIONS: Record<Wave, { titulo: string; periodo: string; foco: string }> = {
-  W1: { titulo: "Wave 1 — Fundamentos & Quick Wins", periodo: "2026", foco: "Estruturação da PMO, governança e iniciativas de impacto rápido com baixa complexidade." },
-  W2: { titulo: "Wave 2 — Crescimento & Escala",     periodo: "2027 – 2028", foco: "Expansão de produtos institucionais, integração de processos e ganho de escala operacional." },
-  W3: { titulo: "Wave 3 — Inovação & Expansão",      periodo: "2029 – 2030", foco: "Novos modelos de negócio, transformação digital avançada e diversificação do portfolio." },
+  W1: {
+    titulo: "Wave 1 — Estrutura mínima",
+    periodo: "Remove risco sistêmico",
+    foco: "Remove restrições estruturais e protege EEA/C.01: governança, dados e financeiro (teto de variáveis, FP&A 36m, cohort P&L, CAPEX, dashboards, forecast por NRR), processos e qualidade (gestão à vista, gates de prontidão, alertas de engajamento) e pessoas e liderança (treino do método, matriz performance, PDI, OTE/PLR, rituais 1:1). Sem isso, crescer quebra.",
+  },
+  W2: {
+    titulo: "Wave 2 — Escala com controle",
+    periodo: "Crescer com previsibilidade, eficiência e repetição",
+    foco: "Comercial e aquisição (leadscore, funil, DRE de vendedor, squads, outbound/field), produto e jornada (escada de valor, BU Paciente Grave, app próprio, alertas de CX), operação e capacidade (ITC, simulação com IA) e alavancas estratégicas (follow-up automatizado, scripts/pitch com IA, pricing & packaging 2.0 ancorado no cohort P&L).",
+  },
+  W3: {
+    titulo: "Wave 3 — Aceleração e diferenciação",
+    periodo: "Vantagem competitiva, novos modelos e inovação",
+    foco: "IA avançada e diferenciação (chat IA LM, copilotos, biblioteca de algoritmos, Emy Education AI-native, portfólio de agentes), marca e ecossistema (ALUMNI, calendário editorial, Pílulas, Social Selling, LM Capital/FIDC) e expansão estrutural (multi-hub SP/Recife/Curitiba, Faculty Cloud, SVST multidisciplinar, P04 Angola).",
+  },
 };
 
 const baseClass = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-medium border whitespace-nowrap";
