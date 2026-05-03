@@ -225,6 +225,51 @@ export type Database = {
           },
         ]
       }
+      estrategia_insights: {
+        Row: {
+          arquivo_nome: string | null
+          arquivo_path: string | null
+          arquivo_tamanho: number | null
+          autor: string | null
+          autor_nome: string | null
+          conteudo: string | null
+          created_at: string
+          ferramenta: string
+          id: string
+          tipo_arquivo: string | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          arquivo_nome?: string | null
+          arquivo_path?: string | null
+          arquivo_tamanho?: number | null
+          autor?: string | null
+          autor_nome?: string | null
+          conteudo?: string | null
+          created_at?: string
+          ferramenta: string
+          id?: string
+          tipo_arquivo?: string | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          arquivo_nome?: string | null
+          arquivo_path?: string | null
+          arquivo_tamanho?: number | null
+          autor?: string | null
+          autor_nome?: string | null
+          conteudo?: string | null
+          created_at?: string
+          ferramenta?: string
+          id?: string
+          tipo_arquivo?: string | null
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gmail_processados: {
         Row: {
           draft_id: string | null
