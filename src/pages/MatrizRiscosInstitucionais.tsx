@@ -101,13 +101,16 @@ export default function MatrizRiscosInstitucionais() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-          <ShieldAlert className="h-6 w-6 text-primary" /> Matriz de Riscos Institucionais
-        </h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Visão consolidada dos riscos institucionais, riscos críticos de processos e riscos críticos de projetos.
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+            <ShieldAlert className="h-6 w-6 text-primary" /> Matriz de Riscos Institucionais
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Visão consolidada dos riscos institucionais, riscos críticos de processos e riscos críticos de projetos.
+          </p>
+        </div>
+        <UploadRiscosInstitucionais onDone={refetch} />
       </div>
 
       {/* KPIs */}
