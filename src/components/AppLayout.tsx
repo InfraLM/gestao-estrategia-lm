@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp } from "lucide-react";
+import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
@@ -66,6 +66,7 @@ const navGroups: NavGroup[] = [
       { to: "/repositorios/processos-publicados", label: "Processos Publicados", icon: FileCheck2 },
       { to: "/repositorios/documentos-controlados", label: "Documentos Controlados", icon: FolderArchive },
       { to: "/repositorios/politicas-institucionais", label: "Políticas Institucionais", icon: ShieldCheck },
+      { to: "/repositorios/gestao", label: "Gestão do Repositório", icon: Settings2 },
     ],
   },
 ];
@@ -95,6 +96,7 @@ const titles: Record<string, string> = {
   "/repositorios/processos-publicados": "Processos Publicados · Repositório Controlado",
   "/repositorios/documentos-controlados": "Documentos Controlados · Controle de Qualidade",
   "/repositorios/politicas-institucionais": "Políticas Institucionais · Repositório Controlado",
+  "/repositorios/gestao": "Gestão do Repositório · Controle de Revisão e Aprovações",
 };
 
 export default function AppLayout() {
