@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network } from "lucide-react";
+import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,6 +17,7 @@ const navItems = [
   { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
   { to: "/melhoria-continua", label: "Melhoria Contínua", icon: Repeat },
   { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
+  { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
   { to: "/repositorio", label: "Repositório", icon: FolderArchive },
 ];
 
@@ -32,6 +33,7 @@ const titles: Record<string, string> = {
   "/melhorias": "Gestão de Melhorias Estratégicas",
   "/melhoria-continua": "Gestão de Melhoria Contínua · Por Área",
   "/matriz-processos": "Matriz de Processos · Cadeia de Valor LM",
+  "/gestao-processos": "Gestão de Processos · Mapeamento e Análise",
   "/repositorio": "Repositório · BCs e Documentos",
 };
 
