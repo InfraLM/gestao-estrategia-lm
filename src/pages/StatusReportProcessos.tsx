@@ -34,12 +34,6 @@ const STATUS_COLORS: Record<string, string> = {
 const periodos = ["Semanal", "Quinzenal", "Mensal"] as const;
 type Periodo = typeof periodos[number];
 
-function loadProcessos(): Processo[] {
-  try {
-    const edits: Record<string, Partial<Processo>> = JSON.parse(localStorage.getItem(MATRIZ_KEY) || "{}");
-    return (processosSeed as Processo[]).map(p => ({ ...p, ...edits[p.id] }));
-  } catch { return processosSeed as Processo[]; }
-}
 function loadGestao(): Record<string, any> {
   try { return JSON.parse(localStorage.getItem(GP_KEY) || "{}"); } catch { return {}; }
 }
