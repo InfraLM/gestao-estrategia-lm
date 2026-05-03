@@ -741,15 +741,38 @@ const TIPO_ICON_MAP: Record<SubmissaoDocumento["tipo"], typeof FileIcon> = {
   outro: FileIcon,
 };
 
-function EapEditavel({ editable }: { editable: Editable }) {
+const EAP_COL_DEFAULTS: Record<string, number> = {
+  id: 56, entrega: 280, responsavel: 160, dataPrev: 140, dataConcl: 140,
+  horas: 70, status: 140, predecessoras: 200, submissoes: 140, acoes: 40,
+};
+
+const EAP_COLS: { key: keyof typeof EAP_COL_DEFAULTS; label: string; align?: "left" | "center" }[] = [
+  { key: "id", label: "ID" },
+  { key: "entrega", label: "Entrega" },
+  { key: "responsavel", label: "Responsável" },
+  { key: "dataPrev", label: "Data prevista" },
+  { key: "dataConcl", label: "Data conclusão" },
+  { key: "horas", label: "Horas", align: "center" },
+  { key: "status", label: "Status" },
+  { key: "predecessoras", label: "Predecessoras" },
+  { key: "submissoes", label: "Submissões", align: "center" },
+  { key: "acoes", label: "" },
+];
+
+function EapEditavel({ editable, projetoId }: { editable: Editable; projetoId: string }) {
   const { state, updateEntrega, addEntrega, removeEntrega, submitDocumento } = editable;
+  const { widths, startResize, reset } = useColumnWidths(`${projetoId}-eap`, EAP_COL_DEFAULTS);
+
   return (
     <Card className="p-5 shadow-card">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 gap-3">
         <div>
           <h3 className="font-semibold">Estrutura Analítica do Projeto (EAP) — editável</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">Cada entrega tem responsável, datas e botão de submissão de documentos (planilha, PDF, texto, gravação).</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Colunas redimensionáveis (arraste a borda direita do cabeçalho). Vincule <strong>predecessoras</strong> de outras entregas, projetos ou melhorias — atividades com pendentes ficam <strong>bloqueadas</strong> automaticamente (caminho crítico).
+          </p>
         </div>
+        <Button size="sm" variant="ghost" onClick={reset} className="text-xs h-7 shrink-0">Resetar larguras</Button>
       </div>
       <div className="space-y-4">
         {state.eap.map(pacote => {
@@ -772,76 +795,107 @@ function EapEditavel({ editable }: { editable: Editable }) {
                 </div>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="text-sm" style={{ tableLayout: "fixed", width: "max-content", minWidth: "100%" }}>
+                  <colgroup>
+                    {EAP_COLS.map(c => (
+                      <col key={c.key} style={{ width: `${widths[c.key]}px` }} />
+                    ))}
+                  </colgroup>
                   <thead>
                     <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
-                      <th className="text-left px-2 py-2 font-semibold w-12">ID</th>
-                      <th className="text-left px-2 py-2 font-semibold">Entrega</th>
-                      <th className="text-left px-2 py-2 font-semibold w-[160px]">Responsável</th>
-                      <th className="text-left px-2 py-2 font-semibold w-[140px]">Data prevista</th>
-                      <th className="text-left px-2 py-2 font-semibold w-[140px]">Data conclusão</th>
-                      <th className="text-center px-2 py-2 font-semibold w-16">Horas</th>
-                      <th className="text-left px-2 py-2 font-semibold w-[140px]">Status</th>
-                      <th className="text-center px-2 py-2 font-semibold w-[140px]">Submissões</th>
-                      <th className="px-2 py-2 w-8" />
+                      {EAP_COLS.map(c => (
+                        <th
+                          key={c.key}
+                          className={cn("px-2 py-2 font-semibold relative", c.align === "center" ? "text-center" : "text-left")}
+                        >
+                          <span className="block truncate pr-1.5">{c.label}</span>
+                          {c.key !== "acoes" && <ResizeHandle onMouseDown={(e) => startResize(c.key as string, e)} />}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {pacote.entregas.map(e => (
-                      <tr key={e.id} className="border-b border-border/50">
-                        <td className="px-2 py-1.5 text-xs font-mono text-muted-foreground tabular-nums">{e.id}</td>
-                        <td className="px-2 py-1.5">
-                          <Input value={e.titulo} onChange={ev => updateEntrega(pacote.id, e.id, { titulo: ev.target.value })} className="h-8 text-sm" />
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <Input value={e.responsavel} onChange={ev => updateEntrega(pacote.id, e.id, { responsavel: ev.target.value })} className="h-8 text-sm" />
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <Input type="date" value={e.dataPrevista} onChange={ev => updateEntrega(pacote.id, e.id, { dataPrevista: ev.target.value })} className="h-8 text-xs" />
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <Input type="date" value={e.dataConclusao ?? ""} onChange={ev => updateEntrega(pacote.id, e.id, { dataConclusao: ev.target.value || null, feito: !!ev.target.value })} className="h-8 text-xs" />
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <Input type="number" min={0} value={e.horas} onChange={ev => updateEntrega(pacote.id, e.id, { horas: Number(ev.target.value) || 0 })} className="h-8 text-xs text-center tabular-nums" />
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <Select value={e.status} onValueChange={(v) => {
-                            const novo = v as EntregaItem["status"];
-                            updateEntrega(pacote.id, e.id, { status: novo, feito: novo === "Concluído", dataConclusao: novo === "Concluído" ? (e.dataConclusao ?? new Date().toISOString().slice(0, 10)) : null });
-                          }}>
-                            <SelectTrigger className={cn("h-8 text-xs", statusColor(e.status))}>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {STATUS_ENTREGA.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="px-2 py-1.5 text-center">
-                          <SubmeterEntregaDialog
-                            entregaId={e.id}
-                            entregaTitulo={e.titulo}
-                            documentos={e.documentos}
-                            onSubmit={(doc) => submitDocumento(pacote.id, e.id, doc)}
-                          />
-                          {e.documentos.length > 0 && (
-                            <div className="flex items-center justify-center gap-1 mt-1">
-                              {e.documentos.slice(0, 3).map(d => {
-                                const Icon = TIPO_ICON_MAP[d.tipo];
-                                return <Icon key={d.id} className="h-3 w-3 text-muted-foreground" />;
-                              })}
-                              {e.documentos.length > 3 && <span className="text-[9px] text-muted-foreground">+{e.documentos.length - 3}</span>}
+                    {pacote.entregas.map(e => {
+                      const bloqueado = isEntregaBloqueada(e, state.eap);
+                      const statusEfetivo: EntregaItem["status"] = bloqueado && e.status !== "Concluído" ? "Bloqueado" : e.status;
+                      return (
+                        <tr key={e.id} className={cn("border-b border-border/50", bloqueado && e.status !== "Concluído" && "bg-destructive/5")}>
+                          <td className="px-2 py-1.5 text-xs font-mono text-muted-foreground tabular-nums truncate">{e.id}</td>
+                          <td className="px-2 py-1.5">
+                            <Input value={e.titulo} onChange={ev => updateEntrega(pacote.id, e.id, { titulo: ev.target.value })} className="h-8 text-sm" />
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <Input value={e.responsavel} onChange={ev => updateEntrega(pacote.id, e.id, { responsavel: ev.target.value })} className="h-8 text-sm" />
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <Input type="date" value={e.dataPrevista} onChange={ev => updateEntrega(pacote.id, e.id, { dataPrevista: ev.target.value })} className="h-8 text-xs" />
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <Input type="date" value={e.dataConclusao ?? ""} onChange={ev => updateEntrega(pacote.id, e.id, { dataConclusao: ev.target.value || null, feito: !!ev.target.value })} className="h-8 text-xs" />
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <Input type="number" min={0} value={e.horas} onChange={ev => updateEntrega(pacote.id, e.id, { horas: Number(ev.target.value) || 0 })} className="h-8 text-xs text-center tabular-nums" />
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <Select
+                              value={statusEfetivo}
+                              disabled={bloqueado && e.status !== "Concluído"}
+                              onValueChange={(v) => {
+                                const novo = v as EntregaItem["status"];
+                                updateEntrega(pacote.id, e.id, { status: novo, feito: novo === "Concluído", dataConclusao: novo === "Concluído" ? (e.dataConclusao ?? new Date().toISOString().slice(0, 10)) : null });
+                              }}
+                            >
+                              <SelectTrigger className={cn("h-8 text-xs", statusColor(statusEfetivo))}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {STATUS_ENTREGA.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <div className="flex items-center gap-1 flex-wrap">
+                              {e.predecessoras?.slice(0, 2).map(p => (
+                                <PredecessorBadge key={`${p.origem}-${p.refId}`} p={p} />
+                              ))}
+                              {e.predecessoras && e.predecessoras.length > 2 && (
+                                <span className="text-[10px] text-muted-foreground">+{e.predecessoras.length - 2}</span>
+                              )}
+                              <PredecessoraDialog
+                                entregaTitulo={e.titulo}
+                                entregaIdLocal={e.id}
+                                predecessoras={e.predecessoras ?? []}
+                                currentProjectId={projetoId}
+                                eap={state.eap}
+                                onChange={(preds) => updateEntrega(pacote.id, e.id, { predecessoras: preds })}
+                              />
                             </div>
-                          )}
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => removeEntrega(pacote.id, e.id)}>
-                            <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="px-2 py-1.5 text-center">
+                            <SubmeterEntregaDialog
+                              entregaId={e.id}
+                              entregaTitulo={e.titulo}
+                              documentos={e.documentos}
+                              onSubmit={(doc) => submitDocumento(pacote.id, e.id, doc)}
+                            />
+                            {e.documentos.length > 0 && (
+                              <div className="flex items-center justify-center gap-1 mt-1">
+                                {e.documentos.slice(0, 3).map(d => {
+                                  const Icon = TIPO_ICON_MAP[d.tipo];
+                                  return <Icon key={d.id} className="h-3 w-3 text-muted-foreground" />;
+                                })}
+                                {e.documentos.length > 3 && <span className="text-[9px] text-muted-foreground">+{e.documentos.length - 3}</span>}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => removeEntrega(pacote.id, e.id)}>
+                              <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
