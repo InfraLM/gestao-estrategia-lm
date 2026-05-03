@@ -31,8 +31,9 @@ export default function Portfolio() {
   
   const [view, setView] = useState<"tabela" | "kanban">("tabela");
   const [submitOpen, setSubmitOpen] = useState(false);
-  const [data, setData] = useState<Projeto[]>(initial);
-  const [search, setSearch] = useState("");
+  const { data: initial } = useProjetosDB();
+  const [data, setData] = useState<Projeto[]>([]);
+  useEffect(() => { setData(initial); }, [initial]);
   const [filterWave, setFilterWave] = useState<string[]>([]);
   const [filterClass, setFilterClass] = useState<string[]>([]);
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
