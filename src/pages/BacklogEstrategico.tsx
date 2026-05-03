@@ -516,21 +516,39 @@ export default function BacklogEstrategico() {
                       </Button>
                     </div>
                     {i.vinculos && i.vinculos.length > 0 ? (
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-col gap-1.5">
                         {i.vinculos.map((v) => {
                           const FIcon = fonteMeta[v.fonte].icon;
+                          const meta = projetoMap.get(v.refId);
                           const inner = (
-                            <Badge variant="outline" className={`text-[10px] ${fonteMeta[v.fonte].cor}`} title={`${v.fonte} · ${v.refId}`}>
-                              <FIcon className="h-3 w-3 mr-1" />
-                              <span className="font-mono mr-1">{v.refId}</span>
-                              <span className="truncate max-w-[220px]">{v.titulo}</span>
-                              {v.href && <ExternalLink className="h-2.5 w-2.5 ml-1 opacity-60" />}
-                            </Badge>
+                            <div className={`flex flex-wrap items-center gap-2 rounded-md border px-2 py-1.5 text-[11px] ${fonteMeta[v.fonte].cor}`} title={`${v.fonte} · ${v.refId}`}>
+                              <FIcon className="h-3 w-3 shrink-0" />
+                              <span className="font-mono">{v.refId}</span>
+                              <span className="truncate max-w-[260px] font-medium">{v.titulo}</span>
+                              {meta ? (
+                                <>
+                                  <Badge variant="outline" className={`text-[10px] ml-auto ${statusTone[meta.status] || "bg-muted text-foreground border-border"}`}>
+                                    {meta.status}
+                                  </Badge>
+                                  <span className={`text-[10px] font-semibold ${saudeTone[meta.saude] || "text-muted-foreground"}`}>
+                                    ● {meta.saude}
+                                  </span>
+                                  {meta.termino && (
+                                    <span className="text-[10px] text-muted-foreground">
+                                      Término: <strong className="text-foreground">{meta.termino}</strong>
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <span className="text-[10px] text-muted-foreground ml-auto italic">sem dados de execução</span>
+                              )}
+                              {v.href && <ExternalLink className="h-3 w-3 opacity-60" />}
+                            </div>
                           );
                           return v.href ? (
-                            <Link key={`${v.fonte}-${v.refId}`} to={v.href}>{inner}</Link>
+                            <Link key={`${v.fonte}-${v.refId}`} to={v.href} className="hover:opacity-90">{inner}</Link>
                           ) : (
-                            <span key={`${v.fonte}-${v.refId}`}>{inner}</span>
+                            <div key={`${v.fonte}-${v.refId}`}>{inner}</div>
                           );
                         })}
                       </div>
