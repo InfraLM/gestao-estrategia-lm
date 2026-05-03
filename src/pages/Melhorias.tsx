@@ -100,6 +100,8 @@ const SEED: MelhoriaEstrategica[] = projetos
     dataPrevista: p.termino ?? "",
     status: (p.status as Status) ?? "Backlog",
     projetoId: p.id,
+    objetivos: p.objetivos ?? [],
+    krs: p.krs ?? [],
   }));
 
 const STATUS_COLORS: Record<Status, string> = {
