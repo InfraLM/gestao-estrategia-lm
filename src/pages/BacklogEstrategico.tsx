@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
+import SubmissaoBacklogDialog from "@/components/SubmissaoBacklogDialog";
+import PropostasIABacklog from "@/components/PropostasIABacklog";
 
 // ===== Tipagem =====
 type Tipo = "Reforço de Fraqueza" | "Defesa Identificada" | "Potencializar Força" | "Explorar Oportunidade";
@@ -343,16 +345,19 @@ export default function BacklogEstrategico() {
       {/* Header */}
       <Card className="bg-gradient-to-br from-primary/5 via-info/5 to-success/5 border-primary/20">
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-primary/10 grid place-items-center">
-              <ListChecks className="h-5 w-5 text-primary" />
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 grid place-items-center">
+                <ListChecks className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <CardTitle>Backlog Estratégico · Plano de Ação Institucional</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Iniciativas derivadas do <strong>Diagnóstico</strong> e da <strong>Estratégia LM</strong>, classificadas por movimento estratégico e rastreadas pela origem decisória.
+                </p>
+              </div>
             </div>
-            <div>
-              <CardTitle>Backlog Estratégico · Plano de Ação Institucional</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                Iniciativas derivadas do <strong>Diagnóstico</strong> e da <strong>Estratégia LM</strong>, classificadas por movimento estratégico e rastreadas pela origem decisória.
-              </p>
-            </div>
+            <SubmissaoBacklogDialog />
           </div>
         </CardHeader>
         <CardContent>
@@ -399,6 +404,9 @@ export default function BacklogEstrategico() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Propostas IA pendentes */}
+      <PropostasIABacklog />
 
       {/* Filtros */}
       <Card>
