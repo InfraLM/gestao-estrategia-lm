@@ -34,6 +34,7 @@ export default function Portfolio() {
   const { data: initial } = useProjetosDB();
   const [data, setData] = useState<Projeto[]>([]);
   useEffect(() => { setData(initial); }, [initial]);
+  const [search, setSearch] = useState("");
   const [filterWave, setFilterWave] = useState<string[]>([]);
   const [filterClass, setFilterClass] = useState<string[]>([]);
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
