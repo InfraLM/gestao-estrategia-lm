@@ -405,6 +405,9 @@ export default function BacklogEstrategico() {
         </CardContent>
       </Card>
 
+      {/* Propostas IA pendentes */}
+      <PropostasIABacklog />
+
       {/* Filtros */}
       <Card>
         <CardContent className="pt-6">
