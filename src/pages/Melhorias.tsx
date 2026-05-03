@@ -9,9 +9,30 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, ArrowRight, Plus, Search, Sparkles, GitBranch, ClipboardList, Users, Calendar, Target } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Search, Sparkles, GitBranch, ClipboardList, Users, Calendar, Target, Check } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { projetos } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+
+// Objetivos Estratégicos (BSC) — fonte: Estrategia.tsx
+export const OBJETIVOS_ESTRATEGICOS = [
+  { codigo: "F.01", nome: "Previsibilidade de Caixa", perspectiva: "Financeira", krs: ["NRR > 115%", "Inadimplência >30d ≤ 6%", "Previsão DFC ±5%"] },
+  { codigo: "F.02", nome: "Crescimento com Rentabilidade Sustentável", perspectiva: "Financeira", krs: ["OPEX ratio < 43%", "Margem contribuição > 65%", "Forecast DRE ±5%"] },
+  { codigo: "C.01", nome: "Experiência WOW", perspectiva: "Cliente", krs: ["CSAT > 4,75", ">30% alunos em 3+ pilares", ">95% tickets ≤30min"] },
+  { codigo: "C.02", nome: "Penetração de Mercado", perspectiva: "Cliente", krs: ["8.030 leads", "4.000 alunos", "Lançamento por praça <30 dias"] },
+  { codigo: "P.01", nome: "Conversão Comercial High-Ticket", perspectiva: "Processos", krs: ["SQL→Matrícula >35%", "MQL→SQL ≥20%", "No-show <20%"] },
+  { codigo: "P.02", nome: "Eficiência de Cobrança", perspectiva: "Processos", krs: ["Recuperação >50%", "Recorrência cartão >90%"] },
+  { codigo: "P.03", nome: "Automação de Processos Core", perspectiva: "Processos", krs: ["Lead time -25%", "30% portfólio com IA", "100% BPM"] },
+  { codigo: "P.04", nome: "AI First · Human First", perspectiva: "Processos", krs: ["Copilotos por área", "Produtos com IA", "Trilhas personalizadas"] },
+  { codigo: "AC.01", nome: "Cultura Viva & Alta Performance", perspectiva: "Aprendizagem", krs: ["100% áreas com OKRs", "85% rituais", "100% gestão à vista"] },
+] as const;
+
+const PERSP_BADGE: Record<string, string> = {
+  "Financeira": "bg-emerald-100 text-emerald-800 border-emerald-200",
+  "Cliente": "bg-primary/10 text-primary border-primary/30",
+  "Processos": "bg-blue-100 text-blue-800 border-blue-200",
+  "Aprendizagem": "bg-amber-100 text-amber-800 border-amber-200",
+};
 
 const AREAS = [
   "Comercial",
