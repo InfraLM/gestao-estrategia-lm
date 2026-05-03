@@ -169,6 +169,7 @@ const ROI_BASE = [
 const tooltipStyle = { background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 };
 
 export default function Dashboard() {
+  const { data: projetos } = useProjetosDB();
   const [filterClasses, setFilterClasses] = useState<Classificacao[]>([]); // vazio = todas
   const [showList, setShowList] = useState(false);
   const isAll = filterClasses.length === 0;
