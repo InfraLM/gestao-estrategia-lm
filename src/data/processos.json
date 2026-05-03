@@ -1,0 +1,1611 @@
+[
+  {
+    "id": "86acpxrvu",
+    "nome": "02.07.04 –  Gerir UGC e Influencers",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Iuri",
+    "dono": "Alexia Finazzi, Wendy",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pt7u",
+    "nome": "01.01.05 - Gerir Compliance e Conformidade Institucional",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "Naira",
+    "dono": "Marcya Santos",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.01.04 - Gerir Riscos Corporativos e Reputacionais",
+      "03.04.02 Gerir Obrigações Legais e Regulatórias"
+    ],
+    "clientes": [
+      "03.07.03 - Realizar Auditorias Internas e Externas"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9ptc9",
+    "nome": "01.03.01 - Gerir Portfólio do Ecossistema e Inovação Estratégica",
+    "nivel": "Gerencial",
+    "revisao": 1,
+    "diretor": "Ian",
+    "dono": "Guilherme Vieira",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [
+      "01.01.01 - Definir e Governar a Estratégia do Ecossistema",
+      "01.03.02 - Avaliar Aderência Estratégica de Novos Produtos e Negócios"
+    ],
+    "clientes": [
+      "01.03.03 - Priorizar, Evoluir ou Descontinuar Produtos e Iniciativas",
+      "01.04.03 - Gerir Projetos Estratégicos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9ptkp",
+    "nome": "01.01.04 - Gerir Riscos Corporativos e Reputacionais",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "Naira",
+    "dono": "Marcya Santos",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.01.01 - Definir e Governar a Estratégia do Ecossistema",
+      "01.05.03 - Gerir Processos"
+    ],
+    "clientes": [
+      "01.01.05 - Gerir Compliance e Conformidade Institucional"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prrr",
+    "nome": "01.01.01 - Definir e Governar a Estratégia do Ecossistema",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "Ian",
+    "dono": "Naira Yurie",
+    "status": "BACKLOG",
+    "fornecedores": [],
+    "clientes": [
+      "01.04.01 - Desdobrar Estratégia em Objetivos e Indicadores",
+      "01.03.01 - Gerir Portfólio do Ecossistema e Inovação Estratégica"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prr7",
+    "nome": "01.04.01 - Desdobrar Estratégia em Objetivos e Indicadores",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "Naira",
+    "dono": "Yuri Ribeiro, Renato Mesquita",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.01.01 - Definir e Governar a Estratégia do Ecossistema"
+    ],
+    "clientes": [
+      "01.04.02 - Monitorar Performance e Resultados",
+      "03.02.01 - Planejar, Orçar e Controlar a Performance Financeira"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prtd",
+    "nome": "01.04.02 - Monitorar Performance e Resultados",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "Yuri",
+    "dono": "Yuri Ribeiro",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.04.01 - Desdobrar Estratégia em Objetivos e Indicadores",
+      "03.02.01 - Planejar, Orçar e Controlar a Performance Financeira"
+    ],
+    "clientes": [
+      "01.05.02 - Gerir Melhoria Contínua dos Processos",
+      "01.01.03 - Governar Comitês, Fóruns e Rituais Decisórios"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9ptmf",
+    "nome": "01.02.03 - Definir e Governar Posicionamento Institucional",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "Iuri",
+    "dono": "Iuri Eloi Franco",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.01.01 - Definir e Governar a Estratégia do Ecossistema"
+    ],
+    "clientes": [
+      "01.02.02 - Proteger e Evoluir a Marca como Ativo de Confiança"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prvk",
+    "nome": "01.02.02 - Proteger e Evoluir a Marca como Ativo de Confiança",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "Iuri",
+    "dono": "Iuri Eloi Franco",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.02.03 - Definir e Governar Posicionamento Institucional"
+    ],
+    "clientes": [
+      "02.08.01 - Atrair Leads Qualificados",
+      "02.01.01 - Posicionar a Proposta de Valor do Ecossistema"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9ptpb",
+    "nome": "01.05.04 - Gerir Projetos de Melhoria",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "Naira",
+    "dono": "Naira Yurie, Gerson Correia",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.05.02 - Gerir Melhoria Contínua dos Processos"
+    ],
+    "clientes": [
+      "01.04.03 - Gerir Projetos Estratégicos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pryy",
+    "nome": "01.05.02 - Gerir Melhoria Contínua dos Processos",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "Naira",
+    "dono": "Naira Yurie, Áurea Emílio",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.05.01 - Gerir Qualidade Institucional",
+      "03.07.04 - Gerir Não Conformidades"
+    ],
+    "clientes": [
+      "01.05.03 - Gerir Processos",
+      "01.05.04 - Gerir Projetos de Melhoria"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pt8h",
+    "nome": "01.05.01 - Gerir Qualidade Institucional",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "Yuri",
+    "dono": "Yuri Ribeiro, Naira Yurie",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.04.02 - Monitorar Performance e Resultados"
+    ],
+    "clientes": [
+      "01.05.02 - Gerir Melhoria Contínua dos Processos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prxf",
+    "nome": "02.04.01 - Realizar Curadoria Educacional",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Ian",
+    "dono": "Ianny Ribeiro",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.03.01 - Gerir Portfólio do Ecossistema e Inovação Estratégica"
+    ],
+    "clientes": [
+      "02.04.02 - Estruturar Produto e Jornada Educacional"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9przt",
+    "nome": "02.04.02 - Estruturar Produto e Jornada Educacional",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "",
+    "status": "A INICIAR",
+    "fornecedores": [
+      "02.04.01 - Realizar Curadoria Educacional",
+      "01.02.01 - Definir e Governar a Experiência do Aluno (EEA)"
+    ],
+    "clientes": [
+      "02.05.01 - Planejar Conteúdo Educacional",
+      "02.06.01 - Criar, Configurar e Submeter Cursos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9ptcu",
+    "nome": "02.04.03 - Avaliar e Melhorar Continuamente o Produto Educacional",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Caio Barros",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.10.06 – Operar Experiência, Suporte e Sucesso do Aluno",
+      "01.05.01 - Gerir Qualidade Institucional"
+    ],
+    "clientes": [
+      "02.04.01 - Realizar Curadoria Educacional"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prjj",
+    "nome": "02.05.02 – Produzir Conteúdo (aulas, gravações, materiais)",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Iuri",
+    "dono": "Pedro Fonseca",
+    "status": "APROVAÇÃO DIRETORIA",
+    "fornecedores": [
+      "02.05.01 - Planejar Conteúdo Educacional",
+      "03.05.04 - Apoiar Execução Acadêmica (aulas, gravações, imersões)"
+    ],
+    "clientes": [
+      "02.06.01 - Criar, Configurar e Submeter Cursos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prm5",
+    "nome": "02.05.03 - Desenvolver e Configurar Plataformas Educacionais",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Iuri",
+    "dono": "Brenner Rocha, Pedro Viana",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [],
+    "clientes": [
+      "02.06.01 - Criar, Configurar e Submeter Cursos",
+      "02.06.03 - Garantir Acesso e Estabilidade da Plataforma"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prn2",
+    "nome": "02.06.03 - Garantir Acesso e Estabilidade da Plataforma",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Pedro Viana",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pqya",
+    "nome": "02.08.01 - Atrair Leads Qualificados",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Iuri",
+    "dono": "Iuri Eloi Franco, Fábio Braz Dias",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [
+      "01.02.02 - Proteger e Evoluir a Marca como Ativo de Confiança"
+    ],
+    "clientes": [
+      "02.08.02 - Nutrir Leads"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pqzh",
+    "nome": "02.08.02 - Nutrir Leads",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Iuri",
+    "dono": "Fábio Braz Dias, Iuri Eloi Franco",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [
+      "02.08.01 - Atrair Leads Qualificados"
+    ],
+    "clientes": [
+      "02.07.03 - Qualificar Leads (MQL/SQL)"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pqxh",
+    "nome": "02.08.02 - Realizar venda",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Ian",
+    "dono": "Matheus Amaral",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [
+      "02.07.03 - Qualificar Leads (MQL/SQL)",
+      "02.08.01 - Elaborar Estratégias de Venda",
+      ": https://app.clickup.com/t/86ae9ptj2"
+    ],
+    "clientes": [
+      "02.09.04 - Realizar Onboarding do Aluno",
+      ": https://app.clickup.com/t/86ae9pqu5",
+      "03.02.02 - Gerir Recebíveis e Cobrança"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prtx",
+    "nome": "02.10.06 – Operar Experiência, Suporte e Sucesso do Aluno",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Rodrigo Lima Dutra",
+    "status": "VALIDAÇÃO INTERNA",
+    "fornecedores": [
+      "02.09.04 - Realizar Onboarding do Aluno",
+      ": https://app.clickup.com/t/86ae9pqu5",
+      "Criação de IT 08 - 02.07.02 - Renegociar, trancar e distratar"
+    ],
+    "clientes": [
+      "02.04.03 - Avaliar e Melhorar Continuamente o Produto Educacional"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pt97",
+    "nome": "03.01.02 - Avaliar e Desenvolver Pessoas",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Ian",
+    "dono": "Elisângela Aparecida",
+    "status": "A INICIAR",
+    "fornecedores": [
+      "03.01.01 - Atrair, Recrutar e Admitir Pessoas"
+    ],
+    "clientes": [
+      "03.01.04 - Promover e Realocar Pessoas"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prdv",
+    "nome": "03.01.04 - Promover e Realocar Pessoas",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Lemidia Pereira",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [
+      "03.01.04 - Avaliações periódicas"
+    ],
+    "clientes": [
+      "03.01.03 - Gerir Remuneração Variável"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pt2g",
+    "nome": "03.02.02 - Gerir Recebíveis e Cobrança",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Bruno",
+    "dono": "Gabriel de Paula Ribeiro, Eloí Lelis",
+    "status": "PARALISADO",
+    "fornecedores": [
+      "02.08.02 - Realizar venda"
+    ],
+    "clientes": [
+      "03.02.05 - Gerir Contabilidade, Fiscal e Reporte Financeiro"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pt4r",
+    "nome": "03.02.06 - Gerir Controles Financeiros Internos",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Bruno",
+    "dono": "Gabriel de Paula Ribeiro",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.02.04 - Gerir Tesouraria, Liquidez, Endividamento e Capital",
+      "03.02.05 - Gerir Contabilidade, Fiscal e Reporte Financeiro"
+    ],
+    "clientes": [
+      "01.04.02 - Monitorar Performance e Resultados"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prwh",
+    "nome": "03.02.07 - Gerir Investimentos e Captação de Recursos",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Bruno",
+    "dono": "Gabriel de Paula Ribeiro",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.01.01 - Definir e Governar a Estratégia do Ecossistema"
+    ],
+    "clientes": [
+      "03.02.04 - Gerir Tesouraria, Liquidez, Endividamento e Capital"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pr7y",
+    "nome": "03.06.01 - Adquirir materiais e bens",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Juliana Alves",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [],
+    "clientes": [
+      "03.06.02 - Gerir estoque de materiais",
+      "03.02.03 - Gerir Pagamentos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pt5d",
+    "nome": "03.06.02 - Gerir estoque de materiais",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Juliana Alves",
+    "status": "VALIDAÇÃO INTERNA",
+    "fornecedores": [
+      "03.06.01 - Adquirir materiais e bens"
+    ],
+    "clientes": [
+      "03.06.04 - Contratar e Gerir Serviços de Suporte"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pr9a",
+    "nome": "03.06.04 - Contratar e Gerir Serviços de Suporte",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Juliana Alves",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [
+      "03.06.01 - Adquirir materiais e bens"
+    ],
+    "clientes": [
+      "03.06.05 - Gerir Alimentação, Coffee e Amenidades",
+      "03.06.06 - Gerir Limpeza e Conservação"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prh0",
+    "nome": "03.06.05 - Gerir Alimentação, Coffee e Amenidades",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Juliana Alves",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [
+      "03.06.04 - Contratar e Gerir Serviços de Suporte"
+    ],
+    "clientes": [
+      "02.10.01 - Imersões Presenciais"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9ptj2",
+    "nome": "02.08.01 - Elaborar Estratégias de Venda",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Ian",
+    "dono": "Felipe Souza",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.01.01 - Definir e Governar a Estratégia do Ecossistema"
+    ],
+    "clientes": [
+      "02.08.02 - Realizar venda"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prf5",
+    "nome": "03.04.01 - Elaborar, Revisar e Rescindir Contratos",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Elisângela Aparecida, Marcya Santos",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [
+      "03.01.01 - Atrair, Recrutar e Admitir Pessoas",
+      "03.05.01 - Recrutar, Contratar e realizar onboarding de Professores/preceptores/instrutores"
+    ],
+    "clientes": [
+      "03.02.03 - Gerir Pagamentos",
+      "03.04.02 Gerir Obrigações Legais e Regulatórias"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prnz",
+    "nome": "03.05.01 - Recrutar, Contratar e realizar onboarding de Professores/preceptores/instrutores",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Ianny Ribeiro, Brenner Rocha",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [
+      "02.05.01 - Planejar Conteúdo Educacional"
+    ],
+    "clientes": [
+      "03.05.02 - Gerir Contratos, Pagamentos e Agenda de Professores",
+      "03.04.01 - Elaborar, Revisar e Rescindir Contratos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pta4",
+    "nome": "03.05.04 - Apoiar Execução Acadêmica (aulas, gravações, imersões)",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Ianny Ribeiro",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.05.03 - Fornecer Suporte Operacional ao Professor",
+      "02.05.01 - Planejar Conteúdo Educacional"
+    ],
+    "clientes": [
+      "02.05.02 – Produzir Conteúdo (aulas, gravações, materiais)",
+      "02.03.02 - Operar Campos de Prática e Preceptoria"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pt0f",
+    "nome": "03.05.03 - Fornecer Suporte Operacional ao Professor",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Ianny Ribeiro",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.05.02 - Gerir Contratos, Pagamentos e Agenda de Professores"
+    ],
+    "clientes": [
+      "03.05.04 - Apoiar Execução Acadêmica (aulas, gravações, imersões)"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pt6y",
+    "nome": "03.06.07 Gerir Patrimônio",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Gabriel de Paula Ribeiro",
+    "status": "VALIDAÇÃO INTERNA",
+    "fornecedores": [
+      "03.06.06 - Gerir Limpeza e Conservação"
+    ],
+    "clientes": [
+      "03.02.05 - Gerir Contabilidade, Fiscal e Reporte Financeiro"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prg4",
+    "nome": "03.06.06 - Gerir Limpeza e Conservação",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Juliana Alves",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [
+      "03.06.04 - Contratar e Gerir Serviços de Suporte"
+    ],
+    "clientes": [
+      "03.06.07 Gerir Patrimônio"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pr20",
+    "nome": "03.03.02 - Desenvolver, Integrar e Implantar Soluções Inteligentes",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Gabriel Melo, Vinicius Leandro, Matheus Castro",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pr33",
+    "nome": "03.03.01 - Gerir Infraestrutura, Operações e Serviços de TI",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Vinicius Leandro, Gabriel Melo",
+    "status": "BACKLOG",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pr6k",
+    "nome": "03.03.03 - Governar Arquitetura, Dados & Analytics",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Vinicius Leandro, Gabriel Melo, Matheus Castro",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pr5u",
+    "nome": "03.03.04 - Gerir Segurança da Informação, Continuidade e Privacidade",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Gabriel Melo, Vinicius Leandro",
+    "status": "BACKLOG",
+    "fornecedores": [],
+    "clientes": [
+      "02.05.03 - Desenvolver e Configurar Plataformas Educacionais",
+      "02.06.03 - Garantir Acesso e Estabilidade da Plataforma"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pra0",
+    "nome": "03.07.01 Gerir Documentos Controlados",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Naira",
+    "dono": "Áurea Emílio",
+    "status": "REVISÃO CONCLUÍDA VIGENTE",
+    "fornecedores": [],
+    "clientes": [
+      "03.07.03 - Realizar Auditorias Internas e Externas"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pth8",
+    "nome": "03.07.02 - Gerir Requisitos Normativos do Sistema de Gestão Integrado",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Naira",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.04.02 Gerir Obrigações Legais e Regulatórias"
+    ],
+    "clientes": [
+      "03.07.03 - Realizar Auditorias Internas e Externas"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pt36",
+    "nome": "03.07.03 - Realizar Auditorias Internas e Externas",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Naira",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.07.01 Gerir Documentos Controlados",
+      "03.07.02 - Gerir Requisitos Normativos do Sistema de Gestão Integrado"
+    ],
+    "clientes": [
+      "03.07.04 - Gerir Não Conformidades"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pt42",
+    "nome": "03.07.04 - Gerir Não Conformidades",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Naira",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.07.03 - Realizar Auditorias Internas e Externas"
+    ],
+    "clientes": [
+      "01.05.02 - Gerir Melhoria Contínua dos Processos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prug",
+    "nome": "03.08.02 - Gerir Viagens e Passagens",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Bianca Maranhão",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.08.01 Gerir Agenda Executiva"
+    ],
+    "clientes": [
+      "03.02.03 - Gerir Pagamentos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9prbj",
+    "nome": "03.02.02.01 - Cobrança",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Bruno",
+    "dono": "André Garcia Ribeiro, Eloí Lelis",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [
+      "03.02.02 - Gerir Recebíveis e Cobrança"
+    ],
+    "clientes": [
+      "03.02.02 - Gerir Recebíveis e Cobrança"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9pree",
+    "nome": "02.07.05 – Participação em Eventos",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Iuri",
+    "dono": "",
+    "status": "PARALISADO",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ae9yxx2",
+    "nome": "01.01.03 - Governar Comitês, Fóruns e Rituais Decisórios",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.01.01 - Definir e Governar a Estratégia do Ecossistema"
+    ],
+    "clientes": [
+      "01.04.02 - Monitorar Performance e Resultados"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9yy1r",
+    "nome": "01.02.01 - Definir e Governar a Experiência do Aluno (EEA)",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.01.01 - Definir e Governar a Estratégia do Ecossistema"
+    ],
+    "clientes": [
+      "02.04.02 - Estruturar Produto e Jornada Educacional",
+      "02.10.06 – Operar Experiência, Suporte e Sucesso do Aluno"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9yy6f",
+    "nome": "01.03.02 - Avaliar Aderência Estratégica de Novos Produtos e Negócios",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.04.01 - Realizar Curadoria Educacional"
+    ],
+    "clientes": [
+      "01.03.01 - Gerir Portfólio do Ecossistema e Inovação Estratégica"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9yy8t",
+    "nome": "01.03.03 - Priorizar, Evoluir ou Descontinuar Produtos e Iniciativas",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.03.01 - Gerir Portfólio do Ecossistema e Inovação Estratégica"
+    ],
+    "clientes": [
+      "02.04.02 - Estruturar Produto e Jornada Educacional"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9yyfv",
+    "nome": "01.04.03 - Gerir Projetos Estratégicos",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.03.01 - Gerir Portfólio do Ecossistema e Inovação Estratégica"
+    ],
+    "clientes": [
+      "01.04.02 - Monitorar Performance e Resultados"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9yyph",
+    "nome": "01.05.03 - Gerir Processos",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "",
+    "dono": "Naira Yurie",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.05.02 - Gerir Melhoria Contínua dos Processos"
+    ],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z1fn",
+    "nome": "02.01.01 - Posicionar a Proposta de Valor do Ecossistema",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.02.03 - Definir e Governar Posicionamento Institucional"
+    ],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z1r5",
+    "nome": "02.01.03 - Engajar Médicos na Identidade e Pertencimento LM",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "A INICIAR",
+    "fornecedores": [],
+    "clientes": [
+      "02.01.04 - Realizar Entrada Qualificada no Ecossistema"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z1v6",
+    "nome": "02.01.04 - Realizar Entrada Qualificada no Ecossistema",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.01.03 - Engajar Médicos na Identidade e Pertencimento LM",
+      "02.08.02 - Realizar venda"
+    ],
+    "clientes": [
+      "02.01.05 - Preparar Médico para a Jornada de Desenvolvimento"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z1yt",
+    "nome": "02.01.05 - Preparar Médico para a Jornada de Desenvolvimento",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.01.04 - Realizar Entrada Qualificada no Ecossistema"
+    ],
+    "clientes": [
+      "02.10.01 - Mapear Estágios da Jornada de Carreira"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z2qh",
+    "nome": "01.02.04 - Gerir Competências Clínicas Essenciais",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.04.01 - Realizar Curadoria Educacional"
+    ],
+    "clientes": [
+      "02.02.02 - Estruturar Trilhas de Desenvolvimento Clínico"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z2uy",
+    "nome": "02.02.02 - Estruturar Trilhas de Desenvolvimento Clínico",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "Brenner Rocha",
+    "status": "A INICIAR",
+    "fornecedores": [
+      "01.02.04 - Gerir Competências Clínicas Essenciais"
+    ],
+    "clientes": [
+      "02.02.02 - Desenvolver Conteúdos e Experiências de Aprendizagem"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z2zz",
+    "nome": "02.02.02 - Desenvolver Conteúdos e Experiências de Aprendizagem",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "A INICIAR",
+    "fornecedores": [
+      "02.02.02 - Estruturar Trilhas de Desenvolvimento Clínico",
+      "02.05.01 - Planejar Conteúdo Educacional"
+    ],
+    "clientes": [
+      "02.02.03 - Avaliar Evolução e Certificar Competência Clínica",
+      "02.05.02 – Produzir Conteúdo (aulas, gravações, materiais)"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z33c",
+    "nome": "02.02.03 - Avaliar Evolução e Certificar Competência Clínica",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "Rodrigo Lima Dutra",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [
+      "02.02.02 - Desenvolver Conteúdos e Experiências de Aprendizagem",
+      "02.03.01 - Integrar Formação Teórica à Prática Real"
+    ],
+    "clientes": [
+      "02.10.04 - Acompanhar Progressão e Retenção no Ecossistema"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z3b8",
+    "nome": "02.03.01 - Integrar Formação Teórica à Prática Real",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "A INICIAR",
+    "fornecedores": [
+      "02.02.02 - Desenvolver Conteúdos e Experiências de Aprendizagem"
+    ],
+    "clientes": [
+      "02.03.02 - Operar Campos de Prática e Preceptoria"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z3tb",
+    "nome": "02.03.02 - Operar Campos de Prática e Preceptoria",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "Ianny Ribeiro",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [
+      "02.03.01 - Integrar Formação Teórica à Prática Real",
+      "03.05.04 - Apoiar Execução Acadêmica (aulas, gravações, imersões)"
+    ],
+    "clientes": [
+      "02.03.03 - Garantir Supervisão, Feedback e Segurança Assistencial"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9z3ur",
+    "nome": "02.03.03 - Garantir Supervisão, Feedback e Segurança Assistencial",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "A INICIAR",
+    "fornecedores": [
+      "02.03.02 - Operar Campos de Prática e Preceptoria"
+    ],
+    "clientes": [
+      "02.02.03 - Avaliar Evolução e Certificar Competência Clínica"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9zvvp",
+    "nome": "02.05.01 - Planejar Conteúdo Educacional",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.04.02 - Estruturar Produto e Jornada Educacional"
+    ],
+    "clientes": [
+      "02.05.02 – Produzir Conteúdo (aulas, gravações, materiais)",
+      "03.05.04 - Apoiar Execução Acadêmica (aulas, gravações, imersões)"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9zye6",
+    "nome": "02.06.01 - Criar, Configurar e Submeter Cursos",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [
+      "02.05.02 – Produzir Conteúdo (aulas, gravações, materiais)",
+      "02.05.03 - Desenvolver e Configurar Plataformas Educacionais"
+    ],
+    "clientes": [
+      "02.06.02 - Operar Transmissões e Ambientes Digitais"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ae9zyrh",
+    "nome": "02.06.02 - Operar Transmissões e Ambientes Digitais",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.06.01 - Criar, Configurar e Submeter Cursos"
+    ],
+    "clientes": [
+      "02.10.06 – Operar Experiência, Suporte e Sucesso do Aluno"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea02pc",
+    "nome": "02.07.03 - Qualificar Leads (MQL/SQL)",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.08.02 - Nutrir Leads"
+    ],
+    "clientes": [
+      "02.08.02 - Realizar venda"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea07qk",
+    "nome": "02.10.02 - Plantão Flexível",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "Ianny Ribeiro",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86aea07x2",
+    "nome": "02.09.03 – Assinaturas e Programas Contínuos",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "Pedro Viana",
+    "status": "VALIDAÇÃO INTERNA",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86aea0846",
+    "nome": "02.09.04 - Simulação da Prática Hospitalar",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "A INICIAR",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86aea0863",
+    "nome": "02.09.05 - Cursos Online e Trilhas Digitais",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "Rafael Hoshino, Veri Neves",
+    "status": "VALIDAÇÃO INTERNA",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86aea08wv",
+    "nome": "02.09.06 - Comunidade Profissional Ativa (Clube LM)",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "Caio Barros",
+    "status": "BACKLOG",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86aea0936",
+    "nome": "02.09.07 - Mentorias de Carreira e Fóruns Clínicos",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "Caio Barros",
+    "status": "BACKLOG",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86aea09eg",
+    "nome": "02.09.08 - Soluções Futuras de Carreira e Financeiras",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86aea09kf",
+    "nome": "02.09.09 - Método LM (B2B)",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "A INICIAR",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86aea09w2",
+    "nome": "02.10.01 - Mapear Estágios da Jornada de Carreira",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.01.05 - Preparar Médico para a Jornada de Desenvolvimento"
+    ],
+    "clientes": [
+      "02.10.02 - Orientar Decisões de Carreira e Evolução Profissional"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea0a7u",
+    "nome": "02.10.02 - Orientar Decisões de Carreira e Evolução Profissional",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.10.01 - Mapear Estágios da Jornada de Carreira"
+    ],
+    "clientes": [
+      "02.10.03 - Conectar Produtos, Prática e Oportunidades do Ecossistema"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea0aw7",
+    "nome": "02.10.03 - Conectar Produtos, Prática e Oportunidades do Ecossistema",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "02.10.02 - Orientar Decisões de Carreira e Evolução Profissional"
+    ],
+    "clientes": [
+      "02.10.04 - Acompanhar Progressão e Retenção no Ecossistema"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea0axx",
+    "nome": "02.10.04 - Acompanhar Progressão e Retenção no Ecossistema",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "Rodrigo Lima Dutra",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [
+      "02.10.03 - Conectar Produtos, Prática e Oportunidades do Ecossistema",
+      "02.02.03 - Avaliar Evolução e Certificar Competência Clínica"
+    ],
+    "clientes": [
+      "02.10.05 - Acompanhar Evolução Profissional dos Médicos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea0bj6",
+    "nome": "02.10.05 - Acompanhar Evolução Profissional dos Médicos",
+    "nivel": "Finalístico",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "A INICIAR",
+    "fornecedores": [
+      "02.10.03 - Conectar Produtos, Prática e Oportunidades do Ecossistema",
+      "02.02.03 - Avaliar Evolução e Certificar Competência Clínica"
+    ],
+    "clientes": [
+      "01.04.02 - Monitorar Performance e Resultados"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea0dqm",
+    "nome": "03.01.03 - Gerir Remuneração Variável",
+    "nivel": "Suporte",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.01.04 - Avaliações periódicas"
+    ],
+    "clientes": [
+      "03.02.03 - Gerir Pagamentos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea0emc",
+    "nome": "03.01.05 - Desligar / Encerrar Contratos",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "Lemidia Pereira",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [],
+    "clientes": [
+      "03.02.03 - Gerir Pagamentos",
+      "03.04.01 - Elaborar, Revisar e Rescindir Contratos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea1pnq",
+    "nome": "03.02.01 - Planejar, Orçar e Controlar a Performance Financeira",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Bruno",
+    "dono": "Gabriel de Paula Ribeiro",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "01.04.01 - Desdobrar Estratégia em Objetivos e Indicadores"
+    ],
+    "clientes": [
+      "03.02.03 - Gerir Pagamentos",
+      "03.02.04 - Gerir Tesouraria, Liquidez, Endividamento e Capital"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea1q60",
+    "nome": "03.02.04 - Gerir Tesouraria, Liquidez, Endividamento e Capital",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Bruno",
+    "dono": "Gabriel de Paula Ribeiro",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.02.02 - Gerir Recebíveis e Cobrança",
+      "03.02.03 - Gerir Pagamentos"
+    ],
+    "clientes": [
+      "03.02.06 - Gerir Controles Financeiros Internos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea1qdn",
+    "nome": "03.02.05 - Gerir Contabilidade, Fiscal e Reporte Financeiro",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "Bruno",
+    "dono": "Gabriel de Paula Ribeiro",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.02.02 - Gerir Recebíveis e Cobrança",
+      "03.02.03 - Gerir Pagamentos"
+    ],
+    "clientes": [
+      "03.02.06 - Gerir Controles Financeiros Internos",
+      "03.04.02 Gerir Obrigações Legais e Regulatórias"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea2944",
+    "nome": "03.04.02 Gerir Obrigações Legais e Regulatórias",
+    "nivel": "Suporte",
+    "revisao": null,
+    "diretor": "",
+    "dono": "Marcya Santos",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.04.01 - Elaborar, Revisar e Rescindir Contratos"
+    ],
+    "clientes": [
+      "03.07.02 - Gerir Requisitos Normativos do Sistema de Gestão Integrado"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea2apy",
+    "nome": "03.05.02 - Gerir Contratos, Pagamentos e Agenda de Professores",
+    "nivel": "Suporte",
+    "revisao": null,
+    "diretor": "",
+    "dono": "Ianny Ribeiro",
+    "status": "BACKLOG",
+    "fornecedores": [
+      "03.05.01 - Recrutar, Contratar e realizar onboarding de Professores/preceptores/instrutores"
+    ],
+    "clientes": [
+      "03.02.03 - Gerir Pagamentos",
+      "03.05.03 - Fornecer Suporte Operacional ao Professor"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86aea2mkq",
+    "nome": "03.08.01 Gerir Agenda Executiva",
+    "nivel": "Suporte",
+    "revisao": null,
+    "diretor": "",
+    "dono": "Bianca Maranhão",
+    "status": "BACKLOG",
+    "fornecedores": [],
+    "clientes": [
+      "03.08.02 - Gerir Viagens e Passagens"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86af9z5w1",
+    "nome": "02.10.07 - Avaliar, Certificar e Formar Alunos",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "Brenner Rocha",
+    "status": "VALIDAÇÃO INTERNA",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86afz7pvn",
+    "nome": "01.01.02 - Definir, Gerir e Atualizar Políticas Corporativas",
+    "nivel": "Gerencial",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ag7rzj4",
+    "nome": "03.01.01 - Atrair, Recrutar e Admitir Pessoas Vs2",
+    "nivel": "Suporte",
+    "revisao": 2,
+    "diretor": "Yuri",
+    "dono": "Lemidia Pereira",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [],
+    "clientes": [
+      "03.01.04 - Avaliações periódicas",
+      "03.04.01 - Elaborar, Revisar e Rescindir Contratos"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ag7rzna",
+    "nome": "02.08.04 - Realizar Onboarding do Aluno Vs2",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Yuri",
+    "dono": "Rodrigo Lima Dutra",
+    "status": "APROVAÇÃO DIRETORIA",
+    "fornecedores": [
+      "02.08.02 - Realizar venda",
+      "02.02.03 - Avaliar Evolução e Certificar Competência Clínica"
+    ],
+    "clientes": [
+      "02.10.06 – Operar Experiência, Suporte e Sucesso do Aluno"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ag7rzqb",
+    "nome": "03.02.03 - Gerir Pagamentos Vs2",
+    "nivel": "Suporte",
+    "revisao": 2,
+    "diretor": "Bruno",
+    "dono": "Gabriel de Paula Ribeiro",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [
+      "03.06.01 - Adquirir materiais e bens",
+      "03.05.02 - Gerir Contratos, Pagamentos e Agenda de Professores",
+      "03.01.03 - Gerir Remuneração Variável",
+      "03.01.01 - Atrair, Recrutar e Admitir Pessoas Vs2",
+      "03.06.04 - Contratar e Gerir Serviços de Suporte",
+      "03.06.05 - Gerir Alimentação, Coffee e Amenidades"
+    ],
+    "clientes": [
+      "03.02.04 - Gerir Tesouraria, Liquidez, Endividamento e Capital",
+      "03.02.05 - Gerir Contabilidade, Fiscal e Reporte Financeiro",
+      "03.06.04 - Contratar e Gerir Serviços de Suporte",
+      "03.06.06 - Gerir Limpeza e Conservação",
+      "02.09.01 - Imersões Presenciais"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86ag7t10z",
+    "nome": "02.08.03 – Gerir Funil e Conversão Comercial",
+    "nivel": "Finalístico",
+    "revisao": 1,
+    "diretor": "Ian",
+    "dono": "Matheus Castro, Matheus Amaral",
+    "status": "VALIDAÇÃO INTERNA",
+    "fornecedores": [
+      "02.08.02 - Realizar venda"
+    ],
+    "clientes": [
+      "01.04.02 - Monitorar Performance e Resultados"
+    ],
+    "documentos": []
+  },
+  {
+    "id": "86agf2bxh",
+    "nome": "02.09.01 - Imersões Presenciais",
+    "nivel": "Finalístico",
+    "revisao": 2,
+    "diretor": "Iuri",
+    "dono": "Thaynara Ribeiro Neves",
+    "status": "MAPEAMENTO AS-IS/TO-BE",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86agvjv7m",
+    "nome": "03.06.03 – Gerir estoque Mat/Med",
+    "nivel": "Suporte",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "Thaynara Ribeiro Neves",
+    "status": "VALIDAÇÃO INTERNA",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86agxu6gn",
+    "nome": "Novos produtos",
+    "nivel": "",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "Guilherme Vieira",
+    "status": "APROVAÇÃO DIRETORIA",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86agyj3ay",
+    "nome": "02.07.05 –  Outbound Parcerias Institucionais",
+    "nivel": "",
+    "revisao": null,
+    "diretor": "",
+    "dono": "Sofia Mesquita",
+    "status": "A INICIAR",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86agz9n8h",
+    "nome": "01.01.06 – Gerir Sociedade e Parcerias Estratégicas",
+    "nivel": "",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ah4wgyn",
+    "nome": "02.07.02 - Nutrir Leads",
+    "nivel": "",
+    "revisao": null,
+    "diretor": "",
+    "dono": "",
+    "status": "BACKLOG",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  },
+  {
+    "id": "86ah6c6zc",
+    "nome": "Renegociar, Trancar e Distratar Vs2",
+    "nivel": "",
+    "revisao": 1,
+    "diretor": "",
+    "dono": "Rodrigo Lima Dutra",
+    "status": "MELHORIAS/ ANÁLISE",
+    "fornecedores": [],
+    "clientes": [],
+    "documentos": []
+  }
+]
