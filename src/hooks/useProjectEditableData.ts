@@ -123,6 +123,7 @@ function buildDefault(projectId: string, inicio: string, isOff: boolean, isAlert
       dataConclusao: feito ? dataPrev : null,
       status: feito ? "Concluído" : "A iniciar",
       documentos: [],
+      predecessoras: [],
     };
   };
 
