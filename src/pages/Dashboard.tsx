@@ -266,21 +266,20 @@ export default function Dashboard() {
     setWaveChartClasses(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
 
   // Distribuição real por wave/semestre a partir dos projetos do banco
+  // Cada semestre tem uma barra empilhada (W1/W2/W3) para cada classificação ativa, lado a lado
   const SEMESTRES = ["2026/1", "2026/2", "2027/1", "2027/2"];
   const distSemestre = useMemo(() => {
-    const projetosBase = projetos.filter(p => waveChartActive.includes(p.classificacao));
     return SEMESTRES.map(sem => {
-      const inSem = projetosBase.filter(p => (p.inicio || "").trim() === sem);
-      const byWave = (w: "W1" | "W2" | "W3") => inSem.filter(p => p.wave === w);
-      return {
-        sem,
-        W1: byWave("W1").length,
-        W2: byWave("W2").length,
-        W3: byWave("W3").length,
-        W1_list: byWave("W1").map(p => ({ id: p.id, nome: p.nome, classificacao: p.classificacao })),
-        W2_list: byWave("W2").map(p => ({ id: p.id, nome: p.nome, classificacao: p.classificacao })),
-        W3_list: byWave("W3").map(p => ({ id: p.id, nome: p.nome, classificacao: p.classificacao })),
-      };
+      const row: any = { sem };
+      waveChartActive.forEach(c => {
+        const inSemClass = projetos.filter(p => (p.inicio || "").trim() === sem && p.classificacao === c);
+        (["W1", "W2", "W3"] as const).forEach(w => {
+          const list = inSemClass.filter(p => p.wave === w);
+          row[`${c}__${w}`] = list.length;
+          row[`${c}__${w}_list`] = list.map(p => ({ id: p.id, nome: p.nome }));
+        });
+      });
+      return row;
     });
   }, [projetos, waveChartActive]);
 
