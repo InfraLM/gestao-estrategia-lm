@@ -229,7 +229,7 @@ export default function MatrizProcessos() {
 
       {/* Filtros */}
       <Card>
-        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-6 gap-3">
+        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-7 gap-3">
           <div className="relative md:col-span-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Buscar processo ou dono..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
