@@ -118,6 +118,19 @@ const CLASSIF_COLORS: Record<Classif, string> = {
   "Melhoria Contínua com EPP": "bg-purple-50 text-purple-800 border-purple-200",
 };
 
+const COLS = [
+  { key: "classificacao", label: "Classificação", w: 130 },
+  { key: "oQueFazer", label: "O que fazer?", w: 240 },
+  { key: "justificativa", label: "Justificativa", w: 240 },
+  { key: "resultadoEsperado", label: "Resultado esperado", w: 220 },
+  { key: "vinculo", label: "Vínculo OKR / KR", w: 220 },
+  { key: "responsavel", label: "Responsável", w: 170 },
+  { key: "dataPrevista", label: "Prevista", w: 130 },
+  { key: "dataConclusao", label: "Conclusão", w: 130 },
+  { key: "status", label: "Status", w: 140 },
+  { key: "acoes", label: "", w: 80 },
+] as const;
+
 export default function Melhorias() {
   const [itens, setItens] = useState<MelhoriaEstrategica[]>(SEED);
   const [areaSel, setAreaSel] = useState<Area | null>(null);
@@ -126,6 +139,28 @@ export default function Melhorias() {
   const [statusFilter, setStatusFilter] = useState<string>("Todos");
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Partial<MelhoriaEstrategica>>({ classificacao: "Melhoria Contínua", status: "Backlog" });
+  const [colWidths, setColWidths] = useState<number[]>(COLS.map(c => c.w));
+  const [vinculoFor, setVinculoFor] = useState<string | null>(null);
+
+  function startResize(idx: number, e: React.MouseEvent) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = colWidths[idx];
+    const onMove = (ev: MouseEvent) => {
+      const w = Math.max(70, startW + (ev.clientX - startX));
+      setColWidths(prev => prev.map((v, i) => i === idx ? w : v));
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
+
+  function updateItem(id: string, patch: Partial<MelhoriaEstrategica>) {
+    setItens(prev => prev.map(i => i.id === id ? { ...i, ...patch } : i));
+  }
 
   const counts = useMemo(() => {
     const m = new Map<Area, number>();
