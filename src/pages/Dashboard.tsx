@@ -723,11 +723,24 @@ export default function Dashboard() {
                 <LabelList dataKey="Atrasado" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
               </Bar>
               <Bar dataKey="Concluídos" stackId="a" fill="hsl(var(--wave-2))">
-                <LabelList position="right" style={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 600 }}
-                  formatter={(_v: any, _n: any, entry: any) => {
-                    if (!entry?.payload) return "";
-                    const p = entry.payload;
-                    return p["Em Andamento"] + p["A Iniciar"] + p.Backlog + p.Atrasado + p["Concluídos"];
+                <LabelList dataKey="Concluídos" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 2 ? v : ""} />
+                <LabelList
+                  position="right"
+                  content={(props: any) => {
+                    const { x, y, width, height, index } = props;
+                    const p = statusByClass[index];
+                    if (!p) return null;
+                    const total = p["Em Andamento"] + p["A Iniciar"] + p.Backlog + p.Atrasado + p["Concluídos"];
+                    if (!total) return null;
+                    const cx = x + width + 16;
+                    const cy = y + height / 2;
+                    const w = total >= 10 ? 24 : 20;
+                    return (
+                      <g>
+                        <rect x={cx - w / 2} y={cy - 9} width={w} height={18} rx={9} fill="hsl(var(--primary))" />
+                        <text x={cx} y={cy + 3} textAnchor="middle" fontSize={11} fontWeight={700} fill="hsl(var(--primary-foreground))">{total}</text>
+                      </g>
+                    );
                   }}
                 />
               </Bar>
