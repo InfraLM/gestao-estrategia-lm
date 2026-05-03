@@ -261,24 +261,58 @@ export default function BacklogEstrategico() {
   const [busca, setBusca] = useState("");
   const [tipoFiltro, setTipoFiltro] = useState<Tipo | "Todos">("Todos");
   const [origemFiltro, setOrigemFiltro] = useState<Origem | "Todas">("Todas");
+  const [lista, setLista] = useState<Iniciativa[]>(iniciativas);
+
+  // Edição (ação · resultado esperado · vínculos)
+  const [editId, setEditId] = useState<string | null>(null);
+  const [draft, setDraft] = useState<{ acao: string; resultadoEsperado: string; vinculos: VinculoIniciativa[] }>({
+    acao: "", resultadoEsperado: "", vinculos: [],
+  });
+
+  function openEdit(i: Iniciativa) {
+    setEditId(i.id);
+    setDraft({
+      acao: i.acao,
+      resultadoEsperado: i.resultadoEsperado,
+      vinculos: i.vinculos ?? [],
+    });
+  }
+  function saveEdit() {
+    if (!editId) return;
+    setLista(prev => prev.map(it => it.id === editId ? { ...it, ...draft } : it));
+    setEditId(null);
+  }
+  function toggleVinculo(v: VinculoIniciativa) {
+    setDraft(d => {
+      const exists = d.vinculos.some(x => x.refId === v.refId && x.fonte === v.fonte);
+      return {
+        ...d,
+        vinculos: exists
+          ? d.vinculos.filter(x => !(x.refId === v.refId && x.fonte === v.fonte))
+          : [...d.vinculos, v],
+      };
+    });
+  }
 
   const filtradas = useMemo(() => {
-    return iniciativas.filter((i) => {
+    return lista.filter((i) => {
       const t = tipoFiltro === "Todos" || i.tipo === tipoFiltro;
       const o = origemFiltro === "Todas" || i.origem.includes(origemFiltro);
       const q = busca.trim().toLowerCase();
       const matchQ = !q || [i.titulo, i.acao, i.responsavel, i.vinculo].some(s => s.toLowerCase().includes(q));
       return t && o && matchQ;
     });
-  }, [busca, tipoFiltro, origemFiltro]);
+  }, [busca, tipoFiltro, origemFiltro, lista]);
 
   const counts = useMemo(() => {
     const c: Record<Tipo, number> = {
       "Reforço de Fraqueza": 0, "Defesa Identificada": 0, "Potencializar Força": 0, "Explorar Oportunidade": 0,
     };
-    iniciativas.forEach(i => c[i.tipo]++);
+    lista.forEach(i => c[i.tipo]++);
     return c;
-  }, []);
+  }, [lista]);
+
+  const editing = lista.find(i => i.id === editId) ?? null;
 
   return (
     <div className="space-y-6">
