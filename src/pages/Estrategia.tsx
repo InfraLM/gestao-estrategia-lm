@@ -170,7 +170,6 @@ export default function Estrategia() {
             </div>
           </TooltipProvider>
           <EstrategiaToolInsights ferramenta="Pilares Imprescindíveis" {...FERRAMENTAS.Pilares} />
-          <EstrategiaToolInsights ferramenta="ICP" {...FERRAMENTAS.ICP} />
         </CardContent>
       </Card>
 
