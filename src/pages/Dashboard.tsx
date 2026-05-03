@@ -778,25 +778,37 @@ export default function Dashboard() {
                   const row = payload[0]?.payload;
                   if (!row) return null;
                   return (
-                    <div className="rounded-md border bg-popover text-popover-foreground shadow-lg p-3 text-xs max-w-[340px]">
+                    <div className="rounded-md border bg-popover text-popover-foreground shadow-lg p-3 text-xs max-w-[380px]">
                       <div className="font-semibold mb-2">{label}</div>
-                      {(["W1", "W2", "W3"] as const).map(w => {
-                        const list = row[`${w}_list`] as { id: string; nome: string }[];
-                        if (!list?.length) return null;
+                      {waveChartActive.map(c => {
+                        const total = (["W1", "W2", "W3"] as const).reduce((s, w) => s + (row[`${c}__${w}`] || 0), 0);
+                        if (!total) return null;
                         return (
-                          <div key={w} className="mb-2 last:mb-0">
+                          <div key={c} className="mb-2 last:mb-0">
                             <div className="flex items-center gap-1.5 font-medium mb-1">
-                              <span className="h-2 w-2 rounded-sm" style={{ background: waveColor[w] }} />
-                              {w} · {list.length} projeto(s)
+                              <span className="h-2 w-2 rounded-sm" style={{ background: CLASS_COLORS[c] }} />
+                              {CLASS_SHORT[c]} · {total}
                             </div>
-                            <ul className="pl-3 space-y-0.5 list-disc text-muted-foreground max-h-40 overflow-auto">
-                              {list.slice(0, 12).map(p => (
-                                <li key={p.id} className="leading-snug">
-                                  <span className="text-foreground/80">{p.id}</span> — {p.nome}
-                                </li>
-                              ))}
-                              {list.length > 12 && <li>+ {list.length - 12} outros…</li>}
-                            </ul>
+                            {(["W1", "W2", "W3"] as const).map(w => {
+                              const list = (row[`${c}__${w}_list`] || []) as { id: string; nome: string }[];
+                              if (!list.length) return null;
+                              return (
+                                <div key={w} className="pl-3 mb-1">
+                                  <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                                    <span className="h-1.5 w-1.5 rounded-sm" style={{ background: waveColor[w] }} />
+                                    {w} · {list.length}
+                                  </div>
+                                  <ul className="pl-3 list-disc text-muted-foreground max-h-32 overflow-auto">
+                                    {list.slice(0, 8).map(p => (
+                                      <li key={p.id} className="leading-snug">
+                                        <span className="text-foreground/80">{p.id}</span> — {p.nome}
+                                      </li>
+                                    ))}
+                                    {list.length > 8 && <li>+ {list.length - 8} outros…</li>}
+                                  </ul>
+                                </div>
+                              );
+                            })}
                           </div>
                         );
                       })}
@@ -805,21 +817,19 @@ export default function Dashboard() {
                 }}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="W1" stackId="b" fill={waveColor.W1}>
-                <LabelList dataKey="W1" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
-              </Bar>
-              <Bar dataKey="W2" stackId="b" fill={waveColor.W2}>
-                <LabelList dataKey="W2" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
-              </Bar>
-              <Bar dataKey="W3" stackId="b" fill={waveColor.W3}>
-                <LabelList position="top" style={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 600 }}
-                  formatter={(_v: any, _n: any, entry: any) => {
-                    if (!entry?.payload) return "";
-                    const p = entry.payload;
-                    return p.W1 + p.W2 + p.W3;
-                  }}
-                />
-              </Bar>
+              {waveChartActive.map(c => (
+                <>
+                  <Bar key={`${c}-W1`} dataKey={`${c}__W1`} stackId={c} fill={waveColor.W1} name={`${CLASS_SHORT[c]} · W1`}>
+                    <LabelList dataKey={`${c}__W1`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+                  </Bar>
+                  <Bar key={`${c}-W2`} dataKey={`${c}__W2`} stackId={c} fill={waveColor.W2} name={`${CLASS_SHORT[c]} · W2`}>
+                    <LabelList dataKey={`${c}__W2`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+                  </Bar>
+                  <Bar key={`${c}-W3`} dataKey={`${c}__W3`} stackId={c} fill={waveColor.W3} name={`${CLASS_SHORT[c]} · W3`}>
+                    <LabelList dataKey={`${c}__W3`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+                  </Bar>
+                </>
+              ))}
             </BarChart>
           </ResponsiveContainer>
         </Card>
