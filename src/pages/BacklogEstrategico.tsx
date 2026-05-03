@@ -521,7 +521,7 @@ export default function BacklogEstrategico() {
                           const FIcon = fonteMeta[v.fonte].icon;
                           const meta = projetoMap.get(v.refId);
                           const inner = (
-                            <div className={`flex flex-wrap items-center gap-2 rounded-md border px-2 py-1.5 text-[11px] ${fonteMeta[v.fonte].cor}`} title={`${v.fonte} · ${v.refId}`}>
+                            <div className="flex flex-wrap items-center gap-2 rounded-md border border-purple-500/40 bg-purple-500/10 text-purple-700 dark:text-purple-300 px-2 py-1.5 text-[11px]" title={`${v.fonte} · ${v.refId}`}>
                               <FIcon className="h-3 w-3 shrink-0" />
                               <span className="font-mono">{v.refId}</span>
                               <span className="truncate max-w-[260px] font-medium">{v.titulo}</span>
