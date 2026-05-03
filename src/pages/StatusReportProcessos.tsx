@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import processosSeed from "@/data/processos.json";
+import { useProcessosDB } from "@/hooks/useProcessosDB";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -34,12 +34,6 @@ const STATUS_COLORS: Record<string, string> = {
 const periodos = ["Semanal", "Quinzenal", "Mensal"] as const;
 type Periodo = typeof periodos[number];
 
-function loadProcessos(): Processo[] {
-  try {
-    const edits: Record<string, Partial<Processo>> = JSON.parse(localStorage.getItem(MATRIZ_KEY) || "{}");
-    return (processosSeed as Processo[]).map(p => ({ ...p, ...edits[p.id] }));
-  } catch { return processosSeed as Processo[]; }
-}
 function loadGestao(): Record<string, any> {
   try { return JSON.parse(localStorage.getItem(GP_KEY) || "{}"); } catch { return {}; }
 }
@@ -56,16 +50,16 @@ const FAROL_COLOR = { verde: "bg-emerald-500", amarelo: "bg-amber-500", vermelho
 const FAROL_LABEL = { verde: "On-Track", amarelo: "Alerta", vermelho: "Off-Track" };
 
 export default function StatusReportProcessos() {
-  const [processos, setProcessos] = useState<Processo[]>([]);
+  const { data: processos } = useProcessosDB();
   const [gestao, setGestao] = useState<Record<string, any>>({});
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
   const [diretorFilter, setDiretorFilter] = useState<string>("todos");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
 
   useEffect(() => {
-    setProcessos(loadProcessos());
     setGestao(loadGestao());
   }, []);
+
 
   const diretores = useMemo(() => Array.from(new Set(processos.map(p => p.diretor).filter(Boolean))).sort(), [processos]);
 

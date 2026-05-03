@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import processosSeed from "@/data/processos.json";
+import { useProcessosDB } from "@/hooks/useProcessosDB";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,16 +14,8 @@ type Processo = {
   maturidade?: number; kpiValor?: number; vinculo?: Record<string, number>;
 };
 
-const MATRIZ_EDITS_KEY = "matriz-processos-edits-v1";
 const GP_KEY = "gestao-processos-v1";
 
-function loadProcessos(): Processo[] {
-  try {
-    const raw = localStorage.getItem(MATRIZ_EDITS_KEY);
-    const edits: Record<string, Partial<Processo>> = raw ? JSON.parse(raw) : {};
-    return (processosSeed as Processo[]).map(p => ({ ...p, ...edits[p.id] }));
-  } catch { return processosSeed as Processo[]; }
-}
 
 function loadGestao(): Record<string, any> {
   try { return JSON.parse(localStorage.getItem(GP_KEY) || "{}"); } catch { return {}; }
@@ -41,13 +33,13 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function DashboardProcessos() {
-  const [processos, setProcessos] = useState<Processo[]>([]);
+  const { data: processos } = useProcessosDB();
   const [gestao, setGestao] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    setProcessos(loadProcessos());
     setGestao(loadGestao());
   }, []);
+
 
   const stats = useMemo(() => {
     const total = processos.length;

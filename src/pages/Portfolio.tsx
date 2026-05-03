@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers, ChevronUp } from "lucide-react";
-import { projetos as initial, type Projeto, diretores, objetivosBSC, okrs } from "@/data/mockData";
+import { type Projeto, diretores, objetivosBSC, okrs } from "@/data/mockData";
+import { useProjetosDB } from "@/hooks/useProjetosDB";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import Submissao from "./Submissao";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
@@ -30,7 +31,9 @@ export default function Portfolio() {
   
   const [view, setView] = useState<"tabela" | "kanban">("tabela");
   const [submitOpen, setSubmitOpen] = useState(false);
-  const [data, setData] = useState<Projeto[]>(initial);
+  const { data: initial } = useProjetosDB();
+  const [data, setData] = useState<Projeto[]>([]);
+  useEffect(() => { setData(initial); }, [initial]);
   const [search, setSearch] = useState("");
   const [filterWave, setFilterWave] = useState<string[]>([]);
   const [filterClass, setFilterClass] = useState<string[]>([]);

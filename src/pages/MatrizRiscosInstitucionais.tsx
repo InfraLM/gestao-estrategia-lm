@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import processosSeed from "@/data/processos.json";
-import { projetos } from "@/data/mockData";
+import { useProcessosDB } from "@/hooks/useProcessosDB";
+import { useProjetosDB } from "@/hooks/useProjetosDB";
+import { useRiscosInstitucionaisDB } from "@/hooks/useRiscosInstitucionaisDB";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,14 +29,7 @@ interface RiscoInst {
   contingencia?: string;
 }
 
-const RISCOS_INSTITUCIONAIS: RiscoInst[] = [
-  { id: "RI-09", nome: "Proteção de Dados e Segurança da Informação (LGPD)", natureza: "Evento", tipo: "Regulatório, Sistema/Tecnologia, Legal", impacto: 5, ocorrencia: 3, status: "MITIGAÇÃO EM ANDAMENTO", impactoFinanceiro: 2000000, acoesMitigadoras: "Política LGPD, mapeamento e classificação de dados sensíveis, controle de acesso individualizado, gestão de permissões (ClickUp/SEI/Memberkit), treinamento, logs e rastreabilidade, auditoria periódica, governança de dados, revisão contratual com operadores.", responsaveis: "Marcya Santos, Naira Yurie, Renato Mesquita", dueDate: "29/05/2026", contingencia: "Plano de resposta a incidentes, contenção, notificação ANPD/PC, comunicação a titulares, investigação de causa raiz e medidas corretivas." },
-  { id: "RI-12", nome: "Continuidade operacional e dependência tecnológica", natureza: "Evento", tipo: "Estratégico, Operacional, Sistema/Tecnologia", impacto: 4, ocorrencia: 3, status: "NOVO REGISTRO", impactoFinanceiro: 500000, acoesMitigadoras: "Mapeamento de sistemas críticos, SLA com fornecedores, monitoramento de disponibilidade, plano de contingência tecnológica, redundância de sistemas.", responsaveis: "Naira Yurie, Renato Mesquita, Yuri Ribeiro", dueDate: "29/05/2026", contingencia: "Plano de continuidade, acionamento de fornecedores, soluções alternativas, comunicação às áreas." },
-  { id: "RI-13", nome: "Conflitos de interesse e governança interna", natureza: "Ambiguidade", tipo: "Ético/Organizacional", impacto: 3, ocorrencia: 4, status: "NOVO REGISTRO", acoesMitigadoras: "Política de conflitos de interesse, alçadas e governança decisória, fluxos de aprovação formais, registro e transparência de decisões.", responsaveis: "Marcya Santos, Diretoria", dueDate: "29/05/2026", contingencia: "Revisão da decisão, escalonamento ao comitê, apuração interna, eventual responsabilização." },
-  { id: "RI-14", nome: "Dependência de receita concentrada em poucos produtos", natureza: "Variação", tipo: "Estratégico, Financeiro", impacto: 5, ocorrencia: 3, status: "NOVO REGISTRO", impactoFinanceiro: 5000000, acoesMitigadoras: "Diversificação de portfólio, novas linhas de receita, monitoramento de concentração de faturamento, planejamento estratégico comercial.", responsaveis: "Iuri Eloi Franco, Bruno Garcia, Diretoria", dueDate: "29/05/2026", contingencia: "Ajuste da estratégia comercial, aceleração de novos produtos, redução de custos." },
-  { id: "RI-15", nome: "Continuidade da informação e gestão do conhecimento", natureza: "Condição de incerteza", tipo: "Estratégico, Sistema/Tecnologia", impacto: 4, ocorrencia: 4, status: "NOVO REGISTRO", impactoFinanceiro: 1000000, acoesMitigadoras: "Política de gestão do conhecimento, backup institucional, centralização de documentos críticos, controle de versionamento, padronização de repositórios.", responsaveis: "Marcya Santos, Naira Yurie, Renato Mesquita, Yuri Ribeiro", dueDate: "29/05/2026", contingencia: "Recuperação de backup, reconstrução documental, mobilização das áreas." },
-  { id: "RI-16", nome: "Registro de marca", natureza: "Condição de incerteza", tipo: "Reputacional, Legal, Financeiro", impacto: 5, ocorrencia: 3, status: "MITIGAÇÃO EM ANDAMENTO", acoesMitigadoras: "Registrar marca: revisar histórico com Stephany e transferir demanda para Renata Camozzi. Acompanhamento contínuo do processo.", responsaveis: "Naira Yurie, Marcya Santos, Ian", dueDate: "25/11/2027" },
-];
+// Matriz de riscos institucionais agora vem do banco (hook useRiscosInstitucionaisDB)
 
 const GP_KEY = "gestao-processos-v1";
 
@@ -59,29 +53,32 @@ function fmtBRL(v?: number) {
 export default function MatrizRiscosInstitucionais() {
   const [gestao, setGestao] = useState<Record<string, any>>({});
   const [filtroNivel, setFiltroNivel] = useState<string>("todos");
+  const { data: riscosInst } = useRiscosInstitucionaisDB();
+  const { data: processos } = useProcessosDB();
+  const { data: projetos } = useProjetosDB();
 
   useEffect(() => {
     try { setGestao(JSON.parse(localStorage.getItem(GP_KEY) || "{}")); } catch { setGestao({}); }
   }, []);
 
   const riscosInstFiltrados = useMemo(() => {
-    return RISCOS_INSTITUCIONAIS
+    return riscosInst
       .map(r => ({ r, n: nivelDe(r.impacto, r.ocorrencia) }))
       .filter(x => filtroNivel === "todos" || x.n.nivel === filtroNivel)
       .sort((a, b) => b.n.valor - a.n.valor);
-  }, [filtroNivel]);
+  }, [filtroNivel, riscosInst]);
 
   const stats = useMemo(() => {
-    const totalInst = RISCOS_INSTITUCIONAIS.length;
-    const extremos = RISCOS_INSTITUCIONAIS.filter(r => r.impacto * r.ocorrencia >= 15).length;
-    const altos = RISCOS_INSTITUCIONAIS.filter(r => r.impacto * r.ocorrencia >= 10 && r.impacto * r.ocorrencia < 15).length;
-    const expFin = RISCOS_INSTITUCIONAIS.reduce((a, r) => a + (r.impactoFinanceiro || 0), 0);
+    const totalInst = riscosInst.length;
+    const extremos = riscosInst.filter(r => r.impacto * r.ocorrencia >= 15).length;
+    const altos = riscosInst.filter(r => r.impacto * r.ocorrencia >= 10 && r.impacto * r.ocorrencia < 15).length;
+    const expFin = riscosInst.reduce((a, r) => a + (r.impactoFinanceiro || 0), 0);
     return { totalInst, extremos, altos, expFin };
-  }, []);
+  }, [riscosInst]);
 
   // Riscos críticos vindos da matriz de riscos de PROCESSOS (apenas Alto/Extremo)
   const riscosProcessosCriticos = useMemo(() => {
-    const procsMap = new Map((processosSeed as any[]).map(p => [p.id, p]));
+    const procsMap = new Map(processos.map(p => [p.id, p]));
     const out: { processo: any; risco: any; n: ReturnType<typeof nivelDe> }[] = [];
     Object.entries(gestao).forEach(([pid, d]: any) => {
       (d?.riscos || []).forEach((r: any) => {
@@ -92,14 +89,14 @@ export default function MatrizRiscosInstitucionais() {
       });
     });
     return out.sort((a, b) => b.n.valor - a.n.valor);
-  }, [gestao]);
+  }, [gestao, processos]);
 
   // Riscos críticos vindos do controle de PROJETOS (saúde Off-Track ou desvio Riscos vermelho)
   const projetosCriticos = useMemo(() => {
     return projetos
       .filter(p => p.saude === "Off-Track" || (p.desvios || []).some(d => d.dimensao === "Riscos" && d.status === "vermelho"))
       .map(p => ({ p, riscoDesvio: (p.desvios || []).find(d => d.dimensao === "Riscos") }));
-  }, []);
+  }, [projetos]);
 
   return (
     <div className="space-y-6">

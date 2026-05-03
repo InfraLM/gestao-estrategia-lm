@@ -381,6 +381,60 @@ export type Database = {
         }
         Relationships: []
       }
+      processos: {
+        Row: {
+          clientes: Json
+          created_at: string
+          diretor: string | null
+          documentos: Json
+          dono: string | null
+          fornecedores: Json
+          id: string
+          kpi_valor: number | null
+          maturidade: number | null
+          nivel: string | null
+          nome: string
+          revisao: number | null
+          status: string | null
+          updated_at: string
+          vinculo: Json
+        }
+        Insert: {
+          clientes?: Json
+          created_at?: string
+          diretor?: string | null
+          documentos?: Json
+          dono?: string | null
+          fornecedores?: Json
+          id: string
+          kpi_valor?: number | null
+          maturidade?: number | null
+          nivel?: string | null
+          nome: string
+          revisao?: number | null
+          status?: string | null
+          updated_at?: string
+          vinculo?: Json
+        }
+        Update: {
+          clientes?: Json
+          created_at?: string
+          diretor?: string | null
+          documentos?: Json
+          dono?: string | null
+          fornecedores?: Json
+          id?: string
+          kpi_valor?: number | null
+          maturidade?: number | null
+          nivel?: string | null
+          nome?: string
+          revisao?: number | null
+          status?: string | null
+          updated_at?: string
+          vinculo?: Json
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           cargo: string | null
@@ -549,6 +603,57 @@ export type Database = {
           termino?: string | null
           updated_at?: string
           wave?: Database["public"]["Enums"]["wave_enum"]
+        }
+        Relationships: []
+      }
+      riscos_institucionais: {
+        Row: {
+          acoes_mitigadoras: string | null
+          contingencia: string | null
+          created_at: string
+          due_date: string | null
+          id: string
+          impacto: number
+          impacto_financeiro: number | null
+          natureza: string | null
+          nome: string
+          ocorrencia: number
+          responsaveis: string | null
+          status: string | null
+          tipo: string | null
+          updated_at: string
+        }
+        Insert: {
+          acoes_mitigadoras?: string | null
+          contingencia?: string | null
+          created_at?: string
+          due_date?: string | null
+          id: string
+          impacto?: number
+          impacto_financeiro?: number | null
+          natureza?: string | null
+          nome: string
+          ocorrencia?: number
+          responsaveis?: string | null
+          status?: string | null
+          tipo?: string | null
+          updated_at?: string
+        }
+        Update: {
+          acoes_mitigadoras?: string | null
+          contingencia?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          impacto?: number
+          impacto_financeiro?: number | null
+          natureza?: string | null
+          nome?: string
+          ocorrencia?: number
+          responsaveis?: string | null
+          status?: string | null
+          tipo?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

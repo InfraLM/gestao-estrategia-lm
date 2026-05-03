@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, Download, CircleDot, AlertCircle, ShieldAlert, Sparkles, FilePlus2 } from "lucide-react";
-import { projetos } from "@/data/mockData";
+import { useProjetosDB } from "@/hooks/useProjetosDB";
 import { SaudeBadge } from "@/components/badges";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ type Periodo = typeof periodos[number];
 const farolColor = { verde: "bg-success", amarelo: "bg-warning", vermelho: "bg-destructive" } as const;
 
 export default function StatusReport() {
+  const { data: projetos } = useProjetosDB();
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
   const [expanded, setExpanded] = useState<string | null>(projetos.find(p => p.saude !== "On-Track")?.id ?? null);
   const [parecerOpen, setParecerOpen] = useState(false);
