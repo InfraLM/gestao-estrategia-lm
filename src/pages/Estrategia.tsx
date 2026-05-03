@@ -382,11 +382,15 @@ export default function Estrategia() {
                 <CardTitle>Waves de Priorização</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="grid md:grid-cols-3 gap-4">
+            <CardContent className="space-y-4">
+              <div className="p-3 rounded-md bg-muted/40 border border-border text-xs text-muted-foreground leading-relaxed">
+                <strong className="text-foreground">Wave</strong> é um agrupamento intencional e sequenciado de iniciativas que remove restrições críticas, instala capacidades organizacionais e habilita o próximo nível de execução da estratégia — respeitando dependências, risco e capacidade de absorção. <em>Wave ordena capacidades (lógica), não cronograma.</em>
+              </div>
+              <div className="grid md:grid-cols-3 gap-4">
               {[
-                { wave: "W1", ano: "2026", titulo: "Fundamentos & Quick Wins", desc: "Consolidação de método, padronização e quick wins financeiros." },
-                { wave: "W2", ano: "2027-2028", titulo: "Escala & Expansão", desc: "Polos padronizados, ecossistema integrado, expansão geográfica." },
-                { wave: "W3", ano: "2029-2030", titulo: "Ecossistema & Moat", desc: "Lock-in de carreira, M&A, plataforma flywheel." },
+                { wave: "W1", ano: "Remove risco sistêmico", titulo: "Estrutura mínima", desc: "Remove restrições estruturais e protege EEA/C.01: governança, dados e financeiro (FP&A 36m, cohort P&L, CAPEX, dashboards, forecast por NRR), processos e qualidade (gestão à vista, gates de prontidão, alertas de engajamento) e pessoas e liderança (método, matriz performance, PDI, OTE/PLR, rituais 1:1). Sem isso, crescer quebra." },
+                { wave: "W2", ano: "Crescer com previsibilidade", titulo: "Escala com controle", desc: "Comercial e aquisição (leadscore, funil, DRE de vendedor, squads, outbound/field), produto e jornada (escada de valor, BU Paciente Grave, app próprio), operação (ITC, simulação com IA) e alavancas (follow-up automatizado, scripts/pitch com IA, pricing & packaging 2.0 ancorado no cohort P&L)." },
+                { wave: "W3", ano: "Vantagem competitiva", titulo: "Aceleração e diferenciação", desc: "IA avançada (chat IA LM, copilotos, biblioteca de algoritmos, Emy Education AI-native, portfólio de agentes), marca e ecossistema (ALUMNI, calendário editorial, Pílulas, Social Selling, LM Capital/FIDC) e expansão estrutural (multi-hub SP/Recife/Curitiba, Faculty Cloud, SVST, P04 Angola)." },
               ].map((w) => (
                 <div key={w.wave} className="p-4 rounded-lg border border-primary/30 bg-primary/5">
                   <div className="flex items-center gap-2 mb-2">
@@ -394,9 +398,10 @@ export default function Estrategia() {
                     <span className="text-xs text-muted-foreground">{w.ano}</span>
                   </div>
                   <h4 className="font-semibold text-sm mb-1">{w.titulo}</h4>
-                  <p className="text-xs text-muted-foreground">{w.desc}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{w.desc}</p>
                 </div>
               ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
