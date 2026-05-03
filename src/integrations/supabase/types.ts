@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_modulos: {
+        Row: {
+          created_at: string
+          id: string
+          modulo: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          modulo: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          modulo?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       backlog_propostas_ia: {
         Row: {
           acao: string
@@ -170,6 +191,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      departamentos: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          nome: string
+          origem: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+          origem?: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+          origem?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       diagnostico_insights: {
         Row: {
@@ -546,6 +594,8 @@ export type Database = {
         Row: {
           cargo: string | null
           created_at: string
+          departamento_id: string | null
+          departamento_nome: string | null
           display_name: string | null
           email: string | null
           id: string
@@ -555,6 +605,8 @@ export type Database = {
         Insert: {
           cargo?: string | null
           created_at?: string
+          departamento_id?: string | null
+          departamento_nome?: string | null
           display_name?: string | null
           email?: string | null
           id?: string
@@ -564,10 +616,47 @@ export type Database = {
         Update: {
           cargo?: string | null
           created_at?: string
+          departamento_id?: string | null
+          departamento_nome?: string | null
           display_name?: string | null
           email?: string | null
           id?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_departamento_id_fkey"
+            columns: ["departamento_id"]
+            isOneToOne: false
+            referencedRelation: "departamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projeto_membros: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          papel: string
+          projeto_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          papel?: string
+          projeto_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          papel?: string
+          projeto_id?: string
           user_id?: string
         }
         Relationships: []
@@ -979,13 +1068,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin_of_modulo: {
+        Args: { _modulo: string; _user_id: string }
+        Returns: boolean
+      }
       is_especialista_of: {
         Args: { _projeto_id: string; _user_id: string }
         Returns: boolean
       }
+      is_membro_projeto: {
+        Args: { _projeto_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_super_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "pmo" | "viewer"
+      app_role: "admin" | "pmo" | "viewer" | "super_admin"
       classificacao_enum:
         | "Institucional"
         | "Melhoria Contínua"
@@ -1157,7 +1255,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "pmo", "viewer"],
+      app_role: ["admin", "pmo", "viewer", "super_admin"],
       classificacao_enum: [
         "Institucional",
         "Melhoria Contínua",
