@@ -267,43 +267,10 @@ export default function GestaoProjeto() {
 
         {/* MATRIZ DE RISCOS */}
         <TabsContent value="riscos" className="mt-5">
-          <RiscosEditavel riscos={data.riscos} projetoId={projeto.id} />
-          <Card className="p-5 shadow-card mt-5 hidden">
-            <div className="overflow-x-auto">
-              <table>
-                <thead>
-                  <tr>
-                    <th>placeholder</th>
-                  </tr>
-                </thead>
-                  <tbody>
-                    {data.riscos.map(r => {
-                      const score = r.prob * r.impacto;
-                      const tier = score >= 12 ? "alto" : score >= 6 ? "medio" : "baixo";
-                      return (
-                        <tr key={r.id} className="border-b border-border/50">
-                          <td className="px-2 py-2.5">
-                            <div className="font-medium">{r.titulo}</div>
-                            <div className="text-xs text-muted-foreground mt-0.5">{r.categoria}</div>
-                          </td>
-                          <td className="px-2 py-2 text-center tabular-nums">{r.prob}</td>
-                          <td className="px-2 py-2 text-center tabular-nums">{r.impacto}</td>
-                          <td className="px-2 py-2 text-center">
-                            <Badge className={cn(
-                              "tabular-nums font-semibold",
-                              tier === "alto" && "bg-destructive/15 text-destructive border-destructive/30 hover:bg-destructive/15",
-                              tier === "medio" && "bg-warning/20 text-warning-foreground border-warning/40 hover:bg-warning/20",
-                              tier === "baixo" && "bg-success-soft text-success border-success/30 hover:bg-success-soft",
-                            )}>{score}</Badge>
-                          </td>
-                          <td className="px-2 py-2.5 text-xs text-muted-foreground">{r.mitigacao}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="lg:col-span-2">
+              <RiscosEditavel riscos={data.riscos} projetoId={projeto.id} />
+            </div>
 
             <Card className="p-5 shadow-card">
               <h3 className="font-semibold mb-4">Matriz P × I</h3>
