@@ -262,7 +262,7 @@ export default function GestaoProjeto() {
 
         {/* EAP — editável + submissão por entregável */}
         <TabsContent value="eap" className="mt-5">
-          <EapEditavel editable={editable} />
+          <EapEditavel editable={editable} projetoId={projeto.id} />
         </TabsContent>
 
         {/* MATRIZ DE RISCOS */}
