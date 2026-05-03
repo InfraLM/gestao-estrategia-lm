@@ -528,6 +528,7 @@ export default function MatrizProcessos() {
                   {selected.nivel && <Badge variant="outline" className={nivelColors[selected.nivel]}>{selected.nivel}</Badge>}
                   <Badge className={statusColors[selected.status] || "bg-muted"}>{selected.status}</Badge>
                   {selected.revisao && <Badge variant="outline">Revisão {selected.revisao}</Badge>}
+                  {(() => { const imp = impactoFromTotal(totalVinculo(selected)); return <Badge variant="outline" className={imp.color}><Target className="h-3 w-3 mr-1" />{imp.label} · {totalVinculo(selected)}</Badge>; })()}
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
