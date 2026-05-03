@@ -170,7 +170,6 @@ export default function Estrategia() {
             </div>
           </TooltipProvider>
           <EstrategiaToolInsights ferramenta="Pilares Imprescindíveis" {...FERRAMENTAS.Pilares} />
-          <EstrategiaToolInsights ferramenta="ICP" {...FERRAMENTAS.ICP} />
         </CardContent>
       </Card>
 
@@ -229,6 +228,9 @@ export default function Estrategia() {
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   {icp.desejos.map((d) => <li key={d} className="flex gap-2"><span className="text-success">✓</span>{d}</li>)}
                 </ul>
+              </div>
+              <div className="md:col-span-3">
+                <EstrategiaToolInsights ferramenta="ICP" {...FERRAMENTAS.ICP} />
               </div>
             </CardContent>
           </Card>
