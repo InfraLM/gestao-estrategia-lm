@@ -19,10 +19,12 @@ export type RiscoInstDB = {
 export function useRiscosInstitucionaisDB() {
   const [data, setData] = useState<RiscoInstDB[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     let cancel = false;
     (async () => {
+      setLoading(true);
       const { data: rows, error } = await supabase
         .from("riscos_institucionais")
         .select("*")
@@ -42,7 +44,7 @@ export function useRiscosInstitucionaisDB() {
       setLoading(false);
     })();
     return () => { cancel = true; };
-  }, []);
+  }, [tick]);
 
-  return { data, loading };
+  return { data, loading, refetch: () => setTick((t) => t + 1) };
 }
