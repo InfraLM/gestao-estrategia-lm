@@ -257,7 +257,7 @@ export default function GestaoProjeto() {
 
         {/* CRONOGRAMA — editável */}
         <TabsContent value="cronograma" className="mt-5">
-          <CronogramaEditavel editable={editable} />
+          <CronogramaEditavel editable={editable} projetoId={projeto.id} />
         </TabsContent>
 
         {/* EAP — editável + submissão por entregável */}
@@ -267,23 +267,15 @@ export default function GestaoProjeto() {
 
         {/* MATRIZ DE RISCOS */}
         <TabsContent value="riscos" className="mt-5">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <Card className="p-5 shadow-card lg:col-span-2">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold">Registro de Riscos</h3>
-                <span className="text-xs text-muted-foreground">{data.riscos.length} riscos identificados</span>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-xs uppercase tracking-wider text-muted-foreground border-b border-border">
-                      <th className="text-left px-2 py-2 font-semibold">Risco</th>
-                      <th className="text-center px-2 py-2 font-semibold">Prob.</th>
-                      <th className="text-center px-2 py-2 font-semibold">Impacto</th>
-                      <th className="text-center px-2 py-2 font-semibold">Score</th>
-                      <th className="text-left px-2 py-2 font-semibold">Mitigação</th>
-                    </tr>
-                  </thead>
+          <RiscosEditavel riscos={data.riscos} projetoId={projeto.id} />
+          <Card className="p-5 shadow-card mt-5 hidden">
+            <div className="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>placeholder</th>
+                  </tr>
+                </thead>
                   <tbody>
                     {data.riscos.map(r => {
                       const score = r.prob * r.impacto;
