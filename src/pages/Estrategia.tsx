@@ -232,6 +232,7 @@ export default function Estrategia() {
               <div className="md:col-span-3">
                 <EstrategiaToolInsights ferramenta="ICP" {...FERRAMENTAS.ICP} />
               </div>
+            </CardContent>
           </Card>
 
           {/* PLAY TO WIN */}
