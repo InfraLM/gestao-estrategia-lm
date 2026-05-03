@@ -90,6 +90,18 @@ interface PlanoAcao {
   vinculadoMC?: boolean;
 }
 
+interface AtividadeAnalise {
+  id: string;
+  taskId?: string;
+  taskName: string;
+  caminho?: string;
+  area?: string;
+  potencialAutomacao: "Não se Aplica" | "Baixo" | "Médio" | "Alto";
+  potencialIA: "Não se Aplica" | "Baixo" | "Médio" | "Alto";
+  tipo?: string;
+  classificacao: "TAV" | "TNAV" | "TNAVN";
+}
+
 interface ProcessoData {
   escopo: EscopoMapeamento;
   problemas: Problema[];
@@ -97,6 +109,7 @@ interface ProcessoData {
   asIs: MapaAtividade[];
   toBe: MapaAtividade[];
   plano: PlanoAcao[];
+  atividades: AtividadeAnalise[];
 }
 
 const emptyData = (): ProcessoData => ({
@@ -106,6 +119,7 @@ const emptyData = (): ProcessoData => ({
   asIs: [],
   toBe: [],
   plano: [],
+  atividades: [],
 });
 
 const NATUREZAS: RiscoNatureza[] = ["Variação", "Ambiguidade", "Evento", "Condição de incerteza"];
