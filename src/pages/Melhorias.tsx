@@ -395,6 +395,7 @@ export default function Melhorias() {
                       <TableHead>O que fazer?</TableHead>
                       <TableHead>Justificativa</TableHead>
                       <TableHead>Resultado esperado</TableHead>
+                      <TableHead className="w-[200px]">Vínculo OKR</TableHead>
                       <TableHead className="w-[160px]">Responsável</TableHead>
                       <TableHead className="w-[110px]">Prevista</TableHead>
                       <TableHead className="w-[110px]">Conclusão</TableHead>
