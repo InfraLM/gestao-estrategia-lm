@@ -723,11 +723,24 @@ export default function Dashboard() {
                 <LabelList dataKey="Atrasado" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
               </Bar>
               <Bar dataKey="Concluídos" stackId="a" fill="hsl(var(--wave-2))">
-                <LabelList position="right" style={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 600 }}
-                  formatter={(_v: any, _n: any, entry: any) => {
-                    if (!entry?.payload) return "";
-                    const p = entry.payload;
-                    return p["Em Andamento"] + p["A Iniciar"] + p.Backlog + p.Atrasado + p["Concluídos"];
+                <LabelList dataKey="Concluídos" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 2 ? v : ""} />
+                <LabelList
+                  position="right"
+                  content={(props: any) => {
+                    const { x, y, width, height, index } = props;
+                    const p = statusByClass[index];
+                    if (!p) return null;
+                    const total = p["Em Andamento"] + p["A Iniciar"] + p.Backlog + p.Atrasado + p["Concluídos"];
+                    if (!total) return null;
+                    const cx = x + width + 16;
+                    const cy = y + height / 2;
+                    const w = total >= 10 ? 24 : 20;
+                    return (
+                      <g>
+                        <rect x={cx - w / 2} y={cy - 9} width={w} height={18} rx={9} fill="hsl(var(--primary))" />
+                        <text x={cx} y={cy + 3} textAnchor="middle" fontSize={11} fontWeight={700} fill="hsl(var(--primary-foreground))">{total}</text>
+                      </g>
+                    );
                   }}
                 />
               </Bar>
@@ -767,7 +780,7 @@ export default function Dashboard() {
             </Popover>
           </div>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={distSemestre} margin={{ top: 24 }}>
+            <BarChart data={distSemestre} margin={{ top: 36 }}>
               <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
               <XAxis dataKey="sem" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
@@ -818,8 +831,27 @@ export default function Dashboard() {
                 <Bar key={`${c}-W2`} dataKey={`${c}__W2`} stackId={c} fill={waveColor.W2} name={`${CLASS_SHORT[c]} · W2`}>
                   <LabelList dataKey={`${c}__W2`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
                 </Bar>,
-                <Bar key={`${c}-W3`} dataKey={`${c}__W3`} stackId={c} fill={waveColor.W3} name={`${CLASS_SHORT[c]} · W3`}>
+                <Bar key={`${c}-W3`} dataKey={`${c}__W3`} stackId={c} fill={waveColor.W3} name={`${CLASS_SHORT[c]} · W3`} radius={[4, 4, 0, 0]}>
                   <LabelList dataKey={`${c}__W3`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+                  <LabelList
+                    position="top"
+                    content={(props: any) => {
+                      const { x, y, width, index } = props;
+                      const row = distSemestre[index];
+                      if (!row) return null;
+                      const total = (row[`${c}__W1`] || 0) + (row[`${c}__W2`] || 0) + (row[`${c}__W3`] || 0);
+                      if (!total) return null;
+                      const cx = x + width / 2;
+                      const cy = y - 10;
+                      const w = total >= 10 ? 24 : 18;
+                      return (
+                        <g>
+                          <rect x={cx - w / 2} y={cy - 9} width={w} height={16} rx={8} fill={CLASS_COLORS[c]} opacity={0.95} />
+                          <text x={cx} y={cy + 2} textAnchor="middle" fontSize={10} fontWeight={700} fill="white">{total}</text>
+                        </g>
+                      );
+                    }}
+                  />
                 </Bar>,
               ]))}
             </BarChart>
@@ -1231,7 +1263,7 @@ export default function Dashboard() {
             <span className="text-xs text-muted-foreground">R$ Milhões · 2026 → 2030</span>
           </div>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={ROI_BASE} margin={{ top: 24 }}>
+            <BarChart data={ROI_BASE} margin={{ top: 36 }}>
               <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
               <XAxis dataKey="ano" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `${v}M`} />
@@ -1243,12 +1275,26 @@ export default function Dashboard() {
               <Bar dataKey="W2" stackId="r" fill={waveColor.W2}>
                 <LabelList dataKey="W2" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
               </Bar>
-              <Bar dataKey="W3" stackId="r" fill={waveColor.W3} radius={[6, 6, 0, 0]}>
-                <LabelList position="top" style={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 700 }}
-                  formatter={(_v: any, _n: any, entry: any) => {
-                    if (!entry?.payload) return "";
-                    const p = entry.payload;
-                    return `${p.W1 + p.W2 + p.W3}M`;
+              <Bar dataKey="W3" stackId="r" fill={waveColor.W3} radius={[4, 4, 0, 0]}>
+                <LabelList dataKey="W3" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+                <LabelList
+                  position="top"
+                  content={(props: any) => {
+                    const { x, y, width, index } = props;
+                    const p = ROI_BASE[index];
+                    if (!p) return null;
+                    const total = (p as any).W1 + (p as any).W2 + (p as any).W3;
+                    if (!total) return null;
+                    const cx = x + width / 2;
+                    const cy = y - 12;
+                    const label = `${total}M`;
+                    const w = label.length * 7 + 12;
+                    return (
+                      <g>
+                        <rect x={cx - w / 2} y={cy - 9} width={w} height={18} rx={9} fill="hsl(var(--primary))" />
+                        <text x={cx} y={cy + 3} textAnchor="middle" fontSize={11} fontWeight={700} fill="hsl(var(--primary-foreground))">{label}</text>
+                      </g>
+                    );
                   }}
                 />
               </Bar>
