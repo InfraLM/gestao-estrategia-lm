@@ -51,6 +51,55 @@ export default function GestaoProjeto() {
   const editable = useProjectEditableData(projeto.id, projeto.inicio, projeto.saude);
   const cronogramaChart = editable.cronogramaChart;
 
+  // Datas reais a partir do cronograma editável
+  const datasReais = useMemo(() => {
+    const cron = editable.state.cronograma;
+    if (!cron.length) return { inicioReal: null as string | null, terminoPrevisto: null as string | null };
+    const concluidas = cron.map(c => c.dataConclusao).filter(Boolean) as string[];
+    const inicioReal = concluidas.length
+      ? concluidas.sort()[0]
+      : cron.map(c => c.dataPrevista).filter(Boolean).sort()[0] ?? null;
+    const terminoPrevisto = cron.map(c => c.dataPrevista).filter(Boolean).sort().slice(-1)[0] ?? null;
+    return { inicioReal, terminoPrevisto };
+  }, [editable.state.cronograma]);
+
+  // Execução do escopo (EAP) — cumulativo planejado x realizado por mês
+  const escopoExecucao = useMemo(() => {
+    const entregas = editable.state.eap.flatMap(p => p.entregas);
+    if (!entregas.length) return [] as { mes: string; planejado: number; realizado: number }[];
+    const ymKey = (iso: string) => iso.slice(0, 7); // yyyy-mm
+    const mesesSet = new Set<string>();
+    entregas.forEach(e => {
+      if (e.dataPrevista) mesesSet.add(ymKey(e.dataPrevista));
+      if (e.dataConclusao) mesesSet.add(ymKey(e.dataConclusao));
+    });
+    const meses = Array.from(mesesSet).sort();
+    const total = entregas.length;
+    const hoje = new Date().toISOString().slice(0, 7);
+    return meses.map(m => {
+      const planejadasAteAqui = entregas.filter(e => e.dataPrevista && ymKey(e.dataPrevista) <= m).length;
+      const realizadasAteAqui = entregas.filter(e => e.dataConclusao && ymKey(e.dataConclusao) <= m).length;
+      const isFuturo = m > hoje;
+      const mesLabel = (() => {
+        const [y, mo] = m.split("-");
+        return `${mo}/${y.slice(2)}`;
+      })();
+      return {
+        mes: mesLabel,
+        planejado: Math.round((planejadasAteAqui / total) * 100),
+        // Não mostra realizado em meses futuros (linha "para")
+        realizado: isFuturo ? null as any : Math.round((realizadasAteAqui / total) * 100),
+      };
+    });
+  }, [editable.state.eap]);
+
+  const fmtDate = (iso: string | null) => {
+    if (!iso) return "—";
+    const [y, m, d] = iso.split("-");
+    return `${d}/${m}/${y}`;
+  };
+
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -79,6 +128,17 @@ export default function GestaoProjeto() {
         <div className="text-right">
           <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Período</div>
           <div className="text-sm font-medium mt-1 tabular-nums">{projeto.inicio} → {projeto.termino}</div>
+          <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
+            <div className="rounded-md border border-border bg-muted/30 px-2 py-1 text-left">
+              <div className="uppercase tracking-wider font-semibold">Início real</div>
+              <div className="text-foreground font-medium tabular-nums mt-0.5">{fmtDate(datasReais.inicioReal)}</div>
+            </div>
+            <div className="rounded-md border border-border bg-muted/30 px-2 py-1 text-left">
+              <div className="uppercase tracking-wider font-semibold">Término previsto</div>
+              <div className="text-foreground font-medium tabular-nums mt-0.5">{fmtDate(datasReais.terminoPrevisto)}</div>
+            </div>
+          </div>
+          <div className="text-[10px] text-muted-foreground mt-1">Conforme cronograma</div>
         </div>
       </div>
 
@@ -382,8 +442,13 @@ export default function GestaoProjeto() {
             </Card>
 
             <Card className="p-5 shadow-card">
-              <h3 className="font-semibold mb-4">Burn-rate acumulado</h3>
-              <ResponsiveContainer width="100%" height={240}>
+              <div className="mb-4">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-primary" /> Execução Financeira
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Burn-rate acumulado · Planejado vs Realizado (R$)</p>
+              </div>
+              <ResponsiveContainer width="100%" height={220}>
                 <RLineChart data={data.burnRate} margin={{ top: 16, right: 16 }}>
                   <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
                   <XAxis dataKey="mes" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" />
@@ -398,6 +463,66 @@ export default function GestaoProjeto() {
                   </Line>
                 </RLineChart>
               </ResponsiveContainer>
+            </Card>
+
+            {/* Execução do Escopo (EAP) — espelha a financeira */}
+            <Card className="p-5 shadow-card xl:col-span-3">
+              <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+                <div>
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <ListChecks className="h-4 w-4 text-info" /> Execução do Escopo (EAP)
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    % cumulativo de entregas · Planejado vs Realizado (com base nas datas previstas e de conclusão da EAP)
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 text-xs">
+                  {(() => {
+                    const entregas = editable.state.eap.flatMap(p => p.entregas);
+                    const total = entregas.length || 1;
+                    const concluidas = entregas.filter(e => e.dataConclusao).length;
+                    const hoje = new Date().toISOString().slice(0, 10);
+                    const planAteHoje = entregas.filter(e => e.dataPrevista && e.dataPrevista <= hoje).length;
+                    return (
+                      <>
+                        <div className="text-right">
+                          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Concluído</div>
+                          <div className="text-lg font-bold tabular-nums" style={{ color: "hsl(var(--info))" }}>{Math.round((concluidas / total) * 100)}%</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Planejado até hoje</div>
+                          <div className="text-lg font-bold tabular-nums text-muted-foreground">{Math.round((planAteHoje / total) * 100)}%</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Entregas</div>
+                          <div className="text-lg font-bold tabular-nums">{concluidas}/{total}</div>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+              {escopoExecucao.length > 0 ? (
+                <ResponsiveContainer width="100%" height={240}>
+                  <RLineChart data={escopoExecucao} margin={{ top: 16, right: 24 }}>
+                    <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
+                    <XAxis dataKey="mes" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                    <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}%`} domain={[0, 100]} stroke="hsl(var(--muted-foreground))" />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => v == null ? "—" : `${v}%`} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Line type="monotone" dataKey="planejado" name="Planejado" stroke="hsl(var(--neutral))" strokeDasharray="5 5" dot={{ r: 2 }}>
+                      <LabelList dataKey="planejado" position="top" style={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} formatter={(v: number) => v != null ? `${v}%` : ""} />
+                    </Line>
+                    <Line type="monotone" dataKey="realizado" name="Realizado" stroke="hsl(var(--info))" strokeWidth={2.5} dot={{ r: 3 }} connectNulls={false}>
+                      <LabelList dataKey="realizado" position="bottom" style={{ fill: "hsl(var(--info))", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v != null ? `${v}%` : ""} />
+                    </Line>
+                  </RLineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="text-center text-sm text-muted-foreground py-10">
+                  Sem entregas cadastradas na EAP para calcular execução do escopo.
+                </div>
+              )}
             </Card>
           </div>
         </TabsContent>
