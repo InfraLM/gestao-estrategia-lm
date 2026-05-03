@@ -767,7 +767,7 @@ export default function Dashboard() {
             </Popover>
           </div>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={distSemestre} margin={{ top: 24 }}>
+            <BarChart data={distSemestre} margin={{ top: 36 }}>
               <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
               <XAxis dataKey="sem" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
