@@ -7,14 +7,57 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw } from "lucide-react";
+import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw, Target } from "lucide-react";
 
 type Processo = (typeof processosSeed)[number] & {
-  maturidade?: number; // 1-5 CMMI
-  kpiValor?: number; // 0-100 % entrega de valor
+  maturidade?: number;
+  kpiValor?: number;
+  vinculo?: Record<string, number>; // codigo objetivo -> 0..3
 };
 
 const STORAGE_KEY = "matriz-processos-edits-v1";
+
+// Objetivos estratégicos (BSC LM)
+const OBJETIVOS = [
+  { codigo: "F.01", nome: "Previsibilidade de Caixa", perspectiva: "Financeira" },
+  { codigo: "F.02", nome: "Crescimento Rentável", perspectiva: "Financeira" },
+  { codigo: "C.01", nome: "Experiência WOW", perspectiva: "Cliente" },
+  { codigo: "C.02", nome: "Penetração de Mercado", perspectiva: "Cliente" },
+  { codigo: "C.03", nome: "Marca & Autoridade", perspectiva: "Cliente" },
+  { codigo: "P.01", nome: "Conversão Comercial", perspectiva: "Processos" },
+  { codigo: "P.02", nome: "Eficiência de Cobrança", perspectiva: "Processos" },
+  { codigo: "P.03", nome: "Automação de Processos Core", perspectiva: "Processos" },
+  { codigo: "AC.01", nome: "Cultura & Performance", perspectiva: "Aprendizagem" },
+  { codigo: "AC.02", nome: "Capacitação & Talentos", perspectiva: "Aprendizagem" },
+  { codigo: "AC.03", nome: "AI First · Human First", perspectiva: "Aprendizagem" },
+] as const;
+
+const PERSP_COLORS: Record<string, string> = {
+  "Financeira": "bg-emerald-500/15 text-emerald-700",
+  "Cliente": "bg-primary/15 text-primary",
+  "Processos": "bg-blue-500/15 text-blue-700",
+  "Aprendizagem": "bg-amber-500/15 text-amber-700",
+};
+
+function impactoFromTotal(total: number) {
+  if (total >= 12) return { label: "Forte", color: "bg-emerald-500/20 text-emerald-700 border-emerald-500/40" };
+  if (total >= 8)  return { label: "Moderado", color: "bg-blue-500/20 text-blue-700 border-blue-500/40" };
+  if (total >= 5)  return { label: "Fraco", color: "bg-amber-500/20 text-amber-700 border-amber-500/40" };
+  if (total > 0)   return { label: "Muito fraco", color: "bg-red-500/20 text-red-700 border-red-500/40" };
+  return { label: "Sem vínculo", color: "bg-muted text-muted-foreground border-border" };
+}
+
+function totalVinculo(p: Processo) {
+  return Object.values(p.vinculo || {}).reduce((a, b) => a + (Number(b) || 0), 0);
+}
+
+const VINC_CELL: Record<number, string> = {
+  0: "bg-muted/30 text-muted-foreground",
+  1: "bg-amber-500/15 text-amber-700",
+  2: "bg-blue-500/20 text-blue-700",
+  3: "bg-emerald-500/25 text-emerald-700 font-semibold",
+};
+
 
 const statusColors: Record<string, string> = {
   "BACKLOG": "bg-muted text-muted-foreground",
