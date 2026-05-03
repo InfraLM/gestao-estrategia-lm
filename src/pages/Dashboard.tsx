@@ -805,7 +805,12 @@ export default function Dashboard() {
                   );
                 }}
               />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Legend
+                wrapperStyle={{ fontSize: 11 }}
+                payload={(["W1", "W2", "W3"] as const).map(w => ({
+                  value: w, type: "square", id: w, color: waveColor[w],
+                }))}
+              />
               {waveChartActive.flatMap(c => ([
                 <Bar key={`${c}-W1`} dataKey={`${c}__W1`} stackId={c} fill={waveColor.W1} name={`${CLASS_SHORT[c]} · W1`}>
                   <LabelList dataKey={`${c}__W1`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
