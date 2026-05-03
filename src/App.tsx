@@ -17,6 +17,7 @@ import PlaceholderDoc from "./pages/PlaceholderDoc";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
 import BacklogEstrategico from "./pages/BacklogEstrategico";
+import ImpactoEstrategico from "./pages/ImpactoEstrategico";
 import MatrizProcessos from "./pages/MatrizProcessos";
 import GestaoProcessos from "./pages/GestaoProcessos";
 import DashboardProcessos from "./pages/DashboardProcessos";
