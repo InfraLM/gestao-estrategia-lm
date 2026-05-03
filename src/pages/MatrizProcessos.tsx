@@ -376,6 +376,144 @@ export default function MatrizProcessos() {
             );
           })}
         </TabsContent>
+
+        <TabsContent value="vinculo">
+          <Card>
+            <CardHeader className="py-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Target className="h-4 w-4 text-primary" /> Vínculo Estratégico · Processos × Objetivos BSC
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">
+                Pontue 0 (sem vínculo), 1 (fraco), 2 (moderado) ou 3 (forte) o quanto cada processo contribui para cada objetivo. O impacto estratégico é calculado pela soma.
+              </p>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Tabs defaultValue="Financeira" className="w-full">
+                <div className="px-4 pt-2">
+                  <TabsList className="flex-wrap h-auto">
+                    {Array.from(new Set(OBJETIVOS.map(o => o.perspectiva))).map(p => (
+                      <TabsTrigger key={p} value={p} className="text-xs">
+                        <Badge variant="outline" className={`${PERSP_COLORS[p]} mr-1.5 px-1.5 py-0 text-[10px] border-0`}>
+                          {OBJETIVOS.filter(o => o.perspectiva === p).length}
+                        </Badge>
+                        {p}
+                      </TabsTrigger>
+                    ))}
+                    <TabsTrigger value="resumo" className="text-xs">Resumo</TabsTrigger>
+                  </TabsList>
+                </div>
+
+                {Array.from(new Set(OBJETIVOS.map(o => o.perspectiva))).map(persp => {
+                  const objs = OBJETIVOS.filter(o => o.perspectiva === persp);
+                  return (
+                    <TabsContent key={persp} value={persp} className="mt-0">
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="min-w-[280px] sticky left-0 bg-background z-10">Processo</TableHead>
+                              {objs.map(o => (
+                                <TableHead key={o.codigo} className="text-center w-[110px]">
+                                  <div className="font-semibold">{o.codigo}</div>
+                                  <div className="text-[10px] font-normal text-muted-foreground leading-tight mt-0.5">{o.nome}</div>
+                                </TableHead>
+                              ))}
+                              <TableHead className="text-center w-[100px]">Subtotal</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {filtered.map(p => (
+                              <TableRow key={p.id}>
+                                <TableCell className="font-medium text-xs sticky left-0 bg-background z-10">
+                                  <button onClick={() => setSelected(p)} className="text-left hover:underline">{p.nome}</button>
+                                </TableCell>
+                                {objs.map(o => {
+                                  const v = p.vinculo?.[o.codigo] ?? 0;
+                                  return (
+                                    <TableCell key={o.codigo} className="p-1">
+                                      <Select
+                                        value={String(v)}
+                                        onValueChange={val => updateField(p.id, "vinculo", { ...(p.vinculo || {}), [o.codigo]: Number(val) })}
+                                      >
+                                        <SelectTrigger className={`h-8 text-xs justify-center ${VINC_CELL[v]}`}>
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="0">0 · Sem vínculo</SelectItem>
+                                          <SelectItem value="1">1 · Fraco</SelectItem>
+                                          <SelectItem value="2">2 · Moderado</SelectItem>
+                                          <SelectItem value="3">3 · Forte</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </TableCell>
+                                  );
+                                })}
+                                <TableCell className="text-center text-xs font-semibold tabular-nums">
+                                  {objs.reduce((a, o) => a + (p.vinculo?.[o.codigo] ?? 0), 0)}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </TabsContent>
+                  );
+                })}
+
+                <TabsContent value="resumo" className="mt-0 p-4">
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="min-w-[280px]">Processo</TableHead>
+                          <TableHead className="w-[120px]">Diretor</TableHead>
+                          <TableHead className="text-center w-[100px]">Total</TableHead>
+                          <TableHead className="w-[160px]">Impacto Estratégico</TableHead>
+                          <TableHead className="text-left">Distribuição por perspectiva</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {[...filtered].sort((a, b) => totalVinculo(b) - totalVinculo(a)).map(p => {
+                          const total = totalVinculo(p);
+                          const imp = impactoFromTotal(total);
+                          const byPersp = Array.from(new Set(OBJETIVOS.map(o => o.perspectiva))).map(persp => ({
+                            persp,
+                            v: OBJETIVOS.filter(o => o.perspectiva === persp).reduce((a, o) => a + (p.vinculo?.[o.codigo] ?? 0), 0),
+                          }));
+                          const max = Math.max(1, ...byPersp.map(b => b.v));
+                          return (
+                            <TableRow key={p.id}>
+                              <TableCell className="font-medium text-xs">
+                                <button onClick={() => setSelected(p)} className="text-left hover:underline">{p.nome}</button>
+                              </TableCell>
+                              <TableCell className="text-xs">{p.diretor || "—"}</TableCell>
+                              <TableCell className="text-center font-semibold tabular-nums">{total}</TableCell>
+                              <TableCell><Badge variant="outline" className={`text-xs ${imp.color}`}>{imp.label}</Badge></TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  {byPersp.map(b => (
+                                    <div key={b.persp} className="flex-1 min-w-[60px]">
+                                      <div className="text-[10px] text-muted-foreground mb-0.5 flex justify-between">
+                                        <span>{b.persp.slice(0,4)}</span><span className="tabular-nums">{b.v}</span>
+                                      </div>
+                                      <div className="h-1.5 bg-surface-muted rounded-full overflow-hidden">
+                                        <div className={`h-full rounded-full ${PERSP_COLORS[b.persp]?.split(" ")[0] || "bg-primary"}`} style={{ width: `${(b.v / (max || 1)) * 100}%` }} />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       <Dialog open={!!selected} onOpenChange={o => !o && setSelected(null)}>
