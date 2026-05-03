@@ -443,38 +443,9 @@ export default function GestaoProjeto() {
         {/* MATRIZ DE STAKEHOLDERS */}
         <TabsContent value="stakeholders" className="mt-5">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <Card className="p-5 shadow-card lg:col-span-2">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold">Stakeholders · Influência × Interesse</h3>
-                <span className="text-xs text-muted-foreground">{data.stakeholders.length} pessoas</span>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-xs uppercase tracking-wider text-muted-foreground border-b border-border">
-                      <th className="text-left px-2 py-2 font-semibold">Stakeholder</th>
-                      <th className="text-left px-2 py-2 font-semibold">Papel</th>
-                      <th className="text-center px-2 py-2 font-semibold">Influência</th>
-                      <th className="text-center px-2 py-2 font-semibold">Interesse</th>
-                      <th className="text-left px-2 py-2 font-semibold">Estratégia</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.stakeholders.map(s => (
-                      <tr key={s.nome} className="border-b border-border/50">
-                        <td className="px-2 py-2.5 font-medium">{s.nome}</td>
-                        <td className="px-2 py-2 text-muted-foreground text-xs">{s.papel}</td>
-                        <td className="px-2 py-2 text-center"><Bolinhas n={s.influencia} /></td>
-                        <td className="px-2 py-2 text-center"><Bolinhas n={s.interesse} /></td>
-                        <td className="px-2 py-2 text-xs">
-                          <Badge variant="outline" className="text-[10px]">{s.estrategia}</Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
+            <div className="lg:col-span-2">
+              <StakeholdersEditavel stakeholders={data.stakeholders} projetoId={projeto.id} />
+            </div>
 
             <Card className="p-5 shadow-card">
               <h3 className="font-semibold mb-4">Quadrante</h3>
