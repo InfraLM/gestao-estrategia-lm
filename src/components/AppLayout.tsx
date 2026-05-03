@@ -20,6 +20,7 @@ const navItems = [
   { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
   { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
   { to: "/status-report-processos", label: "Status Report de Processos", icon: LineChart },
+  { to: "/matriz-riscos", label: "Matriz de Riscos Institucionais", icon: ShieldAlert },
   { to: "/repositorio", label: "Repositório", icon: FolderArchive },
 ];
 
