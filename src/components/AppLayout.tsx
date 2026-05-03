@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target } from "lucide-react";
+import { LayoutDashboard, FilePlus2, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,6 +10,7 @@ const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/diagnostico", label: "Diagnóstico Estratégico", icon: Compass },
   { to: "/estrategia", label: "Estratégia LM", icon: Target },
+  { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
   { to: "/submissao", label: "Submissão", icon: FilePlus2 },
   { to: "/portfolio", label: "Portfólio", icon: LayoutGrid },
   { to: "/status-report", label: "Status Report", icon: LineChart },
@@ -22,6 +23,7 @@ const titles: Record<string, string> = {
   "/": "Dashboard Estratégico",
   "/diagnostico": "Diagnóstico Estratégico LM",
   "/estrategia": "Estratégia LM · Formulação + Planejamento",
+  "/backlog-estrategico": "Backlog Estratégico · Plano de Ação Institucional",
   "/submissao": "Submissão de Projetos",
   "/portfolio": "Portfólio Estratégico",
   "/status-report": "Status Report — Evolução",
