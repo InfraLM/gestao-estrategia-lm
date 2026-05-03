@@ -229,7 +229,9 @@ export default function Estrategia() {
                   {icp.desejos.map((d) => <li key={d} className="flex gap-2"><span className="text-success">✓</span>{d}</li>)}
                 </ul>
               </div>
-            </CardContent>
+              <div className="md:col-span-3">
+                <EstrategiaToolInsights ferramenta="ICP" {...FERRAMENTAS.ICP} />
+              </div>
           </Card>
 
           {/* PLAY TO WIN */}
