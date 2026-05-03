@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import processos from "@/data/processos.json";
+import { useEffect, useMemo, useState } from "react";
+import processosSeed from "@/data/processos.json";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -7,9 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, Network, FileText, Users, ArrowRight, ArrowLeft } from "lucide-react";
+import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw } from "lucide-react";
 
-type Processo = (typeof processos)[number];
+type Processo = (typeof processosSeed)[number] & {
+  maturidade?: number; // 1-5 CMMI
+  kpiValor?: number; // 0-100 % entrega de valor
+};
+
+const STORAGE_KEY = "matriz-processos-edits-v1";
 
 const statusColors: Record<string, string> = {
   "BACKLOG": "bg-muted text-muted-foreground",
@@ -28,10 +33,31 @@ const nivelColors: Record<string, string> = {
   "Suporte": "bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-500/30",
 };
 
+const NIVEIS = ["Finalístico", "Gerencial", "Suporte"];
+const DIRETORES = ["Iuri", "Naira", "Ian", "Yuri", "Bruno"];
+const STATUSES = [
+  "BACKLOG", "A INICIAR", "MAPEAMENTO AS-IS/TO-BE", "MELHORIAS/ ANÁLISE",
+  "VALIDAÇÃO INTERNA", "APROVAÇÃO DIRETORIA", "REVISÃO CONCLUÍDA VIGENTE", "PARALISADO",
+];
+const MATURIDADES = [
+  { v: 1, label: "1 · Inicial", color: "bg-red-500/15 text-red-700 dark:text-red-300" },
+  { v: 2, label: "2 · Repetível", color: "bg-orange-500/15 text-orange-700 dark:text-orange-300" },
+  { v: 3, label: "3 · Definido", color: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+  { v: 4, label: "4 · Gerenciado", color: "bg-blue-500/15 text-blue-700 dark:text-blue-300" },
+  { v: 5, label: "5 · Otimizado", color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+];
+
 function getMacro(nome: string) {
   const m = nome.match(/^(\d{2})\.(\d{2})/);
   if (!m) return { macro: "—", sub: "—" };
   return { macro: m[1], sub: `${m[1]}.${m[2]}` };
+}
+
+function kpiColor(v?: number) {
+  if (v == null) return "text-muted-foreground";
+  if (v >= 80) return "text-emerald-600";
+  if (v >= 50) return "text-amber-600";
+  return "text-red-600";
 }
 
 export default function MatrizProcessos() {
@@ -40,47 +66,86 @@ export default function MatrizProcessos() {
   const [diretor, setDiretor] = useState<string>("todos");
   const [status, setStatus] = useState<string>("todos");
   const [selected, setSelected] = useState<Processo | null>(null);
+  const [data, setData] = useState<Processo[]>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const edits: Record<string, Partial<Processo>> = raw ? JSON.parse(raw) : {};
+      return (processosSeed as Processo[]).map(p => ({ ...p, ...edits[p.id] }));
+    } catch {
+      return processosSeed as Processo[];
+    }
+  });
 
-  const diretores = useMemo(() => Array.from(new Set(processos.map(p => p.diretor).filter(Boolean))).sort(), []);
-  const niveis = ["Finalístico", "Gerencial", "Suporte"];
-  const statuses = useMemo(() => Array.from(new Set(processos.map(p => p.status).filter(Boolean))).sort(), []);
+  useEffect(() => {
+    const edits: Record<string, Partial<Processo>> = {};
+    data.forEach(p => {
+      const seed = (processosSeed as Processo[]).find(s => s.id === p.id)!;
+      const diff: Partial<Processo> = {};
+      (["nivel", "diretor", "status", "maturidade", "kpiValor"] as const).forEach(k => {
+        if ((p as any)[k] !== (seed as any)[k]) (diff as any)[k] = (p as any)[k];
+      });
+      if (Object.keys(diff).length) edits[p.id] = diff;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+  }, [data]);
+
+  const updateField = (id: string, field: keyof Processo, value: any) => {
+    setData(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
+  };
+
+  const resetAll = () => {
+    if (!confirm("Resetar todas as edições da matriz?")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    setData(processosSeed as Processo[]);
+  };
+
+  const diretores = DIRETORES;
+  const niveis = NIVEIS;
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
-    return (processos as Processo[]).filter(p => {
+    return data.filter(p => {
       if (nivel !== "todos" && p.nivel !== nivel) return false;
       if (diretor !== "todos" && p.diretor !== diretor) return false;
       if (status !== "todos" && p.status !== status) return false;
       if (q && !p.nome.toLowerCase().includes(q) && !p.dono.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [search, nivel, diretor, status]);
+  }, [search, nivel, diretor, status, data]);
 
   const stats = useMemo(() => {
-    const total = processos.length;
-    const byNivel = niveis.map(n => ({ n, c: processos.filter(p => p.nivel === n).length }));
-    const vigentes = processos.filter(p => p.status === "REVISÃO CONCLUÍDA VIGENTE").length;
-    return { total, byNivel, vigentes };
-  }, []);
+    const total = data.length;
+    const byNivel = niveis.map(n => ({ n, c: data.filter(p => p.nivel === n).length }));
+    const vigentes = data.filter(p => p.status === "REVISÃO CONCLUÍDA VIGENTE").length;
+    const matAvg = (() => {
+      const vals = data.map(p => p.maturidade).filter((v): v is number => !!v);
+      return vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : "—";
+    })();
+    const kpiAvg = (() => {
+      const vals = data.map(p => p.kpiValor).filter((v): v is number => v != null);
+      return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) + "%" : "—";
+    })();
+    return { total, byNivel, vigentes, matAvg, kpiAvg };
+  }, [data]);
 
-  // Cadeia de valor: agrupar por macro
   const macroGroups = useMemo(() => {
     const groups: Record<string, { nivel: string; subs: Record<string, Processo[]> }> = {};
-    (processos as Processo[]).forEach(p => {
+    data.forEach(p => {
       const { macro, sub } = getMacro(p.nome);
       if (!groups[macro]) groups[macro] = { nivel: p.nivel, subs: {} };
       if (!groups[macro].subs[sub]) groups[macro].subs[sub] = [];
       groups[macro].subs[sub].push(p);
     });
     return groups;
-  }, []);
+  }, [data]);
+
 
   return (
     <div className="space-y-6">
       {/* KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         <Card><CardContent className="p-4">
-          <div className="text-xs text-muted-foreground">Total de Processos</div>
+          <div className="text-xs text-muted-foreground">Total</div>
           <div className="text-2xl font-semibold mt-1">{stats.total}</div>
         </CardContent></Card>
         {stats.byNivel.map(b => (
@@ -93,11 +158,19 @@ export default function MatrizProcessos() {
           <div className="text-xs text-muted-foreground">Vigentes</div>
           <div className="text-2xl font-semibold mt-1 text-emerald-600">{stats.vigentes}</div>
         </CardContent></Card>
+        <Card><CardContent className="p-4">
+          <div className="text-xs text-muted-foreground">Maturidade média</div>
+          <div className="text-2xl font-semibold mt-1">{stats.matAvg}</div>
+        </CardContent></Card>
+        <Card><CardContent className="p-4">
+          <div className="text-xs text-muted-foreground">KPI valor médio</div>
+          <div className="text-2xl font-semibold mt-1">{stats.kpiAvg}</div>
+        </CardContent></Card>
       </div>
 
       {/* Filtros */}
       <Card>
-        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-5 gap-3">
+        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-6 gap-3">
           <div className="relative md:col-span-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Buscar processo ou dono..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
@@ -120,9 +193,12 @@ export default function MatrizProcessos() {
             <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todos os status</SelectItem>
-              {statuses.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              {STATUSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
             </SelectContent>
           </Select>
+          <button onClick={resetAll} className="flex items-center justify-center gap-2 text-xs px-3 rounded-md border border-border hover:bg-surface-muted transition-colors">
+            <RotateCcw className="h-3.5 w-3.5" /> Resetar edições
+          </button>
         </CardContent>
       </Card>
 
@@ -135,33 +211,80 @@ export default function MatrizProcessos() {
         <TabsContent value="lista">
           <Card>
             <CardHeader className="py-3">
-              <CardTitle className="text-base">Matriz de Processos · {filtered.length} processo(s)</CardTitle>
+              <CardTitle className="text-base">Matriz de Processos · {filtered.length} processo(s) · edição inline</CardTitle>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Processo</TableHead>
-                    <TableHead>Nível</TableHead>
-                    <TableHead>Diretor</TableHead>
-                    <TableHead>Dono</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-center">Rev.</TableHead>
+                    <TableHead className="min-w-[280px]">Processo</TableHead>
+                    <TableHead className="w-[140px]">Nível</TableHead>
+                    <TableHead className="w-[120px]">Diretor</TableHead>
+                    <TableHead className="min-w-[160px]">Dono</TableHead>
+                    <TableHead className="w-[200px]">Status</TableHead>
+                    <TableHead className="w-[160px]">Maturidade</TableHead>
+                    <TableHead className="w-[140px]">KPI valor (%)</TableHead>
+                    <TableHead className="text-center w-[60px]">Rev.</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map(p => (
-                    <TableRow key={p.id} className="cursor-pointer" onClick={() => setSelected(p)}>
-                      <TableCell className="font-medium max-w-md">{p.nome}</TableCell>
-                      <TableCell>
-                        {p.nivel && <Badge variant="outline" className={nivelColors[p.nivel]}>{p.nivel}</Badge>}
+                    <TableRow key={p.id}>
+                      <TableCell className="font-medium">
+                        <button onClick={() => setSelected(p)} className="text-left hover:underline">{p.nome}</button>
                       </TableCell>
-                      <TableCell>{p.diretor}</TableCell>
+                      <TableCell>
+                        <Select value={p.nivel || ""} onValueChange={v => updateField(p.id, "nivel", v)}>
+                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            {NIVEIS.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Select value={p.diretor || ""} onValueChange={v => updateField(p.id, "diretor", v)}>
+                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            {DIRETORES.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
                       <TableCell className="text-sm text-muted-foreground">{p.dono}</TableCell>
                       <TableCell>
-                        <Badge className={statusColors[p.status] || "bg-muted"}>{p.status}</Badge>
+                        <Select value={p.status || ""} onValueChange={v => updateField(p.id, "status", v)}>
+                          <SelectTrigger className={`h-8 text-xs ${statusColors[p.status] || ""}`}><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            {STATUSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                       </TableCell>
-                      <TableCell className="text-center">{p.revisao ?? "—"}</TableCell>
+                      <TableCell>
+                        <Select value={p.maturidade ? String(p.maturidade) : ""} onValueChange={v => updateField(p.id, "maturidade", Number(v))}>
+                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            {MATURIDADES.map(m => <SelectItem key={m.v} value={String(m.v)}>{m.label}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="number"
+                            min={0}
+                            max={100}
+                            value={p.kpiValor ?? ""}
+                            onChange={e => {
+                              const v = e.target.value === "" ? undefined : Math.max(0, Math.min(100, Number(e.target.value)));
+                              updateField(p.id, "kpiValor", v);
+                            }}
+                            className="h-8 text-xs w-16"
+                          />
+                          <span className={`text-xs font-medium ${kpiColor(p.kpiValor)}`}>
+                            {p.kpiValor != null ? `${p.kpiValor}%` : "—"}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center text-xs">{p.revisao ?? "—"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
