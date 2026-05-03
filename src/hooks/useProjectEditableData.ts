@@ -281,7 +281,7 @@ export function useProjectEditableData(
     const nova: EntregaItem = {
       id: novaId, titulo: "Nova entrega", responsavel: "—",
       dataPrevista: new Date().toISOString().slice(0, 10), dataConclusao: null,
-      horas: 8, feito: false, status: "A iniciar", documentos: [],
+      horas: 8, feito: false, status: "A iniciar", documentos: [], predecessoras: [],
     };
     setState(s => ({
       ...s,
