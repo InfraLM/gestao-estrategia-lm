@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Search, FolderKanban, TrendingUp, AlertTriangle, Clock } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { SaudeBadge } from "@/components/badges";
+import { SubmissaoProjetoDialog } from "@/components/SubmissaoProjetoDialog";
+import { Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Gestao() {
