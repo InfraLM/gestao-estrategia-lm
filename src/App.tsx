@@ -59,6 +59,7 @@ const App = () => (
               <Route path="/repositorios/processos-publicados" element={<ProcessosPublicados />} />
               <Route path="/repositorios/documentos-controlados" element={<PlaceholderDoc titulo="Documentos Controlados" descricao="Documentos sob controle de qualidade (POPs, instruções de trabalho, manuais, checklists). Apenas a versão vigente disponível ao usuário final." bullets={["Numeração e código de controle", "Versão vigente única e auditável", "Workflow de aprovação por alçada", "Revisão anual obrigatória com alerta automático", "Histórico restrito a PMO/Admin"]} />} />
               <Route path="/repositorios/politicas-institucionais" element={<PlaceholderDoc titulo="Políticas Institucionais" descricao="Políticas oficiais da Liberdade Médica. Apenas a versão vigente é publicada; revisões antigas ficam no Histórico de Governança." bullets={["Política vigente única por tema", "Aprovação por excom/diretoria (alçada Zeev)", "Ciclo de revisão anual", "Aceite eletrônico por colaborador (futuro)", "Trilha de auditoria completa"]} />} />
+              <Route path="/repositorios/gestao" element={<GestaoRepositorio />} />
               <Route path="/diagnostico" element={<Diagnostico />} />
               <Route path="/estrategia" element={<Estrategia />} />
               <Route path="/backlog-estrategico" element={<BacklogEstrategico />} />
