@@ -13,7 +13,7 @@ import GestaoProjeto from "./pages/GestaoProjeto";
 import Melhorias from "./pages/Melhorias";
 import MelhoriaContinua from "./pages/MelhoriaContinua";
 import MelhoriaDetalhe from "./pages/MelhoriaDetalhe";
-import Repositorio from "./pages/Repositorio";
+import PlaceholderDoc from "./pages/PlaceholderDoc";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
 import BacklogEstrategico from "./pages/BacklogEstrategico";
