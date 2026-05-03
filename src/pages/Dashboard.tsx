@@ -817,19 +817,17 @@ export default function Dashboard() {
                 }}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              {waveChartActive.map(c => (
-                <>
-                  <Bar key={`${c}-W1`} dataKey={`${c}__W1`} stackId={c} fill={waveColor.W1} name={`${CLASS_SHORT[c]} · W1`}>
-                    <LabelList dataKey={`${c}__W1`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
-                  </Bar>
-                  <Bar key={`${c}-W2`} dataKey={`${c}__W2`} stackId={c} fill={waveColor.W2} name={`${CLASS_SHORT[c]} · W2`}>
-                    <LabelList dataKey={`${c}__W2`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
-                  </Bar>
-                  <Bar key={`${c}-W3`} dataKey={`${c}__W3`} stackId={c} fill={waveColor.W3} name={`${CLASS_SHORT[c]} · W3`}>
-                    <LabelList dataKey={`${c}__W3`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
-                  </Bar>
-                </>
-              ))}
+              {waveChartActive.flatMap(c => ([
+                <Bar key={`${c}-W1`} dataKey={`${c}__W1`} stackId={c} fill={waveColor.W1} name={`${CLASS_SHORT[c]} · W1`}>
+                  <LabelList dataKey={`${c}__W1`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+                </Bar>,
+                <Bar key={`${c}-W2`} dataKey={`${c}__W2`} stackId={c} fill={waveColor.W2} name={`${CLASS_SHORT[c]} · W2`}>
+                  <LabelList dataKey={`${c}__W2`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+                </Bar>,
+                <Bar key={`${c}-W3`} dataKey={`${c}__W3`} stackId={c} fill={waveColor.W3} name={`${CLASS_SHORT[c]} · W3`}>
+                  <LabelList dataKey={`${c}__W3`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+                </Bar>,
+              ]))}
             </BarChart>
           </ResponsiveContainer>
         </Card>
