@@ -201,11 +201,12 @@ export default function GestaoProcessos() {
     let c = 0;
     if (Object.values(d.escopo || {}).some(v => v && String(v).trim())) c++;
     if (d.problemas?.length) c++;
+    if (d.atividades?.length) c++;
     if (d.riscos?.length) c++;
     if (d.asIs?.length) c++;
     if (d.toBe?.length) c++;
     if (d.plano?.length) c++;
-    return Math.round((c / 6) * 100);
+    return Math.round((c / 7) * 100);
   };
 
   const enviarParaMC = (acao: PlanoAcao) => {
