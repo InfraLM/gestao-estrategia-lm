@@ -14,8 +14,8 @@ import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Popover, PopoverContent, PopoverTrigger,
-} from "@/components/ui/popover";
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
 import {
   ListChecks, ShieldAlert, Sword, Sparkles, Compass, Filter,
   Building2, Gavel, AlertTriangle, Target, Zap, TrendingUp,
