@@ -53,6 +53,7 @@ const App = () => (
               <Route path="/gestao-processos" element={<GestaoProcessos />} />
               <Route path="/dashboard-processos" element={<DashboardProcessos />} />
               <Route path="/status-report-processos" element={<StatusReportProcessos />} />
+              <Route path="/matriz-riscos" element={<MatrizRiscosInstitucionais />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
