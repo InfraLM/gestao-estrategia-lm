@@ -1263,7 +1263,7 @@ export default function Dashboard() {
             <span className="text-xs text-muted-foreground">R$ Milhões · 2026 → 2030</span>
           </div>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={ROI_BASE} margin={{ top: 24 }}>
+            <BarChart data={ROI_BASE} margin={{ top: 36 }}>
               <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
               <XAxis dataKey="ano" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `${v}M`} />
