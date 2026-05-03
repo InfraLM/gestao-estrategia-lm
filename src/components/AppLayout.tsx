@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch } from "lucide-react";
+import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
@@ -46,11 +46,25 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    id: "outros",
-    label: "Repositório",
-    icon: FolderArchive,
+    id: "historico",
+    label: "Histórico de Documentações",
+    icon: History,
     children: [
-      { to: "/repositorio", label: "Repositório", icon: FolderArchive },
+      { to: "/historico/projetos", label: "Histórico de Projetos", icon: FolderKanban },
+      { to: "/historico/processos", label: "Histórico de Processos", icon: Workflow },
+      { to: "/historico/governanca", label: "Histórico de Governança", icon: ScrollText },
+      { to: "/historico/infra-tech", label: "Histórico de Infra & Tech", icon: Server },
+    ],
+  },
+  {
+    id: "repositorios",
+    label: "Repositórios",
+    icon: Library,
+    children: [
+      { to: "/repositorios/frameworks", label: "Frameworks Vigentes", icon: BookOpen },
+      { to: "/repositorios/processos-publicados", label: "Processos Publicados", icon: FileCheck2 },
+      { to: "/repositorios/documentos-controlados", label: "Documentos Controlados", icon: FolderArchive },
+      { to: "/repositorios/politicas-institucionais", label: "Políticas Institucionais", icon: ShieldCheck },
     ],
   },
 ];
@@ -71,7 +85,14 @@ const titles: Record<string, string> = {
   "/matriz-processos": "Matriz de Processos · Cadeia de Valor LM",
   "/gestao-processos": "Gestão de Processos · Mapeamento e Análise",
   "/matriz-riscos": "Matriz de Riscos Institucionais",
-  "/repositorio": "Repositório · BCs e Documentos",
+  "/historico/projetos": "Histórico de Projetos · Versões de Documentos",
+  "/historico/processos": "Histórico de Processos · Versões de Documentos",
+  "/historico/governanca": "Histórico de Governança · Atas e Deliberações",
+  "/historico/infra-tech": "Histórico de Infra & Tech · Arquiteturas e Runbooks",
+  "/repositorios/frameworks": "Frameworks Vigentes · Repositório Controlado",
+  "/repositorios/processos-publicados": "Processos Publicados · Repositório Controlado",
+  "/repositorios/documentos-controlados": "Documentos Controlados · Controle de Qualidade",
+  "/repositorios/politicas-institucionais": "Políticas Institucionais · Repositório Controlado",
 };
 
 export default function AppLayout() {
