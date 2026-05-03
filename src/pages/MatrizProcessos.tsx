@@ -221,10 +221,6 @@ export default function MatrizProcessos() {
           <div className="text-xs text-muted-foreground">Maturidade média</div>
           <div className="text-2xl font-semibold mt-1">{stats.matAvg}</div>
         </CardContent></Card>
-        <Card><CardContent className="p-4">
-          <div className="text-xs text-muted-foreground">KPI valor médio</div>
-          <div className="text-2xl font-semibold mt-1">{stats.kpiAvg}</div>
-        </CardContent></Card>
       </div>
 
       {/* Filtros */}
