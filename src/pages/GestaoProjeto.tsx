@@ -258,13 +258,14 @@ export default function GestaoProjeto() {
 
       {/* Tabs operacionais */}
       <Tabs defaultValue="cronograma">
-        <TabsList className="grid grid-cols-4 lg:grid-cols-7 w-full">
+        <TabsList className="grid grid-cols-4 lg:grid-cols-8 w-full">
           <TabsTrigger value="cronograma" className="gap-1.5"><GanttChart className="h-3.5 w-3.5" /> Cronograma</TabsTrigger>
           <TabsTrigger value="eap" className="gap-1.5"><ListChecks className="h-3.5 w-3.5" /> EAP</TabsTrigger>
           <TabsTrigger value="riscos" className="gap-1.5"><ShieldAlert className="h-3.5 w-3.5" /> Riscos</TabsTrigger>
           <TabsTrigger value="desvios" className="gap-1.5"><GitBranch className="h-3.5 w-3.5" /> Desvios</TabsTrigger>
           <TabsTrigger value="custos" className="gap-1.5"><DollarSign className="h-3.5 w-3.5" /> Custos</TabsTrigger>
           <TabsTrigger value="stakeholders" className="gap-1.5"><Users className="h-3.5 w-3.5" /> Stakeholders</TabsTrigger>
+          <TabsTrigger value="submissoes" className="gap-1.5"><Upload className="h-3.5 w-3.5" /> Submissões</TabsTrigger>
           <TabsTrigger value="historico" className="gap-1.5"><History className="h-3.5 w-3.5" /> Histórico</TabsTrigger>
         </TabsList>
 
@@ -276,6 +277,11 @@ export default function GestaoProjeto() {
         {/* EAP — editável + submissão por entregável */}
         <TabsContent value="eap" className="mt-5">
           <EapEditavel editable={editable} projetoId={projeto.id} />
+        </TabsContent>
+
+        {/* SUBMISSÕES — visão consolidada */}
+        <TabsContent value="submissoes" className="mt-5">
+          <SubmissoesTab editable={editable} projeto={projeto} />
         </TabsContent>
 
         {/* MATRIZ DE RISCOS */}
