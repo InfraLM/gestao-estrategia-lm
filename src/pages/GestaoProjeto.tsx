@@ -126,6 +126,17 @@ export default function GestaoProjeto() {
               <Badge variant="outline" className="text-[10px]">BC: {projeto.statusBC}</Badge>
               <Badge variant="outline" className="text-[10px]">{projeto.status}</Badge>
               <Badge variant="outline" className="text-[10px]">Diretor: {projeto.diretor}</Badge>
+              <SubmissaoProjetoDialog
+                projetoId={projeto.id}
+                projetoNome={projeto.nome}
+                inicio={projeto.inicio}
+                saude={projeto.saude}
+                trigger={
+                  <Button size="sm" variant="outline" className="h-6 text-xs gap-1.5 ml-1">
+                    <Upload className="h-3 w-3" /> Submeter documento
+                  </Button>
+                }
+              />
             </div>
           </div>
         </div>
