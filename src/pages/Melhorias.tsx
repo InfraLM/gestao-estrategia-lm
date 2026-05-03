@@ -470,7 +470,7 @@ export default function Melhorias() {
                     ))}
                     {lista.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={9} className="text-center text-muted-foreground py-10">
+                        <TableCell colSpan={10} className="text-center text-muted-foreground py-10">
                           Nenhuma melhoria estratégica para esta área. Clique em <strong>Nova melhoria estratégica</strong>.
                         </TableCell>
                       </TableRow>
