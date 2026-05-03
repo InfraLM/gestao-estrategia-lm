@@ -1,0 +1,53 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { projetos as mockProjetos, type Projeto } from "@/data/mockData";
+
+/**
+ * Carrega projetos do banco no formato Projeto (compatível com o mockData),
+ * com fallback para o mock quando o banco não responde ou está vazio.
+ */
+export function useProjetosDB() {
+  const [data, setData] = useState<Projeto[]>(mockProjetos);
+  const [loading, setLoading] = useState(true);
+  const [usingDB, setUsingDB] = useState(false);
+
+  useEffect(() => {
+    let cancel = false;
+    (async () => {
+      const { data: rows, error } = await supabase
+        .from("projetos")
+        .select("codigo,nome,wave,classificacao,objetivos,krs,diretor,gerente,budget,realizado,status_bc,status,saude,inicio,termino,ice,descricao,avancos,causa_raiz,plano_acao");
+      if (cancel) return;
+      if (!error && rows && rows.length > 0) {
+        const mapped: Projeto[] = rows.map((r: any) => ({
+          id: r.codigo,
+          nome: r.nome,
+          wave: r.wave,
+          classificacao: r.classificacao,
+          objetivos: r.objetivos || [],
+          krs: r.krs || [],
+          diretor: r.diretor || "Não atribuído",
+          gerente: r.gerente || undefined,
+          budget: Number(r.budget) || 0,
+          realizado: Number(r.realizado) || 0,
+          statusBC: r.status_bc,
+          status: r.status,
+          saude: r.saude,
+          inicio: r.inicio || "",
+          termino: r.termino || "",
+          ice: Number(r.ice) || 0,
+          descricao: r.descricao || "",
+          avancos: r.avancos || undefined,
+          causaRaiz: r.causa_raiz || undefined,
+          planoAcao: r.plano_acao || undefined,
+        }));
+        setData(mapped);
+        setUsingDB(true);
+      }
+      setLoading(false);
+    })();
+    return () => { cancel = true; };
+  }, []);
+
+  return { data, loading, usingDB };
+}
