@@ -485,9 +485,18 @@ export default function GestaoProjeto() {
                     const planAteHoje = entregas.filter(e => e.dataPrevista && e.dataPrevista <= hoje).length;
                     return (
                       <>
-                        <Resumo label="Concluído" value={Math.round((concluidas / total) * 100)} color="hsl(var(--info))" suffix="%" />
-                        <Resumo label="Planejado até hoje" value={Math.round((planAteHoje / total) * 100)} color="hsl(var(--neutral))" suffix="%" />
-                        <Resumo label="Entregas" value={`${concluidas}/${total}` as any} color="hsl(var(--primary))" />
+                        <div className="text-right">
+                          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Concluído</div>
+                          <div className="text-lg font-bold tabular-nums" style={{ color: "hsl(var(--info))" }}>{Math.round((concluidas / total) * 100)}%</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Planejado até hoje</div>
+                          <div className="text-lg font-bold tabular-nums text-muted-foreground">{Math.round((planAteHoje / total) * 100)}%</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Entregas</div>
+                          <div className="text-lg font-bold tabular-nums">{concluidas}/{total}</div>
+                        </div>
                       </>
                     );
                   })()}
