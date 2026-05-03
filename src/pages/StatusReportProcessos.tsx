@@ -50,16 +50,16 @@ const FAROL_COLOR = { verde: "bg-emerald-500", amarelo: "bg-amber-500", vermelho
 const FAROL_LABEL = { verde: "On-Track", amarelo: "Alerta", vermelho: "Off-Track" };
 
 export default function StatusReportProcessos() {
-  const [processos, setProcessos] = useState<Processo[]>([]);
+  const { data: processos } = useProcessosDB();
   const [gestao, setGestao] = useState<Record<string, any>>({});
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
   const [diretorFilter, setDiretorFilter] = useState<string>("todos");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
 
   useEffect(() => {
-    setProcessos(loadProcessos());
     setGestao(loadGestao());
   }, []);
+
 
   const diretores = useMemo(() => Array.from(new Set(processos.map(p => p.diretor).filter(Boolean))).sort(), [processos]);
 
