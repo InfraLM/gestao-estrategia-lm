@@ -46,11 +46,25 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    id: "outros",
-    label: "Repositório",
-    icon: FolderArchive,
+    id: "historico",
+    label: "Histórico de Documentações",
+    icon: History,
     children: [
-      { to: "/repositorio", label: "Repositório", icon: FolderArchive },
+      { to: "/historico/projetos", label: "Histórico de Projetos", icon: FolderKanban },
+      { to: "/historico/processos", label: "Histórico de Processos", icon: Workflow },
+      { to: "/historico/governanca", label: "Histórico de Governança", icon: ScrollText },
+      { to: "/historico/infra-tech", label: "Histórico de Infra & Tech", icon: Server },
+    ],
+  },
+  {
+    id: "repositorios",
+    label: "Repositórios",
+    icon: Library,
+    children: [
+      { to: "/repositorios/frameworks", label: "Frameworks Vigentes", icon: BookOpen },
+      { to: "/repositorios/processos-publicados", label: "Processos Publicados", icon: FileCheck2 },
+      { to: "/repositorios/documentos-controlados", label: "Documentos Controlados", icon: FolderArchive },
+      { to: "/repositorios/politicas-institucionais", label: "Políticas Institucionais", icon: ShieldCheck },
     ],
   },
 ];
