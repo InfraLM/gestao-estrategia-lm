@@ -540,6 +540,10 @@ export default function MatrizProcessos() {
         <TabsContent value="e2e">
           <E2EDashboard processos={data} />
         </TabsContent>
+
+        <TabsContent value="riscos">
+          <MatrizRiscosInstitucionais />
+        </TabsContent>
       </Tabs>
 
       <Dialog open={!!selected} onOpenChange={o => !o && setSelected(null)}>
