@@ -97,6 +97,90 @@ export default function StatusReportProcessos() {
   const desviosCriticos = linhas.filter(l => l.farol === "vermelho");
   const alertas = linhas.filter(l => l.farol === "amarelo");
 
+  // Aguardando validação (etapas de validação/aprovação)
+  const aguardandoValidacao = useMemo(
+    () => linhas
+      .map(l => l.p)
+      .filter(p => p.status === "VALIDAÇÃO INTERNA" || p.status === "APROVAÇÃO DIRETORIA"),
+    [linhas]
+  );
+
+  // Riscos críticos (score >= 15) extraídos do gestao por processo
+  const riscosCriticos = useMemo(() => {
+    const out: { processoId: string; processoNome: string; diretor: string; descricao: string; impacto: number; ocorrencia: number; score: number; responsavel: string }[] = [];
+    linhas.forEach(({ p, d }) => {
+      (d.riscos || []).forEach((r: any) => {
+        const score = (r.impacto || 0) * (r.ocorrencia || 0);
+        if (score >= 15) out.push({
+          processoId: p.id, processoNome: p.nome, diretor: p.diretor || "—",
+          descricao: r.descricao || r.nome || "—",
+          impacto: r.impacto || 0, ocorrencia: r.ocorrencia || 0, score,
+          responsavel: r.responsavel || "—",
+        });
+      });
+    });
+    return out.sort((a, b) => b.score - a.score);
+  }, [linhas]);
+
+  // Atividades em atraso (atividades + plano de ação com prazo passado e não concluído)
+  const atividadesAtraso = useMemo(() => {
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    const out: { processoId: string; processoNome: string; descricao: string; responsavel: string; prazoLabel: string; diasAtraso: number; origem: "Atividade" | "Plano de Ação" }[] = [];
+    const parse = (v?: string) => { if (!v) return null; const d = new Date(v); return isNaN(d.getTime()) ? null : d; };
+    linhas.forEach(({ p, d }) => {
+      (d.atividades || []).forEach((a: any) => {
+        const prazo = parse(a.prazo);
+        if (prazo && prazo < hoje && a.status !== "Concluído") {
+          out.push({ processoId: p.id, processoNome: p.nome, descricao: a.descricao || a.titulo || "—", responsavel: a.responsavel || "—", prazoLabel: a.prazo, diasAtraso: Math.floor((hoje.getTime() - prazo.getTime()) / 86400000), origem: "Atividade" });
+        }
+      });
+      (d.plano || []).forEach((a: any) => {
+        const prazo = parse(a.prazo);
+        if (prazo && prazo < hoje && a.status !== "Concluído") {
+          out.push({ processoId: p.id, processoNome: p.nome, descricao: a.oQueFazer || "—", responsavel: a.responsavel || "—", prazoLabel: a.prazo, diasAtraso: Math.floor((hoje.getTime() - prazo.getTime()) / 86400000), origem: "Plano de Ação" });
+        }
+      });
+    });
+    return out.sort((a, b) => b.diasAtraso - a.diasAtraso);
+  }, [linhas]);
+
+  // Séries mensais (últimos 6 meses)
+  const meses6 = useMemo(() => {
+    const arr: { ym: string; mes: string }[] = [];
+    const d = new Date(); d.setDate(1);
+    for (let i = 5; i >= 0; i--) {
+      const x = new Date(d.getFullYear(), d.getMonth() - i, 1);
+      arr.push({ ym: `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}`, mes: x.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "") });
+    }
+    return arr;
+  }, []);
+
+  const ymOf = (v?: string) => { if (!v) return null; const d = new Date(v); if (isNaN(d.getTime())) return null; return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`; };
+
+  const mapeamentoMes = useMemo(() => meses6.map(({ ym, mes }) => {
+    let concluidas = 0, planejadas = 0;
+    linhas.forEach(({ d }) => {
+      [...(d.asIs || []), ...(d.toBe || []), ...(d.atividades || [])].forEach((a: any) => {
+        const ymPrazo = ymOf(a.prazo); const ymConcl = ymOf(a.dataConclusao || a.concluidoEm);
+        if (ymPrazo === ym) planejadas++;
+        if (ymConcl === ym && a.status === "Concluído") concluidas++;
+      });
+    });
+    return { mes, concluidas, planejadas };
+  }), [linhas, meses6]);
+
+  const melhoriasMes = useMemo(() => meses6.map(({ ym, mes }) => {
+    let concluidas = 0, planejadas = 0;
+    linhas.forEach(({ d }) => {
+      (d.plano || []).forEach((a: any) => {
+        const ymPrazo = ymOf(a.prazo); const ymConcl = ymOf(a.dataConclusao || a.concluidoEm);
+        if (ymPrazo === ym) planejadas++;
+        if (ymConcl === ym && a.status === "Concluído") concluidas++;
+      });
+    });
+    return { mes, concluidas, planejadas };
+  }), [linhas, meses6]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
