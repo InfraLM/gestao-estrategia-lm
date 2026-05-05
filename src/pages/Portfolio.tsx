@@ -125,6 +125,7 @@ export default function Portfolio() {
       (!filterClass.length || filterClass.includes(p.classificacao)) &&
       (!filterStatus.length || filterStatus.includes(p.status)) &&
       (!filterDir.length || filterDir.includes(p.diretor)) &&
+      (!filterCategoria.length || (p.categoria && filterCategoria.includes(p.categoria))) &&
       (!filterPeriodo.length || filterPeriodo.some(per => isInPeriodo(p, per)))
     );
     // Rank: when periodo filter is active, sort by ICE desc (priority within period)
@@ -132,7 +133,7 @@ export default function Portfolio() {
       return [...list].sort((a, b) => b.ice - a.ice);
     }
     return list;
-  }, [data, search, filterWave, filterClass, filterStatus, filterDir, filterPeriodo]);
+  }, [data, search, filterWave, filterClass, filterStatus, filterDir, filterCategoria, filterPeriodo]);
 
   const grouped = useMemo<{ key: string; items: Projeto[] }[]>(() => {
     if (groupBy === "none") return [{ key: "", items: filtered }];
