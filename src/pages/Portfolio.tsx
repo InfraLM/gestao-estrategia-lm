@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers, ChevronUp } from "lucide-react";
-import { type Projeto, diretores, objetivosBSC, okrs } from "@/data/mockData";
+import { type Projeto, type CategoriaEstrategica, diretores, objetivosBSC, okrs, categoriasEstrategicas } from "@/data/mockData";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import Submissao from "./Submissao";
