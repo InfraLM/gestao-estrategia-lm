@@ -24,6 +24,7 @@ export function useProjetosDB() {
           nome: r.nome,
           wave: r.wave,
           classificacao: r.classificacao,
+          categoria: r.categoria || undefined,
           objetivos: r.objetivos || [],
           krs: r.krs || [],
           diretor: r.diretor || "Não atribuído",
