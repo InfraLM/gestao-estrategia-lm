@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers, ChevronUp } from "lucide-react";
-import { type Projeto, diretores, objetivosBSC, okrs } from "@/data/mockData";
+import { type Projeto, type CategoriaEstrategica, diretores, objetivosBSC, okrs, categoriasEstrategicas } from "@/data/mockData";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import Submissao from "./Submissao";
@@ -22,6 +22,17 @@ const waveOpts: Projeto["wave"][] = ["W1","W2","W3"];
 const classOpts: Projeto["classificacao"][] = ["Institucional","Melhoria Contínua","Melhoria Contínua com EPP","Novo Produto"];
 const statusOpts: Projeto["status"][] = ["Backlog","A Iniciar","Em Andamento","Validação","Encerramento","Concluído","Pausado","Atrasado","Cancelado","Em Avaliação"];
 const bcOpts: Projeto["statusBC"][] = ["Em Revisão","BC em Construção","Ativo EPP","Projeto Concluído","BC não aplicável","Sem BC","Adiado","Validado"];
+const categoriaOpts: CategoriaEstrategica[] = categoriasEstrategicas.map(c => c.id);
+const categoriaTooltip: Record<CategoriaEstrategica, string> = Object.fromEntries(
+  categoriasEstrategicas.map(c => [c.id, `${c.descricao}\nCritério: ${c.criterio}`])
+) as Record<CategoriaEstrategica, string>;
+const categoriaCor: Record<CategoriaEstrategica, string> = {
+  "Crescimento de Receita": "bg-emerald-100 text-emerald-800 border-emerald-300",
+  "Retenção e Experiência do Aluno": "bg-violet-100 text-violet-800 border-violet-300",
+  "Eficiência e Escala Operacional": "bg-sky-100 text-sky-800 border-sky-300",
+  "Fundação Tecnológica e Dados": "bg-slate-100 text-slate-800 border-slate-300",
+  "Marca e Posicionamento": "bg-amber-100 text-amber-800 border-amber-300",
+};
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -40,13 +51,14 @@ export default function Portfolio() {
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
   const [filterDir, setFilterDir] = useState<string[]>([]);
   const [filterPeriodo, setFilterPeriodo] = useState<string[]>([]);
+  const [filterCategoria, setFilterCategoria] = useState<string[]>([]);
   const [editing, setEditing] = useState<Projeto | null>(null);
-  const [groupBy, setGroupBy] = useState<"none" | "wave" | "periodo" | "diretor" | "classificacao" | "status" | "statusBC">("none");
+  const [groupBy, setGroupBy] = useState<"none" | "wave" | "periodo" | "diretor" | "classificacao" | "categoria" | "status" | "statusBC">("none");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const toggleGroup = (k: string) => setCollapsed(c => ({ ...c, [k]: !c[k] }));
 
-  const columns = ["ID","Projeto","Diretor","Classif.","Wave","Objetivos","KRs","Status BC","Período","Budget","Status","ICE",""] as const;
-  const defaultWidths = [70, 240, 180, 160, 80, 160, 140, 140, 130, 120, 130, 110, 100];
+  const columns = ["ID","Projeto","Diretor","Classif.","Categoria","Wave","Objetivos","KRs","Status BC","Período","Budget","Status","ICE",""] as const;
+  const defaultWidths = [70, 240, 180, 160, 200, 80, 160, 140, 140, 130, 120, 130, 110, 100];
   const [colWidths, setColWidths] = useState<number[]>(() => {
     try {
       const saved = localStorage.getItem("portfolio.colWidths");
@@ -113,6 +125,7 @@ export default function Portfolio() {
       (!filterClass.length || filterClass.includes(p.classificacao)) &&
       (!filterStatus.length || filterStatus.includes(p.status)) &&
       (!filterDir.length || filterDir.includes(p.diretor)) &&
+      (!filterCategoria.length || (p.categoria && filterCategoria.includes(p.categoria))) &&
       (!filterPeriodo.length || filterPeriodo.some(per => isInPeriodo(p, per)))
     );
     // Rank: when periodo filter is active, sort by ICE desc (priority within period)
@@ -120,7 +133,7 @@ export default function Portfolio() {
       return [...list].sort((a, b) => b.ice - a.ice);
     }
     return list;
-  }, [data, search, filterWave, filterClass, filterStatus, filterDir, filterPeriodo]);
+  }, [data, search, filterWave, filterClass, filterStatus, filterDir, filterCategoria, filterPeriodo]);
 
   const grouped = useMemo<{ key: string; items: Projeto[] }[]>(() => {
     if (groupBy === "none") return [{ key: "", items: filtered }];
@@ -149,7 +162,7 @@ export default function Portfolio() {
   }, [filtered, groupBy]);
 
 
-  const clearAll = () => { setSearch(""); setFilterWave([]); setFilterClass([]); setFilterStatus([]); setFilterDir([]); setFilterPeriodo([]); };
+  const clearAll = () => { setSearch(""); setFilterWave([]); setFilterClass([]); setFilterStatus([]); setFilterDir([]); setFilterPeriodo([]); setFilterCategoria([]); };
 
   const toggle = (arr: string[], v: string, set: (v: string[]) => void) =>
     set(arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]);
@@ -176,6 +189,7 @@ export default function Portfolio() {
                 <SelectItem value="periodo">Ano/Semestre</SelectItem>
                 <SelectItem value="diretor">Diretor</SelectItem>
                 <SelectItem value="classificacao">Classificação</SelectItem>
+                <SelectItem value="categoria">Categoria estratégica</SelectItem>
                 <SelectItem value="status">Status</SelectItem>
                 <SelectItem value="statusBC">Status BC</SelectItem>
               </SelectContent>
@@ -221,12 +235,13 @@ export default function Portfolio() {
           <FilterChip label="Classificação" options={["Institucional","Melhoria Contínua","Melhoria Contínua com EPP","Novo Produto"]} selected={filterClass} onToggle={(v) => toggle(filterClass, v, setFilterClass)} />
           <FilterChip label="Status" options={statusOpts as unknown as string[]} selected={filterStatus} onToggle={(v) => toggle(filterStatus, v, setFilterStatus)} />
           <FilterChip label="Diretor" options={diretores} selected={filterDir} onToggle={(v) => toggle(filterDir, v, setFilterDir)} />
+          <FilterChip label="Categoria" options={categoriaOpts as unknown as string[]} selected={filterCategoria} onToggle={(v) => toggle(filterCategoria, v, setFilterCategoria)} />
           <FilterChip label="Ano/Semestre" options={periodoOptions} selected={filterPeriodo} onToggle={(v) => toggle(filterPeriodo, v, setFilterPeriodo)} />
           <Button variant="ghost" size="sm" onClick={clearAll} className="gap-1"><X className="h-3.5 w-3.5" /> Limpar</Button>
         </div>
-        {(filterWave.length + filterClass.length + filterStatus.length + filterDir.length + filterPeriodo.length) > 0 && (
+        {(filterWave.length + filterClass.length + filterStatus.length + filterDir.length + filterPeriodo.length + filterCategoria.length) > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border">
-            {[...filterWave, ...filterClass, ...filterStatus, ...filterDir, ...filterPeriodo].map(f => (
+            {[...filterWave, ...filterClass, ...filterStatus, ...filterDir, ...filterCategoria, ...filterPeriodo].map(f => (
               <span key={f} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/30">
                 {f}
               </span>
@@ -264,7 +279,7 @@ export default function Portfolio() {
                   <Fragment key={g.key || "all"}>
                     {g.key && (
                       <tr key={`h-${g.key}`} className="bg-surface-muted/70 border-t border-border">
-                        <td colSpan={13} className="px-3 py-2">
+                        <td colSpan={14} className="px-3 py-2">
                           <button onClick={() => toggleGroup(g.key)} className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground">
                             {collapsed[g.key] ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                             <span>{g.key}</span>
@@ -285,6 +300,24 @@ export default function Portfolio() {
                     <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.classificacao} options={classOpts} onChange={(v) => updateProject(p.id, { classificacao: v as Projeto["classificacao"] })}>
                         <ClassBadge value={p.classificacao} />
+                      </InlineSelect>
+                    </td>
+                    <td className="px-4 py-3 overflow-hidden">
+                      <InlineSelect
+                        value={p.categoria ?? ""}
+                        options={categoriaOpts}
+                        onChange={(v) => updateProject(p.id, { categoria: v as CategoriaEstrategica })}
+                      >
+                        {p.categoria ? (
+                          <span
+                            title={categoriaTooltip[p.categoria]}
+                            className={cn("inline-flex items-center px-2 py-0.5 rounded-md border text-[11px] font-medium leading-tight", categoriaCor[p.categoria])}
+                          >
+                            {p.categoria}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground italic">+ definir</span>
+                        )}
                       </InlineSelect>
                     </td>
                     <td className="px-4 py-3 overflow-hidden">

@@ -5,12 +5,27 @@ export type Classificacao = "Institucional" | "Melhoria Contínua" | "Melhoria C
 export type StatusExecucao = "Backlog" | "A Iniciar" | "Em Andamento" | "Validação" | "Encerramento" | "Concluído" | "Pausado" | "Atrasado" | "Cancelado" | "Em Avaliação";
 export type StatusBC = "Em Revisão" | "BC em Construção" | "Ativo EPP" | "Projeto Concluído" | "BC não aplicável" | "Sem BC" | "Adiado" | "Validado";
 export type Saude = "On-Track" | "Alerta" | "Off-Track";
+export type CategoriaEstrategica =
+  | "Crescimento de Receita"
+  | "Retenção e Experiência do Aluno"
+  | "Eficiência e Escala Operacional"
+  | "Fundação Tecnológica e Dados"
+  | "Marca e Posicionamento";
+
+export const categoriasEstrategicas: { id: CategoriaEstrategica; descricao: string; criterio: string }[] = [
+  { id: "Crescimento de Receita", descricao: "Aumentar receita — novos alunos, produtos, mercados, ticket.", criterio: "O projeto aumenta diretamente a base pagante ou o ticket médio?" },
+  { id: "Retenção e Experiência do Aluno", descricao: "Manter o aluno engajado, reduzir churn e melhorar a jornada.", criterio: "O projeto reduz churn ou melhora NPS/conclusão de curso?" },
+  { id: "Eficiência e Escala Operacional", descricao: "Reduzir custo, eliminar retrabalho, escalar sem crescer time.", criterio: "Reduz custo por aluno, tempo de processo ou dependência de pessoas?" },
+  { id: "Fundação Tecnológica e Dados", descricao: "Infraestrutura que sustenta tudo — habilita outros projetos.", criterio: "Habilita outros projetos ou reduz risco técnico?" },
+  { id: "Marca e Posicionamento", descricao: "Reputação, autoridade e diferenciação no mercado.", criterio: "Aumenta autoridade, share of voice ou percepção de valor?" },
+];
 
 export interface Projeto {
   id: string;
   nome: string;
   wave: Wave;
   classificacao: Classificacao;
+  categoria?: CategoriaEstrategica;
   objetivos: string[];
   krs: string[];
   diretor: string;
