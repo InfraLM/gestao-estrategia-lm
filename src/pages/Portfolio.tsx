@@ -303,6 +303,24 @@ export default function Portfolio() {
                       </InlineSelect>
                     </td>
                     <td className="px-4 py-3 overflow-hidden">
+                      <InlineSelect
+                        value={p.categoria ?? ""}
+                        options={categoriaOpts}
+                        onChange={(v) => updateProject(p.id, { categoria: v as CategoriaEstrategica })}
+                      >
+                        {p.categoria ? (
+                          <span
+                            title={categoriaTooltip[p.categoria]}
+                            className={cn("inline-flex items-center px-2 py-0.5 rounded-md border text-[11px] font-medium leading-tight", categoriaCor[p.categoria])}
+                          >
+                            {p.categoria}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground italic">+ definir</span>
+                        )}
+                      </InlineSelect>
+                    </td>
+                    <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.wave} options={waveOpts} onChange={(v) => updateProject(p.id, { wave: v as Projeto["wave"] })}>
                         <WaveBadge wave={p.wave} />
                       </InlineSelect>
