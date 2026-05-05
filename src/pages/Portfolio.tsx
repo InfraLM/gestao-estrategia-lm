@@ -32,6 +32,7 @@ const categoriaCor: Record<CategoriaEstrategica, string> = {
   "Eficiência e Escala Operacional": "bg-sky-100 text-sky-800 border-sky-300",
   "Fundação Tecnológica e Dados": "bg-slate-100 text-slate-800 border-slate-300",
   "Marca e Posicionamento": "bg-amber-100 text-amber-800 border-amber-300",
+  "Conformidade e Sustentabilidade": "bg-rose-100 text-rose-800 border-rose-300",
 };
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
