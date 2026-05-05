@@ -279,7 +279,7 @@ export default function Portfolio() {
                   <Fragment key={g.key || "all"}>
                     {g.key && (
                       <tr key={`h-${g.key}`} className="bg-surface-muted/70 border-t border-border">
-                        <td colSpan={13} className="px-3 py-2">
+                        <td colSpan={14} className="px-3 py-2">
                           <button onClick={() => toggleGroup(g.key)} className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground">
                             {collapsed[g.key] ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                             <span>{g.key}</span>
