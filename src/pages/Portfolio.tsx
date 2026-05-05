@@ -239,9 +239,9 @@ export default function Portfolio() {
           <FilterChip label="Ano/Semestre" options={periodoOptions} selected={filterPeriodo} onToggle={(v) => toggle(filterPeriodo, v, setFilterPeriodo)} />
           <Button variant="ghost" size="sm" onClick={clearAll} className="gap-1"><X className="h-3.5 w-3.5" /> Limpar</Button>
         </div>
-        {(filterWave.length + filterClass.length + filterStatus.length + filterDir.length + filterPeriodo.length) > 0 && (
+        {(filterWave.length + filterClass.length + filterStatus.length + filterDir.length + filterPeriodo.length + filterCategoria.length) > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border">
-            {[...filterWave, ...filterClass, ...filterStatus, ...filterDir, ...filterPeriodo].map(f => (
+            {[...filterWave, ...filterClass, ...filterStatus, ...filterDir, ...filterCategoria, ...filterPeriodo].map(f => (
               <span key={f} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/30">
                 {f}
               </span>
