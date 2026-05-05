@@ -1,14 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { useProcessosDB } from "@/hooks/useProcessosDB";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, ArrowRight, AlertTriangle, Workflow } from "lucide-react";
+import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, Clock, CheckCircle2, Map, Rocket } from "lucide-react";
 import { toast } from "sonner";
 
 type Processo = {
@@ -94,8 +91,92 @@ export default function StatusReportProcessos() {
     vermelho: linhas.filter(l => l.farol === "vermelho").length,
   }), [linhas]);
 
-  const desviosCriticos = linhas.filter(l => l.farol === "vermelho");
-  const alertas = linhas.filter(l => l.farol === "amarelo");
+  // (lista de processos removida — disponível em Matriz de Processos)
+
+
+  // Aguardando validação (etapas de validação/aprovação)
+  const aguardandoValidacao = useMemo(
+    () => linhas
+      .map(l => l.p)
+      .filter(p => p.status === "VALIDAÇÃO INTERNA" || p.status === "APROVAÇÃO DIRETORIA"),
+    [linhas]
+  );
+
+  // Riscos críticos (score >= 15) extraídos do gestao por processo
+  const riscosCriticos = useMemo(() => {
+    const out: { processoId: string; processoNome: string; diretor: string; descricao: string; impacto: number; ocorrencia: number; score: number; responsavel: string }[] = [];
+    linhas.forEach(({ p, d }) => {
+      (d.riscos || []).forEach((r: any) => {
+        const score = (r.impacto || 0) * (r.ocorrencia || 0);
+        if (score >= 15) out.push({
+          processoId: p.id, processoNome: p.nome, diretor: p.diretor || "—",
+          descricao: r.descricao || r.nome || "—",
+          impacto: r.impacto || 0, ocorrencia: r.ocorrencia || 0, score,
+          responsavel: r.responsavel || "—",
+        });
+      });
+    });
+    return out.sort((a, b) => b.score - a.score);
+  }, [linhas]);
+
+  // Atividades em atraso (atividades + plano de ação com prazo passado e não concluído)
+  const atividadesAtraso = useMemo(() => {
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    const out: { processoId: string; processoNome: string; descricao: string; responsavel: string; prazoLabel: string; diasAtraso: number; origem: "Atividade" | "Plano de Ação" }[] = [];
+    const parse = (v?: string) => { if (!v) return null; const d = new Date(v); return isNaN(d.getTime()) ? null : d; };
+    linhas.forEach(({ p, d }) => {
+      (d.atividades || []).forEach((a: any) => {
+        const prazo = parse(a.prazo);
+        if (prazo && prazo < hoje && a.status !== "Concluído") {
+          out.push({ processoId: p.id, processoNome: p.nome, descricao: a.descricao || a.titulo || "—", responsavel: a.responsavel || "—", prazoLabel: a.prazo, diasAtraso: Math.floor((hoje.getTime() - prazo.getTime()) / 86400000), origem: "Atividade" });
+        }
+      });
+      (d.plano || []).forEach((a: any) => {
+        const prazo = parse(a.prazo);
+        if (prazo && prazo < hoje && a.status !== "Concluído") {
+          out.push({ processoId: p.id, processoNome: p.nome, descricao: a.oQueFazer || "—", responsavel: a.responsavel || "—", prazoLabel: a.prazo, diasAtraso: Math.floor((hoje.getTime() - prazo.getTime()) / 86400000), origem: "Plano de Ação" });
+        }
+      });
+    });
+    return out.sort((a, b) => b.diasAtraso - a.diasAtraso);
+  }, [linhas]);
+
+  // Séries mensais (últimos 6 meses)
+  const meses6 = useMemo(() => {
+    const arr: { ym: string; mes: string }[] = [];
+    const d = new Date(); d.setDate(1);
+    for (let i = 5; i >= 0; i--) {
+      const x = new Date(d.getFullYear(), d.getMonth() - i, 1);
+      arr.push({ ym: `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}`, mes: x.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "") });
+    }
+    return arr;
+  }, []);
+
+  const ymOf = (v?: string) => { if (!v) return null; const d = new Date(v); if (isNaN(d.getTime())) return null; return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`; };
+
+  const mapeamentoMes = useMemo(() => meses6.map(({ ym, mes }) => {
+    let concluidas = 0, planejadas = 0;
+    linhas.forEach(({ d }) => {
+      [...(d.asIs || []), ...(d.toBe || []), ...(d.atividades || [])].forEach((a: any) => {
+        const ymPrazo = ymOf(a.prazo); const ymConcl = ymOf(a.dataConclusao || a.concluidoEm);
+        if (ymPrazo === ym) planejadas++;
+        if (ymConcl === ym && a.status === "Concluído") concluidas++;
+      });
+    });
+    return { mes, concluidas, planejadas };
+  }), [linhas, meses6]);
+
+  const melhoriasMes = useMemo(() => meses6.map(({ ym, mes }) => {
+    let concluidas = 0, planejadas = 0;
+    linhas.forEach(({ d }) => {
+      (d.plano || []).forEach((a: any) => {
+        const ymPrazo = ymOf(a.prazo); const ymConcl = ymOf(a.dataConclusao || a.concluidoEm);
+        if (ymPrazo === ym) planejadas++;
+        if (ymConcl === ym && a.status === "Concluído") concluidas++;
+      });
+    });
+    return { mes, concluidas, planejadas };
+  }), [linhas, meses6]);
 
   return (
     <div className="space-y-6">
@@ -152,119 +233,175 @@ export default function StatusReportProcessos() {
         </Select>
       </CardContent></Card>
 
-      <Tabs defaultValue="resumo">
-        <TabsList>
-          <TabsTrigger value="resumo">Resumo por Processo</TabsTrigger>
-          <TabsTrigger value="desvios">Desvios & Alertas</TabsTrigger>
-          <TabsTrigger value="acoes">Plano de Ação</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="resumo" className="mt-4">
-          <Card>
-            <CardHeader className="py-3"><CardTitle className="text-base">Status consolidado · {linhas.length} processo(s)</CardTitle></CardHeader>
-            <CardContent className="p-0 overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[50px]">Farol</TableHead>
-                    <TableHead className="min-w-[260px]">Processo</TableHead>
-                    <TableHead className="w-[160px]">Diretor</TableHead>
-                    <TableHead className="w-[200px]">Status</TableHead>
-                    <TableHead className="w-[100px]">Maturidade</TableHead>
-                    <TableHead className="w-[160px]">Completude</TableHead>
-                    <TableHead className="w-[100px]">Riscos altos+</TableHead>
-                    <TableHead className="w-[100px]">Ações</TableHead>
-                    <TableHead className="w-[60px]"></TableHead>
+      {/* === Riscos críticos === */}
+      <Card className="border-red-200">
+        <CardHeader className="py-3">
+          <CardTitle className="text-base flex items-center gap-2 text-red-700">
+            <ShieldAlert className="h-4 w-4" /> Riscos Críticos
+            <Badge variant="outline" className="ml-2 text-xs">{riscosCriticos.length}</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 overflow-x-auto">
+          {riscosCriticos.length === 0 ? (
+            <div className="text-sm text-muted-foreground p-6 text-center">Nenhum risco crítico identificado no período.</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[220px]">Processo</TableHead>
+                  <TableHead className="min-w-[260px]">Risco</TableHead>
+                  <TableHead className="w-[80px]">Imp.</TableHead>
+                  <TableHead className="w-[80px]">Ocorr.</TableHead>
+                  <TableHead className="w-[80px]">Score</TableHead>
+                  <TableHead className="w-[160px]">Responsável</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {riscosCriticos.map((r, i) => (
+                  <TableRow key={`${r.processoId}-${i}`}>
+                    <TableCell className="text-sm font-medium">{r.processoNome}<div className="text-[11px] text-muted-foreground">{r.diretor}</div></TableCell>
+                    <TableCell className="text-sm">{r.descricao || "—"}</TableCell>
+                    <TableCell className="tabular-nums text-sm">{r.impacto}</TableCell>
+                    <TableCell className="tabular-nums text-sm">{r.ocorrencia}</TableCell>
+                    <TableCell><Badge className="bg-red-500/15 text-red-700 tabular-nums">{r.score}</Badge></TableCell>
+                    <TableCell className="text-sm">{r.responsavel || "—"}</TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {linhas.map(({ p, farol, completude, riscosAltos, planosAndamento, planosConcluidos }) => (
-                    <TableRow key={p.id}>
-                      <TableCell><span className={`inline-block h-3 w-3 rounded-full ${FAROL_COLOR[farol]}`} title={FAROL_LABEL[farol]} /></TableCell>
-                      <TableCell className="font-medium">{p.nome}<div className="text-[11px] text-muted-foreground">{p.nivel}</div></TableCell>
-                      <TableCell className="text-sm">{p.diretor || "—"}</TableCell>
-                      <TableCell><Badge className={STATUS_COLORS[p.status] || "bg-muted"}>{p.status}</Badge></TableCell>
-                      <TableCell className="tabular-nums">{p.maturidade ?? "—"}<span className="text-xs text-muted-foreground">/5</span></TableCell>
-                      <TableCell><div className="flex items-center gap-2"><Progress value={completude} className="h-1.5 flex-1" /><span className="text-xs tabular-nums w-9 text-right">{completude}%</span></div></TableCell>
-                      <TableCell className="tabular-nums">{riscosAltos > 0 ? <span className="text-red-700 font-medium">{riscosAltos}</span> : "—"}</TableCell>
-                      <TableCell className="text-xs">{planosConcluidos}<span className="text-muted-foreground">/</span>{planosAndamento + planosConcluidos}</TableCell>
-                      <TableCell><Link to="/gestao-processos"><Button size="icon" variant="ghost" className="h-7 w-7"><ArrowRight className="h-4 w-4" /></Button></Link></TableCell>
-                    </TableRow>
-                  ))}
-                  {!linhas.length && <TableRow><TableCell colSpan={9} className="text-center text-muted-foreground py-8">Nenhum processo encontrado</TableCell></TableRow>}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
 
-        <TabsContent value="desvios" className="mt-4 space-y-4">
-          <Card className="border-red-200 bg-red-50/30">
-            <CardHeader className="py-3"><CardTitle className="text-base flex items-center gap-2 text-red-700"><ShieldAlert className="h-4 w-4" /> Desvios Críticos · {desviosCriticos.length}</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
-              {desviosCriticos.length === 0 && <div className="text-sm text-muted-foreground">Nenhum desvio crítico identificado.</div>}
-              {desviosCriticos.map(({ p, riscosAltos }) => (
-                <div key={p.id} className="flex items-center justify-between border-b last:border-0 pb-2">
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">{p.nome}</div>
-                    <div className="text-xs text-muted-foreground">{p.diretor} · {riscosAltos} risco(s) extremo(s)</div>
-                  </div>
-                  <Badge className={STATUS_COLORS[p.status] || "bg-muted"}>{p.status}</Badge>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          <Card className="border-amber-200 bg-amber-50/30">
-            <CardHeader className="py-3"><CardTitle className="text-base flex items-center gap-2 text-amber-700"><AlertTriangle className="h-4 w-4" /> Alertas · {alertas.length}</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
-              {alertas.length === 0 && <div className="text-sm text-muted-foreground">Sem alertas no período.</div>}
-              {alertas.map(({ p, riscosAltos }) => (
-                <div key={p.id} className="flex items-center justify-between border-b last:border-0 pb-2">
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">{p.nome}</div>
-                    <div className="text-xs text-muted-foreground">{p.diretor} · {riscosAltos > 0 ? `${riscosAltos} risco(s) altos` : `Maturidade ${p.maturidade ?? "?"} /5`}</div>
-                  </div>
-                  <Badge className={STATUS_COLORS[p.status] || "bg-muted"}>{p.status}</Badge>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="acoes" className="mt-4">
-          <Card>
-            <CardHeader className="py-3"><CardTitle className="text-base flex items-center gap-2"><Workflow className="h-4 w-4" /> Plano de Ação Consolidado</CardTitle></CardHeader>
-            <CardContent className="p-0 overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="min-w-[260px]">Processo</TableHead>
-                    <TableHead className="min-w-[280px]">O que fazer</TableHead>
-                    <TableHead className="w-[160px]">Responsável</TableHead>
-                    <TableHead className="w-[120px]">Prazo</TableHead>
-                    <TableHead className="w-[140px]">Status</TableHead>
+      {/* === Atividades em Atraso === */}
+      <Card className="border-amber-200">
+        <CardHeader className="py-3">
+          <CardTitle className="text-base flex items-center gap-2 text-amber-700">
+            <Clock className="h-4 w-4" /> Atividades em Atraso
+            <Badge variant="outline" className="ml-2 text-xs">{atividadesAtraso.length}</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 overflow-x-auto">
+          {atividadesAtraso.length === 0 ? (
+            <div className="text-sm text-muted-foreground p-6 text-center">Nenhuma atividade em atraso.</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[220px]">Processo</TableHead>
+                  <TableHead className="min-w-[280px]">Atividade / Ação</TableHead>
+                  <TableHead className="w-[140px]">Responsável</TableHead>
+                  <TableHead className="w-[120px]">Prazo</TableHead>
+                  <TableHead className="w-[100px]">Atraso</TableHead>
+                  <TableHead className="w-[120px]">Origem</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {atividadesAtraso.map((a, i) => (
+                  <TableRow key={`${a.processoId}-${a.origem}-${i}`}>
+                    <TableCell className="text-sm font-medium">{a.processoNome}</TableCell>
+                    <TableCell className="text-sm">{a.descricao || "—"}</TableCell>
+                    <TableCell className="text-sm">{a.responsavel || "—"}</TableCell>
+                    <TableCell className="text-sm tabular-nums">{a.prazoLabel}</TableCell>
+                    <TableCell className="text-sm tabular-nums text-red-700 font-medium">{a.diasAtraso}d</TableCell>
+                    <TableCell><Badge variant="outline" className="text-xs">{a.origem}</Badge></TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {linhas.flatMap(({ p, d }) => (d.plano || []).map((acao: any) => (
-                    <TableRow key={`${p.id}-${acao.id}`}>
-                      <TableCell className="text-sm">{p.nome}</TableCell>
-                      <TableCell className="text-sm">{acao.oQueFazer || "—"}</TableCell>
-                      <TableCell className="text-sm">{acao.responsavel || "—"}</TableCell>
-                      <TableCell className="text-sm tabular-nums">{acao.prazo || "—"}</TableCell>
-                      <TableCell><Badge variant="outline" className="text-xs">{acao.status}</Badge></TableCell>
-                    </TableRow>
-                  )))}
-                  {linhas.every(l => !(l.d.plano || []).length) && (
-                    <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">Nenhum plano de ação cadastrado</TableCell></TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* === Aguardando Validação === */}
+      <Card className="border-cyan-200">
+        <CardHeader className="py-3">
+          <CardTitle className="text-base flex items-center gap-2 text-cyan-700">
+            <CheckCircle2 className="h-4 w-4" /> Processos Aguardando Validação
+            <Badge variant="outline" className="ml-2 text-xs">{aguardandoValidacao.length}</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 overflow-x-auto">
+          {aguardandoValidacao.length === 0 ? (
+            <div className="text-sm text-muted-foreground p-6 text-center">Nenhum processo na fila de validação.</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[280px]">Processo</TableHead>
+                  <TableHead className="w-[180px]">Diretor</TableHead>
+                  <TableHead className="w-[180px]">Dono</TableHead>
+                  <TableHead className="w-[220px]">Etapa</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {aguardandoValidacao.map(p => (
+                  <TableRow key={p.id}>
+                    <TableCell className="text-sm font-medium">{p.nome}<div className="text-[11px] text-muted-foreground">{p.nivel}</div></TableCell>
+                    <TableCell className="text-sm">{p.diretor || "—"}</TableCell>
+                    <TableCell className="text-sm">{p.dono || "—"}</TableCell>
+                    <TableCell><Badge className={STATUS_COLORS[p.status] || "bg-muted"}>{p.status}</Badge></TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* === Mapeamento mês a mês === */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader className="py-3">
+            <CardTitle className="text-base flex items-center gap-2"><Map className="h-4 w-4 text-primary" /> Mapeamento mês a mês</CardTitle>
+            <p className="text-xs text-muted-foreground">Atividades de mapeamento concluídas por mês (últimos 6 meses).</p>
+          </CardHeader>
+          <CardContent>
+            <MonthlyBars data={mapeamentoMes} accent="bg-primary" />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="py-3">
+            <CardTitle className="text-base flex items-center gap-2"><Rocket className="h-4 w-4 text-emerald-600" /> Implantação de Melhorias mês a mês</CardTitle>
+            <p className="text-xs text-muted-foreground">Ações do plano de melhoria concluídas por mês (últimos 6 meses).</p>
+          </CardHeader>
+          <CardContent>
+            <MonthlyBars data={melhoriasMes} accent="bg-emerald-500" />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+// ====== Helpers / sub-components ======
+
+function MonthlyBars({ data, accent }: { data: { mes: string; concluidas: number; planejadas: number }[]; accent: string }) {
+  const max = Math.max(1, ...data.map(d => Math.max(d.concluidas, d.planejadas)));
+  const totalConcluidas = data.reduce((s, d) => s + d.concluidas, 0);
+  const totalPlanejadas = data.reduce((s, d) => s + d.planejadas, 0);
+  return (
+    <div className="space-y-3">
+      <div className="flex items-end gap-3 h-40">
+        {data.map(d => (
+          <div key={d.mes} className="flex-1 flex flex-col items-center gap-1">
+            <div className="w-full flex items-end gap-1 h-32">
+              <div className="flex-1 bg-muted rounded-t" style={{ height: `${(d.planejadas / max) * 100}%` }} title={`Planejadas: ${d.planejadas}`} />
+              <div className={`flex-1 ${accent} rounded-t`} style={{ height: `${(d.concluidas / max) * 100}%` }} title={`Concluídas: ${d.concluidas}`} />
+            </div>
+            <div className="text-[10px] text-muted-foreground tabular-nums">{d.mes}</div>
+            <div className="text-xs font-semibold tabular-nums">{d.concluidas}<span className="text-muted-foreground font-normal">/{d.planejadas}</span></div>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-2">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1"><span className="h-2 w-3 inline-block bg-muted rounded-sm" /> Planejadas</span>
+          <span className="flex items-center gap-1"><span className={`h-2 w-3 inline-block ${accent} rounded-sm`} /> Concluídas</span>
+        </div>
+        <div className="tabular-nums font-medium text-foreground">Total: {totalConcluidas}/{totalPlanejadas} ({totalPlanejadas ? Math.round((totalConcluidas / totalPlanejadas) * 100) : 0}%)</div>
+      </div>
     </div>
   );
 }
