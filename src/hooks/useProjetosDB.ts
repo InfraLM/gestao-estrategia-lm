@@ -16,7 +16,7 @@ export function useProjetosDB() {
     (async () => {
       const { data: rows, error } = await supabase
         .from("projetos")
-        .select("codigo,nome,wave,classificacao,objetivos,krs,diretor,gerente,budget,realizado,status_bc,status,saude,inicio,termino,ice,descricao,avancos,causa_raiz,plano_acao");
+        .select("codigo,nome,wave,classificacao,categoria,objetivos,krs,diretor,gerente,budget,realizado,status_bc,status,saude,inicio,termino,ice,descricao,avancos,causa_raiz,plano_acao");
       if (cancel) return;
       if (!error && rows && rows.length > 0) {
         const mapped: Projeto[] = rows.map((r: any) => ({
