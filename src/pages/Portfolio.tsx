@@ -22,7 +22,17 @@ const waveOpts: Projeto["wave"][] = ["W1","W2","W3"];
 const classOpts: Projeto["classificacao"][] = ["Institucional","Melhoria Contínua","Melhoria Contínua com EPP","Novo Produto"];
 const statusOpts: Projeto["status"][] = ["Backlog","A Iniciar","Em Andamento","Validação","Encerramento","Concluído","Pausado","Atrasado","Cancelado","Em Avaliação"];
 const bcOpts: Projeto["statusBC"][] = ["Em Revisão","BC em Construção","Ativo EPP","Projeto Concluído","BC não aplicável","Sem BC","Adiado","Validado"];
-import { cn } from "@/lib/utils";
+const categoriaOpts: CategoriaEstrategica[] = categoriasEstrategicas.map(c => c.id);
+const categoriaTooltip: Record<CategoriaEstrategica, string> = Object.fromEntries(
+  categoriasEstrategicas.map(c => [c.id, `${c.descricao}\nCritério: ${c.criterio}`])
+) as Record<CategoriaEstrategica, string>;
+const categoriaCor: Record<CategoriaEstrategica, string> = {
+  "Crescimento de Receita": "bg-emerald-100 text-emerald-800 border-emerald-300",
+  "Retenção e Experiência do Aluno": "bg-violet-100 text-violet-800 border-violet-300",
+  "Eficiência e Escala Operacional": "bg-sky-100 text-sky-800 border-sky-300",
+  "Fundação Tecnológica e Dados": "bg-slate-100 text-slate-800 border-slate-300",
+  "Marca e Posicionamento": "bg-amber-100 text-amber-800 border-amber-300",
+};
 import { toast } from "sonner";
 
 const statusCols: Projeto["status"][] = ["Backlog", "A Iniciar", "Em Andamento", "Validação", "Encerramento", "Concluído"];
