@@ -57,8 +57,8 @@ export default function Portfolio() {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const toggleGroup = (k: string) => setCollapsed(c => ({ ...c, [k]: !c[k] }));
 
-  const columns = ["ID","Projeto","Diretor","Classif.","Wave","Objetivos","KRs","Status BC","Período","Budget","Status","ICE",""] as const;
-  const defaultWidths = [70, 240, 180, 160, 80, 160, 140, 140, 130, 120, 130, 110, 100];
+  const columns = ["ID","Projeto","Diretor","Classif.","Categoria","Wave","Objetivos","KRs","Status BC","Período","Budget","Status","ICE",""] as const;
+  const defaultWidths = [70, 240, 180, 160, 200, 80, 160, 140, 140, 130, 120, 130, 110, 100];
   const [colWidths, setColWidths] = useState<number[]>(() => {
     try {
       const saved = localStorage.getItem("portfolio.colWidths");
