@@ -91,8 +91,8 @@ export default function StatusReportProcessos() {
     vermelho: linhas.filter(l => l.farol === "vermelho").length,
   }), [linhas]);
 
-  const desviosCriticos = linhas.filter(l => l.farol === "vermelho");
-  const alertas = linhas.filter(l => l.farol === "amarelo");
+  // (lista de processos removida — disponível em Matriz de Processos)
+
 
   // Aguardando validação (etapas de validação/aprovação)
   const aguardandoValidacao = useMemo(
