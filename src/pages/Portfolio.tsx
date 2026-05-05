@@ -51,8 +51,9 @@ export default function Portfolio() {
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
   const [filterDir, setFilterDir] = useState<string[]>([]);
   const [filterPeriodo, setFilterPeriodo] = useState<string[]>([]);
+  const [filterCategoria, setFilterCategoria] = useState<string[]>([]);
   const [editing, setEditing] = useState<Projeto | null>(null);
-  const [groupBy, setGroupBy] = useState<"none" | "wave" | "periodo" | "diretor" | "classificacao" | "status" | "statusBC">("none");
+  const [groupBy, setGroupBy] = useState<"none" | "wave" | "periodo" | "diretor" | "classificacao" | "categoria" | "status" | "statusBC">("none");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const toggleGroup = (k: string) => setCollapsed(c => ({ ...c, [k]: !c[k] }));
 
