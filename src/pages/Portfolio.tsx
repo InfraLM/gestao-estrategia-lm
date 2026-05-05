@@ -33,6 +33,7 @@ const categoriaCor: Record<CategoriaEstrategica, string> = {
   "Fundação Tecnológica e Dados": "bg-slate-100 text-slate-800 border-slate-300",
   "Marca e Posicionamento": "bg-amber-100 text-amber-800 border-amber-300",
 };
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const statusCols: Projeto["status"][] = ["Backlog", "A Iniciar", "Em Andamento", "Validação", "Encerramento", "Concluído"];
