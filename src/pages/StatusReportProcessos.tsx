@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, ArrowRight, AlertTriangle, Workflow } from "lucide-react";
+import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, AlertTriangle, Workflow, Clock, CheckCircle2, Map, Rocket } from "lucide-react";
 import { toast } from "sonner";
 
 type Processo = {
