@@ -1099,6 +1099,7 @@ export type Database = {
         | "Eficiência e Escala Operacional"
         | "Fundação Tecnológica e Dados"
         | "Marca e Posicionamento"
+        | "Conformidade e Sustentabilidade"
       classificacao_enum:
         | "Institucional"
         | "Melhoria Contínua"
@@ -1277,6 +1278,7 @@ export const Constants = {
         "Eficiência e Escala Operacional",
         "Fundação Tecnológica e Dados",
         "Marca e Posicionamento",
+        "Conformidade e Sustentabilidade",
       ],
       classificacao_enum: [
         "Institucional",

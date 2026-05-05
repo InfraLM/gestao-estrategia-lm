@@ -1,0 +1,1 @@
+ALTER TYPE public.categoria_estrategica_enum ADD VALUE IF NOT EXISTS 'Conformidade e Sustentabilidade';
