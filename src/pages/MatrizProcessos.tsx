@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw, Target, Workflow, ShieldAlert, AlertTriangle } from "lucide-react";
 import { E2E_ZONES, zonesForProcesso, type E2EZone } from "@/data/e2eZones";
+import MatrizRiscosInstitucionais from "@/pages/MatrizRiscosInstitucionais";
 
 type Processo = {
   id: string;
@@ -270,6 +271,7 @@ export default function MatrizProcessos() {
           <TabsTrigger value="cadeia">Cadeia de Valor</TabsTrigger>
           <TabsTrigger value="vinculo"><Target className="h-3.5 w-3.5 mr-1" />Vínculo Estratégico</TabsTrigger>
           <TabsTrigger value="e2e"><Workflow className="h-3.5 w-3.5 mr-1" />Matriz E2E</TabsTrigger>
+          <TabsTrigger value="riscos"><ShieldAlert className="h-3.5 w-3.5 mr-1" />Dashboard de Riscos</TabsTrigger>
         </TabsList>
 
         <TabsContent value="lista">
@@ -537,6 +539,10 @@ export default function MatrizProcessos() {
 
         <TabsContent value="e2e">
           <E2EDashboard processos={data} />
+        </TabsContent>
+
+        <TabsContent value="riscos">
+          <MatrizRiscosInstitucionais />
         </TabsContent>
       </Tabs>
 
