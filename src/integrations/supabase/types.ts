@@ -719,6 +719,9 @@ export type Database = {
         Row: {
           avancos: string | null
           budget: number
+          categoria:
+            | Database["public"]["Enums"]["categoria_estrategica_enum"]
+            | null
           causa_raiz: string | null
           classificacao: Database["public"]["Enums"]["classificacao_enum"]
           codigo: string
@@ -747,6 +750,9 @@ export type Database = {
         Insert: {
           avancos?: string | null
           budget?: number
+          categoria?:
+            | Database["public"]["Enums"]["categoria_estrategica_enum"]
+            | null
           causa_raiz?: string | null
           classificacao?: Database["public"]["Enums"]["classificacao_enum"]
           codigo: string
@@ -775,6 +781,9 @@ export type Database = {
         Update: {
           avancos?: string | null
           budget?: number
+          categoria?:
+            | Database["public"]["Enums"]["categoria_estrategica_enum"]
+            | null
           causa_raiz?: string | null
           classificacao?: Database["public"]["Enums"]["classificacao_enum"]
           codigo?: string
@@ -1084,6 +1093,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "pmo" | "viewer" | "super_admin"
+      categoria_estrategica_enum:
+        | "Crescimento de Receita"
+        | "Retenção e Experiência do Aluno"
+        | "Eficiência e Escala Operacional"
+        | "Fundação Tecnológica e Dados"
+        | "Marca e Posicionamento"
       classificacao_enum:
         | "Institucional"
         | "Melhoria Contínua"
@@ -1256,6 +1271,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "pmo", "viewer", "super_admin"],
+      categoria_estrategica_enum: [
+        "Crescimento de Receita",
+        "Retenção e Experiência do Aluno",
+        "Eficiência e Escala Operacional",
+        "Fundação Tecnológica e Dados",
+        "Marca e Posicionamento",
+      ],
       classificacao_enum: [
         "Institucional",
         "Melhoria Contínua",
