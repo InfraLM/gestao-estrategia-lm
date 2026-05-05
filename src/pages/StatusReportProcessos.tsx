@@ -1,14 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { useProcessosDB } from "@/hooks/useProcessosDB";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, AlertTriangle, Workflow, Clock, CheckCircle2, Map, Rocket } from "lucide-react";
+import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, Clock, CheckCircle2, Map, Rocket } from "lucide-react";
 import { toast } from "sonner";
 
 type Processo = {
