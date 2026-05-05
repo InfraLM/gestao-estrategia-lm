@@ -189,6 +189,7 @@ export default function Portfolio() {
                 <SelectItem value="periodo">Ano/Semestre</SelectItem>
                 <SelectItem value="diretor">Diretor</SelectItem>
                 <SelectItem value="classificacao">Classificação</SelectItem>
+                <SelectItem value="categoria">Categoria estratégica</SelectItem>
                 <SelectItem value="status">Status</SelectItem>
                 <SelectItem value="statusBC">Status BC</SelectItem>
               </SelectContent>
