@@ -162,7 +162,7 @@ export default function Portfolio() {
   }, [filtered, groupBy]);
 
 
-  const clearAll = () => { setSearch(""); setFilterWave([]); setFilterClass([]); setFilterStatus([]); setFilterDir([]); setFilterPeriodo([]); };
+  const clearAll = () => { setSearch(""); setFilterWave([]); setFilterClass([]); setFilterStatus([]); setFilterDir([]); setFilterPeriodo([]); setFilterCategoria([]); };
 
   const toggle = (arr: string[], v: string, set: (v: string[]) => void) =>
     set(arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]);
