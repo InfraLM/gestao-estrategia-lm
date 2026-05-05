@@ -10,7 +10,8 @@ export type CategoriaEstrategica =
   | "Retenção e Experiência do Aluno"
   | "Eficiência e Escala Operacional"
   | "Fundação Tecnológica e Dados"
-  | "Marca e Posicionamento";
+  | "Marca e Posicionamento"
+  | "Conformidade e Sustentabilidade";
 
 export const categoriasEstrategicas: { id: CategoriaEstrategica; descricao: string; criterio: string }[] = [
   { id: "Crescimento de Receita", descricao: "Aumentar receita — novos alunos, produtos, mercados, ticket.", criterio: "O projeto aumenta diretamente a base pagante ou o ticket médio?" },
@@ -18,6 +19,7 @@ export const categoriasEstrategicas: { id: CategoriaEstrategica; descricao: stri
   { id: "Eficiência e Escala Operacional", descricao: "Reduzir custo, eliminar retrabalho, escalar sem crescer time.", criterio: "Reduz custo por aluno, tempo de processo ou dependência de pessoas?" },
   { id: "Fundação Tecnológica e Dados", descricao: "Infraestrutura que sustenta tudo — habilita outros projetos.", criterio: "Habilita outros projetos ou reduz risco técnico?" },
   { id: "Marca e Posicionamento", descricao: "Reputação, autoridade e diferenciação no mercado.", criterio: "Aumenta autoridade, share of voice ou percepção de valor?" },
+  { id: "Conformidade e Sustentabilidade", descricao: "Atende exigências legais, normas, auditorias e mitiga riscos jurídicos/regulatórios.", criterio: "O projeto é exigido por lei, norma ou auditoria — ou sua ausência gera risco jurídico?" },
 ];
 
 export interface Projeto {
