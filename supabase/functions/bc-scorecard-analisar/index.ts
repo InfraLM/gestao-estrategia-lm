@@ -139,6 +139,8 @@ Janela estratégica:
 
 ${sub.arquivo_path ? "IMPORTANTE: o anexo contém o Business Case completo. EXTRAIA do anexo todas as informações que faltam acima (ROI, payback, riscos, demanda, capacidade, trade-offs, janela) e use-as na análise. Quando o formulário e o anexo divergirem, prefira o anexo se mais detalhado." : ""}
 
+${extractedText ? `--- CONTEÚDO DO ARQUIVO ANEXO ---\n${extractedText.slice(0, 60000)}\n--- FIM DO ARQUIVO ---` : ""}
+
 Aplique RIGOROSAMENTE o framework ScoreCard LM. Retorne JSON:
 {
   "gate": "saudavel" | "condicional" | "bloqueado",
