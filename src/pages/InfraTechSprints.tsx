@@ -226,20 +226,40 @@ export default function InfraTechSprints() {
                 {!loading && filtradas.length === 0 && <TableRow><TableCell colSpan={10} className="text-center text-sm text-muted-foreground py-6">Nenhuma tarefa.</TableCell></TableRow>}
                 {filtradas.map(t => (
                   <TableRow key={t.id}>
-                    <TableCell className="font-mono text-xs">{t.task_custom_id ?? "—"}</TableCell>
-                    <TableCell className="max-w-[320px]"><div className="text-sm font-medium">{t.nome}</div>{t.classificacao && <div className="text-[10px] text-muted-foreground">{t.classificacao}</div>}</TableCell>
-                    <TableCell><Input className="h-8 text-xs" defaultValue={t.assignee ?? ""} onBlur={e => e.target.value !== (t.assignee ?? "") && updateField(t.id, { assignee: e.target.value || null })} /></TableCell>
+                    <TableCell>
+                      <Input className="h-8 text-xs font-mono w-[110px]" defaultValue={t.task_custom_id ?? ""} onBlur={e => e.target.value !== (t.task_custom_id ?? "") && updateField(t.id, { task_custom_id: e.target.value || null })} />
+                    </TableCell>
+                    <TableCell className="max-w-[340px]">
+                      <Input className="h-8 text-sm font-medium" defaultValue={t.nome} onBlur={e => e.target.value !== t.nome && e.target.value && updateField(t.id, { nome: e.target.value })} />
+                      <Select value={t.classificacao ?? ""} onValueChange={v => updateField(t.id, { classificacao: v || null })}>
+                        <SelectTrigger className="h-6 text-[10px] mt-1 border-none px-1 text-muted-foreground"><SelectValue placeholder="classificação" /></SelectTrigger>
+                        <SelectContent>{CLASSIFICACOES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell><Input className="h-8 text-xs w-[140px]" defaultValue={t.assignee ?? ""} onBlur={e => e.target.value !== (t.assignee ?? "") && updateField(t.id, { assignee: e.target.value || null })} /></TableCell>
                     <TableCell>
                       <Select value={t.status} onValueChange={v => updateField(t.id, { status: v })}>
                         <SelectTrigger className="h-8 w-[170px]"><Badge variant="outline" className={statusColor(t.status)}>{t.status}</Badge></SelectTrigger>
                         <SelectContent>{STATUSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                       </Select>
                     </TableCell>
-                    <TableCell className="text-xs">{fmtSemana(t.sprint_semana)}</TableCell>
-                    <TableCell className="text-xs">{t.due_date ? new Date(t.due_date + "T00:00:00").toLocaleDateString("pt-BR") : "—"}</TableCell>
-                    <TableCell className="text-xs">{t.categoria ?? "—"}</TableCell>
-                    <TableCell className="text-xs">{t.time_estimate ?? "—"}</TableCell>
-                    <TableCell className="text-xs">{t.time_logged ?? "—"}</TableCell>
+                    <TableCell>
+                      <Input type="date" className="h-8 text-xs w-[140px]" defaultValue={t.sprint_semana ?? ""} onBlur={e => {
+                        const v = e.target.value ? isoMondayOf(new Date(e.target.value)) : null;
+                        if (v !== t.sprint_semana) updateField(t.id, { sprint_semana: v });
+                      }} />
+                    </TableCell>
+                    <TableCell>
+                      <Input type="date" className="h-8 text-xs w-[140px]" defaultValue={t.due_date ?? ""} onBlur={e => e.target.value !== (t.due_date ?? "") && updateField(t.id, { due_date: e.target.value || null })} />
+                    </TableCell>
+                    <TableCell>
+                      <Select value={t.categoria ?? ""} onValueChange={v => updateField(t.id, { categoria: v || null })}>
+                        <SelectTrigger className="h-8 w-[140px] text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                        <SelectContent>{CATEGORIAS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell><Input className="h-8 text-xs w-[80px]" defaultValue={t.time_estimate ?? ""} onBlur={e => e.target.value !== (t.time_estimate ?? "") && updateField(t.id, { time_estimate: e.target.value || null })} /></TableCell>
+                    <TableCell><Input className="h-8 text-xs w-[80px]" defaultValue={t.time_logged ?? ""} onBlur={e => e.target.value !== (t.time_logged ?? "") && updateField(t.id, { time_logged: e.target.value || null })} /></TableCell>
                     <TableCell><Button size="icon" variant="ghost" onClick={() => remover(t.id)}><Trash2 className="h-3.5 w-3.5 text-rose-600" /></Button></TableCell>
                   </TableRow>
                 ))}
