@@ -91,7 +91,9 @@ Deno.serve(async (req) => {
         b64 = btoa(b64);
         fileParts.push({ type: "image_url", image_url: { url: `data:application/pdf;base64,${b64}` } });
       } else if (isDocx) {
-        const result = await mammoth.extractRawText({ arrayBuffer: arrayBuf });
+        // mammoth on Deno expects a Node Buffer via the `buffer` option
+        const { Buffer } = await import("node:buffer");
+        const result = await mammoth.extractRawText({ buffer: Buffer.from(arrayBuf) });
         extractedText = result.value || "";
       } else if (isText) {
         extractedText = new TextDecoder().decode(arrayBuf);
