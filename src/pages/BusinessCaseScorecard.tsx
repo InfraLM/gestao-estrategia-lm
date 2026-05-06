@@ -306,6 +306,7 @@ export default function BusinessCaseScorecard() {
 
       {/* Lista + análise */}
       <div className="space-y-4">
+        <ScorecardMatriz list={list} onSelect={setSelected} selectedId={selected?.id} />
         <Card>
           <CardHeader className="pb-3"><CardTitle className="text-base">Submissões</CardTitle></CardHeader>
           <CardContent className="space-y-2">
