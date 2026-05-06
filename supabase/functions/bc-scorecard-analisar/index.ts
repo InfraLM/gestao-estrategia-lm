@@ -82,14 +82,23 @@ Deno.serve(async (req) => {
       const isText = mime.startsWith("text/") || /\.(txt|md|csv|json)$/i.test(nameLower);
 
       if (isPdf) {
-        const buf = new Uint8Array(arrayBuf);
-        let b64 = "";
-        const chunk = 0x8000;
-        for (let i = 0; i < buf.length; i += chunk) {
-          b64 += String.fromCharCode(...buf.subarray(i, i + chunk));
+        // Extrai texto do PDF (muito mais rápido que enviar PDF inteiro como anexo multimodal)
+        try {
+          const { extractText, getDocumentProxy } = await import("https://esm.sh/unpdf@0.12.1");
+          const pdf = await getDocumentProxy(new Uint8Array(arrayBuf));
+          const { text } = await extractText(pdf, { mergePages: true });
+          extractedText = Array.isArray(text) ? text.join("\n") : text;
+        } catch (err) {
+          console.error("Falha extraindo PDF, fallback p/ multimodal:", err);
+          const buf = new Uint8Array(arrayBuf);
+          let b64 = "";
+          const chunk = 0x8000;
+          for (let i = 0; i < buf.length; i += chunk) {
+            b64 += String.fromCharCode(...buf.subarray(i, i + chunk));
+          }
+          b64 = btoa(b64);
+          fileParts.push({ type: "image_url", image_url: { url: `data:application/pdf;base64,${b64}` } });
         }
-        b64 = btoa(b64);
-        fileParts.push({ type: "image_url", image_url: { url: `data:application/pdf;base64,${b64}` } });
       } else if (isDocx) {
         // mammoth on Deno expects a Node Buffer via the `buffer` option
         const { Buffer } = await import("node:buffer");
@@ -141,7 +150,7 @@ Janela estratégica:
 
 ${sub.arquivo_path ? "IMPORTANTE: o anexo contém o Business Case completo. EXTRAIA do anexo todas as informações que faltam acima (ROI, payback, riscos, demanda, capacidade, trade-offs, janela) e use-as na análise. Quando o formulário e o anexo divergirem, prefira o anexo se mais detalhado." : ""}
 
-${extractedText ? `--- CONTEÚDO DO ARQUIVO ANEXO ---\n${extractedText.slice(0, 60000)}\n--- FIM DO ARQUIVO ---` : ""}
+${extractedText ? `--- CONTEÚDO DO ARQUIVO ANEXO ---\n${extractedText.slice(0, 20000)}\n--- FIM DO ARQUIVO ---` : ""}
 
 Aplique RIGOROSAMENTE o framework ScoreCard LM. Retorne JSON:
 {
@@ -169,7 +178,7 @@ Aplique RIGOROSAMENTE o framework ScoreCard LM. Retorne JSON:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-pro",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: `Você é um analista do PMO da Liberdade Médica. Aplique o framework ScoreCard LM com rigor. Sempre responda em JSON válido conforme solicitado.\n\n${FRAMEWORK}` },
           { role: "user", content: userContent },
