@@ -1,6 +1,7 @@
 // Edge function: analisa um Business Case com base no framework ScoreCard LM
 // e retorna gate (saudavel/condicional/bloqueado) + análise detalhada por dimensão.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import mammoth from "npm:mammoth@1.8.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
