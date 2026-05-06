@@ -156,12 +156,21 @@ export default function BusinessCaseScorecard() {
     <div className="grid grid-cols-1 xl:grid-cols-[420px,1fr] gap-6">
       {/* Form */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Sparkles className="h-4 w-4 text-primary" /> Submeter Business Case (formulário)
-          </CardTitle>
-          <CardDescription>A análise será feita com base no framework <b>ScoreCard LM</b>.</CardDescription>
-        </CardHeader>
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-surface-muted transition rounded-t-lg group">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Sparkles className="h-4 w-4 text-primary" /> Submeter Business Case (formulário)
+                  </CardTitle>
+                  <CardDescription>Preencher manualmente — análise pelo framework <b>ScoreCard LM</b>.</CardDescription>
+                </div>
+                <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+              </div>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div className="col-span-2">
