@@ -105,13 +105,59 @@ export default function BusinessCaseScorecard() {
     }
   };
 
+  const quickUpload = async (f: File) => {
+    if (!user) { toast({ title: "Faça login", variant: "destructive" }); return; }
+    setBusy(true);
+    try {
+      const ext = f.name.split(".").pop() || "bin";
+      const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("business-cases").upload(path, f, { contentType: f.type });
+      if (upErr) throw upErr;
+      const { data: ins, error: insErr } = await supabase.from("bc_scorecard_submissoes" as any)
+        .insert({
+          titulo: f.name.replace(/\.[^.]+$/, ""),
+          tipo_projeto: "eficiencia",
+          arquivo_path: path, arquivo_nome: f.name, arquivo_tipo: f.type, arquivo_tamanho: f.size,
+          created_by: user.id, status: "pendente",
+        }).select("id").single();
+      if (insErr) throw insErr;
+      toast({ title: "Arquivo enviado", description: "A IA está extraindo os dados do BC e aplicando o ScoreCard…" });
+      await load();
+      analisar((ins as any).id);
+    } catch (e: any) {
+      toast({ title: "Erro no upload", description: e.message, variant: "destructive" });
+    } finally { setBusy(false); }
+  };
+
   return (
+    <div className="space-y-4">
+      {/* Quick upload */}
+      <Card className="border-primary/40 bg-primary/5">
+        <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+          <div>
+            <div className="font-semibold text-sm flex items-center gap-2"><FileUp className="h-4 w-4 text-primary" /> Já tem o BC pronto?</div>
+            <p className="text-xs text-muted-foreground">Carregue o arquivo (PDF, DOCX, PPTX) e a IA extrai os dados e aplica o ScoreCard LM automaticamente.</p>
+          </div>
+          <div>
+            <input id="bc-quick-file" type="file" accept=".pdf,.docx,.pptx,.xlsx,.txt,.md"
+              className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) quickUpload(f); e.currentTarget.value = ""; }} />
+            <Button asChild disabled={busy} size="sm" className="gap-2">
+              <label htmlFor="bc-quick-file" className="cursor-pointer">
+                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
+                Carregar BC pronto
+              </label>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
     <div className="grid grid-cols-1 xl:grid-cols-[420px,1fr] gap-6">
       {/* Form */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Sparkles className="h-4 w-4 text-primary" /> Submeter Business Case
+            <Sparkles className="h-4 w-4 text-primary" /> Submeter Business Case (formulário)
           </CardTitle>
           <CardDescription>A análise será feita com base no framework <b>ScoreCard LM</b>.</CardDescription>
         </CardHeader>
