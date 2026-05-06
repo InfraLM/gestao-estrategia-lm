@@ -227,7 +227,10 @@ function NovaSubmissaoDialog({ repositorio, onCreated }: { repositorio: string; 
     if (!file) { toast({ title: "Anexe um arquivo", variant: "destructive" }); return; }
     setBusy(true);
     try {
-      const path = `${repositorio}/${user.id}/${Date.now()}-${file.name}`;
+      const safeName = file.name
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9._-]+/g, "_");
+      const path = `${repositorio}/${user.id}/${Date.now()}-${safeName}`;
       const { error: upErr } = await supabase.storage.from("repositorio-docs").upload(path, file);
       if (upErr) throw upErr;
       const { error } = await supabase.from("repositorio_documentos").insert({
