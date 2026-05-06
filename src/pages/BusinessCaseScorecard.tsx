@@ -431,3 +431,67 @@ function AnaliseDetalhe({ sub }: { sub: any }) {
     </Card>
   );
 }
+
+const DIMENSOES_ORDEM = ["Tese Financeira", "Risco Institucional", "Evidência de Demanda", "Capacidade Operacional", "Trade-offs"];
+
+function corDot(cor?: string) {
+  const c = cor === "verde" ? "bg-emerald-500" : cor === "amarelo" ? "bg-amber-500" : cor === "vermelho" ? "bg-rose-500" : "bg-muted";
+  return <span className={`inline-block h-3 w-3 rounded-full ${c}`} />;
+}
+
+function ScorecardMatriz({ list, onSelect, selectedId }: { list: any[]; onSelect: (s: any) => void; selectedId?: string }) {
+  const analisados = list.filter((s) => s.ai_resultado?.dimensoes);
+  if (analisados.length === 0) return null;
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" /> Matriz ScoreCard LM</CardTitle>
+        <CardDescription>Comparativo dos projetos analisados — uma coluna por dimensão e o gate final.</CardDescription>
+      </CardHeader>
+      <CardContent className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="min-w-[180px]">Projeto</TableHead>
+              {DIMENSOES_ORDEM.map((d) => (
+                <TableHead key={d} className="text-center text-[11px]">{d}</TableHead>
+              ))}
+              <TableHead className="text-center">Janela</TableHead>
+              <TableHead className="text-center">Gate</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {analisados.map((s) => {
+              const dims: any[] = s.ai_resultado?.dimensoes ?? [];
+              const meta = s.ai_gate ? GATE_META[s.ai_gate] : null;
+              return (
+                <TableRow key={s.id} onClick={() => onSelect(s)}
+                  className={`cursor-pointer ${selectedId === s.id ? "bg-surface-muted" : ""}`}>
+                  <TableCell className="font-medium text-sm">
+                    <div className="truncate max-w-[220px]">{s.titulo}</div>
+                    <div className="text-xs text-muted-foreground">{s.proponente || "—"}</div>
+                  </TableCell>
+                  {DIMENSOES_ORDEM.map((nome) => {
+                    const d = dims.find((x) => (x.nome || "").toLowerCase().includes(nome.toLowerCase().split(" ")[0]));
+                    return (
+                      <TableCell key={nome} className="text-center">
+                        <div className="flex justify-center" title={d?.analise || ""}>{corDot(d?.cor)}</div>
+                      </TableCell>
+                    );
+                  })}
+                  <TableCell className="text-center text-xs">
+                    {s.ai_resultado?.janela?.pontos ? `${s.ai_resultado.janela.pontos}/9` : "—"}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {meta ? <Badge className={`border ${meta.cls}`} variant="outline">{meta.label.split(" — ")[0]}</Badge> : "—"}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
