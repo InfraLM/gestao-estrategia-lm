@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Loader2, FileUp, CheckCircle2, AlertTriangle, ShieldAlert, RefreshCw, ChevronDown } from "lucide-react";
+import { Sparkles, Loader2, FileUp, CheckCircle2, AlertTriangle, ShieldAlert, RefreshCw, ChevronDown, Info } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 type Sub = any;
 
@@ -133,6 +134,7 @@ export default function BusinessCaseScorecard() {
 
   return (
     <div className="space-y-4">
+      <GovernancaInfo />
       {/* Quick upload */}
       <Card className="border-primary/40 bg-primary/5">
         <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
@@ -491,6 +493,85 @@ function ScorecardMatriz({ list, onSelect, selectedId }: { list: any[]; onSelect
             })}
           </TableBody>
         </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
+function GovernancaInfo() {
+  return (
+    <Card className="border-primary/30">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base flex items-center gap-2">
+          <Info className="h-4 w-4 text-primary" />
+          Como funciona o ScoreCard LM — Janela Estratégica e regra do Gate
+        </CardTitle>
+        <CardDescription>
+          Entenda o que é avaliado e por que um BC é classificado como Saudável, Condicional ou Bloqueado.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Accordion type="multiple" className="w-full">
+          <AccordionItem value="janela">
+            <AccordionTrigger className="text-sm font-medium py-2">
+              🪟 O que é a Janela Estratégica?
+            </AccordionTrigger>
+            <AccordionContent className="text-sm space-y-2 text-muted-foreground">
+              <p>
+                A <b>Janela Estratégica</b> mede a <b>oportunidade de timing</b> do projeto — o quanto vale a pena agir agora vs. depois. Pontuação de <b>3 a 9 pontos</b>, somando 3 critérios (1–3 cada):
+              </p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li><b>Exclusividade</b> — somos os únicos capazes de executar agora? (1 = qualquer um faz, 3 = vantagem única)</li>
+                <li><b>Urgência</b> — existe prazo regulatório, sazonal ou competitivo? (1 = sem prazo, 3 = janela curta)</li>
+                <li><b>Custo de inação</b> — quanto perdemos se não agir? (1 = nada relevante, 3 = perda significativa)</li>
+              </ul>
+              <div className="mt-2 space-y-1">
+                <div><Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/40 text-emerald-700">8–9 Única</Badge> permite <b>+1 vermelho operacional adicional</b> (vedado risco reputacional/clínico).</div>
+                <div><Badge variant="outline" className="bg-amber-500/10 border-amber-500/40 text-amber-700">5–7 Passiva</Badge> nenhuma concessão; exige validação executiva.</div>
+                <div><Badge variant="outline" className="bg-muted">3–4 Indiferente</Badge> sem concessão — segue regra padrão.</div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="dimensoes">
+            <AccordionTrigger className="text-sm font-medium py-2">
+              📊 As 5 dimensões avaliadas
+            </AccordionTrigger>
+            <AccordionContent className="text-sm space-y-2 text-muted-foreground">
+              <p>Cada dimensão recebe cor 🟢 Verde / 🟡 Amarelo / 🔴 Vermelho. As 3 primeiras são <b>estruturais</b> (peso maior, podem bloquear sozinhas); as 2 últimas são <b>operacionais</b>.</p>
+              <ol className="list-decimal pl-5 space-y-1">
+                <li><b>Tese Financeira</b> (estrutural) — ROI 24m e Payback.</li>
+                <li><b>Risco Institucional</b> (estrutural) — Jurídico, Reputacional, Clínico/ético.</li>
+                <li><b>Evidência de Demanda</b> (estrutural) — % base ativa + qualidade da fonte.</li>
+                <li><b>Capacidade Operacional</b> (operacional) — peso técnico + sequestro de capacidade.</li>
+                <li><b>Trade-offs</b> (operacional) — conflito de fila com outros projetos.</li>
+              </ol>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="gate">
+            <AccordionTrigger className="text-sm font-medium py-2">
+              🚦 Regra do Gate — Saudável, Condicional ou Bloqueado
+            </AccordionTrigger>
+            <AccordionContent className="text-sm space-y-2 text-muted-foreground">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-1">
+                <div className="p-3 rounded-md border border-emerald-500/40 bg-emerald-500/10">
+                  <div className="font-semibold text-emerald-700 flex items-center gap-1 mb-1"><CheckCircle2 className="h-4 w-4" /> Saudável</div>
+                  <div className="text-xs text-emerald-900/80">0 vermelhos estruturais e <b>até 1 operacional</b>. Segue para PMO.</div>
+                </div>
+                <div className="p-3 rounded-md border border-amber-500/40 bg-amber-500/10">
+                  <div className="font-semibold text-amber-700 flex items-center gap-1 mb-1"><AlertTriangle className="h-4 w-4" /> Condicional</div>
+                  <div className="text-xs text-amber-900/80"><b>1 vermelho estrutural isolado</b> OU <b>2 operacionais</b>. Exige validação executiva.</div>
+                </div>
+                <div className="p-3 rounded-md border border-rose-500/40 bg-rose-500/10">
+                  <div className="font-semibold text-rose-700 flex items-center gap-1 mb-1"><ShieldAlert className="h-4 w-4" /> Bloqueado</div>
+                  <div className="text-xs text-rose-900/80"><b>2+ estruturais</b> OU <b>1 estrutural + 1 operacional</b>. Reapresentar BC.</div>
+                </div>
+              </div>
+              <p className="text-xs mt-2">⚡ <b>Concessão por janela 8–9:</b> permite tolerar +1 vermelho operacional sem rebaixar para Condicional (exceto reputacional/clínico, que nunca são tolerados).</p>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </CardContent>
     </Card>
   );
