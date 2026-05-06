@@ -1,6 +1,7 @@
 // Edge function: analisa um Business Case com base no framework ScoreCard LM
 // e retorna gate (saudavel/condicional/bloqueado) + análise detalhada por dimensão.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import mammoth from "npm:mammoth@1.8.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -65,24 +66,38 @@ Deno.serve(async (req) => {
     await supabase.from("bc_scorecard_submissoes")
       .update({ status: "analisando" }).eq("id", submissao_id);
 
-    // Se há arquivo, baixar e enviar como anexo multimodal para a IA
+    // Se há arquivo: PDF vai como anexo multimodal; DOCX é convertido para texto via mammoth;
+    // demais tipos (txt/md/csv) são lidos como texto. Outros formatos não suportados pelo Gemini.
     let fileParts: any[] = [];
+    let extractedText = "";
     if (sub.arquivo_path) {
       const { data: fileData, error: dlErr } = await supabase.storage
         .from("business-cases").download(sub.arquivo_path);
       if (dlErr) throw new Error(`Falha ao baixar arquivo: ${dlErr.message}`);
-      const buf = new Uint8Array(await fileData.arrayBuffer());
-      let b64 = "";
-      const chunk = 0x8000;
-      for (let i = 0; i < buf.length; i += chunk) {
-        b64 += String.fromCharCode(...buf.subarray(i, i + chunk));
+      const arrayBuf = await fileData.arrayBuffer();
+      const mime = (sub.arquivo_tipo || "").toLowerCase();
+      const nameLower = (sub.arquivo_nome || "").toLowerCase();
+      const isPdf = mime.includes("pdf") || nameLower.endsWith(".pdf");
+      const isDocx = mime.includes("officedocument.wordprocessingml") || nameLower.endsWith(".docx");
+      const isText = mime.startsWith("text/") || /\.(txt|md|csv|json)$/i.test(nameLower);
+
+      if (isPdf) {
+        const buf = new Uint8Array(arrayBuf);
+        let b64 = "";
+        const chunk = 0x8000;
+        for (let i = 0; i < buf.length; i += chunk) {
+          b64 += String.fromCharCode(...buf.subarray(i, i + chunk));
+        }
+        b64 = btoa(b64);
+        fileParts.push({ type: "image_url", image_url: { url: `data:application/pdf;base64,${b64}` } });
+      } else if (isDocx) {
+        const result = await mammoth.extractRawText({ arrayBuffer: arrayBuf });
+        extractedText = result.value || "";
+      } else if (isText) {
+        extractedText = new TextDecoder().decode(arrayBuf);
+      } else {
+        extractedText = `[Arquivo "${sub.arquivo_nome}" do tipo ${mime || "desconhecido"} não pôde ser lido automaticamente. Converta para PDF ou DOCX.]`;
       }
-      b64 = btoa(b64);
-      const mime = sub.arquivo_tipo || "application/pdf";
-      fileParts.push({
-        type: "image_url",
-        image_url: { url: `data:${mime};base64,${b64}` },
-      });
     }
 
     const userText = `
@@ -123,6 +138,8 @@ Janela estratégica:
 - Custo de inação: ${sub.janela_custo_inacao ?? 1}/3
 
 ${sub.arquivo_path ? "IMPORTANTE: o anexo contém o Business Case completo. EXTRAIA do anexo todas as informações que faltam acima (ROI, payback, riscos, demanda, capacidade, trade-offs, janela) e use-as na análise. Quando o formulário e o anexo divergirem, prefira o anexo se mais detalhado." : ""}
+
+${extractedText ? `--- CONTEÚDO DO ARQUIVO ANEXO ---\n${extractedText.slice(0, 60000)}\n--- FIM DO ARQUIVO ---` : ""}
 
 Aplique RIGOROSAMENTE o framework ScoreCard LM. Retorne JSON:
 {
