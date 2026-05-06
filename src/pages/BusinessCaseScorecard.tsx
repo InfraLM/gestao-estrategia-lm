@@ -133,6 +133,7 @@ export default function BusinessCaseScorecard() {
 
   return (
     <div className="space-y-4">
+      <GovernancaInfo />
       {/* Quick upload */}
       <Card className="border-primary/40 bg-primary/5">
         <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
