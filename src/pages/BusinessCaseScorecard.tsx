@@ -328,6 +328,7 @@ export default function BusinessCaseScorecard() {
         )}
       </div>
     </div>
+    </div>
   );
 }
 
