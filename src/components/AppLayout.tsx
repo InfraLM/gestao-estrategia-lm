@@ -70,6 +70,14 @@ const navGroups: NavGroup[] = [
       { to: "/repositorios/gestao", label: "Gestão do Repositório", icon: Settings2 },
     ],
   },
+  {
+    id: "infra_tech",
+    label: "Infra & Tech",
+    icon: Server,
+    children: [
+      { to: "/infra-tech/sprints", label: "Sprints Semanais", icon: ListChecks },
+    ],
+  },
 ];
 
 const titles: Record<string, string> = {
@@ -100,6 +108,7 @@ const titles: Record<string, string> = {
   "/repositorios/gestao": "Gestão do Repositório · Controle de Revisão e Aprovações",
   "/minhas-permissoes": "Minhas Permissões",
   "/gestao-usuarios": "Gestão de Usuários e Permissões",
+  "/infra-tech/sprints": "Infra & Tech · Gestão de Sprints Semanais",
 };
 
 export default function AppLayout() {

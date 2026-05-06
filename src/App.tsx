@@ -27,6 +27,7 @@ import ProcessosPublicados from "./pages/ProcessosPublicados";
 import GestaoRepositorio from "./pages/GestaoRepositorio";
 import MinhasPermissoes from "./pages/MinhasPermissoes";
 import GestaoUsuarios from "./pages/GestaoUsuarios";
+import InfraTechSprints from "./pages/InfraTechSprints";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -73,6 +74,7 @@ const App = () => (
               <Route path="/dashboard-processos" element={<DashboardProcessos />} />
               <Route path="/status-report-processos" element={<StatusReportProcessos />} />
               <Route path="/matriz-riscos" element={<MatrizRiscosInstitucionais />} />
+              <Route path="/infra-tech/sprints" element={<InfraTechSprints />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
