@@ -108,6 +108,7 @@ const titles: Record<string, string> = {
   "/repositorios/gestao": "Gestão do Repositório · Controle de Revisão e Aprovações",
   "/minhas-permissoes": "Minhas Permissões",
   "/gestao-usuarios": "Gestão de Usuários e Permissões",
+  "/infra-tech/sprints": "Infra & Tech · Gestão de Sprints Semanais",
 };
 
 export default function AppLayout() {
