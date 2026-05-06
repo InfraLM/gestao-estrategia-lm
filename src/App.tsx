@@ -25,6 +25,7 @@ import StatusReportProcessos from "./pages/StatusReportProcessos";
 import MatrizRiscosInstitucionais from "./pages/MatrizRiscosInstitucionais";
 import ProcessosPublicados from "./pages/ProcessosPublicados";
 import GestaoRepositorio from "./pages/GestaoRepositorio";
+import RepositorioLista from "./pages/RepositorioLista";
 import MinhasPermissoes from "./pages/MinhasPermissoes";
 import GestaoUsuarios from "./pages/GestaoUsuarios";
 import InfraTechSprints from "./pages/InfraTechSprints";
