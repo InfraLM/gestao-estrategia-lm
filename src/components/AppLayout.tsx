@@ -70,6 +70,14 @@ const navGroups: NavGroup[] = [
       { to: "/repositorios/gestao", label: "Gestão do Repositório", icon: Settings2 },
     ],
   },
+  {
+    id: "infra_tech",
+    label: "Infra & Tech",
+    icon: Server,
+    children: [
+      { to: "/infra-tech/sprints", label: "Sprints Semanais", icon: ListChecks },
+    ],
+  },
 ];
 
 const titles: Record<string, string> = {
