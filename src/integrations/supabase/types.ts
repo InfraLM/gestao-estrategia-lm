@@ -449,6 +449,63 @@ export type Database = {
         }
         Relationships: []
       }
+      infra_tasks: {
+        Row: {
+          assignee: string | null
+          categoria: string | null
+          classificacao: string | null
+          created_at: string
+          created_by: string | null
+          due_date: string | null
+          id: string
+          nome: string
+          observacoes: string | null
+          sprint_semana: string | null
+          status: string
+          task_custom_id: string | null
+          task_external_id: string | null
+          time_estimate: string | null
+          time_logged: string | null
+          updated_at: string
+        }
+        Insert: {
+          assignee?: string | null
+          categoria?: string | null
+          classificacao?: string | null
+          created_at?: string
+          created_by?: string | null
+          due_date?: string | null
+          id?: string
+          nome: string
+          observacoes?: string | null
+          sprint_semana?: string | null
+          status?: string
+          task_custom_id?: string | null
+          task_external_id?: string | null
+          time_estimate?: string | null
+          time_logged?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assignee?: string | null
+          categoria?: string | null
+          classificacao?: string | null
+          created_at?: string
+          created_by?: string | null
+          due_date?: string | null
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          sprint_semana?: string | null
+          status?: string
+          task_custom_id?: string | null
+          task_external_id?: string | null
+          time_estimate?: string | null
+          time_logged?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       melhoria_business_case: {
         Row: {
           amplitude_impacto_financeiro: boolean | null
