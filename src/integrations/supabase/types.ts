@@ -142,6 +142,117 @@ export type Database = {
         }
         Relationships: []
       }
+      bc_scorecard_submissoes: {
+        Row: {
+          ai_erro: string | null
+          ai_gate: string | null
+          ai_resultado: Json
+          ai_resumo: string | null
+          area: string | null
+          arquivo_nome: string | null
+          arquivo_path: string | null
+          arquivo_tamanho: number | null
+          arquivo_tipo: string | null
+          conflito_fila: string | null
+          created_at: string
+          created_by: string | null
+          evidencia_demanda: string | null
+          hipotese: string | null
+          id: string
+          janela_custo_inacao: number | null
+          janela_exclusividade: number | null
+          janela_urgencia: number | null
+          payback_meses: number | null
+          pct_base_demanda: number | null
+          peso_tecnico: string | null
+          problema: string | null
+          proponente: string | null
+          publico_alvo: string | null
+          qualidade_fonte: string | null
+          risco_clinico: string | null
+          risco_juridico: string | null
+          risco_reputacional: string | null
+          roi_pct: number | null
+          sequestro_capacidade_pct: number | null
+          status: string
+          tipo_projeto: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          ai_erro?: string | null
+          ai_gate?: string | null
+          ai_resultado?: Json
+          ai_resumo?: string | null
+          area?: string | null
+          arquivo_nome?: string | null
+          arquivo_path?: string | null
+          arquivo_tamanho?: number | null
+          arquivo_tipo?: string | null
+          conflito_fila?: string | null
+          created_at?: string
+          created_by?: string | null
+          evidencia_demanda?: string | null
+          hipotese?: string | null
+          id?: string
+          janela_custo_inacao?: number | null
+          janela_exclusividade?: number | null
+          janela_urgencia?: number | null
+          payback_meses?: number | null
+          pct_base_demanda?: number | null
+          peso_tecnico?: string | null
+          problema?: string | null
+          proponente?: string | null
+          publico_alvo?: string | null
+          qualidade_fonte?: string | null
+          risco_clinico?: string | null
+          risco_juridico?: string | null
+          risco_reputacional?: string | null
+          roi_pct?: number | null
+          sequestro_capacidade_pct?: number | null
+          status?: string
+          tipo_projeto?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          ai_erro?: string | null
+          ai_gate?: string | null
+          ai_resultado?: Json
+          ai_resumo?: string | null
+          area?: string | null
+          arquivo_nome?: string | null
+          arquivo_path?: string | null
+          arquivo_tamanho?: number | null
+          arquivo_tipo?: string | null
+          conflito_fila?: string | null
+          created_at?: string
+          created_by?: string | null
+          evidencia_demanda?: string | null
+          hipotese?: string | null
+          id?: string
+          janela_custo_inacao?: number | null
+          janela_exclusividade?: number | null
+          janela_urgencia?: number | null
+          payback_meses?: number | null
+          pct_base_demanda?: number | null
+          peso_tecnico?: string | null
+          problema?: string | null
+          proponente?: string | null
+          publico_alvo?: string | null
+          qualidade_fonte?: string | null
+          risco_clinico?: string | null
+          risco_juridico?: string | null
+          risco_reputacional?: string | null
+          roi_pct?: number | null
+          sequestro_capacidade_pct?: number | null
+          status?: string
+          tipo_projeto?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cronograma_itens: {
         Row: {
           created_at: string

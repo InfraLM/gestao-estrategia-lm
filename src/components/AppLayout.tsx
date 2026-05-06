@@ -30,6 +30,7 @@ const navGroups: NavGroup[] = [
     icon: Briefcase,
     children: [
       { to: "/portfolio", label: "Portfólio Estratégico", icon: LayoutGrid },
+      { to: "/pmo/business-case", label: "Business Case · ScoreCard LM", icon: FileCheck2 },
       { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
       { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
       { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
@@ -109,6 +110,7 @@ const titles: Record<string, string> = {
   "/minhas-permissoes": "Minhas Permissões",
   "/gestao-usuarios": "Gestão de Usuários e Permissões",
   "/infra-tech/sprints": "Infra & Tech · Gestão de Sprints Semanais",
+  "/pmo/business-case": "PMO · Submissão de Business Case (ScoreCard LM)",
 };
 
 export default function AppLayout() {
