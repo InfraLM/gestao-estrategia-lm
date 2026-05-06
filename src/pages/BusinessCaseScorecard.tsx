@@ -299,6 +299,8 @@ export default function BusinessCaseScorecard() {
             Submeter e analisar com IA
           </Button>
         </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
       </Card>
 
       {/* Lista + análise */}
