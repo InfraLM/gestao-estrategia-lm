@@ -26,7 +26,14 @@ type InfraTask = {
 };
 
 const STATUSES = ["BACKLOG", "PRÓXIMA SPRINT", "SPRINT", "EM ANDAMENTO", "EM PROGRESSO", "PARALISADO", "PENDENTE", "PRONTO PRA REVISAR", "REVIEW", "CONCLUÍDO"];
-const CATEGORIAS = ["Automação", "Página (LP)", "Plataforma", "Suporte", "Análise", "Desenvolvimento", "Dashboard", "Banco de dados", "Configuração PC", "Planejamento", "Grupo"];
+const CATEGORIAS_GRUPOS: { grupo: string; itens: string[] }[] = [
+  { grupo: "Dev. de Apps", itens: ["Software Proprietário", "Módulos de Sistema"] },
+  { grupo: "TI Ops / Infra", itens: ["Setup de Hardware", "Gestão de Acessos", "Inventários/Ativos", "Outros (Infra)"] },
+  { grupo: "Automação / IA", itens: ["Automações de Processo", "Workflows de Mensagem", "Formulários Inteligentes"] },
+  { grupo: "Landing Pages", itens: ["Landing Pages Novas", "Otimizações de Funil", "Páginas de Apoio"] },
+  { grupo: "Dados / Dash", itens: ["Mapeamentos de KPI", "Dashboards", "Outros (Dados)"] },
+];
+const CATEGORIAS = CATEGORIAS_GRUPOS.flatMap(g => g.itens);
 const CLASSIFICACOES = ["Planejadas", "Não Planejadas", "Incidentes", "Internas"];
 
 function statusColor(s: string) {
@@ -163,7 +170,7 @@ export default function InfraTechSprints() {
                   <div><Label>Categoria</Label>
                     <Select value={novo.categoria ?? ""} onValueChange={v => setNovo({ ...novo, categoria: v })}>
                       <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
-                      <SelectContent>{CATEGORIAS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                      <SelectContent className="max-h-[300px]">{CATEGORIAS_GRUPOS.map(g => (<div key={g.grupo}><div className="px-2 py-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{g.grupo}</div>{g.itens.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</div>))}</SelectContent>
                     </Select>
                   </div>
                   <div><Label>Classificação</Label>
@@ -255,7 +262,7 @@ export default function InfraTechSprints() {
                     <TableCell>
                       <Select value={t.categoria ?? ""} onValueChange={v => updateField(t.id, { categoria: v || null })}>
                         <SelectTrigger className="h-8 w-[140px] text-xs"><SelectValue placeholder="—" /></SelectTrigger>
-                        <SelectContent>{CATEGORIAS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                        <SelectContent className="max-h-[300px]">{CATEGORIAS_GRUPOS.map(g => (<div key={g.grupo}><div className="px-2 py-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{g.grupo}</div>{g.itens.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</div>))}</SelectContent>
                       </Select>
                     </TableCell>
                     <TableCell><Input className="h-8 text-xs w-[80px]" defaultValue={t.time_estimate ?? ""} onBlur={e => e.target.value !== (t.time_estimate ?? "") && updateField(t.id, { time_estimate: e.target.value || null })} /></TableCell>
