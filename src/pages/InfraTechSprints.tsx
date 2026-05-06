@@ -26,7 +26,14 @@ type InfraTask = {
 };
 
 const STATUSES = ["BACKLOG", "PRÓXIMA SPRINT", "SPRINT", "EM ANDAMENTO", "EM PROGRESSO", "PARALISADO", "PENDENTE", "PRONTO PRA REVISAR", "REVIEW", "CONCLUÍDO"];
-const CATEGORIAS = ["Automação", "Página (LP)", "Plataforma", "Suporte", "Análise", "Desenvolvimento", "Dashboard", "Banco de dados", "Configuração PC", "Planejamento", "Grupo"];
+const CATEGORIAS_GRUPOS: { grupo: string; itens: string[] }[] = [
+  { grupo: "Dev. de Apps", itens: ["Software Proprietário", "Módulos de Sistema"] },
+  { grupo: "TI Ops / Infra", itens: ["Setup de Hardware", "Gestão de Acessos", "Inventários/Ativos", "Outros (Infra)"] },
+  { grupo: "Automação / IA", itens: ["Automações de Processo", "Workflows de Mensagem", "Formulários Inteligentes"] },
+  { grupo: "Landing Pages", itens: ["Landing Pages Novas", "Otimizações de Funil", "Páginas de Apoio"] },
+  { grupo: "Dados / Dash", itens: ["Mapeamentos de KPI", "Dashboards", "Outros (Dados)"] },
+];
+const CATEGORIAS = CATEGORIAS_GRUPOS.flatMap(g => g.itens);
 const CLASSIFICACOES = ["Planejadas", "Não Planejadas", "Incidentes", "Internas"];
 
 function statusColor(s: string) {
