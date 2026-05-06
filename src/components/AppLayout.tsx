@@ -30,6 +30,7 @@ const navGroups: NavGroup[] = [
     icon: Briefcase,
     children: [
       { to: "/portfolio", label: "Portfólio Estratégico", icon: LayoutGrid },
+      { to: "/pmo/business-case", label: "Business Case · ScoreCard LM", icon: FileCheck2 },
       { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
       { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
       { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
