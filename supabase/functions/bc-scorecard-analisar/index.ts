@@ -65,7 +65,27 @@ Deno.serve(async (req) => {
     await supabase.from("bc_scorecard_submissoes")
       .update({ status: "analisando" }).eq("id", submissao_id);
 
-    const userPrompt = `
+    // Se há arquivo, baixar e enviar como anexo multimodal para a IA
+    let fileParts: any[] = [];
+    if (sub.arquivo_path) {
+      const { data: fileData, error: dlErr } = await supabase.storage
+        .from("business-cases").download(sub.arquivo_path);
+      if (dlErr) throw new Error(`Falha ao baixar arquivo: ${dlErr.message}`);
+      const buf = new Uint8Array(await fileData.arrayBuffer());
+      let b64 = "";
+      const chunk = 0x8000;
+      for (let i = 0; i < buf.length; i += chunk) {
+        b64 += String.fromCharCode(...buf.subarray(i, i + chunk));
+      }
+      b64 = btoa(b64);
+      const mime = sub.arquivo_tipo || "application/pdf";
+      fileParts.push({
+        type: "image_url",
+        image_url: { url: `data:${mime};base64,${b64}` },
+      });
+    }
+
+    const userText = `
 Business Case submetido:
 
 Título: ${sub.titulo}
@@ -102,23 +122,26 @@ Janela estratégica:
 - Urgência: ${sub.janela_urgencia ?? 1}/3
 - Custo de inação: ${sub.janela_custo_inacao ?? 1}/3
 
+${sub.arquivo_path ? "IMPORTANTE: o anexo contém o Business Case completo. EXTRAIA do anexo todas as informações que faltam acima (ROI, payback, riscos, demanda, capacidade, trade-offs, janela) e use-as na análise. Quando o formulário e o anexo divergirem, prefira o anexo se mais detalhado." : ""}
+
 Aplique RIGOROSAMENTE o framework ScoreCard LM. Retorne JSON:
 {
   "gate": "saudavel" | "condicional" | "bloqueado",
   "resumo_executivo": "string (até 3 parágrafos)",
+  "dados_extraidos": { "titulo":"", "proponente":"", "area":"", "tipo_projeto":"", "problema":"", "hipotese":"", "publico_alvo":"", "roi_pct":null, "payback_meses":null, "pct_base_demanda":null, "qualidade_fonte":"", "evidencia_demanda":"", "risco_juridico":"", "risco_reputacional":"", "risco_clinico":"", "peso_tecnico":"", "sequestro_capacidade_pct":null, "conflito_fila":"" },
   "janela": { "pontos": number, "classificacao": "Única|Passiva|Indiferente", "concessao_aplicada": boolean, "justificativa": "string" },
   "dimensoes": [
-    { "nome": "Tese Financeira", "tipo": "estrutural", "cor": "verde|amarelo|vermelho", "criterios": [{"nome": "string","cor":"verde|amarelo|vermelho","comentario":"string"}], "analise": "string" },
-    { "nome": "Risco Institucional", "tipo": "estrutural", ... },
-    { "nome": "Evidência de Demanda", "tipo": "estrutural", ... },
-    { "nome": "Capacidade Operacional", "tipo": "operacional", ... },
-    { "nome": "Trade-offs", "tipo": "operacional", ... }
+    { "nome": "Tese Financeira", "tipo": "estrutural", "cor": "verde|amarelo|vermelho", "criterios": [{"nome": "string","cor":"verde|amarelo|vermelho","comentario":"string"}], "analise": "string" }
   ],
   "vermelhos_estruturais": number,
   "vermelhos_operacionais": number,
-  "recomendacoes": ["string", ...],
-  "plano_mitigacao": ["string", ...]
+  "recomendacoes": ["string"],
+  "plano_mitigacao": ["string"]
 }`;
+
+    const userContent: any = fileParts.length > 0
+      ? [{ type: "text", text: userText }, ...fileParts]
+      : userText;
 
     const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -130,7 +153,7 @@ Aplique RIGOROSAMENTE o framework ScoreCard LM. Retorne JSON:
         model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: `Você é um analista do PMO da Liberdade Médica. Aplique o framework ScoreCard LM com rigor. Sempre responda em JSON válido conforme solicitado.\n\n${FRAMEWORK}` },
-          { role: "user", content: userPrompt },
+          { role: "user", content: userContent },
         ],
         response_format: { type: "json_object" },
       }),
