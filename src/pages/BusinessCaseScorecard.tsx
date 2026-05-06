@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Loader2, FileUp, CheckCircle2, AlertTriangle, ShieldAlert, RefreshCw, ChevronDown } from "lucide-react";
+import { Sparkles, Loader2, FileUp, CheckCircle2, AlertTriangle, ShieldAlert, RefreshCw, ChevronDown, Info } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 type Sub = any;
 
