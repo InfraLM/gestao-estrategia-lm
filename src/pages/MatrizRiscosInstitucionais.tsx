@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShieldAlert, AlertTriangle, ArrowRight, Building2, Workflow, FolderKanban } from "lucide-react";
+import { ShieldAlert, AlertTriangle, ArrowRight, Building2, Workflow, FolderKanban, Download } from "lucide-react";
 import { UploadRiscosInstitucionais } from "@/components/UploadRiscosInstitucionais";
+import { exportToCSV } from "@/lib/exportCsv";
 
 type RiscoNivel = "Extremo" | "Alto" | "Moderado" | "Baixo";
 type Natureza = "Variação" | "Ambiguidade" | "Evento" | "Condição de incerteza";
@@ -54,6 +55,7 @@ function fmtBRL(v?: number) {
 export default function MatrizRiscosInstitucionais() {
   const [gestao, setGestao] = useState<Record<string, any>>({});
   const [filtroNivel, setFiltroNivel] = useState<string>("todos");
+  const [tabAtiva, setTabAtiva] = useState<string>("institucionais");
   const { data: riscosInst, refetch } = useRiscosInstitucionaisDB();
   const { data: processos } = useProcessosDB();
   const { data: projetos } = useProjetosDB();
@@ -110,7 +112,38 @@ export default function MatrizRiscosInstitucionais() {
             Visão consolidada dos riscos institucionais, riscos críticos de processos e riscos críticos de projetos.
           </p>
         </div>
-        <UploadRiscosInstitucionais onDone={refetch} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => {
+              const ativo = tabAtiva;
+              if (ativo === "processos") {
+                exportToCSV("riscos_processos_criticos", riscosProcessosCriticos.map(({ processo, risco, n }) => ({
+                  Processo: processo.nome, Diretor: processo.diretor ?? "", Risco: risco.nome,
+                  Natureza: risco.natureza, Impacto: risco.impacto, Ocorrencia: risco.ocorrencia,
+                  Score: n.valor, Nivel: n.nivel, Status: risco.status, Prazo: risco.dueDate ?? "",
+                })));
+              } else if (ativo === "projetos") {
+                exportToCSV("projetos_criticos", projetosCriticos.map(({ p, riscoDesvio }) => ({
+                  ID: p.id, Projeto: p.nome, Diretor: p.diretor, Saude: p.saude, Status: p.status,
+                  Observacao: riscoDesvio?.obs || p.causaRaiz || "",
+                })));
+              } else {
+                exportToCSV("riscos_institucionais", riscosInstFiltrados.map(({ r, n }) => ({
+                  ID: r.id, Risco: r.nome, Natureza: r.natureza, Tipo: r.tipo,
+                  Impacto: r.impacto, Ocorrencia: r.ocorrencia, Score: n.valor, Nivel: n.nivel,
+                  ImpactoFinanceiro: r.impactoFinanceiro ?? "", Responsaveis: r.responsaveis,
+                  Prazo: r.dueDate, AcoesMitigadoras: r.acoesMitigadoras, Contingencia: r.contingencia ?? "",
+                })));
+              }
+            }}
+          >
+            <Download className="h-4 w-4" /> Exportar CSV
+          </Button>
+          <UploadRiscosInstitucionais onDone={refetch} />
+        </div>
       </div>
 
       {/* KPIs */}
@@ -122,7 +155,7 @@ export default function MatrizRiscosInstitucionais() {
         <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Projetos com risco crítico</div><div className="text-2xl font-semibold mt-1 text-amber-700">{projetosCriticos.length}</div></CardContent></Card>
       </div>
 
-      <Tabs defaultValue="institucionais">
+      <Tabs value={tabAtiva} onValueChange={setTabAtiva}>
         <TabsList>
           <TabsTrigger value="institucionais"><Building2 className="h-3.5 w-3.5 mr-1" /> Institucionais</TabsTrigger>
           <TabsTrigger value="processos"><Workflow className="h-3.5 w-3.5 mr-1" /> Processos críticos</TabsTrigger>

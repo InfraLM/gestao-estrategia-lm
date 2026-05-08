@@ -4,12 +4,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Search, FolderKanban, TrendingUp, AlertTriangle, Clock } from "lucide-react";
+import { ArrowRight, Search, FolderKanban, TrendingUp, AlertTriangle, Clock, Download } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { SaudeBadge } from "@/components/badges";
 import { SubmissaoProjetoDialog } from "@/components/SubmissaoProjetoDialog";
 import { Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { exportToCSV } from "@/lib/exportCsv";
 
 export default function Gestao() {
   const [q, setQ] = useState("");
@@ -43,14 +44,30 @@ export default function Gestao() {
             <span className="text-xs">Iniciativas de Melhoria Contínua estão em <Link to="/melhorias" className="underline text-primary">Gestão de Melhorias</Link>.</span>
           </p>
         </div>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={q}
-            onChange={e => setQ(e.target.value)}
-            placeholder="Buscar projeto…"
-            className="pl-9 w-64"
-          />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => exportToCSV("gestao_projetos", filtrados.map(p => ({
+              ID: p.id, Projeto: p.nome, Wave: p.wave, Classificacao: p.classificacao,
+              Diretor: p.diretor, Status: p.status, Saude: p.saude, BC: p.statusBC,
+              Inicio: p.inicio, Termino: p.termino,
+              Budget: p.budget, Realizado: p.realizado,
+              ExecucaoPct: p.budget > 0 ? ((p.realizado / p.budget) * 100).toFixed(1) : "0",
+            })))}
+          >
+            <Download className="h-4 w-4" /> Exportar CSV
+          </Button>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={q}
+              onChange={e => setQ(e.target.value)}
+              placeholder="Buscar projeto…"
+              className="pl-9 w-64"
+            />
+          </div>
         </div>
       </div>
 
