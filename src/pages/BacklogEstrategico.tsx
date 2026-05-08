@@ -358,7 +358,22 @@ export default function BacklogEstrategico() {
                 </p>
               </div>
             </div>
-            <SubmissaoBacklogDialog />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                onClick={() => exportToCSV("backlog_estrategico", filtradas.map(i => ({
+                  ID: i.id, Titulo: i.titulo, Tipo: i.tipo, Origem: (i.origem || []).join(" | "),
+                  Wave: i.wave, Status: i.status, Prioridade: i.prioridade, ICE: i.ice,
+                  Responsavel: i.responsavel, Acao: i.acao, ResultadoEsperado: i.resultadoEsperado,
+                  Vinculos: (i.vinculos || []).map(v => `${v.fonte}:${v.refId}`).join(" | "),
+                })))}
+              >
+                <Download className="h-4 w-4" /> Exportar CSV
+              </Button>
+              <SubmissaoBacklogDialog />
+            </div>
           </div>
         </CardHeader>
         <CardContent>
