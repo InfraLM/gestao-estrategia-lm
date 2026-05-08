@@ -16,12 +16,13 @@ import {
 import {
   ListChecks, ShieldAlert, Sword, Sparkles, Compass, Filter,
   Building2, Gavel, AlertTriangle, Target, Zap, TrendingUp,
-  Link2, Pencil, Plus, X, Briefcase, Repeat, GitBranch, ExternalLink,
+  Link2, Pencil, Plus, X, Briefcase, Repeat, GitBranch, ExternalLink, Download,
 } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
 import SubmissaoBacklogDialog from "@/components/SubmissaoBacklogDialog";
 import PropostasIABacklog from "@/components/PropostasIABacklog";
+import { exportToCSV } from "@/lib/exportCsv";
 
 // ===== Tipagem =====
 type Tipo = "Reforço de Fraqueza" | "Defesa Identificada" | "Potencializar Força" | "Explorar Oportunidade";
