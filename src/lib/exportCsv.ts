@@ -1,27 +1,25 @@
-export function exportToCSV(filename: string, rows: Record<string, any>[], headers?: string[]) {
+import * as XLSX from "xlsx";
+
+export function exportToExcel(filename: string, rows: Record<string, any>[], sheetName = "Dados") {
   if (!rows || rows.length === 0) {
     alert("Não há dados para exportar.");
     return;
   }
-  const cols = headers ?? Object.keys(rows[0]);
-  const escape = (v: any) => {
-    if (v == null) return "";
-    const s = String(v).replace(/"/g, '""');
-    return /[",;\n\r]/.test(s) ? `"${s}"` : s;
-  };
-  const csv = [
-    cols.join(";"),
-    ...rows.map(r => cols.map(c => escape(r[c])).join(";")),
-  ].join("\n");
-  // BOM para Excel reconhecer UTF-8 corretamente
-  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
+  const ws = XLSX.utils.json_to_sheet(rows);
+  // ajuste simples de largura de colunas
+  const cols = Object.keys(rows[0]);
+  ws["!cols"] = cols.map((c) => {
+    const maxLen = Math.max(
+      c.length,
+      ...rows.map((r) => (r[c] == null ? 0 : String(r[c]).length))
+    );
+    return { wch: Math.min(Math.max(maxLen + 2, 10), 60) };
+  });
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName.slice(0, 31));
   const ts = new Date().toISOString().slice(0, 10);
-  a.href = url;
-  a.download = `${filename}_${ts}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  XLSX.writeFile(wb, `${filename}_${ts}.xlsx`);
 }
+
+// alias mantido p/ compatibilidade — agora gera .xlsx
+export const exportToCSV = exportToExcel;
