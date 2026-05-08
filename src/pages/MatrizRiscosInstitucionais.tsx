@@ -55,6 +55,7 @@ function fmtBRL(v?: number) {
 export default function MatrizRiscosInstitucionais() {
   const [gestao, setGestao] = useState<Record<string, any>>({});
   const [filtroNivel, setFiltroNivel] = useState<string>("todos");
+  const [tabAtiva, setTabAtiva] = useState<string>("institucionais");
   const { data: riscosInst, refetch } = useRiscosInstitucionaisDB();
   const { data: processos } = useProcessosDB();
   const { data: projetos } = useProjetosDB();
