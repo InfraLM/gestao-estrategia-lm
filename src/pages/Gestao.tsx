@@ -4,12 +4,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Search, FolderKanban, TrendingUp, AlertTriangle, Clock } from "lucide-react";
+import { ArrowRight, Search, FolderKanban, TrendingUp, AlertTriangle, Clock, Download } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { SaudeBadge } from "@/components/badges";
 import { SubmissaoProjetoDialog } from "@/components/SubmissaoProjetoDialog";
 import { Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { exportToCSV } from "@/lib/exportCsv";
 
 export default function Gestao() {
   const [q, setQ] = useState("");
