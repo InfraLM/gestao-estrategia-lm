@@ -155,7 +155,7 @@ export default function MatrizRiscosInstitucionais() {
         <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Projetos com risco crítico</div><div className="text-2xl font-semibold mt-1 text-amber-700">{projetosCriticos.length}</div></CardContent></Card>
       </div>
 
-      <Tabs defaultValue="institucionais">
+      <Tabs value={tabAtiva} onValueChange={setTabAtiva}>
         <TabsList>
           <TabsTrigger value="institucionais"><Building2 className="h-3.5 w-3.5 mr-1" /> Institucionais</TabsTrigger>
           <TabsTrigger value="processos"><Workflow className="h-3.5 w-3.5 mr-1" /> Processos críticos</TabsTrigger>
