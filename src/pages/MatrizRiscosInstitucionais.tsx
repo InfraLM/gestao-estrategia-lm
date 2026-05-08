@@ -111,7 +111,38 @@ export default function MatrizRiscosInstitucionais() {
             Visão consolidada dos riscos institucionais, riscos críticos de processos e riscos críticos de projetos.
           </p>
         </div>
-        <UploadRiscosInstitucionais onDone={refetch} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => {
+              const ativo = (document.querySelector('[data-state="active"][role="tabpanel"]')?.getAttribute("data-tab")) || "institucionais";
+              if (ativo === "processos") {
+                exportToCSV("riscos_processos_criticos", riscosProcessosCriticos.map(({ processo, risco, n }) => ({
+                  Processo: processo.nome, Diretor: processo.diretor ?? "", Risco: risco.nome,
+                  Natureza: risco.natureza, Impacto: risco.impacto, Ocorrencia: risco.ocorrencia,
+                  Score: n.valor, Nivel: n.nivel, Status: risco.status, Prazo: risco.dueDate ?? "",
+                })));
+              } else if (ativo === "projetos") {
+                exportToCSV("projetos_criticos", projetosCriticos.map(({ p, riscoDesvio }) => ({
+                  ID: p.id, Projeto: p.nome, Diretor: p.diretor, Saude: p.saude, Status: p.status,
+                  Observacao: riscoDesvio?.obs || p.causaRaiz || "",
+                })));
+              } else {
+                exportToCSV("riscos_institucionais", riscosInstFiltrados.map(({ r, n }) => ({
+                  ID: r.id, Risco: r.nome, Natureza: r.natureza, Tipo: r.tipo,
+                  Impacto: r.impacto, Ocorrencia: r.ocorrencia, Score: n.valor, Nivel: n.nivel,
+                  ImpactoFinanceiro: r.impactoFinanceiro ?? "", Responsaveis: r.responsaveis,
+                  Prazo: r.dueDate, AcoesMitigadoras: r.acoesMitigadoras, Contingencia: r.contingencia ?? "",
+                })));
+              }
+            }}
+          >
+            <Download className="h-4 w-4" /> Exportar CSV
+          </Button>
+          <UploadRiscosInstitucionais onDone={refetch} />
+        </div>
       </div>
 
       {/* KPIs */}
