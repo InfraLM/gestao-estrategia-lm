@@ -118,7 +118,7 @@ export default function MatrizRiscosInstitucionais() {
             size="sm"
             className="gap-1.5"
             onClick={() => {
-              const ativo = (document.querySelector('[data-state="active"][role="tabpanel"]')?.getAttribute("data-tab")) || "institucionais";
+              const ativo = tabAtiva;
               if (ativo === "processos") {
                 exportToCSV("riscos_processos_criticos", riscosProcessosCriticos.map(({ processo, risco, n }) => ({
                   Processo: processo.nome, Diretor: processo.diretor ?? "", Risco: risco.nome,
