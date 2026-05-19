@@ -14,6 +14,7 @@ import { exportToCSV } from "@/lib/exportCsv";
 import { NATUREZAS_BPMO, TIPOS_BPMO, STATUS_RISCO_BPMO, IMPACTO_LABEL, PROB_LABEL, classifRiscoBPMO, type NaturezaBPMO, type TipoBPMO, type StatusRiscoBPMO } from "@/lib/bpmoRisco";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { DiretoresMultiSelect } from "@/components/DiretoresMultiSelect";
 
 
 type Processo = {
@@ -36,6 +37,7 @@ const MATRIZ_EDITS_KEY = "matriz-processos-edits-v1";
 const STORAGE_KEY = "gestao-processos-v1";
 const MC_SHARED_KEY = "mc-shared-actions-v1";
 const DIRETORES_BPMO = ["Yuri Garcia", "Iuri Franco", "Naira Yurie", "Ian Camilo", "Guilherme Vieira"];
+import { DiretoresMultiSelect } from "@/components/DiretoresMultiSelect";
 
 interface EscopoMapeamento {
   objetivo?: string;

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import processosSeed from "@/data/processos.json";
+import { DiretoresMultiSelect, parseDiretores } from "@/components/DiretoresMultiSelect";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -164,7 +165,7 @@ export default function MatrizProcessos() {
     const q = search.toLowerCase().trim();
     return data.filter(p => {
       if (nivel !== "todos" && p.nivel !== nivel) return false;
-      if (diretor !== "todos" && p.diretor !== diretor) return false;
+      if (diretor !== "todos" && !parseDiretores(p.diretor).includes(diretor)) return false;
       if (status !== "todos" && p.status !== status) return false;
       if (zonaE2E !== "todos") {
         const zs = zonesForProcesso(p.nome).map(z => z.id);
@@ -312,12 +313,12 @@ export default function MatrizProcessos() {
                         </Select>
                       </TableCell>
                       <TableCell>
-                        <Select value={p.diretor || ""} onValueChange={v => updateField(p.id, "diretor", v)}>
-                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
-                          <SelectContent>
-                            {DIRETORES.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
+                        <DiretoresMultiSelect
+                          value={p.diretor || ""}
+                          onChange={v => updateField(p.id, "diretor", v)}
+                          size="sm"
+                          placeholder="—"
+                        />
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">{p.dono}</TableCell>
                       <TableCell>
