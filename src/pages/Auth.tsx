@@ -76,7 +76,7 @@ export default function Auth() {
             <form onSubmit={signUp} className="space-y-3">
               <div><Label>Nome</Label><Input required value={name} onChange={e => setName(e.target.value)} /></div>
               <div><Label>E-mail</Label><Input type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
-              <div><Label>Senha</Label><PasswordInput show={showSignUpPwd} setShow={setShowSignUpPwd} minLength={6} /></div>
+              <div><Label>Senha</Label><div className="relative"><Input type={showSignUpPwd ? "text" : "password"} required minLength={6} value={password} onChange={e => setPassword(e.target.value)} className="pr-10" /><button type="button" onClick={() => setShowSignUpPwd(s => !s)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label={showSignUpPwd ? "Ocultar senha" : "Mostrar senha"} tabIndex={-1}>{showSignUpPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></div></div>
               <Button type="submit" disabled={busy} className="w-full">{busy && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Criar conta</Button>
             </form>
           </TabsContent>
