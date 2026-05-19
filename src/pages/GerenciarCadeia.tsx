@@ -228,7 +228,7 @@ function ProcessoDialog({
     setBusy(true);
     if (isEdit) {
       const { error } = await supabase.from("processos").update({
-        nome: form.nome, nivel: form.nivel || null, area: form.area || null, status: form.status,
+        nome: form.nome, nivel: form.nivel || null, area: form.area || null, status: form.status, diretor: form.diretor || null,
       }).eq("id", processo!.id);
       setBusy(false);
       if (error) return toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
@@ -237,6 +237,7 @@ function ProcessoDialog({
       const { error } = await supabase.from("processos").insert({
         id: form.id.trim(), nome: form.nome.trim(),
         nivel: form.nivel || null, area: form.area || null, status: form.status,
+        diretor: form.diretor || null,
         ativo: true,
       });
       setBusy(false);
