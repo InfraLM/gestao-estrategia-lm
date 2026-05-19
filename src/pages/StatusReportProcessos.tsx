@@ -203,6 +203,104 @@ export default function StatusReportProcessos() {
     return { mes, concluidas, planejadas };
   }), [linhas, meses6]);
 
+  const [exporting, setExporting] = useState(false);
+
+  const buildPayload = (): StatusReportPayload => ({
+    titulo: "Status Report de Processos — BPMO",
+    geradoEm: new Date(),
+    periodo,
+    filtros: {
+      diretor: diretorFilter === "todos" ? "Todos" : diretorFilter,
+      status: statusFilter === "todos" ? "Todos" : statusFilter,
+    },
+    resumo: counts,
+    processos: linhas.map(({ p, farol, completude }) => ({
+      id: p.id, nome: p.nome, nivel: p.nivel, diretor: p.diretor || "—",
+      dono: p.dono || "—", status: p.status, maturidade: p.maturidade ?? "—",
+      completude, farol: FAROL_LABEL[farol],
+    })),
+    aguardandoValidacao: aguardandoValidacao.map(p => ({
+      id: p.id, nome: p.nome, diretor: p.diretor || "—", dono: p.dono || "—", status: p.status,
+    })),
+    riscosCriticos: riscosCriticos.map(r => ({
+      processoNome: r.processoNome, diretor: r.diretor, descricao: r.descricao,
+      impacto: r.impacto, ocorrencia: r.ocorrencia, score: r.score, responsavel: r.responsavel,
+    })),
+    atividadesAtraso: atividadesAtraso.map(a => ({
+      processoNome: a.processoNome, descricao: a.descricao, responsavel: a.responsavel,
+      prazoLabel: a.prazoLabel, diasAtraso: a.diasAtraso, origem: a.origem,
+    })),
+  });
+
+  const runExport = async (fn: () => void, okMsg: string) => {
+    setExporting(true);
+    try {
+      await Promise.resolve(fn());
+      toast.success(okMsg);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Falha ao gerar arquivo";
+      toast.error(msg);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleExportPdf = () => {
+    const date = formatDateForFilename();
+    runExport(() => exportStatusReportPdf(buildPayload(), `status-report-processos-${date}.pdf`), "PDF gerado com sucesso");
+  };
+  const handleExportMd = () => {
+    const date = formatDateForFilename();
+    runExport(() => exportStatusReportMarkdown(buildPayload(), `status-report-processos-${date}.md`), "Markdown gerado com sucesso");
+  };
+  const handleExportMatrizXlsx = () => {
+    const date = formatDateForFilename();
+    runExport(() => exportToXlsx(`matriz-processos-${date}.xlsx`, [{
+      name: "Matriz",
+      rows: linhas.map(({ p, farol, completude }) => ({
+        ID: p.id, Nome: p.nome, Nível: p.nivel, Diretor: p.diretor || "",
+        Dono: p.dono || "", Status: p.status, Revisão: p.revisao ?? "",
+        Maturidade: p.maturidade ?? "", "KPI Valor": (p as any).kpiValor ?? "",
+        Completude: completude, Farol: FAROL_LABEL[farol],
+      })),
+    }]), "Matriz exportada (XLSX)");
+  };
+  const handleExportRiscosCsv = () => {
+    const date = formatDateForFilename();
+    runExport(() => exportToCsv(`riscos-processos-${date}.csv`, riscosCriticos.map(r => ({
+      Processo: r.processoNome, Diretor: r.diretor, Risco: r.descricao,
+      Impacto: r.impacto, Ocorrência: r.ocorrencia, Score: r.score, Responsável: r.responsavel,
+    }))), "Riscos exportados (CSV)");
+  };
+  const handleExportPlanosXlsx = () => {
+    const date = formatDateForFilename();
+    const planos = linhas.flatMap(({ p, d }) =>
+      (d.plano || []).map((a: any) => ({
+        Origem: "Plano de Ação", Processo: p.nome, Diretor: p.diretor || "",
+        Ação: a.oQueFazer || "", Justificativa: a.porQue || "",
+        Responsável: a.responsavel || "", "Data Prevista": a.prazo || "",
+        "Data Conclusão": a.dataConclusao || "", Status: a.status || "",
+        "Dias Atraso": (() => {
+          const r = diasEntre(a.prazo, a.dataConclusao || new Date().toISOString().slice(0,10));
+          return r ?? "";
+        })(),
+      }))
+    );
+    const mcRows = mcAcoes.map((a: any) => ({
+      Origem: "Melhoria Contínua", Processo: a.processoNome || "", Diretor: a.area || "",
+      Ação: a.oQueFazer || "", Justificativa: a.justificativa || "",
+      Responsável: a.responsavel || "", "Data Prevista": a.dataPrevista || "",
+      "Data Conclusão": a.dataConclusao || "", Status: a.status || "",
+      "Dias Atraso": (() => {
+        const r = diasEntre(a.dataPrevista, a.dataConclusao || new Date().toISOString().slice(0,10));
+        return r ?? "";
+      })(),
+    }));
+    runExport(() => exportToXlsx(`planos-acao-processos-${date}.xlsx`, [
+      { name: "Planos de Ação", rows: [...planos, ...mcRows] },
+    ]), "Planos de ação exportados (XLSX)");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
