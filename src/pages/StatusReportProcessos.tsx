@@ -424,3 +424,160 @@ function MonthlyBars({ data, accent }: { data: { mes: string; concluidas: number
     </div>
   );
 }
+
+function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] }) {
+  const hoje = new Date().toISOString().slice(0, 10);
+  const isAbertoAcao = (s: string) => s !== "Concluído" && s !== "Cancelado";
+  const isAbertoRisco = (s: string) => s !== "Mitigado" && s !== "Aceito";
+
+  const acoesIdx = acoes.map(a => {
+    const aberto = isAbertoAcao(a.status);
+    const refConc = a.dataConclusao ?? (aberto ? hoje : undefined);
+    const descol = diasEntre(a.dataPrevista, refConc);
+    const tempoStatus = diasEntre(a.statusChangedAt, hoje);
+    return { ...a, descol, tempoStatus, aberto };
+  });
+  const riscosIdx = riscos.map(r => {
+    const aberto = isAbertoRisco(r.status);
+    const refConc = r.dataConclusao ?? (aberto ? hoje : undefined);
+    const descol = diasEntre(r.prazo, refConc);
+    const tempoStatus = diasEntre(r.statusChangedAt, hoje);
+    return { ...r, descol, tempoStatus, aberto };
+  });
+
+  const atrasadasAcoes = acoesIdx.filter(a => a.descol != null && a.descol > 0 && a.aberto).sort((a, b) => b.descol - a.descol);
+  const atrasadosRiscos = riscosIdx.filter(r => r.descol != null && r.descol > 0 && r.aberto).sort((a, b) => b.descol - a.descol);
+  const paradasAcoes = acoesIdx.filter(a => a.aberto && a.tempoStatus != null && a.tempoStatus >= 30).sort((a, b) => b.tempoStatus - a.tempoStatus);
+
+  const totalAbertas = acoesIdx.filter(a => a.aberto).length;
+  const totalRiscosAbertos = riscosIdx.filter(r => r.aberto).length;
+  const mediaDescolAcoes = atrasadasAcoes.length ? Math.round(atrasadasAcoes.reduce((s, a) => s + a.descol, 0) / atrasadasAcoes.length) : 0;
+
+  return (
+    <Card className="border-indigo-200">
+      <CardHeader className="py-3">
+        <CardTitle className="text-base flex items-center gap-2 text-indigo-700">
+          <CalendarClock className="h-4 w-4" /> Melhoria Contínua · Status & Descolamento de Datas
+        </CardTitle>
+        <p className="text-xs text-muted-foreground">
+          Indicadores do BPMO/Melhoria Contínua: tempo no status atual e descolamento entre data prevista e conclusão (positivo = atraso, negativo = adiantado).
+        </p>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="rounded-lg border p-3">
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Ações em aberto</div>
+            <div className="text-2xl font-semibold tabular-nums">{totalAbertas}</div>
+          </div>
+          <div className="rounded-lg border p-3">
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Ações atrasadas</div>
+            <div className="text-2xl font-semibold tabular-nums text-red-700">{atrasadasAcoes.length}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Descol. médio: <span className="tabular-nums">+{mediaDescolAcoes}d</span></div>
+          </div>
+          <div className="rounded-lg border p-3">
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Riscos em aberto</div>
+            <div className="text-2xl font-semibold tabular-nums">{totalRiscosAbertos}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Atrasados: <span className="tabular-nums text-red-700">{atrasadosRiscos.length}</span></div>
+          </div>
+          <div className="rounded-lg border p-3">
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1"><Timer className="h-3 w-3" /> Paradas ≥ 30d</div>
+            <div className="text-2xl font-semibold tabular-nums text-amber-700">{paradasAcoes.length}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Sem mudança de status</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div>
+            <div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1"><Clock className="h-3 w-3" /> Top ações atrasadas</div>
+            <div className="rounded-lg border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Ação</TableHead>
+                    <TableHead className="w-[110px]">Status</TableHead>
+                    <TableHead className="w-[80px]">Δ dias</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {atrasadasAcoes.slice(0, 6).map(a => (
+                    <TableRow key={a.id}>
+                      <TableCell className="text-xs">
+                        <div className="font-medium">{a.oQueFazer}</div>
+                        <div className="text-[10px] text-muted-foreground">{a.area} · {a.responsavel || "—"} · prev. {a.dataPrevista}</div>
+                      </TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px]">{a.status}</Badge></TableCell>
+                      <TableCell className="tabular-nums text-xs text-red-700 font-medium">+{a.descol}d</TableCell>
+                    </TableRow>
+                  ))}
+                  {atrasadasAcoes.length === 0 && (
+                    <TableRow><TableCell colSpan={3} className="text-center text-xs text-muted-foreground py-4">Sem atrasos.</TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          <div>
+            <div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1"><Timer className="h-3 w-3" /> Ações paradas há mais tempo (sem mudar de status)</div>
+            <div className="rounded-lg border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Ação</TableHead>
+                    <TableHead className="w-[110px]">Status</TableHead>
+                    <TableHead className="w-[90px]">Há</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paradasAcoes.slice(0, 6).map(a => (
+                    <TableRow key={a.id}>
+                      <TableCell className="text-xs">
+                        <div className="font-medium">{a.oQueFazer}</div>
+                        <div className="text-[10px] text-muted-foreground">{a.area} · desde {a.statusChangedAt}</div>
+                      </TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px]">{a.status}</Badge></TableCell>
+                      <TableCell className="tabular-nums text-xs text-amber-700 font-medium">{a.tempoStatus}d</TableCell>
+                    </TableRow>
+                  ))}
+                  {paradasAcoes.length === 0 && (
+                    <TableRow><TableCell colSpan={3} className="text-center text-xs text-muted-foreground py-4">Nenhuma ação parada há 30 dias ou mais.</TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </div>
+
+        {atrasadosRiscos.length > 0 && (
+          <div>
+            <div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1"><ShieldAlert className="h-3 w-3" /> Riscos com prazo de mitigação estourado</div>
+            <div className="rounded-lg border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Processo · Risco</TableHead>
+                    <TableHead className="w-[120px]">Status</TableHead>
+                    <TableHead className="w-[80px]">Δ dias</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {atrasadosRiscos.slice(0, 6).map(r => (
+                    <TableRow key={r.id}>
+                      <TableCell className="text-xs">
+                        <div className="font-medium">{r.risco}</div>
+                        <div className="text-[10px] text-muted-foreground">{r.processoNome} · prazo {r.prazo}</div>
+                      </TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px]">{r.status}</Badge></TableCell>
+                      <TableCell className="tabular-nums text-xs text-red-700 font-medium">+{r.descol}d</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
