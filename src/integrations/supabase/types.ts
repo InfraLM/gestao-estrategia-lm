@@ -706,6 +706,8 @@ export type Database = {
       }
       processos: {
         Row: {
+          area: string | null
+          ativo: boolean
           clientes: Json
           created_at: string
           diretor: string | null
@@ -713,6 +715,10 @@ export type Database = {
           dono: string | null
           fornecedores: Json
           id: string
+          imagem_fluxo_url: string | null
+          kpi_meta: number | null
+          kpi_nome: string | null
+          kpi_unidade: string | null
           kpi_valor: number | null
           maturidade: number | null
           nivel: string | null
@@ -723,6 +729,8 @@ export type Database = {
           vinculo: Json
         }
         Insert: {
+          area?: string | null
+          ativo?: boolean
           clientes?: Json
           created_at?: string
           diretor?: string | null
@@ -730,6 +738,10 @@ export type Database = {
           dono?: string | null
           fornecedores?: Json
           id: string
+          imagem_fluxo_url?: string | null
+          kpi_meta?: number | null
+          kpi_nome?: string | null
+          kpi_unidade?: string | null
           kpi_valor?: number | null
           maturidade?: number | null
           nivel?: string | null
@@ -740,6 +752,8 @@ export type Database = {
           vinculo?: Json
         }
         Update: {
+          area?: string | null
+          ativo?: boolean
           clientes?: Json
           created_at?: string
           diretor?: string | null
@@ -747,6 +761,10 @@ export type Database = {
           dono?: string | null
           fornecedores?: Json
           id?: string
+          imagem_fluxo_url?: string | null
+          kpi_meta?: number | null
+          kpi_nome?: string | null
+          kpi_unidade?: string | null
           kpi_valor?: number | null
           maturidade?: number | null
           nivel?: string | null
