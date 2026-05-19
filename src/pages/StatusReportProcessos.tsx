@@ -5,8 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, Clock, CheckCircle2, Map, Rocket, Timer, CalendarClock } from "lucide-react";
+import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, Clock, CheckCircle2, Map, Rocket, Timer, CalendarClock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  exportStatusReportPdf,
+  exportStatusReportMarkdown,
+  exportToXlsx,
+  exportToCsv,
+  formatDateForFilename,
+  type StatusReportPayload,
+} from "@/utils/exportUtils";
 
 type Processo = {
   id: string; nome: string; nivel: string; revisao: number | null;
