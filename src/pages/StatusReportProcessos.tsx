@@ -249,8 +249,50 @@ export default function StatusReportProcessos() {
         </Select>
       </CardContent></Card>
 
-      {/* === BPMO · Melhoria Contínua: indicadores de status e descolamento === */}
-      <MelhoriaIndicadores acoes={mcAcoes} riscos={mcRiscos} />
+      {/* === BPMO · Status & Descolamento (Melhoria Contínua + Plano de Ação + Matriz de Riscos) === */}
+      <MelhoriaIndicadores
+        acoes={useMemo(() => {
+          const mc = (mcAcoes || []).map(a => ({ ...a, _origem: "Melhoria Contínua" }));
+          const planos: any[] = [];
+          linhas.forEach(({ p, d }) => {
+            (d.plano || []).forEach((a: any) => planos.push({
+              id: `plano-${p.id}-${a.id}`,
+              oQueFazer: a.oQueFazer,
+              area: p.diretor || "—",
+              responsavel: a.responsavel,
+              dataPrevista: a.prazo,
+              dataConclusao: a.dataConclusao,
+              status: a.status,
+              statusChangedAt: a.statusChangedAt,
+              processoNome: p.nome,
+              _origem: "Plano de Ação",
+            }));
+          });
+          return [...mc, ...planos];
+        }, [mcAcoes, linhas])}
+        riscos={useMemo(() => {
+          const mc = (mcRiscos || []).map(r => ({ ...r, _origem: "Melhoria Contínua" }));
+          const bpmo: any[] = [];
+          linhas.forEach(({ p, d }) => {
+            (d.riscos || []).forEach((r: any) => bpmo.push({
+              id: `risco-${p.id}-${r.id}`,
+              risco: r.nome || r.descricao,
+              natureza: r.natureza,
+              tipo: r.tipo,
+              impacto: r.impacto,
+              probabilidade: r.ocorrencia,
+              prazo: r.prazo,
+              dataConclusao: r.dataConclusao,
+              status: r.status,
+              statusChangedAt: r.statusChangedAt,
+              responsavel: r.responsavel,
+              processoNome: p.nome,
+              _origem: "Matriz de Riscos",
+            }));
+          });
+          return [...mc, ...bpmo];
+        }, [mcRiscos, linhas])}
+      />
 
       {/* === Riscos críticos === */}
       <Card className="border-red-200">
