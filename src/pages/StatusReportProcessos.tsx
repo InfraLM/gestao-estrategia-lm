@@ -597,23 +597,25 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
                 <TableHeader>
                   <TableRow>
                     <TableHead>Ação</TableHead>
+                    <TableHead className="w-[120px]">Origem</TableHead>
                     <TableHead className="w-[110px]">Status</TableHead>
                     <TableHead className="w-[80px]">Δ dias</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {atrasadasAcoes.slice(0, 6).map(a => (
+                  {atrasadasAcoes.slice(0, 8).map(a => (
                     <TableRow key={a.id}>
                       <TableCell className="text-xs">
                         <div className="font-medium">{a.oQueFazer}</div>
                         <div className="text-[10px] text-muted-foreground">{a.area} · {a.responsavel || "—"} · prev. {a.dataPrevista}</div>
                       </TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px]">{a._origem || "—"}</Badge></TableCell>
                       <TableCell><Badge variant="outline" className="text-[10px]">{a.status}</Badge></TableCell>
                       <TableCell className="tabular-nums text-xs text-red-700 font-medium">+{a.descol}d</TableCell>
                     </TableRow>
                   ))}
                   {atrasadasAcoes.length === 0 && (
-                    <TableRow><TableCell colSpan={3} className="text-center text-xs text-muted-foreground py-4">Sem atrasos.</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={4} className="text-center text-xs text-muted-foreground py-4">Sem atrasos.</TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>
