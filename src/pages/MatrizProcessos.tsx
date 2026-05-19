@@ -313,12 +313,12 @@ export default function MatrizProcessos() {
                         </Select>
                       </TableCell>
                       <TableCell>
-                        <Select value={p.diretor || ""} onValueChange={v => updateField(p.id, "diretor", v)}>
-                          <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
-                          <SelectContent>
-                            {DIRETORES.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
+                        <DiretoresMultiSelect
+                          value={p.diretor || ""}
+                          onChange={v => updateField(p.id, "diretor", v)}
+                          size="sm"
+                          placeholder="—"
+                        />
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">{p.dono}</TableCell>
                       <TableCell>
