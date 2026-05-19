@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const NIVEIS = ["Gerencial", "Finalístico", "Suporte", "Outros"];
 const STATUSES = ["MAPEAMENTO", "VALIDAÇÃO INTERNA", "APROVAÇÃO DIRETORIA", "REVISÃO CONCLUÍDA VIGENTE"];
+const DIRETORES = ["Yuri Garcia", "Iuri Franco", "Naira Yurie", "Ian Camilo", "Guilherme Vieira"];
 
 const nivelColors: Record<string, string> = {
   "Gerencial": "bg-violet-500/15 text-violet-700 border-violet-500/30",
@@ -202,7 +203,7 @@ function ProcessoDialog({
   const { toast } = useToast();
   const isEdit = !!processo;
   const [form, setForm] = useState({
-    id: "", nome: "", nivel: "", area: "", status: "MAPEAMENTO",
+    id: "", nome: "", nivel: "", area: "", status: "MAPEAMENTO", diretor: "",
   });
   const [busy, setBusy] = useState(false);
 
@@ -214,6 +215,7 @@ function ProcessoDialog({
         nivel: processo?.nivel || "",
         area: processo?.area || "",
         status: processo?.status || "MAPEAMENTO",
+        diretor: processo?.diretor || "",
       });
     }
   }, [open, processo]);
@@ -226,7 +228,7 @@ function ProcessoDialog({
     setBusy(true);
     if (isEdit) {
       const { error } = await supabase.from("processos").update({
-        nome: form.nome, nivel: form.nivel || null, area: form.area || null, status: form.status,
+        nome: form.nome, nivel: form.nivel || null, area: form.area || null, status: form.status, diretor: form.diretor || null,
       }).eq("id", processo!.id);
       setBusy(false);
       if (error) return toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
@@ -235,6 +237,7 @@ function ProcessoDialog({
       const { error } = await supabase.from("processos").insert({
         id: form.id.trim(), nome: form.nome.trim(),
         nivel: form.nivel || null, area: form.area || null, status: form.status,
+        diretor: form.diretor || null,
         ativo: true,
       });
       setBusy(false);
@@ -275,9 +278,18 @@ function ProcessoDialog({
               </Select>
             </div>
           </div>
-          <div>
-            <Label>Área</Label>
-            <Input value={form.area} onChange={e => setForm({ ...form, area: e.target.value })} placeholder="Ex.: Comercial" />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Área</Label>
+              <Input value={form.area} onChange={e => setForm({ ...form, area: e.target.value })} placeholder="Ex.: Comercial" />
+            </div>
+            <div>
+              <Label>Diretor</Label>
+              <Select value={form.diretor} onValueChange={v => setForm({ ...form, diretor: v })}>
+                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                <SelectContent>{DIRETORES.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
         <DialogFooter>
