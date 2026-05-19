@@ -9,10 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Plus, Workflow, Target as TargetIcon, ListChecks, Search, Upload, Download, AlertTriangle, Link2 } from "lucide-react";
+import { ArrowLeft, Plus, Workflow, Target as TargetIcon, ListChecks, Search, Upload, Download, AlertTriangle, Link2, Sparkles, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProcessosDB } from "@/hooks/useProcessosDB";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const AREAS = [
   "Comercial","Geração de Demanda","CX","Áudio Visual","Infra & Tech",
