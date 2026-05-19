@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, Clock, CheckCircle2, Map, Rocket, Timer, CalendarClock, Loader2 } from "lucide-react";
+import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, Clock, CheckCircle2, Map as MapIcon, Rocket, Timer, CalendarClock, Loader2, PieChart as PieIcon, BarChart3 } from "lucide-react";
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
@@ -371,6 +372,15 @@ export default function StatusReportProcessos() {
         </Select>
       </CardContent></Card>
 
+      {/* === Indicadores visuais === */}
+      <IndicadoresGraficos
+        counts={counts}
+        linhas={linhas}
+        riscosCriticos={riscosCriticos}
+        atividadesAtraso={atividadesAtraso}
+      />
+
+
       {/* === BPMO · Status & Descolamento (Melhoria Contínua + Plano de Ação + Matriz de Riscos) === */}
       <MelhoriaIndicadores
         acoes={useMemo(() => {
@@ -536,7 +546,7 @@ export default function StatusReportProcessos() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="py-3">
-            <CardTitle className="text-base flex items-center gap-2"><Map className="h-4 w-4 text-primary" /> Mapeamento mês a mês</CardTitle>
+            <CardTitle className="text-base flex items-center gap-2"><MapIcon className="h-4 w-4 text-primary" /> Mapeamento mês a mês</CardTitle>
             <p className="text-xs text-muted-foreground">Atividades de mapeamento concluídas por mês (últimos 6 meses).</p>
           </CardHeader>
           <CardContent>
@@ -561,30 +571,170 @@ export default function StatusReportProcessos() {
 // ====== Helpers / sub-components ======
 
 function MonthlyBars({ data, accent }: { data: { mes: string; concluidas: number; planejadas: number }[]; accent: string }) {
-  const max = Math.max(1, ...data.map(d => Math.max(d.concluidas, d.planejadas)));
   const totalConcluidas = data.reduce((s, d) => s + d.concluidas, 0);
   const totalPlanejadas = data.reduce((s, d) => s + d.planejadas, 0);
+  const accentColor = accent.includes("emerald") ? "hsl(160 84% 39%)" : "hsl(var(--primary))";
   return (
-    <div className="space-y-3">
-      <div className="flex items-end gap-3 h-40">
-        {data.map(d => (
-          <div key={d.mes} className="flex-1 flex flex-col items-center gap-1">
-            <div className="w-full flex items-end gap-1 h-32">
-              <div className="flex-1 bg-muted rounded-t" style={{ height: `${(d.planejadas / max) * 100}%` }} title={`Planejadas: ${d.planejadas}`} />
-              <div className={`flex-1 ${accent} rounded-t`} style={{ height: `${(d.concluidas / max) * 100}%` }} title={`Concluídas: ${d.concluidas}`} />
-            </div>
-            <div className="text-[10px] text-muted-foreground tabular-nums">{d.mes}</div>
-            <div className="text-xs font-semibold tabular-nums">{d.concluidas}<span className="text-muted-foreground font-normal">/{d.planejadas}</span></div>
-          </div>
-        ))}
+    <div className="space-y-2">
+      <div className="h-44 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+            <XAxis dataKey="mes" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
+            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+            <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" />
+            <Bar dataKey="planejadas" name="Planejadas" fill="hsl(var(--muted))" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="concluidas" name="Concluídas" fill={accentColor} radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
-      <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-2">
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1"><span className="h-2 w-3 inline-block bg-muted rounded-sm" /> Planejadas</span>
-          <span className="flex items-center gap-1"><span className={`h-2 w-3 inline-block ${accent} rounded-sm`} /> Concluídas</span>
+      <div className="flex items-center justify-end text-xs text-muted-foreground border-t pt-2">
+        <div className="tabular-nums font-medium text-foreground">
+          Total: {totalConcluidas}/{totalPlanejadas} ({totalPlanejadas ? Math.round((totalConcluidas / totalPlanejadas) * 100) : 0}%)
         </div>
-        <div className="tabular-nums font-medium text-foreground">Total: {totalConcluidas}/{totalPlanejadas} ({totalPlanejadas ? Math.round((totalConcluidas / totalPlanejadas) * 100) : 0}%)</div>
       </div>
+    </div>
+  );
+}
+
+function IndicadoresGraficos({ counts, linhas, riscosCriticos, atividadesAtraso }: {
+  counts: { verde: number; amarelo: number; vermelho: number };
+  linhas: Array<{ p: Processo; farol: "verde" | "amarelo" | "vermelho" }>;
+  riscosCriticos: Array<{ score: number; processoNome: string }>;
+  atividadesAtraso: Array<{ origem: string; diasAtraso: number }>;
+}) {
+  const semaforoData = [
+    { name: "On-Track", value: counts.verde, color: "hsl(160 84% 39%)" },
+    { name: "Alerta", value: counts.amarelo, color: "hsl(38 92% 50%)" },
+    { name: "Off-Track", value: counts.vermelho, color: "hsl(0 84% 60%)" },
+  ].filter(d => d.value > 0);
+  const total = counts.verde + counts.amarelo + counts.vermelho;
+
+  const porStatus = useMemo(() => {
+    const m = new Map<string, number>();
+    linhas.forEach(({ p }) => m.set(p.status || "—", (m.get(p.status || "—") || 0) + 1));
+    return Array.from(m, ([status, qtd]) => ({ status: status.length > 22 ? status.slice(0, 20) + "…" : status, qtd })).sort((a, b) => b.qtd - a.qtd);
+  }, [linhas]);
+
+  const porDiretor = useMemo(() => {
+    const m = new Map<string, number>();
+    linhas.forEach(({ p }) => m.set(p.diretor || "Sem diretor", (m.get(p.diretor || "Sem diretor") || 0) + 1));
+    return Array.from(m, ([diretor, qtd]) => ({ diretor, qtd })).sort((a, b) => b.qtd - a.qtd).slice(0, 8);
+  }, [linhas]);
+
+  const atrasoPorOrigem = useMemo(() => {
+    const m = new Map<string, { qtd: number; soma: number }>();
+    atividadesAtraso.forEach(a => {
+      const cur = m.get(a.origem) || { qtd: 0, soma: 0 };
+      cur.qtd++; cur.soma += a.diasAtraso;
+      m.set(a.origem, cur);
+    });
+    return Array.from(m, ([origem, v]) => ({ origem, qtd: v.qtd, media: Math.round(v.soma / Math.max(1, v.qtd)) }));
+  }, [atividadesAtraso]);
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <Card>
+        <CardHeader className="py-3">
+          <CardTitle className="text-base flex items-center gap-2"><PieIcon className="h-4 w-4 text-primary" /> Distribuição de Farol</CardTitle>
+          <p className="text-xs text-muted-foreground">Semáforo dos processos filtrados ({total} total).</p>
+        </CardHeader>
+        <CardContent className="h-56">
+          {total === 0 ? (
+            <div className="h-full flex items-center justify-center text-sm text-muted-foreground">Sem dados.</div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={semaforoData} dataKey="value" nameKey="name" innerRadius={42} outerRadius={70} paddingAngle={2}>
+                  {semaforoData.map((d) => <Cell key={d.name} fill={d.color} />)}
+                </Pie>
+                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+                <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="py-3">
+          <CardTitle className="text-base flex items-center gap-2"><BarChart3 className="h-4 w-4 text-primary" /> Processos por Status</CardTitle>
+          <p className="text-xs text-muted-foreground">Distribuição por etapa do ciclo.</p>
+        </CardHeader>
+        <CardContent className="h-56">
+          {porStatus.length === 0 ? (
+            <div className="h-full flex items-center justify-center text-sm text-muted-foreground">Sem dados.</div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={porStatus} layout="vertical" margin={{ top: 4, right: 16, left: 8, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+                <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <YAxis type="category" dataKey="status" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} width={140} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+                <Bar dataKey="qtd" name="Processos" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="py-3">
+          <CardTitle className="text-base flex items-center gap-2"><BarChart3 className="h-4 w-4 text-indigo-600" /> Processos por Diretor</CardTitle>
+          <p className="text-xs text-muted-foreground">Top 8 diretores por volume.</p>
+        </CardHeader>
+        <CardContent className="h-56">
+          {porDiretor.length === 0 ? (
+            <div className="h-full flex items-center justify-center text-sm text-muted-foreground">Sem dados.</div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={porDiretor} margin={{ top: 4, right: 8, left: -16, bottom: 36 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                <XAxis dataKey="diretor" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} angle={-30} textAnchor="end" interval={0} height={56} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+                <Bar dataKey="qtd" name="Processos" fill="hsl(238 75% 60%)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
+
+      {(riscosCriticos.length > 0 || atrasoPorOrigem.length > 0) && (
+        <Card className="lg:col-span-3">
+          <CardHeader className="py-3">
+            <CardTitle className="text-base flex items-center gap-2"><ShieldAlert className="h-4 w-4 text-rose-600" /> Riscos & Atrasos</CardTitle>
+            <p className="text-xs text-muted-foreground">Riscos críticos por score e atrasos por origem.</p>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={riscosCriticos.slice(0, 8).map(r => ({ nome: r.processoNome.length > 18 ? r.processoNome.slice(0, 16) + "…" : r.processoNome, score: r.score }))} margin={{ top: 4, right: 8, left: -16, bottom: 36 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                  <XAxis dataKey="nome" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} angle={-30} textAnchor="end" interval={0} height={56} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+                  <Bar dataKey="score" name="Score (I×O)" fill="hsl(0 84% 60%)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={atrasoPorOrigem} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                  <XAxis dataKey="origem" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
+                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" />
+                  <Bar dataKey="qtd" name="Qtd. atrasos" fill="hsl(38 92% 50%)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="media" name="Média (dias)" fill="hsl(0 84% 60%)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
