@@ -249,8 +249,50 @@ export default function StatusReportProcessos() {
         </Select>
       </CardContent></Card>
 
-      {/* === BPMO · Melhoria Contínua: indicadores de status e descolamento === */}
-      <MelhoriaIndicadores acoes={mcAcoes} riscos={mcRiscos} />
+      {/* === BPMO · Status & Descolamento (Melhoria Contínua + Plano de Ação + Matriz de Riscos) === */}
+      <MelhoriaIndicadores
+        acoes={useMemo(() => {
+          const mc = (mcAcoes || []).map(a => ({ ...a, _origem: "Melhoria Contínua" }));
+          const planos: any[] = [];
+          linhas.forEach(({ p, d }) => {
+            (d.plano || []).forEach((a: any) => planos.push({
+              id: `plano-${p.id}-${a.id}`,
+              oQueFazer: a.oQueFazer,
+              area: p.diretor || "—",
+              responsavel: a.responsavel,
+              dataPrevista: a.prazo,
+              dataConclusao: a.dataConclusao,
+              status: a.status,
+              statusChangedAt: a.statusChangedAt,
+              processoNome: p.nome,
+              _origem: "Plano de Ação",
+            }));
+          });
+          return [...mc, ...planos];
+        }, [mcAcoes, linhas])}
+        riscos={useMemo(() => {
+          const mc = (mcRiscos || []).map(r => ({ ...r, _origem: "Melhoria Contínua" }));
+          const bpmo: any[] = [];
+          linhas.forEach(({ p, d }) => {
+            (d.riscos || []).forEach((r: any) => bpmo.push({
+              id: `risco-${p.id}-${r.id}`,
+              risco: r.nome || r.descricao,
+              natureza: r.natureza,
+              tipo: r.tipo,
+              impacto: r.impacto,
+              probabilidade: r.ocorrencia,
+              prazo: r.prazo,
+              dataConclusao: r.dataConclusao,
+              status: r.status,
+              statusChangedAt: r.statusChangedAt,
+              responsavel: r.responsavel,
+              processoNome: p.nome,
+              _origem: "Matriz de Riscos",
+            }));
+          });
+          return [...mc, ...bpmo];
+        }, [mcRiscos, linhas])}
+      />
 
       {/* === Riscos críticos === */}
       <Card className="border-red-200">
@@ -473,10 +515,10 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
     <Card className="border-indigo-200">
       <CardHeader className="py-3">
         <CardTitle className="text-base flex items-center gap-2 text-indigo-700">
-          <CalendarClock className="h-4 w-4" /> Melhoria Contínua · Status & Descolamento de Datas
+          <CalendarClock className="h-4 w-4" /> Status & Descolamento de Datas
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          Indicadores do BPMO/Melhoria Contínua: tempo no status atual e descolamento entre data prevista e conclusão (positivo = atraso, negativo = adiantado).
+          Consolidado de Melhoria Contínua, Plano de Ação e Matriz de Riscos: tempo no status atual e descolamento entre data prevista e conclusão (positivo = atraso, negativo = adiantado).
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -555,23 +597,25 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
                 <TableHeader>
                   <TableRow>
                     <TableHead>Ação</TableHead>
+                    <TableHead className="w-[120px]">Origem</TableHead>
                     <TableHead className="w-[110px]">Status</TableHead>
                     <TableHead className="w-[80px]">Δ dias</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {atrasadasAcoes.slice(0, 6).map(a => (
+                  {atrasadasAcoes.slice(0, 8).map(a => (
                     <TableRow key={a.id}>
                       <TableCell className="text-xs">
                         <div className="font-medium">{a.oQueFazer}</div>
                         <div className="text-[10px] text-muted-foreground">{a.area} · {a.responsavel || "—"} · prev. {a.dataPrevista}</div>
                       </TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px]">{a._origem || "—"}</Badge></TableCell>
                       <TableCell><Badge variant="outline" className="text-[10px]">{a.status}</Badge></TableCell>
                       <TableCell className="tabular-nums text-xs text-red-700 font-medium">+{a.descol}d</TableCell>
                     </TableRow>
                   ))}
                   {atrasadasAcoes.length === 0 && (
-                    <TableRow><TableCell colSpan={3} className="text-center text-xs text-muted-foreground py-4">Sem atrasos.</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={4} className="text-center text-xs text-muted-foreground py-4">Sem atrasos.</TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>
@@ -617,17 +661,19 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
                 <TableHeader>
                   <TableRow>
                     <TableHead>Processo · Risco</TableHead>
+                    <TableHead className="w-[140px]">Origem</TableHead>
                     <TableHead className="w-[120px]">Status</TableHead>
                     <TableHead className="w-[80px]">Δ dias</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {atrasadosRiscos.slice(0, 6).map(r => (
+                  {atrasadosRiscos.slice(0, 8).map(r => (
                     <TableRow key={r.id}>
                       <TableCell className="text-xs">
                         <div className="font-medium">{r.risco}</div>
                         <div className="text-[10px] text-muted-foreground">{r.processoNome} · prazo {r.prazo}</div>
                       </TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px]">{r._origem || "—"}</Badge></TableCell>
                       <TableCell><Badge variant="outline" className="text-[10px]">{r.status}</Badge></TableCell>
                       <TableCell className="tabular-nums text-xs text-red-700 font-medium">+{r.descol}d</TableCell>
                     </TableRow>
