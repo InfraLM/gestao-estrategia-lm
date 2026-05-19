@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function Auth() {
   const { user, loading } = useAuth();
@@ -17,6 +17,30 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showSignInPwd, setShowSignInPwd] = useState(false);
+  const [showSignUpPwd, setShowSignUpPwd] = useState(false);
+
+  const PasswordInput = ({ show, setShow, minLength }: { show: boolean; setShow: (v: boolean) => void; minLength?: number }) => (
+    <div className="relative">
+      <Input
+        type={show ? "text" : "password"}
+        required
+        minLength={minLength}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="pr-10"
+      />
+      <button
+        type="button"
+        onClick={() => setShow(!show)}
+        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+        aria-label={show ? "Ocultar senha" : "Mostrar senha"}
+        tabIndex={-1}
+      >
+        {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+      </button>
+    </div>
+  );
 
   if (!loading && user) return <Navigate to="/" replace />;
 
