@@ -249,6 +249,9 @@ export default function StatusReportProcessos() {
         </Select>
       </CardContent></Card>
 
+      {/* === BPMO · Melhoria Contínua: indicadores de status e descolamento === */}
+      <MelhoriaIndicadores acoes={mcAcoes} riscos={mcRiscos} />
+
       {/* === Riscos críticos === */}
       <Card className="border-red-200">
         <CardHeader className="py-3">
