@@ -268,9 +268,11 @@ export default function MatrizProcessos() {
       </Card>
 
       <Tabs defaultValue="lista">
-        <TabsList>
+        <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="lista">Lista</TabsTrigger>
-          <TabsTrigger value="cadeia">Cadeia de Valor</TabsTrigger>
+          <TabsTrigger value="cadeia">Cadeia de Valor (Macro)</TabsTrigger>
+          <TabsTrigger value="galeria"><Network className="h-3.5 w-3.5 mr-1" />Galeria de Processos</TabsTrigger>
+          <TabsTrigger value="gerenciar"><Settings2 className="h-3.5 w-3.5 mr-1" />Gerenciar Cadeia</TabsTrigger>
           <TabsTrigger value="vinculo"><Target className="h-3.5 w-3.5 mr-1" />Vínculo Estratégico</TabsTrigger>
           <TabsTrigger value="e2e"><Workflow className="h-3.5 w-3.5 mr-1" />Matriz E2E</TabsTrigger>
           <TabsTrigger value="riscos"><ShieldAlert className="h-3.5 w-3.5 mr-1" />Dashboard de Riscos</TabsTrigger>
