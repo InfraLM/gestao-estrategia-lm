@@ -795,7 +795,7 @@ export default function MelhoriaContinua() {
                 );})}
                 {riscos.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center text-muted-foreground py-10">
+                    <TableCell colSpan={12} className="text-center text-muted-foreground py-10">
                       Nenhum risco cadastrado. Clique em <strong>Novo risco</strong> para vincular a um processo.
                     </TableCell>
                   </TableRow>
