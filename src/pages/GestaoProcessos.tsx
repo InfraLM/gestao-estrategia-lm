@@ -361,11 +361,12 @@ export default function GestaoProcessos() {
               <Field label="O que NÃO está incluso">
                 <Textarea rows={3} value={e.escopoExcluso || ""} onChange={ev => setEscopo({ escopoExcluso: ev.target.value })} />
               </Field>
-              <Field label="Patrocinador / Diretor">
-                <Select value={e.patrocinador || selected?.diretor || ""} onValueChange={v => setEscopo({ patrocinador: v })}>
-                  <SelectTrigger><SelectValue placeholder="Selecione um diretor" /></SelectTrigger>
-                  <SelectContent>{DIRETORES_BPMO.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
-                </Select>
+              <Field label="Patrocinador / Diretor(es)">
+                <DiretoresMultiSelect
+                  value={e.patrocinador || selected?.diretor || ""}
+                  onChange={v => setEscopo({ patrocinador: v })}
+                  options={DIRETORES_BPMO}
+                />
               </Field>
               <Field label="Owner do processo"><Input value={e.ownerProcesso || selected?.dono || ""} onChange={ev => setEscopo({ ownerProcesso: ev.target.value })} /></Field>
               <Field label="Equipe de mapeamento"><Input value={e.equipeMapeamento || ""} onChange={ev => setEscopo({ equipeMapeamento: ev.target.value })} /></Field>
