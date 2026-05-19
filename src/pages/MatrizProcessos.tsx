@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import processosSeed from "@/data/processos.json";
+import { DiretoresMultiSelect, parseDiretores } from "@/components/DiretoresMultiSelect";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
