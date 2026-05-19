@@ -558,7 +558,7 @@ export default function StatusReportProcessos() {
         </CardHeader>
         <CardContent className="p-0 overflow-x-auto">
           {atividadesAtraso.length === 0 ? (
-            <div className="text-sm text-muted-foreground p-6 text-center">Nenhuma atividade em atraso.</div>
+            <div className="text-sm text-muted-foreground p-6 text-center">Nenhuma atividade em atraso com prazo dentro do período selecionado.</div>
           ) : (
             <Table>
               <TableHeader>
