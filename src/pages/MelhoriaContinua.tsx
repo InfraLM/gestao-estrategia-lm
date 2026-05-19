@@ -636,26 +636,52 @@ export default function MelhoriaContinua() {
                     <label className="text-xs font-medium text-muted-foreground">Risco *</label>
                     <Input value={riscoDraft.risco ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, risco: e.target.value }))} placeholder="Descrição do risco" />
                   </div>
-                  <div>
-                    <label className="text-xs font-medium text-muted-foreground">Causa raiz</label>
-                    <Textarea rows={2} value={riscoDraft.causa ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, causa: e.target.value }))} />
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[11px] text-muted-foreground">A IA pode sugerir <strong>natureza</strong>, <strong>tipo</strong> e <strong>causa raiz</strong> com base na descrição e no processo.</p>
+                    <Button type="button" size="sm" variant="outline" className="gap-1.5" onClick={handleAIClassify} disabled={aiLoading}>
+                      {aiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Analisar com IA
+                    </Button>
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-medium text-muted-foreground">Impacto</label>
-                      <Select value={riscoDraft.impacto} onValueChange={v => setRiscoDraft(d => ({ ...d, impacto: v as any }))}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
+                      <label className="text-xs font-medium text-muted-foreground">Natureza</label>
+                      <Select value={riscoDraft.natureza} onValueChange={v => setRiscoDraft(d => ({ ...d, natureza: v as Natureza }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                         <SelectContent>
-                          {["Baixo","Médio","Alto","Crítico"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          {NATUREZAS.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-muted-foreground">Probabilidade</label>
-                      <Select value={riscoDraft.probabilidade} onValueChange={v => setRiscoDraft(d => ({ ...d, probabilidade: v as any }))}>
+                      <label className="text-xs font-medium text-muted-foreground">Tipo</label>
+                      <Select value={riscoDraft.tipo} onValueChange={v => setRiscoDraft(d => ({ ...d, tipo: v as TipoRisco }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent>
+                          {TIPOS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Causa raiz</label>
+                    <Textarea rows={2} value={riscoDraft.causa ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, causa: e.target.value }))} placeholder="Fonte/origem provável do risco" />
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Impacto (1-5)</label>
+                      <Select value={String(riscoDraft.impacto ?? 3)} onValueChange={v => setRiscoDraft(d => ({ ...d, impacto: Number(v) as Escala }))}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          {["Baixa","Média","Alta"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          {([1,2,3,4,5] as Escala[]).map(n => <SelectItem key={n} value={String(n)}>{n} · {IMPACTO_LABEL[n]}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Probabilidade (1-5)</label>
+                      <Select value={String(riscoDraft.probabilidade ?? 3)} onValueChange={v => setRiscoDraft(d => ({ ...d, probabilidade: Number(v) as Escala }))}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {([1,2,3,4,5] as Escala[]).map(n => <SelectItem key={n} value={String(n)}>{n} · {PROB_LABEL[n]}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -669,6 +695,15 @@ export default function MelhoriaContinua() {
                       </Select>
                     </div>
                   </div>
+                  {(() => {
+                    const c = classifRisco(riscoDraft.impacto as number, riscoDraft.probabilidade as number);
+                    return (
+                      <div className="rounded-md border p-2 text-xs flex items-center justify-between bg-muted/40">
+                        <span className="text-muted-foreground">Score: <strong className="tabular-nums">{c.score}</strong> ({riscoDraft.impacto ?? 0} × {riscoDraft.probabilidade ?? 0})</span>
+                        <Badge variant="outline" className={cn("text-[11px]", c.color)}>{c.nivel}</Badge>
+                      </div>
+                    );
+                  })()}
                   <div>
                     <label className="text-xs font-medium text-muted-foreground">Ação mitigadora</label>
                     <Textarea rows={2} value={riscoDraft.acaoMitigadora ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, acaoMitigadora: e.target.value }))} />
@@ -691,6 +726,7 @@ export default function MelhoriaContinua() {
               </DialogContent>
             </Dialog>
           </div>
+
 
           <Card className="shadow-card overflow-hidden">
             <Table>
