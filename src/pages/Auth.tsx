@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function Auth() {
   const { user, loading } = useAuth();
@@ -17,6 +17,30 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showSignInPwd, setShowSignInPwd] = useState(false);
+  const [showSignUpPwd, setShowSignUpPwd] = useState(false);
+
+  const PasswordInput = ({ show, setShow, minLength }: { show: boolean; setShow: (v: boolean) => void; minLength?: number }) => (
+    <div className="relative">
+      <Input
+        type={show ? "text" : "password"}
+        required
+        minLength={minLength}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="pr-10"
+      />
+      <button
+        type="button"
+        onClick={() => setShow(!show)}
+        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+        aria-label={show ? "Ocultar senha" : "Mostrar senha"}
+        tabIndex={-1}
+      >
+        {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+      </button>
+    </div>
+  );
 
   if (!loading && user) return <Navigate to="/" replace />;
 
@@ -65,7 +89,7 @@ export default function Auth() {
           <TabsContent value="signin">
             <form onSubmit={signIn} className="space-y-3">
               <div><Label>E-mail</Label><Input type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
-              <div><Label>Senha</Label><Input type="password" required value={password} onChange={e => setPassword(e.target.value)} /></div>
+              <div><Label>Senha</Label><PasswordInput show={showSignInPwd} setShow={setShowSignInPwd} /></div>
               <Button type="submit" disabled={busy} className="w-full">{busy && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Entrar</Button>
             </form>
           </TabsContent>
@@ -73,7 +97,7 @@ export default function Auth() {
             <form onSubmit={signUp} className="space-y-3">
               <div><Label>Nome</Label><Input required value={name} onChange={e => setName(e.target.value)} /></div>
               <div><Label>E-mail</Label><Input type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
-              <div><Label>Senha</Label><Input type="password" required minLength={6} value={password} onChange={e => setPassword(e.target.value)} /></div>
+              <div><Label>Senha</Label><PasswordInput show={showSignUpPwd} setShow={setShowSignUpPwd} minLength={6} /></div>
               <Button type="submit" disabled={busy} className="w-full">{busy && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Criar conta</Button>
             </form>
           </TabsContent>
