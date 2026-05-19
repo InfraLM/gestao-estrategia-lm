@@ -13,6 +13,7 @@ import { Sparkles, Loader2, FileUp, CheckCircle2, AlertTriangle, ShieldAlert, Re
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useProjetosDB } from "@/hooks/useProjetosDB";
 
 type Sub = any;
 
