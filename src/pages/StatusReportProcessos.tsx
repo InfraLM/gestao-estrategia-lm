@@ -661,17 +661,19 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
                 <TableHeader>
                   <TableRow>
                     <TableHead>Processo · Risco</TableHead>
+                    <TableHead className="w-[140px]">Origem</TableHead>
                     <TableHead className="w-[120px]">Status</TableHead>
                     <TableHead className="w-[80px]">Δ dias</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {atrasadosRiscos.slice(0, 6).map(r => (
+                  {atrasadosRiscos.slice(0, 8).map(r => (
                     <TableRow key={r.id}>
                       <TableCell className="text-xs">
                         <div className="font-medium">{r.risco}</div>
                         <div className="text-[10px] text-muted-foreground">{r.processoNome} · prazo {r.prazo}</div>
                       </TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px]">{r._origem || "—"}</Badge></TableCell>
                       <TableCell><Badge variant="outline" className="text-[10px]">{r.status}</Badge></TableCell>
                       <TableCell className="tabular-nums text-xs text-red-700 font-medium">+{r.descol}d</TableCell>
                     </TableRow>
