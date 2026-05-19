@@ -133,8 +133,21 @@ export default function StatusReportProcessos() {
   const [mcAcoes, setMcAcoes] = useState<any[]>([]);
   const [mcRiscos, setMcRiscos] = useState<any[]>([]);
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
+  const [opcaoPeriodo, setOpcaoPeriodo] = useState<string>("");
   const [diretorFilter, setDiretorFilter] = useState<string>("todos");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
+
+  const opcoesPeriodo = useMemo(() => buildOpcoesPeriodo(periodo), [periodo]);
+  // garante uma seleção válida ao trocar a periodicidade
+  useEffect(() => {
+    if (!opcoesPeriodo.find(o => o.value === opcaoPeriodo)) {
+      setOpcaoPeriodo(opcoesPeriodo[0]?.value ?? "");
+    }
+  }, [opcoesPeriodo, opcaoPeriodo]);
+  const janela: Janela = useMemo(
+    () => opcoesPeriodo.find(o => o.value === opcaoPeriodo)?.janela ?? opcoesPeriodo[0]?.janela ?? { start: new Date(), end: new Date(), label: "—" },
+    [opcoesPeriodo, opcaoPeriodo]
+  );
 
   useEffect(() => {
     setGestao(loadGestao());
