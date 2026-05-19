@@ -53,6 +53,65 @@ const STATUS_COLORS: Record<string, string> = {
 const periodos = ["Semanal", "Quinzenal", "Mensal"] as const;
 type Periodo = typeof periodos[number];
 
+// ===== Janela de período =====
+function startOfWeek(d: Date): Date {
+  const x = new Date(d); x.setHours(0, 0, 0, 0);
+  const day = x.getDay(); // 0=dom
+  const diff = day === 0 ? -6 : 1 - day; // segunda
+  x.setDate(x.getDate() + diff);
+  return x;
+}
+function addDays(d: Date, n: number): Date { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function fmtBR(d: Date): string { return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }); }
+function fmtBRFull(d: Date): string { return d.toLocaleDateString("pt-BR"); }
+
+type Janela = { start: Date; end: Date; label: string };
+
+function buildOpcoesPeriodo(periodo: Periodo): { value: string; label: string; janela: Janela }[] {
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  const out: { value: string; label: string; janela: Janela }[] = [];
+  if (periodo === "Semanal") {
+    const segAtual = startOfWeek(hoje);
+    for (let i = 0; i < 12; i++) {
+      const start = addDays(segAtual, -7 * i);
+      const end = addDays(start, 6);
+      out.push({
+        value: start.toISOString().slice(0, 10),
+        label: `${i === 0 ? "Semana atual · " : ""}${fmtBR(start)} a ${fmtBR(end)}`,
+        janela: { start, end, label: `Semana ${fmtBR(start)}–${fmtBR(end)}` },
+      });
+    }
+  } else if (periodo === "Quinzenal") {
+    const ref = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    for (let i = 0; i < 6; i++) {
+      const mRef = new Date(ref.getFullYear(), ref.getMonth() - i, 1);
+      const mes = mRef.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" }).replace(".", "");
+      const q1Start = new Date(mRef.getFullYear(), mRef.getMonth(), 1);
+      const q1End = new Date(mRef.getFullYear(), mRef.getMonth(), 15);
+      const q2Start = new Date(mRef.getFullYear(), mRef.getMonth(), 16);
+      const q2End = new Date(mRef.getFullYear(), mRef.getMonth() + 1, 0);
+      out.push({ value: `${q2Start.toISOString().slice(0, 10)}`, label: `Q2 ${mes} (16–${q2End.getDate()})`, janela: { start: q2Start, end: q2End, label: `Q2 ${mes}` } });
+      out.push({ value: `${q1Start.toISOString().slice(0, 10)}`, label: `Q1 ${mes} (01–15)`, janela: { start: q1Start, end: q1End, label: `Q1 ${mes}` } });
+    }
+  } else {
+    const ref = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    for (let i = 0; i < 12; i++) {
+      const start = new Date(ref.getFullYear(), ref.getMonth() - i, 1);
+      const end = new Date(ref.getFullYear(), ref.getMonth() - i + 1, 0);
+      const label = start.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+      out.push({ value: start.toISOString().slice(0, 10), label: label.charAt(0).toUpperCase() + label.slice(1), janela: { start, end, label } });
+    }
+  }
+  return out;
+}
+
+function inWindow(dateStr: string | undefined | null, j: Janela): boolean {
+  if (!dateStr) return false;
+  const d = new Date(dateStr); if (isNaN(d.getTime())) return false;
+  d.setHours(0, 0, 0, 0);
+  return d.getTime() >= j.start.getTime() && d.getTime() <= j.end.getTime();
+}
+
 function loadGestao(): Record<string, any> {
   try { return JSON.parse(localStorage.getItem(GP_KEY) || "{}"); } catch { return {}; }
 }
@@ -74,8 +133,21 @@ export default function StatusReportProcessos() {
   const [mcAcoes, setMcAcoes] = useState<any[]>([]);
   const [mcRiscos, setMcRiscos] = useState<any[]>([]);
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
+  const [opcaoPeriodo, setOpcaoPeriodo] = useState<string>("");
   const [diretorFilter, setDiretorFilter] = useState<string>("todos");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
+
+  const opcoesPeriodo = useMemo(() => buildOpcoesPeriodo(periodo), [periodo]);
+  // garante uma seleção válida ao trocar a periodicidade
+  useEffect(() => {
+    if (!opcoesPeriodo.find(o => o.value === opcaoPeriodo)) {
+      setOpcaoPeriodo(opcoesPeriodo[0]?.value ?? "");
+    }
+  }, [opcoesPeriodo, opcaoPeriodo]);
+  const janela: Janela = useMemo(
+    () => opcoesPeriodo.find(o => o.value === opcaoPeriodo)?.janela ?? opcoesPeriodo[0]?.janela ?? { start: new Date(), end: new Date(), label: "—" },
+    [opcoesPeriodo, opcaoPeriodo]
+  );
 
   useEffect(() => {
     setGestao(loadGestao());
@@ -146,6 +218,7 @@ export default function StatusReportProcessos() {
   }, [linhas]);
 
   // Atividades em atraso (atividades + plano de ação com prazo passado e não concluído)
+  // Filtra também pelo período selecionado: considera apenas itens cujo prazo cai dentro da janela.
   const atividadesAtraso = useMemo(() => {
     const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
     const out: { processoId: string; processoNome: string; descricao: string; responsavel: string; prazoLabel: string; diasAtraso: number; origem: "Atividade" | "Plano de Ação" }[] = [];
@@ -153,19 +226,19 @@ export default function StatusReportProcessos() {
     linhas.forEach(({ p, d }) => {
       (d.atividades || []).forEach((a: any) => {
         const prazo = parse(a.prazo);
-        if (prazo && prazo < hoje && a.status !== "Concluído") {
+        if (prazo && prazo < hoje && a.status !== "Concluído" && inWindow(a.prazo, janela)) {
           out.push({ processoId: p.id, processoNome: p.nome, descricao: a.descricao || a.titulo || "—", responsavel: a.responsavel || "—", prazoLabel: a.prazo, diasAtraso: Math.floor((hoje.getTime() - prazo.getTime()) / 86400000), origem: "Atividade" });
         }
       });
       (d.plano || []).forEach((a: any) => {
         const prazo = parse(a.prazo);
-        if (prazo && prazo < hoje && a.status !== "Concluído") {
+        if (prazo && prazo < hoje && a.status !== "Concluído" && inWindow(a.prazo, janela)) {
           out.push({ processoId: p.id, processoNome: p.nome, descricao: a.oQueFazer || "—", responsavel: a.responsavel || "—", prazoLabel: a.prazo, diasAtraso: Math.floor((hoje.getTime() - prazo.getTime()) / 86400000), origem: "Plano de Ação" });
         }
       });
     });
     return out.sort((a, b) => b.diasAtraso - a.diasAtraso);
-  }, [linhas]);
+  }, [linhas, janela]);
 
   // Séries mensais (últimos 6 meses)
   const meses6 = useMemo(() => {
@@ -209,7 +282,7 @@ export default function StatusReportProcessos() {
   const buildPayload = (): StatusReportPayload => ({
     titulo: "Status Report de Processos — BPMO",
     geradoEm: new Date(),
-    periodo,
+    periodo: `${periodo} · ${janela.label} (${fmtBRFull(janela.start)}–${fmtBRFull(janela.end)})`,
     filtros: {
       diretor: diretorFilter === "todos" ? "Todos" : diretorFilter,
       status: statusFilter === "todos" ? "Todos" : statusFilter,
@@ -310,7 +383,10 @@ export default function StatusReportProcessos() {
             <LineChart className="h-6 w-6 text-primary" /> Status Report de Processos
           </h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Acompanhamento periódico do mapeamento, riscos e melhorias. Última atualização: <span className="font-medium text-foreground">{new Date().toLocaleDateString("pt-BR")}</span>
+            Período: <span className="font-medium text-foreground">{periodo} · {janela.label}</span>
+            <span className="text-muted-foreground/80"> ({fmtBRFull(janela.start)} a {fmtBRFull(janela.end)})</span>
+            <span className="mx-2">·</span>
+            Gerado em <span className="font-medium text-foreground">{new Date().toLocaleDateString("pt-BR")}</span>
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -319,6 +395,12 @@ export default function StatusReportProcessos() {
               <button key={p} onClick={() => setPeriodo(p)} className={`h-8 px-3 text-sm rounded ${periodo === p ? "bg-foreground text-background" : "text-muted-foreground"}`}>{p}</button>
             ))}
           </div>
+          <Select value={opcaoPeriodo} onValueChange={setOpcaoPeriodo}>
+            <SelectTrigger className="w-[240px] h-9"><SelectValue placeholder="Selecione o período" /></SelectTrigger>
+            <SelectContent className="max-h-[320px]">
+              {opcoesPeriodo.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2" disabled={exporting}>
@@ -470,13 +552,13 @@ export default function StatusReportProcessos() {
       <Card className="border-amber-200">
         <CardHeader className="py-3">
           <CardTitle className="text-base flex items-center gap-2 text-amber-700">
-            <Clock className="h-4 w-4" /> Atividades em Atraso
+            <Clock className="h-4 w-4" /> Atividades em Atraso <span className="text-[11px] font-normal text-muted-foreground">· prazos no período</span>
             <Badge variant="outline" className="ml-2 text-xs">{atividadesAtraso.length}</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 overflow-x-auto">
           {atividadesAtraso.length === 0 ? (
-            <div className="text-sm text-muted-foreground p-6 text-center">Nenhuma atividade em atraso.</div>
+            <div className="text-sm text-muted-foreground p-6 text-center">Nenhuma atividade em atraso com prazo dentro do período selecionado.</div>
           ) : (
             <Table>
               <TableHeader>
