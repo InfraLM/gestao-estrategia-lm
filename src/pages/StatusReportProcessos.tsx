@@ -425,6 +425,15 @@ function MonthlyBars({ data, accent }: { data: { mes: string; concluidas: number
   );
 }
 
+function classifNivelBPMO(impacto?: number, probabilidade?: number): { score: number; nivel: "Baixo" | "Moderado" | "Alto" | "Extremo" | "—"; color: string } {
+  if (!impacto || !probabilidade) return { score: 0, nivel: "—", color: "bg-muted text-muted-foreground" };
+  const score = impacto * probabilidade;
+  if (score >= 15) return { score, nivel: "Extremo", color: "bg-rose-500/15 text-rose-700 border-rose-200" };
+  if (score >= 8)  return { score, nivel: "Alto",    color: "bg-orange-500/15 text-orange-700 border-orange-200" };
+  if (score >= 4)  return { score, nivel: "Moderado", color: "bg-amber-500/15 text-amber-700 border-amber-200" };
+  return { score, nivel: "Baixo", color: "bg-emerald-500/15 text-emerald-700 border-emerald-200" };
+}
+
 function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] }) {
   const hoje = new Date().toISOString().slice(0, 10);
   const isAbertoAcao = (s: string) => s !== "Concluído" && s !== "Cancelado";
@@ -442,16 +451,23 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
     const refConc = r.dataConclusao ?? (aberto ? hoje : undefined);
     const descol = diasEntre(r.prazo, refConc);
     const tempoStatus = diasEntre(r.statusChangedAt, hoje);
-    return { ...r, descol, tempoStatus, aberto };
+    const c = classifNivelBPMO(typeof r.impacto === "number" ? r.impacto : undefined, typeof r.probabilidade === "number" ? r.probabilidade : undefined);
+    return { ...r, descol, tempoStatus, aberto, _nivel: c.nivel, _score: c.score, _color: c.color };
   });
 
   const atrasadasAcoes = acoesIdx.filter(a => a.descol != null && a.descol > 0 && a.aberto).sort((a, b) => b.descol - a.descol);
   const atrasadosRiscos = riscosIdx.filter(r => r.descol != null && r.descol > 0 && r.aberto).sort((a, b) => b.descol - a.descol);
   const paradasAcoes = acoesIdx.filter(a => a.aberto && a.tempoStatus != null && a.tempoStatus >= 30).sort((a, b) => b.tempoStatus - a.tempoStatus);
+  const riscosCriticosBPMO = riscosIdx
+    .filter(r => r.aberto && (r._nivel === "Alto" || r._nivel === "Extremo"))
+    .sort((a, b) => b._score - a._score);
+  const totalExtremos = riscosCriticosBPMO.filter(r => r._nivel === "Extremo").length;
+  const totalAltos = riscosCriticosBPMO.filter(r => r._nivel === "Alto").length;
 
   const totalAbertas = acoesIdx.filter(a => a.aberto).length;
   const totalRiscosAbertos = riscosIdx.filter(r => r.aberto).length;
   const mediaDescolAcoes = atrasadasAcoes.length ? Math.round(atrasadasAcoes.reduce((s, a) => s + a.descol, 0) / atrasadasAcoes.length) : 0;
+
 
   return (
     <Card className="border-indigo-200">
@@ -464,7 +480,7 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <div className="rounded-lg border p-3">
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Ações em aberto</div>
             <div className="text-2xl font-semibold tabular-nums">{totalAbertas}</div>
@@ -479,12 +495,57 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
             <div className="text-2xl font-semibold tabular-nums">{totalRiscosAbertos}</div>
             <div className="text-[10px] text-muted-foreground mt-0.5">Atrasados: <span className="tabular-nums text-red-700">{atrasadosRiscos.length}</span></div>
           </div>
+          <div className="rounded-lg border p-3 border-rose-200 bg-rose-50/40">
+            <div className="text-[11px] uppercase tracking-wider text-rose-700 flex items-center gap-1"><ShieldAlert className="h-3 w-3" /> Riscos Extremos / Altos</div>
+            <div className="text-2xl font-semibold tabular-nums text-rose-700">{totalExtremos + totalAltos}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Extremos: <span className="tabular-nums text-rose-700">{totalExtremos}</span> · Altos: <span className="tabular-nums text-orange-700">{totalAltos}</span></div>
+          </div>
           <div className="rounded-lg border p-3">
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1"><Timer className="h-3 w-3" /> Paradas ≥ 30d</div>
             <div className="text-2xl font-semibold tabular-nums text-amber-700">{paradasAcoes.length}</div>
             <div className="text-[10px] text-muted-foreground mt-0.5">Sem mudança de status</div>
           </div>
         </div>
+
+        {riscosCriticosBPMO.length > 0 && (
+          <div>
+            <div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+              <ShieldAlert className="h-3 w-3 text-rose-700" /> Riscos Extremos & Altos do BPMO (I × P ≥ 8)
+            </div>
+            <div className="rounded-lg border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Processo · Risco</TableHead>
+                    <TableHead className="w-[110px]">Natureza</TableHead>
+                    <TableHead className="w-[140px]">Tipo</TableHead>
+                    <TableHead className="w-[140px]">Classificação</TableHead>
+                    <TableHead className="w-[120px]">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {riscosCriticosBPMO.map(r => (
+                    <TableRow key={r.id}>
+                      <TableCell className="text-xs">
+                        <div className="font-medium">{r.risco}</div>
+                        <div className="text-[10px] text-muted-foreground">{r.processoNome} · {r.responsavel || "—"}</div>
+                      </TableCell>
+                      <TableCell className="text-xs">{r.natureza || "—"}</TableCell>
+                      <TableCell className="text-xs">{r.tipo || "—"}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={`text-[10px] ${r._color}`}>
+                          {r._nivel} <span className="ml-1 tabular-nums opacity-70">({r.impacto}×{r.probabilidade}={r._score})</span>
+                        </Badge>
+                      </TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px]">{r.status}</Badge></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        )}
+
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>

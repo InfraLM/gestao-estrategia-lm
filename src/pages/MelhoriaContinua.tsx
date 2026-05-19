@@ -9,10 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Plus, Workflow, Target as TargetIcon, ListChecks, Search, Upload, Download, AlertTriangle, Link2 } from "lucide-react";
+import { ArrowLeft, Plus, Workflow, Target as TargetIcon, ListChecks, Search, Upload, Download, AlertTriangle, Link2, Sparkles, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProcessosDB } from "@/hooks/useProcessosDB";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const AREAS = [
   "Comercial","Geração de Demanda","CX","Áudio Visual","Infra & Tech",
@@ -43,14 +44,22 @@ interface Acao {
   statusHistory?: StatusEvent[];
 }
 
+export const NATUREZAS = ["Variação", "Ambiguidade", "Evento", "Emergente", "Condição de incerteza"] as const;
+export const TIPOS = ["Financeiro", "Legal", "Reputacional", "Processo operacional", "Recursos (Pessoas/Materiais)", "Tecnologia/Sistemas"] as const;
+export type Natureza = typeof NATUREZAS[number];
+export type TipoRisco = typeof TIPOS[number];
+export type Escala = 1 | 2 | 3 | 4 | 5;
+
 interface RiscoProcesso {
   id: string;
   processoId: string;
   processoNome: string;
   risco: string;
   causa: string;
-  impacto: "Baixo" | "Médio" | "Alto" | "Crítico";
-  probabilidade: "Baixa" | "Média" | "Alta";
+  natureza?: Natureza;
+  tipo?: TipoRisco;
+  impacto: Escala;        // 1..5
+  probabilidade: Escala;  // 1..5
   acaoMitigadora: string;
   responsavel: string;
   prazo: string;
@@ -89,12 +98,30 @@ const RISCO_STATUS_COLORS: Record<RiscoProcesso["status"], string> = {
   "Aceito": "bg-muted text-muted-foreground border-border",
 };
 
-const IMPACTO_COLORS: Record<RiscoProcesso["impacto"], string> = {
-  "Baixo": "bg-emerald-50 text-emerald-700 border-emerald-200",
-  "Médio": "bg-amber-50 text-amber-700 border-amber-200",
-  "Alto": "bg-orange-50 text-orange-700 border-orange-200",
-  "Crítico": "bg-rose-50 text-rose-700 border-rose-200",
-};
+// Classificação por score (Impacto × Probabilidade)
+//   1-3 Baixo · 4-6 Moderado · 8-12 Alto · 15-25 Extremo
+export type NivelRisco = "Baixo" | "Moderado" | "Alto" | "Extremo";
+export function classifRisco(impacto?: number, probabilidade?: number): { score: number; nivel: NivelRisco; color: string; cell: string } {
+  const score = (impacto || 0) * (probabilidade || 0);
+  if (score >= 15) return { score, nivel: "Extremo", color: "bg-rose-100 text-rose-800 border-rose-200", cell: "bg-rose-500 text-white" };
+  if (score >= 8)  return { score, nivel: "Alto",    color: "bg-orange-100 text-orange-800 border-orange-200", cell: "bg-orange-500 text-white" };
+  if (score >= 4)  return { score, nivel: "Moderado", color: "bg-amber-100 text-amber-800 border-amber-200", cell: "bg-amber-400 text-amber-950" };
+  return { score, nivel: "Baixo", color: "bg-emerald-100 text-emerald-800 border-emerald-200", cell: "bg-emerald-500 text-white" };
+}
+
+const IMPACTO_LABEL: Record<Escala, string> = { 1: "Insignificante", 2: "Baixo", 3: "Moderado", 4: "Alto", 5: "Crítico" };
+const PROB_LABEL: Record<Escala, string> = { 1: "Raro (<5%)", 2: "Improvável (5–15%)", 3: "Possível (15–40%)", 4: "Provável (40–70%)", 5: "Quase certo (>70%)" };
+
+// Migração: localStorage antigo gravava impacto/probabilidade como string
+function migrateRiscos(arr: any[]): RiscoProcesso[] {
+  const mapImp: Record<string, Escala> = { "Baixo": 2, "Médio": 3, "Alto": 4, "Crítico": 5 };
+  const mapProb: Record<string, Escala> = { "Baixa": 2, "Média": 3, "Alta": 4 };
+  return (arr || []).map((r: any) => ({
+    ...r,
+    impacto: typeof r.impacto === "number" ? r.impacto : (mapImp[r.impacto] ?? 3),
+    probabilidade: typeof r.probabilidade === "number" ? r.probabilidade : (mapProb[r.probabilidade] ?? 3),
+  }));
+}
 
 function diasEntre(a?: string, b?: string): number | null {
   if (!a || !b) return null;
@@ -143,20 +170,52 @@ function loadLS<T>(key: string, fallback: T): T {
 
 export default function MelhoriaContinua() {
   const [acoes, setAcoes] = useState<Acao[]>(() => loadLS(ACOES_KEY, SEED));
-  const [riscos, setRiscos] = useState<RiscoProcesso[]>(() => loadLS(RISCOS_KEY, SEED_RISCOS));
+  const [riscos, setRiscos] = useState<RiscoProcesso[]>(() => migrateRiscos(loadLS<any[]>(RISCOS_KEY, SEED_RISCOS as any)));
   const [areaSel, setAreaSel] = useState<Area | null>(null);
   const [q, setQ] = useState("");
   const [origemFilter, setOrigemFilter] = useState<string>("Todas");
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Partial<Acao>>({ origem: "OKRs da Área", status: "Backlog" });
   const [openRisco, setOpenRisco] = useState(false);
-  const [riscoDraft, setRiscoDraft] = useState<Partial<RiscoProcesso>>({ impacto: "Médio", probabilidade: "Média", status: "Aberto" });
+  const [riscoDraft, setRiscoDraft] = useState<Partial<RiscoProcesso>>({ impacto: 3, probabilidade: 3, status: "Aberto" });
+  const [aiLoading, setAiLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const { data: processos } = useProcessosDB();
 
   useEffect(() => { localStorage.setItem(ACOES_KEY, JSON.stringify(acoes)); }, [acoes]);
   useEffect(() => { localStorage.setItem(RISCOS_KEY, JSON.stringify(riscos)); }, [riscos]);
+
+  async function handleAIClassify() {
+    if (!riscoDraft.risco) { toast.error("Descreva o risco antes de pedir análise por IA."); return; }
+    setAiLoading(true);
+    try {
+      const proc = processos.find(p => p.id === riscoDraft.processoId);
+      const { data, error } = await supabase.functions.invoke("risco-classificar-ai", {
+        body: {
+          risco: riscoDraft.risco,
+          causa: riscoDraft.causa ?? "",
+          processoNome: proc?.nome ?? "",
+          impacto: riscoDraft.impacto,
+          probabilidade: riscoDraft.probabilidade,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setRiscoDraft(d => ({
+        ...d,
+        natureza: data.natureza,
+        tipo: data.tipo,
+        causa: d.causa && d.causa.trim() ? d.causa : data.causa_raiz,
+      }));
+      toast.success("IA classificou: " + data.natureza + " · " + data.tipo);
+    } catch (e: any) {
+      toast.error("Falha na análise: " + (e?.message ?? "erro"));
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
 
   const counts = useMemo(() => {
     const m = new Map<Area, number>();
@@ -239,8 +298,10 @@ export default function MelhoriaContinua() {
       processoNome: proc?.nome ?? "—",
       risco: riscoDraft.risco ?? "",
       causa: riscoDraft.causa ?? "",
-      impacto: (riscoDraft.impacto as RiscoProcesso["impacto"]) ?? "Médio",
-      probabilidade: (riscoDraft.probabilidade as RiscoProcesso["probabilidade"]) ?? "Média",
+      natureza: riscoDraft.natureza,
+      tipo: riscoDraft.tipo,
+      impacto: (typeof riscoDraft.impacto === "number" ? riscoDraft.impacto : 3) as Escala,
+      probabilidade: (typeof riscoDraft.probabilidade === "number" ? riscoDraft.probabilidade : 3) as Escala,
       acaoMitigadora: riscoDraft.acaoMitigadora ?? "",
       responsavel: riscoDraft.responsavel ?? "",
       prazo: riscoDraft.prazo ?? "",
@@ -248,9 +309,10 @@ export default function MelhoriaContinua() {
       statusChangedAt: at,
       statusHistory: [{ status, at }],
     }]);
-    setRiscoDraft({ impacto: "Médio", probabilidade: "Média", status: "Aberto" });
+    setRiscoDraft({ impacto: 3, probabilidade: 3, status: "Aberto" });
     setOpenRisco(false);
   }
+
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -574,26 +636,52 @@ export default function MelhoriaContinua() {
                     <label className="text-xs font-medium text-muted-foreground">Risco *</label>
                     <Input value={riscoDraft.risco ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, risco: e.target.value }))} placeholder="Descrição do risco" />
                   </div>
-                  <div>
-                    <label className="text-xs font-medium text-muted-foreground">Causa raiz</label>
-                    <Textarea rows={2} value={riscoDraft.causa ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, causa: e.target.value }))} />
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[11px] text-muted-foreground">A IA pode sugerir <strong>natureza</strong>, <strong>tipo</strong> e <strong>causa raiz</strong> com base na descrição e no processo.</p>
+                    <Button type="button" size="sm" variant="outline" className="gap-1.5" onClick={handleAIClassify} disabled={aiLoading}>
+                      {aiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Analisar com IA
+                    </Button>
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-medium text-muted-foreground">Impacto</label>
-                      <Select value={riscoDraft.impacto} onValueChange={v => setRiscoDraft(d => ({ ...d, impacto: v as any }))}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
+                      <label className="text-xs font-medium text-muted-foreground">Natureza</label>
+                      <Select value={riscoDraft.natureza} onValueChange={v => setRiscoDraft(d => ({ ...d, natureza: v as Natureza }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                         <SelectContent>
-                          {["Baixo","Médio","Alto","Crítico"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          {NATUREZAS.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-muted-foreground">Probabilidade</label>
-                      <Select value={riscoDraft.probabilidade} onValueChange={v => setRiscoDraft(d => ({ ...d, probabilidade: v as any }))}>
+                      <label className="text-xs font-medium text-muted-foreground">Tipo</label>
+                      <Select value={riscoDraft.tipo} onValueChange={v => setRiscoDraft(d => ({ ...d, tipo: v as TipoRisco }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent>
+                          {TIPOS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Causa raiz</label>
+                    <Textarea rows={2} value={riscoDraft.causa ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, causa: e.target.value }))} placeholder="Fonte/origem provável do risco" />
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Impacto (1-5)</label>
+                      <Select value={String(riscoDraft.impacto ?? 3)} onValueChange={v => setRiscoDraft(d => ({ ...d, impacto: Number(v) as Escala }))}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          {["Baixa","Média","Alta"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          {([1,2,3,4,5] as Escala[]).map(n => <SelectItem key={n} value={String(n)}>{n} · {IMPACTO_LABEL[n]}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Probabilidade (1-5)</label>
+                      <Select value={String(riscoDraft.probabilidade ?? 3)} onValueChange={v => setRiscoDraft(d => ({ ...d, probabilidade: Number(v) as Escala }))}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {([1,2,3,4,5] as Escala[]).map(n => <SelectItem key={n} value={String(n)}>{n} · {PROB_LABEL[n]}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -607,6 +695,15 @@ export default function MelhoriaContinua() {
                       </Select>
                     </div>
                   </div>
+                  {(() => {
+                    const c = classifRisco(riscoDraft.impacto as number, riscoDraft.probabilidade as number);
+                    return (
+                      <div className="rounded-md border p-2 text-xs flex items-center justify-between bg-muted/40">
+                        <span className="text-muted-foreground">Score: <strong className="tabular-nums">{c.score}</strong> ({riscoDraft.impacto ?? 0} × {riscoDraft.probabilidade ?? 0})</span>
+                        <Badge variant="outline" className={cn("text-[11px]", c.color)}>{c.nivel}</Badge>
+                      </div>
+                    );
+                  })()}
                   <div>
                     <label className="text-xs font-medium text-muted-foreground">Ação mitigadora</label>
                     <Textarea rows={2} value={riscoDraft.acaoMitigadora ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, acaoMitigadora: e.target.value }))} />
@@ -630,13 +727,16 @@ export default function MelhoriaContinua() {
             </Dialog>
           </div>
 
+
           <Card className="shadow-card overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Processo</TableHead>
                   <TableHead>Risco</TableHead>
-                  <TableHead className="w-[100px]">Impacto</TableHead>
+                  <TableHead className="w-[130px]">Natureza</TableHead>
+                  <TableHead className="w-[150px]">Tipo</TableHead>
+                  <TableHead className="w-[130px]">Classificação</TableHead>
                   <TableHead>Ação Mitigadora</TableHead>
                   <TableHead className="w-[140px]">Responsável</TableHead>
                   <TableHead className="w-[150px]">Prevista</TableHead>
@@ -649,15 +749,22 @@ export default function MelhoriaContinua() {
                 {riscos.map(r => {
                   const diasNoStatus = r.statusChangedAt ? diasEntre(r.statusChangedAt, hoje) : null;
                   const descol = diasEntre(r.prazo, r.dataConclusao ?? (r.status !== "Mitigado" && r.status !== "Aceito" ? hoje : undefined));
+                  const c = classifRisco(r.impacto, r.probabilidade);
                   return (
                   <TableRow key={r.id}>
                     <TableCell className="text-xs"><span className="inline-flex items-center gap-1"><Link2 className="h-3 w-3" /> {r.processoNome}</span></TableCell>
                     <TableCell className="font-medium text-sm">
                       {r.risco}
                       {r.causa && <div className="text-xs text-muted-foreground mt-0.5">Causa: {r.causa}</div>}
-                      <div className="text-[10px] text-muted-foreground mt-0.5"><Badge variant="outline" className={cn("text-[10px]", IMPACTO_COLORS[r.impacto])}>{r.impacto}</Badge> · Prob. {r.probabilidade}</div>
                     </TableCell>
-                    <TableCell><Badge variant="outline" className={cn("text-[10px]", IMPACTO_COLORS[r.impacto])}>{r.impacto}</Badge></TableCell>
+                    <TableCell className="text-xs">{r.natureza ?? <span className="text-muted-foreground">—</span>}</TableCell>
+                    <TableCell className="text-xs">{r.tipo ?? <span className="text-muted-foreground">—</span>}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={cn("text-[10px]", c.color)}>
+                        {c.nivel} <span className="ml-1 tabular-nums opacity-70">({r.impacto}×{r.probabilidade}={c.score})</span>
+                      </Badge>
+                    </TableCell>
+
                     <TableCell className="text-sm text-muted-foreground">{r.acaoMitigadora || "—"}</TableCell>
                     <TableCell className="text-sm">{r.responsavel || "—"}</TableCell>
                     <TableCell>
@@ -688,7 +795,7 @@ export default function MelhoriaContinua() {
                 );})}
                 {riscos.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center text-muted-foreground py-10">
+                    <TableCell colSpan={12} className="text-center text-muted-foreground py-10">
                       Nenhum risco cadastrado. Clique em <strong>Novo risco</strong> para vincular a um processo.
                     </TableCell>
                   </TableRow>
