@@ -552,7 +552,7 @@ export default function StatusReportProcessos() {
       <Card className="border-amber-200">
         <CardHeader className="py-3">
           <CardTitle className="text-base flex items-center gap-2 text-amber-700">
-            <Clock className="h-4 w-4" /> Atividades em Atraso
+            <Clock className="h-4 w-4" /> Atividades em Atraso <span className="text-[11px] font-normal text-muted-foreground">· prazos no período</span>
             <Badge variant="outline" className="ml-2 text-xs">{atividadesAtraso.length}</Badge>
           </CardTitle>
         </CardHeader>
