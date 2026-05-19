@@ -58,8 +58,6 @@ interface Problema {
   oportunidade?: string;
 }
 
-type RiscoNatureza = "Variação" | "Ambiguidade" | "Evento" | "Condição de incerteza";
-type RiscoStatus = "Identificado" | "Em mitigação" | "Mitigado" | "Aceito";
 
 interface Risco {
   id: string;
