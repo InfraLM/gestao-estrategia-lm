@@ -383,7 +383,10 @@ export default function StatusReportProcessos() {
             <LineChart className="h-6 w-6 text-primary" /> Status Report de Processos
           </h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Acompanhamento periódico do mapeamento, riscos e melhorias. Última atualização: <span className="font-medium text-foreground">{new Date().toLocaleDateString("pt-BR")}</span>
+            Período: <span className="font-medium text-foreground">{periodo} · {janela.label}</span>
+            <span className="text-muted-foreground/80"> ({fmtBRFull(janela.start)} a {fmtBRFull(janela.end)})</span>
+            <span className="mx-2">·</span>
+            Gerado em <span className="font-medium text-foreground">{new Date().toLocaleDateString("pt-BR")}</span>
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -392,6 +395,12 @@ export default function StatusReportProcessos() {
               <button key={p} onClick={() => setPeriodo(p)} className={`h-8 px-3 text-sm rounded ${periodo === p ? "bg-foreground text-background" : "text-muted-foreground"}`}>{p}</button>
             ))}
           </div>
+          <Select value={opcaoPeriodo} onValueChange={setOpcaoPeriodo}>
+            <SelectTrigger className="w-[240px] h-9"><SelectValue placeholder="Selecione o período" /></SelectTrigger>
+            <SelectContent className="max-h-[320px]">
+              {opcoesPeriodo.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2" disabled={exporting}>
