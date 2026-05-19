@@ -278,9 +278,18 @@ function ProcessoDialog({
               </Select>
             </div>
           </div>
-          <div>
-            <Label>Área</Label>
-            <Input value={form.area} onChange={e => setForm({ ...form, area: e.target.value })} placeholder="Ex.: Comercial" />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Área</Label>
+              <Input value={form.area} onChange={e => setForm({ ...form, area: e.target.value })} placeholder="Ex.: Comercial" />
+            </div>
+            <div>
+              <Label>Diretor</Label>
+              <Select value={form.diretor} onValueChange={v => setForm({ ...form, diretor: v })}>
+                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                <SelectContent>{DIRETORES.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
         <DialogFooter>
