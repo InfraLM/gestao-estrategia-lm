@@ -91,7 +91,7 @@ const nivelColors: Record<string, string> = {
 };
 
 const NIVEIS = ["Finalístico", "Gerencial", "Suporte"];
-const DIRETORES = ["Iuri", "Naira", "Ian", "Yuri", "Bruno"];
+const DIRETORES = ["Yuri Garcia", "Iuri Franco", "Naira Yurie", "Ian Camilo", "Guilherme Vieira"];
 const STATUSES = [
   "BACKLOG", "A INICIAR", "MAPEAMENTO AS-IS/TO-BE", "MELHORIAS/ ANÁLISE",
   "VALIDAÇÃO INTERNA", "APROVAÇÃO DIRETORIA", "REVISÃO CONCLUÍDA VIGENTE", "PARALISADO",
