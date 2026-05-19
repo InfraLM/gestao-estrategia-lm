@@ -168,6 +168,30 @@ function DetalheProcesso({ processo, data, onBack }: { processo: any; data: Proc
         </div>
       </div>
 
+      {(processo.imagemFluxoUrl || processo.kpiNome) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {processo.imagemFluxoUrl && (
+            <Card>
+              <CardHeader className="py-3"><CardTitle className="text-sm">Fluxo do processo</CardTitle></CardHeader>
+              <CardContent>
+                <img src={processo.imagemFluxoUrl} alt={`Fluxo ${processo.nome}`} className="w-full max-h-[320px] object-contain rounded border" />
+              </CardContent>
+            </Card>
+          )}
+          {processo.kpiNome && (
+            <Card className="border-primary/30 bg-primary/5">
+              <CardHeader className="py-3"><CardTitle className="text-sm flex items-center gap-2"><Target className="h-4 w-4 text-primary" /> Entrega de Valor</CardTitle></CardHeader>
+              <CardContent className="grid grid-cols-2 gap-3 text-sm">
+                <div><div className="text-[11px] uppercase text-muted-foreground">Métrica / KPI</div><div className="font-medium">{processo.kpiNome}</div></div>
+                <div><div className="text-[11px] uppercase text-muted-foreground">Unidade</div><div>{processo.kpiUnidade || "—"}</div></div>
+                <div><div className="text-[11px] uppercase text-muted-foreground">Meta</div><div>{processo.kpiMeta ?? "—"}{processo.kpiMeta != null ? processo.kpiUnidade || "" : ""}</div></div>
+                <div><div className="text-[11px] uppercase text-muted-foreground">Valor atual</div><div className="font-semibold">{processo.kpiValor ?? "—"}{processo.kpiValor != null ? processo.kpiUnidade || "" : ""}</div></div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
       <Tabs defaultValue="resumo">
         <TabsList>
           <TabsTrigger value="resumo"><Workflow className="h-3.5 w-3.5 mr-1" />Resumo do fluxo</TabsTrigger>
