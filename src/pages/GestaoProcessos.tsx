@@ -424,76 +424,13 @@ export default function GestaoProcessos() {
 
         {/* RISCOS */}
         <TabsContent value="riscos">
-          <Card>
-            <CardHeader className="py-3 flex-row items-center justify-between">
-              <CardTitle className="text-base">Matriz de Riscos</CardTitle>
-              <Button size="sm" onClick={() => updateData({ riscos: [...data.riscos, { id: uid(), nome: "", natureza: "Evento", tipo: "Processo operacional", impacto: 3, ocorrencia: 2, status: "Identificado" }] })}>
-                <Plus className="h-3.5 w-3.5 mr-1" /> Adicionar risco
-              </Button>
-            </CardHeader>
-            <CardContent className="p-0 overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="min-w-[220px]">Risco</TableHead>
-                    <TableHead className="w-[160px]">Natureza</TableHead>
-                    <TableHead className="w-[160px]">Tipo</TableHead>
-                    <TableHead className="min-w-[240px]">Ações mitigadoras</TableHead>
-                    <TableHead className="w-[90px]">Impacto</TableHead>
-                    <TableHead className="w-[110px]">Ocorrência</TableHead>
-                    <TableHead className="w-[140px]">Classificação</TableHead>
-                    <TableHead className="w-[160px]">Status</TableHead>
-                    <TableHead className="w-[40px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.riscos.map(r => {
-                    const cls = riscoClassif(r.impacto, r.ocorrencia);
-                    return (
-                      <TableRow key={r.id}>
-                        <TableCell><Input value={r.nome} onChange={ev => updateData({ riscos: data.riscos.map(x => x.id === r.id ? { ...x, nome: ev.target.value } : x) })} /></TableCell>
-                        <TableCell>
-                          <Select value={r.natureza} onValueChange={v => updateData({ riscos: data.riscos.map(x => x.id === r.id ? { ...x, natureza: v as RiscoNatureza } : x) })}>
-                            <SelectTrigger className={`h-8 text-xs ${NAT_COLORS[r.natureza]}`}><SelectValue /></SelectTrigger>
-                            <SelectContent>{NATUREZAS.map(n => <SelectItem key={n} value={n}>{NAT_ICON[n]} {n}</SelectItem>)}</SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          <Select value={r.tipo} onValueChange={v => updateData({ riscos: data.riscos.map(x => x.id === r.id ? { ...x, tipo: v } : x) })}>
-                            <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
-                            <SelectContent>{["Processo operacional", "Financeiro", "Recursos (Pessoas/Materiais)", "Reputacional", "Tecnológico", "Regulatório"].map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell><Textarea rows={2} value={r.acoesMitigadoras || ""} onChange={ev => updateData({ riscos: data.riscos.map(x => x.id === r.id ? { ...x, acoesMitigadoras: ev.target.value } : x) })} /></TableCell>
-                        <TableCell>
-                          <Select value={String(r.impacto)} onValueChange={v => updateData({ riscos: data.riscos.map(x => x.id === r.id ? { ...x, impacto: Number(v) as any } : x) })}>
-                            <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
-                            <SelectContent>{[1,2,3,4,5].map(v => <SelectItem key={v} value={String(v)}>{v}</SelectItem>)}</SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          <Select value={String(r.ocorrencia)} onValueChange={v => updateData({ riscos: data.riscos.map(x => x.id === r.id ? { ...x, ocorrencia: Number(v) as any } : x) })}>
-                            <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
-                            <SelectContent>{[1,2,3,4,5].map(v => <SelectItem key={v} value={String(v)}>{v}</SelectItem>)}</SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell><Badge className={`${cls.color} text-xs`}>{cls.label}</Badge></TableCell>
-                        <TableCell>
-                          <Select value={r.status} onValueChange={v => updateData({ riscos: data.riscos.map(x => x.id === r.id ? { ...x, status: v as RiscoStatus } : x) })}>
-                            <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
-                            <SelectContent>{["Identificado", "Em mitigação", "Mitigado", "Aceito"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell><Button variant="ghost" size="icon" onClick={() => updateData({ riscos: data.riscos.filter(x => x.id !== r.id) })}><Trash2 className="h-4 w-4 text-muted-foreground" /></Button></TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  {!data.riscos.length && <TableRow><TableCell colSpan={9} className="text-center text-sm text-muted-foreground py-8">Nenhum risco registrado</TableCell></TableRow>}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <RiscosTab
+            processoNome={selected?.nome || ""}
+            items={data.riscos}
+            onChange={items => updateData({ riscos: items })}
+          />
         </TabsContent>
+
 
         {/* AS-IS */}
         <TabsContent value="asis"><MapaTab title="Mapeamento AS-IS (situação atual)" items={data.asIs} onChange={items => updateData({ asIs: items })} /></TabsContent>
