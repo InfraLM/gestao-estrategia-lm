@@ -425,6 +425,15 @@ function MonthlyBars({ data, accent }: { data: { mes: string; concluidas: number
   );
 }
 
+function classifNivelBPMO(impacto?: number, probabilidade?: number): { score: number; nivel: "Baixo" | "Moderado" | "Alto" | "Extremo" | "—"; color: string } {
+  if (!impacto || !probabilidade) return { score: 0, nivel: "—", color: "bg-muted text-muted-foreground" };
+  const score = impacto * probabilidade;
+  if (score >= 15) return { score, nivel: "Extremo", color: "bg-rose-500/15 text-rose-700 border-rose-200" };
+  if (score >= 8)  return { score, nivel: "Alto",    color: "bg-orange-500/15 text-orange-700 border-orange-200" };
+  if (score >= 4)  return { score, nivel: "Moderado", color: "bg-amber-500/15 text-amber-700 border-amber-200" };
+  return { score, nivel: "Baixo", color: "bg-emerald-500/15 text-emerald-700 border-emerald-200" };
+}
+
 function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] }) {
   const hoje = new Date().toISOString().slice(0, 10);
   const isAbertoAcao = (s: string) => s !== "Concluído" && s !== "Cancelado";
@@ -442,16 +451,23 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
     const refConc = r.dataConclusao ?? (aberto ? hoje : undefined);
     const descol = diasEntre(r.prazo, refConc);
     const tempoStatus = diasEntre(r.statusChangedAt, hoje);
-    return { ...r, descol, tempoStatus, aberto };
+    const c = classifNivelBPMO(typeof r.impacto === "number" ? r.impacto : undefined, typeof r.probabilidade === "number" ? r.probabilidade : undefined);
+    return { ...r, descol, tempoStatus, aberto, _nivel: c.nivel, _score: c.score, _color: c.color };
   });
 
   const atrasadasAcoes = acoesIdx.filter(a => a.descol != null && a.descol > 0 && a.aberto).sort((a, b) => b.descol - a.descol);
   const atrasadosRiscos = riscosIdx.filter(r => r.descol != null && r.descol > 0 && r.aberto).sort((a, b) => b.descol - a.descol);
   const paradasAcoes = acoesIdx.filter(a => a.aberto && a.tempoStatus != null && a.tempoStatus >= 30).sort((a, b) => b.tempoStatus - a.tempoStatus);
+  const riscosCriticosBPMO = riscosIdx
+    .filter(r => r.aberto && (r._nivel === "Alto" || r._nivel === "Extremo"))
+    .sort((a, b) => b._score - a._score);
+  const totalExtremos = riscosCriticosBPMO.filter(r => r._nivel === "Extremo").length;
+  const totalAltos = riscosCriticosBPMO.filter(r => r._nivel === "Alto").length;
 
   const totalAbertas = acoesIdx.filter(a => a.aberto).length;
   const totalRiscosAbertos = riscosIdx.filter(r => r.aberto).length;
   const mediaDescolAcoes = atrasadasAcoes.length ? Math.round(atrasadasAcoes.reduce((s, a) => s + a.descol, 0) / atrasadasAcoes.length) : 0;
+
 
   return (
     <Card className="border-indigo-200">
