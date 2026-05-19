@@ -318,7 +318,22 @@ export default function StatusReportProcessos() {
               <button key={p} onClick={() => setPeriodo(p)} className={`h-8 px-3 text-sm rounded ${periodo === p ? "bg-foreground text-background" : "text-muted-foreground"}`}>{p}</button>
             ))}
           </div>
-          <Button variant="outline" className="gap-2" onClick={() => toast.success("Relatório PDF gerado")}><Download className="h-4 w-4" /> Gerar PDF</Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2" disabled={exporting}>
+                {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                Exportar
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuItem onClick={handleExportPdf}>Gerar PDF (Status Report)</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportMd}>Exportar Markdown (.md)</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleExportMatrizXlsx}>Matriz filtrada (XLSX)</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportRiscosCsv}>Riscos críticos (CSV)</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportPlanosXlsx}>Planos de ação (XLSX)</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
