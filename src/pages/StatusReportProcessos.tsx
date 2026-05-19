@@ -480,7 +480,7 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <div className="rounded-lg border p-3">
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Ações em aberto</div>
             <div className="text-2xl font-semibold tabular-nums">{totalAbertas}</div>
@@ -495,12 +495,57 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
             <div className="text-2xl font-semibold tabular-nums">{totalRiscosAbertos}</div>
             <div className="text-[10px] text-muted-foreground mt-0.5">Atrasados: <span className="tabular-nums text-red-700">{atrasadosRiscos.length}</span></div>
           </div>
+          <div className="rounded-lg border p-3 border-rose-200 bg-rose-50/40">
+            <div className="text-[11px] uppercase tracking-wider text-rose-700 flex items-center gap-1"><ShieldAlert className="h-3 w-3" /> Riscos Extremos / Altos</div>
+            <div className="text-2xl font-semibold tabular-nums text-rose-700">{totalExtremos + totalAltos}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Extremos: <span className="tabular-nums text-rose-700">{totalExtremos}</span> · Altos: <span className="tabular-nums text-orange-700">{totalAltos}</span></div>
+          </div>
           <div className="rounded-lg border p-3">
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1"><Timer className="h-3 w-3" /> Paradas ≥ 30d</div>
             <div className="text-2xl font-semibold tabular-nums text-amber-700">{paradasAcoes.length}</div>
             <div className="text-[10px] text-muted-foreground mt-0.5">Sem mudança de status</div>
           </div>
         </div>
+
+        {riscosCriticosBPMO.length > 0 && (
+          <div>
+            <div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+              <ShieldAlert className="h-3 w-3 text-rose-700" /> Riscos Extremos & Altos do BPMO (I × P ≥ 8)
+            </div>
+            <div className="rounded-lg border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Processo · Risco</TableHead>
+                    <TableHead className="w-[110px]">Natureza</TableHead>
+                    <TableHead className="w-[140px]">Tipo</TableHead>
+                    <TableHead className="w-[140px]">Classificação</TableHead>
+                    <TableHead className="w-[120px]">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {riscosCriticosBPMO.map(r => (
+                    <TableRow key={r.id}>
+                      <TableCell className="text-xs">
+                        <div className="font-medium">{r.risco}</div>
+                        <div className="text-[10px] text-muted-foreground">{r.processoNome} · {r.responsavel || "—"}</div>
+                      </TableCell>
+                      <TableCell className="text-xs">{r.natureza || "—"}</TableCell>
+                      <TableCell className="text-xs">{r.tipo || "—"}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={`text-[10px] ${r._color}`}>
+                          {r._nivel} <span className="ml-1 tabular-nums opacity-70">({r.impacto}×{r.probabilidade}={r._score})</span>
+                        </Badge>
+                      </TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px]">{r.status}</Badge></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        )}
+
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
