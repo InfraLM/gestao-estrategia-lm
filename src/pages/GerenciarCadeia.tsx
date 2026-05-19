@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const NIVEIS = ["Gerencial", "Finalístico", "Suporte", "Outros"];
 const STATUSES = ["MAPEAMENTO", "VALIDAÇÃO INTERNA", "APROVAÇÃO DIRETORIA", "REVISÃO CONCLUÍDA VIGENTE"];
-const DIRETORES = ["Yuri Garcia", "Iuri Franco", "Naira Yurie", "Ian Camilo", "Guilherme Vieira"];
+import { DiretoresMultiSelect } from "@/components/DiretoresMultiSelect";
 
 const nivelColors: Record<string, string> = {
   "Gerencial": "bg-violet-500/15 text-violet-700 border-violet-500/30",
