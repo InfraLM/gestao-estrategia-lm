@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, Clock, CheckCircle2, Map, Rocket } from "lucide-react";
+import { CircleDot, AlertCircle, ShieldAlert, Download, LineChart, Clock, CheckCircle2, Map, Rocket, Timer, CalendarClock } from "lucide-react";
 import { toast } from "sonner";
 
 type Processo = {
