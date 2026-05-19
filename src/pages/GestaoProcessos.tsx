@@ -14,6 +14,7 @@ import { exportToCSV } from "@/lib/exportCsv";
 import { NATUREZAS_BPMO, TIPOS_BPMO, STATUS_RISCO_BPMO, IMPACTO_LABEL, PROB_LABEL, classifRiscoBPMO, type NaturezaBPMO, type TipoBPMO, type StatusRiscoBPMO } from "@/lib/bpmoRisco";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { DiretoresMultiSelect } from "@/components/DiretoresMultiSelect";
 
 
 type Processo = {
