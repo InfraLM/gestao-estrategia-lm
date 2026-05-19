@@ -64,16 +64,22 @@ type RiscoStatus = "Identificado" | "Em mitigação" | "Mitigado" | "Aceito";
 interface Risco {
   id: string;
   nome: string;
-  natureza: RiscoNatureza;
-  tipo: string;
-  fonte?: string;
+  natureza?: NaturezaBPMO;
+  tipo?: TipoBPMO;
+  causa?: string;
   acoesMitigadoras?: string;
+  responsavel?: string;
+  prazo?: string;
+  dataConclusao?: string;
   impacto: 1 | 2 | 3 | 4 | 5;
   ocorrencia: 1 | 2 | 3 | 4 | 5;
-  status: RiscoStatus;
+  status: StatusRiscoBPMO;
   impactoFinanceiro?: number;
   dueDate?: string;
+  statusChangedAt?: string;
+  statusHistory?: { status: string; at: string }[];
 }
+
 
 interface MapaAtividade {
   id: string;
