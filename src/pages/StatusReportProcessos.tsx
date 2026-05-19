@@ -53,6 +53,65 @@ const STATUS_COLORS: Record<string, string> = {
 const periodos = ["Semanal", "Quinzenal", "Mensal"] as const;
 type Periodo = typeof periodos[number];
 
+// ===== Janela de período =====
+function startOfWeek(d: Date): Date {
+  const x = new Date(d); x.setHours(0, 0, 0, 0);
+  const day = x.getDay(); // 0=dom
+  const diff = day === 0 ? -6 : 1 - day; // segunda
+  x.setDate(x.getDate() + diff);
+  return x;
+}
+function addDays(d: Date, n: number): Date { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function fmtBR(d: Date): string { return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }); }
+function fmtBRFull(d: Date): string { return d.toLocaleDateString("pt-BR"); }
+
+type Janela = { start: Date; end: Date; label: string };
+
+function buildOpcoesPeriodo(periodo: Periodo): { value: string; label: string; janela: Janela }[] {
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  const out: { value: string; label: string; janela: Janela }[] = [];
+  if (periodo === "Semanal") {
+    const segAtual = startOfWeek(hoje);
+    for (let i = 0; i < 12; i++) {
+      const start = addDays(segAtual, -7 * i);
+      const end = addDays(start, 6);
+      out.push({
+        value: start.toISOString().slice(0, 10),
+        label: `${i === 0 ? "Semana atual · " : ""}${fmtBR(start)} a ${fmtBR(end)}`,
+        janela: { start, end, label: `Semana ${fmtBR(start)}–${fmtBR(end)}` },
+      });
+    }
+  } else if (periodo === "Quinzenal") {
+    const ref = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    for (let i = 0; i < 6; i++) {
+      const mRef = new Date(ref.getFullYear(), ref.getMonth() - i, 1);
+      const mes = mRef.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" }).replace(".", "");
+      const q1Start = new Date(mRef.getFullYear(), mRef.getMonth(), 1);
+      const q1End = new Date(mRef.getFullYear(), mRef.getMonth(), 15);
+      const q2Start = new Date(mRef.getFullYear(), mRef.getMonth(), 16);
+      const q2End = new Date(mRef.getFullYear(), mRef.getMonth() + 1, 0);
+      out.push({ value: `${q2Start.toISOString().slice(0, 10)}`, label: `Q2 ${mes} (16–${q2End.getDate()})`, janela: { start: q2Start, end: q2End, label: `Q2 ${mes}` } });
+      out.push({ value: `${q1Start.toISOString().slice(0, 10)}`, label: `Q1 ${mes} (01–15)`, janela: { start: q1Start, end: q1End, label: `Q1 ${mes}` } });
+    }
+  } else {
+    const ref = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    for (let i = 0; i < 12; i++) {
+      const start = new Date(ref.getFullYear(), ref.getMonth() - i, 1);
+      const end = new Date(ref.getFullYear(), ref.getMonth() - i + 1, 0);
+      const label = start.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+      out.push({ value: start.toISOString().slice(0, 10), label: label.charAt(0).toUpperCase() + label.slice(1), janela: { start, end, label } });
+    }
+  }
+  return out;
+}
+
+function inWindow(dateStr: string | undefined | null, j: Janela): boolean {
+  if (!dateStr) return false;
+  const d = new Date(dateStr); if (isNaN(d.getTime())) return false;
+  d.setHours(0, 0, 0, 0);
+  return d.getTime() >= j.start.getTime() && d.getTime() <= j.end.getTime();
+}
+
 function loadGestao(): Record<string, any> {
   try { return JSON.parse(localStorage.getItem(GP_KEY) || "{}"); } catch { return {}; }
 }
