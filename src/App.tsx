@@ -24,6 +24,8 @@ import DashboardProcessos from "./pages/DashboardProcessos";
 import StatusReportProcessos from "./pages/StatusReportProcessos";
 import MatrizRiscosInstitucionais from "./pages/MatrizRiscosInstitucionais";
 import ProcessosPublicados from "./pages/ProcessosPublicados";
+import CadeiaValor from "./pages/CadeiaValor";
+import GerenciarCadeia from "./pages/GerenciarCadeia";
 import GestaoRepositorio from "./pages/GestaoRepositorio";
 import RepositorioLista from "./pages/RepositorioLista";
 import MinhasPermissoes from "./pages/MinhasPermissoes";
