@@ -170,20 +170,52 @@ function loadLS<T>(key: string, fallback: T): T {
 
 export default function MelhoriaContinua() {
   const [acoes, setAcoes] = useState<Acao[]>(() => loadLS(ACOES_KEY, SEED));
-  const [riscos, setRiscos] = useState<RiscoProcesso[]>(() => loadLS(RISCOS_KEY, SEED_RISCOS));
+  const [riscos, setRiscos] = useState<RiscoProcesso[]>(() => migrateRiscos(loadLS<any[]>(RISCOS_KEY, SEED_RISCOS as any)));
   const [areaSel, setAreaSel] = useState<Area | null>(null);
   const [q, setQ] = useState("");
   const [origemFilter, setOrigemFilter] = useState<string>("Todas");
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Partial<Acao>>({ origem: "OKRs da Área", status: "Backlog" });
   const [openRisco, setOpenRisco] = useState(false);
-  const [riscoDraft, setRiscoDraft] = useState<Partial<RiscoProcesso>>({ impacto: "Médio", probabilidade: "Média", status: "Aberto" });
+  const [riscoDraft, setRiscoDraft] = useState<Partial<RiscoProcesso>>({ impacto: 3, probabilidade: 3, status: "Aberto" });
+  const [aiLoading, setAiLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const { data: processos } = useProcessosDB();
 
   useEffect(() => { localStorage.setItem(ACOES_KEY, JSON.stringify(acoes)); }, [acoes]);
   useEffect(() => { localStorage.setItem(RISCOS_KEY, JSON.stringify(riscos)); }, [riscos]);
+
+  async function handleAIClassify() {
+    if (!riscoDraft.risco) { toast.error("Descreva o risco antes de pedir análise por IA."); return; }
+    setAiLoading(true);
+    try {
+      const proc = processos.find(p => p.id === riscoDraft.processoId);
+      const { data, error } = await supabase.functions.invoke("risco-classificar-ai", {
+        body: {
+          risco: riscoDraft.risco,
+          causa: riscoDraft.causa ?? "",
+          processoNome: proc?.nome ?? "",
+          impacto: riscoDraft.impacto,
+          probabilidade: riscoDraft.probabilidade,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setRiscoDraft(d => ({
+        ...d,
+        natureza: data.natureza,
+        tipo: data.tipo,
+        causa: d.causa && d.causa.trim() ? d.causa : data.causa_raiz,
+      }));
+      toast.success("IA classificou: " + data.natureza + " · " + data.tipo);
+    } catch (e: any) {
+      toast.error("Falha na análise: " + (e?.message ?? "erro"));
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
 
   const counts = useMemo(() => {
     const m = new Map<Area, number>();
