@@ -32,9 +32,11 @@ const GATE_META: Record<string, { label: string; cls: string; icon: any }> = {
 export default function BusinessCaseScorecard() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { data: projetosPortfolio } = useProjetosDB();
   const [list, setList] = useState<Sub[]>([]);
   const [busy, setBusy] = useState(false);
   const [selected, setSelected] = useState<Sub | null>(null);
+  const [projetoVinculado, setProjetoVinculado] = useState<string>("");
 
   const [form, setForm] = useState<any>({
     titulo: "", proponente: "", area: "", tipo_projeto: "eficiencia",
