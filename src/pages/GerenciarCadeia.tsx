@@ -203,7 +203,7 @@ function ProcessoDialog({
   const { toast } = useToast();
   const isEdit = !!processo;
   const [form, setForm] = useState({
-    id: "", nome: "", nivel: "", area: "", status: "MAPEAMENTO",
+    id: "", nome: "", nivel: "", area: "", status: "MAPEAMENTO", diretor: "",
   });
   const [busy, setBusy] = useState(false);
 
@@ -215,6 +215,7 @@ function ProcessoDialog({
         nivel: processo?.nivel || "",
         area: processo?.area || "",
         status: processo?.status || "MAPEAMENTO",
+        diretor: processo?.diretor || "",
       });
     }
   }, [open, processo]);
