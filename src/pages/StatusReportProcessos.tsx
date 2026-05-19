@@ -706,7 +706,11 @@ function IndicadoresGraficos({ counts, linhas, riscosCriticos, atividadesAtraso 
 
   const porDiretor = useMemo(() => {
     const m = new Map<string, number>();
-    linhas.forEach(({ p }) => m.set(p.diretor || "Sem diretor", (m.get(p.diretor || "Sem diretor") || 0) + 1));
+    linhas.forEach(({ p }) => {
+      const ds = splitDir(p.diretor);
+      if (ds.length === 0) m.set("Sem diretor", (m.get("Sem diretor") || 0) + 1);
+      else ds.forEach(d => m.set(d, (m.get(d) || 0) + 1));
+    });
     return Array.from(m, ([diretor, qtd]) => ({ diretor, qtd })).sort((a, b) => b.qtd - a.qtd).slice(0, 8);
   }, [linhas]);
 
