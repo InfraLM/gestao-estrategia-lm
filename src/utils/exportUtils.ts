@@ -285,7 +285,7 @@ export function exportStatusReportPdf(p: StatusReportPayload, filename: string):
 
   const tableOpts: Parameters<typeof autoTable>[1] = {
     theme: "striped" as const,
-    headStyles: { fillColor: [37, 99, 235], textColor: 255, fontSize: 8 },
+    headStyles: { fillColor: [37, 99, 235] as [number, number, number], textColor: 255, fontSize: 8 },
     bodyStyles: { fontSize: 8 },
     margin: { left: margin, right: margin },
     didDrawPage: () => {
