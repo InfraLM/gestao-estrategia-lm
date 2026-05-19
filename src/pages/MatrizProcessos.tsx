@@ -403,6 +403,14 @@ export default function MatrizProcessos() {
           })}
         </TabsContent>
 
+        <TabsContent value="galeria">
+          <CadeiaValor />
+        </TabsContent>
+
+        <TabsContent value="gerenciar">
+          <GerenciarCadeia />
+        </TabsContent>
+
         <TabsContent value="vinculo">
           <Card>
             <CardHeader className="py-3">
