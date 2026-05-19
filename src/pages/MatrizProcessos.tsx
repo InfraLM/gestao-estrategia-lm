@@ -7,9 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw, Target, Workflow, ShieldAlert, AlertTriangle } from "lucide-react";
+import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw, Target, Workflow, ShieldAlert, AlertTriangle, Network, Settings2 } from "lucide-react";
 import { E2E_ZONES, zonesForProcesso, type E2EZone } from "@/data/e2eZones";
 import MatrizRiscosInstitucionais from "@/pages/MatrizRiscosInstitucionais";
+import CadeiaValor from "@/pages/CadeiaValor";
+import GerenciarCadeia from "@/pages/GerenciarCadeia";
 
 type Processo = {
   id: string;
