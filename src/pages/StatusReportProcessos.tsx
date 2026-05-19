@@ -546,7 +546,7 @@ export default function StatusReportProcessos() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="py-3">
-            <CardTitle className="text-base flex items-center gap-2"><Map className="h-4 w-4 text-primary" /> Mapeamento mês a mês</CardTitle>
+            <CardTitle className="text-base flex items-center gap-2"><MapIcon className="h-4 w-4 text-primary" /> Mapeamento mês a mês</CardTitle>
             <p className="text-xs text-muted-foreground">Atividades de mapeamento concluídas por mês (últimos 6 meses).</p>
           </CardHeader>
           <CardContent>
