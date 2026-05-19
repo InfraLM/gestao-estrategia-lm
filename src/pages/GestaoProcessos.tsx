@@ -677,3 +677,273 @@ function AtividadesTab({ items, onChange }: { items: AtividadeAnalise[]; onChang
     </div>
   );
 }
+
+// ============== RiscosTab (BPMO) ==============
+function RiscosTab({ processoNome, items, onChange }: { processoNome: string; items: Risco[]; onChange: (items: Risco[]) => void }) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<Partial<Risco>>({ impacto: 3, ocorrencia: 3, status: "Identificado" });
+  const [aiLoading, setAiLoading] = useState(false);
+
+  const upd = (id: string, patch: Partial<Risco>) => {
+    onChange(items.map(r => {
+      if (r.id !== id) return r;
+      const next: Risco = { ...r, ...patch };
+      if (patch.status && patch.status !== r.status) {
+        const at = todayISO();
+        next.statusChangedAt = at;
+        next.statusHistory = [...(r.statusHistory ?? []), { status: patch.status, at }];
+        if (patch.status === "Mitigado" && !next.dataConclusao) next.dataConclusao = at;
+      }
+      return next;
+    }));
+  };
+  const del = (id: string) => onChange(items.filter(x => x.id !== id));
+
+  async function aiClassify() {
+    if (!draft.nome) { toast.error("Descreva o risco antes de pedir análise por IA."); return; }
+    setAiLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("risco-classificar-ai", {
+        body: { risco: draft.nome, causa: draft.causa ?? "", processoNome, impacto: draft.impacto, probabilidade: draft.ocorrencia },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setDraft(d => ({ ...d, natureza: data.natureza, tipo: data.tipo, causa: d.causa && d.causa.trim() ? d.causa : data.causa_raiz }));
+      toast.success(`IA: ${data.natureza} · ${data.tipo}`);
+    } catch (e: any) {
+      toast.error("Falha na análise: " + (e?.message ?? "erro"));
+    } finally { setAiLoading(false); }
+  }
+
+  function save() {
+    if (!draft.nome) { toast.error("Informe a descrição do risco."); return; }
+    const at = todayISO();
+    const status = (draft.status as StatusRiscoBPMO) ?? "Identificado";
+    onChange([...items, {
+      id: uid(),
+      nome: draft.nome,
+      causa: draft.causa,
+      natureza: draft.natureza,
+      tipo: draft.tipo,
+      acoesMitigadoras: draft.acoesMitigadoras,
+      responsavel: draft.responsavel,
+      prazo: draft.prazo,
+      dataConclusao: draft.dataConclusao,
+      impacto: (draft.impacto ?? 3) as Risco["impacto"],
+      ocorrencia: (draft.ocorrencia ?? 3) as Risco["ocorrencia"],
+      status,
+      statusChangedAt: at,
+      statusHistory: [{ status, at }],
+    }]);
+    setDraft({ impacto: 3, ocorrencia: 3, status: "Identificado" });
+    setOpen(false);
+  }
+
+  function doExport() {
+    exportToCSV("riscos_bpmo_" + (processoNome || "processo").replace(/\s+/g, "_"), items.map(r => {
+      const c = classifRiscoBPMO(r.impacto, r.ocorrencia);
+      return {
+        Processo: processoNome, Risco: r.nome, Causa: r.causa || "", Natureza: r.natureza || "",
+        Tipo: r.tipo || "", Impacto: r.impacto, Ocorrencia: r.ocorrencia, Score: c.score, Classificacao: c.nivel,
+        AcoesMitigadoras: r.acoesMitigadoras || "", Responsavel: r.responsavel || "",
+        Prazo: r.prazo || "", DataConclusao: r.dataConclusao || "", Status: r.status, StatusDesde: r.statusChangedAt || "",
+      };
+    }));
+  }
+
+  const hoje = todayISO();
+
+  return (
+    <Card>
+      <CardHeader className="py-3 flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-base">Matriz de Riscos do Processo</CardTitle>
+          <p className="text-xs text-muted-foreground mt-1">
+            Escala numérica 1-5 (Impacto × Ocorrência). Classificação: 1-3 Baixo · 4-6 Moderado · 8-12 Alto · 15-25 Extremo.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="gap-1.5" onClick={doExport}>
+            <Download className="h-3.5 w-3.5" /> Exportar
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="gap-1.5"><Plus className="h-3.5 w-3.5" /> Novo risco</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader><DialogTitle>Novo risco · {processoNome}</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">Risco *</label>
+                  <Input value={draft.nome ?? ""} onChange={e => setDraft(d => ({ ...d, nome: e.target.value }))} placeholder="Descrição do risco" />
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[11px] text-muted-foreground">A IA pode sugerir <strong>natureza</strong>, <strong>tipo</strong> e <strong>causa raiz</strong>.</p>
+                  <Button type="button" size="sm" variant="outline" className="gap-1.5" onClick={aiClassify} disabled={aiLoading}>
+                    {aiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Analisar com IA
+                  </Button>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Natureza</label>
+                    <Select value={draft.natureza} onValueChange={v => setDraft(d => ({ ...d, natureza: v as NaturezaBPMO }))}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent>{NATUREZAS_BPMO.map(n => <SelectItem key={n} value={n}>{NAT_ICON[n]} {n}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Tipo</label>
+                    <Select value={draft.tipo} onValueChange={v => setDraft(d => ({ ...d, tipo: v as TipoBPMO }))}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent>{TIPOS_BPMO.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">Causa raiz</label>
+                  <Textarea rows={2} value={draft.causa ?? ""} onChange={e => setDraft(d => ({ ...d, causa: e.target.value }))} />
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Impacto (1-5)</label>
+                    <Select value={String(draft.impacto ?? 3)} onValueChange={v => setDraft(d => ({ ...d, impacto: Number(v) as Risco["impacto"] }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>{[1,2,3,4,5].map(n => <SelectItem key={n} value={String(n)}>{n} · {IMPACTO_LABEL[n]}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Ocorrência (1-5)</label>
+                    <Select value={String(draft.ocorrencia ?? 3)} onValueChange={v => setDraft(d => ({ ...d, ocorrencia: Number(v) as Risco["ocorrencia"] }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>{[1,2,3,4,5].map(n => <SelectItem key={n} value={String(n)}>{n} · {PROB_LABEL[n]}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Status</label>
+                    <Select value={draft.status} onValueChange={v => setDraft(d => ({ ...d, status: v as StatusRiscoBPMO }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>{STATUS_RISCO_BPMO.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                {(() => {
+                  const c = classifRiscoBPMO(draft.impacto, draft.ocorrencia);
+                  return (
+                    <div className="rounded-md border p-2 text-xs flex items-center justify-between bg-muted/40">
+                      <span className="text-muted-foreground">Score: <strong className="tabular-nums">{c.score}</strong> ({draft.impacto ?? 0} × {draft.ocorrencia ?? 0})</span>
+                      <Badge variant="outline" className={c.color}>{c.nivel}</Badge>
+                    </div>
+                  );
+                })()}
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">Ação mitigadora</label>
+                  <Textarea rows={2} value={draft.acoesMitigadoras ?? ""} onChange={e => setDraft(d => ({ ...d, acoesMitigadoras: e.target.value }))} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Responsável</label>
+                    <Input value={draft.responsavel ?? ""} onChange={e => setDraft(d => ({ ...d, responsavel: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Prazo</label>
+                    <Input type="date" value={draft.prazo ?? ""} onChange={e => setDraft(d => ({ ...d, prazo: e.target.value }))} />
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+                <Button onClick={save}>Salvar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0 overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="min-w-[220px]">Risco</TableHead>
+              <TableHead className="w-[130px]">Natureza</TableHead>
+              <TableHead className="w-[150px]">Tipo</TableHead>
+              <TableHead className="min-w-[220px]">Ações mitigadoras</TableHead>
+              <TableHead className="w-[80px]">Imp.</TableHead>
+              <TableHead className="w-[80px]">Ocorr.</TableHead>
+              <TableHead className="w-[140px]">Classificação</TableHead>
+              <TableHead className="w-[140px]">Responsável</TableHead>
+              <TableHead className="w-[140px]">Prazo</TableHead>
+              <TableHead className="w-[140px]">Conclusão</TableHead>
+              <TableHead className="w-[150px]">Status</TableHead>
+              <TableHead className="w-[90px]">Δ dias</TableHead>
+              <TableHead className="w-[40px]"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map(r => {
+              const c = classifRiscoBPMO(r.impacto, r.ocorrencia);
+              const aberto = r.status !== "Mitigado" && r.status !== "Aceito";
+              const descol = diasEntre(r.prazo, r.dataConclusao ?? (aberto ? hoje : undefined));
+              return (
+                <TableRow key={r.id}>
+                  <TableCell>
+                    <Textarea rows={2} value={r.nome} onChange={e => upd(r.id, { nome: e.target.value })} />
+                    {r.causa && <div className="text-[10px] text-muted-foreground mt-1">Causa: {r.causa}</div>}
+                  </TableCell>
+                  <TableCell>
+                    <Select value={r.natureza} onValueChange={v => upd(r.id, { natureza: v as NaturezaBPMO })}>
+                      <SelectTrigger className={`h-8 text-xs ${r.natureza ? NAT_COLORS[r.natureza] : ""}`}><SelectValue placeholder="—" /></SelectTrigger>
+                      <SelectContent>{NATUREZAS_BPMO.map(n => <SelectItem key={n} value={n}>{NAT_ICON[n]} {n}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Select value={r.tipo} onValueChange={v => upd(r.id, { tipo: v as TipoBPMO })}>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+                      <SelectContent>{TIPOS_BPMO.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell><Textarea rows={2} value={r.acoesMitigadoras || ""} onChange={e => upd(r.id, { acoesMitigadoras: e.target.value })} /></TableCell>
+                  <TableCell>
+                    <Select value={String(r.impacto)} onValueChange={v => upd(r.id, { impacto: Number(v) as Risco["impacto"] })}>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                      <SelectContent>{[1,2,3,4,5].map(v => <SelectItem key={v} value={String(v)}>{v}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Select value={String(r.ocorrencia)} onValueChange={v => upd(r.id, { ocorrencia: Number(v) as Risco["ocorrencia"] })}>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                      <SelectContent>{[1,2,3,4,5].map(v => <SelectItem key={v} value={String(v)}>{v}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className={`text-[10px] ${c.color}`}>
+                      {c.nivel} <span className="ml-1 tabular-nums opacity-70">({r.impacto}×{r.ocorrencia}={c.score})</span>
+                    </Badge>
+                  </TableCell>
+                  <TableCell><Input className="h-8 text-xs" value={r.responsavel || ""} onChange={e => upd(r.id, { responsavel: e.target.value })} /></TableCell>
+                  <TableCell><Input type="date" className="h-8 text-xs" value={r.prazo || ""} onChange={e => upd(r.id, { prazo: e.target.value })} /></TableCell>
+                  <TableCell><Input type="date" className="h-8 text-xs" value={r.dataConclusao || ""} onChange={e => upd(r.id, { dataConclusao: e.target.value })} /></TableCell>
+                  <TableCell>
+                    <Select value={r.status} onValueChange={v => upd(r.id, { status: v as StatusRiscoBPMO })}>
+                      <SelectTrigger className={`h-8 text-xs ${RISCO_STATUS_COLORS[r.status]}`}><SelectValue /></SelectTrigger>
+                      <SelectContent>{STATUS_RISCO_BPMO.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                    </Select>
+                    {r.statusChangedAt && <div className="text-[10px] text-muted-foreground mt-1 tabular-nums">desde {r.statusChangedAt}</div>}
+                  </TableCell>
+                  <TableCell className="tabular-nums text-xs">
+                    {descol == null ? "—" : (
+                      <span className={descol > 0 ? "text-red-700 font-medium" : descol < 0 ? "text-emerald-700" : "text-muted-foreground"}>
+                        {descol > 0 ? `+${descol}d` : `${descol}d`}
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell><Button variant="ghost" size="icon" onClick={() => del(r.id)}><Trash2 className="h-4 w-4 text-muted-foreground" /></Button></TableCell>
+                </TableRow>
+              );
+            })}
+            {!items.length && <TableRow><TableCell colSpan={13} className="text-center text-sm text-muted-foreground py-8">Nenhum risco registrado. Clique em <strong>Novo risco</strong>.</TableCell></TableRow>}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
