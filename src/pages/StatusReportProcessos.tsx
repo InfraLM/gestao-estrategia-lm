@@ -372,6 +372,15 @@ export default function StatusReportProcessos() {
         </Select>
       </CardContent></Card>
 
+      {/* === Indicadores visuais === */}
+      <IndicadoresGraficos
+        counts={counts}
+        linhas={linhas}
+        riscosCriticos={riscosCriticos}
+        atividadesAtraso={atividadesAtraso}
+      />
+
+
       {/* === BPMO · Status & Descolamento (Melhoria Contínua + Plano de Ação + Matriz de Riscos) === */}
       <MelhoriaIndicadores
         acoes={useMemo(() => {
