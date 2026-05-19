@@ -35,6 +35,7 @@ type Processo = {
 const MATRIZ_EDITS_KEY = "matriz-processos-edits-v1";
 const STORAGE_KEY = "gestao-processos-v1";
 const MC_SHARED_KEY = "mc-shared-actions-v1";
+const DIRETORES_BPMO = ["Yuri Garcia", "Iuri Franco", "Naira Yurie", "Ian Camilo", "Guilherme Vieira"];
 
 interface EscopoMapeamento {
   objetivo?: string;
