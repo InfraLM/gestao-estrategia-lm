@@ -8,7 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, ArrowLeft, Plus, Trash2, FileText, AlertTriangle, GitBranch, Target, ClipboardList, Workflow, Link2, Bot } from "lucide-react";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Search, ArrowLeft, Plus, Trash2, FileText, AlertTriangle, GitBranch, Target, ClipboardList, Workflow, Link2, Bot, Download, Sparkles, Loader2 } from "lucide-react";
+import { exportToCSV } from "@/lib/exportCsv";
+import { NATUREZAS_BPMO, TIPOS_BPMO, STATUS_RISCO_BPMO, IMPACTO_LABEL, PROB_LABEL, classifRiscoBPMO, type NaturezaBPMO, type TipoBPMO, type StatusRiscoBPMO } from "@/lib/bpmoRisco";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
 
 type Processo = {
   id: string;
