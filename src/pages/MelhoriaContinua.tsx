@@ -734,7 +734,9 @@ export default function MelhoriaContinua() {
                 <TableRow>
                   <TableHead>Processo</TableHead>
                   <TableHead>Risco</TableHead>
-                  <TableHead className="w-[100px]">Impacto</TableHead>
+                  <TableHead className="w-[130px]">Natureza</TableHead>
+                  <TableHead className="w-[150px]">Tipo</TableHead>
+                  <TableHead className="w-[130px]">Classificação</TableHead>
                   <TableHead>Ação Mitigadora</TableHead>
                   <TableHead className="w-[140px]">Responsável</TableHead>
                   <TableHead className="w-[150px]">Prevista</TableHead>
@@ -747,15 +749,22 @@ export default function MelhoriaContinua() {
                 {riscos.map(r => {
                   const diasNoStatus = r.statusChangedAt ? diasEntre(r.statusChangedAt, hoje) : null;
                   const descol = diasEntre(r.prazo, r.dataConclusao ?? (r.status !== "Mitigado" && r.status !== "Aceito" ? hoje : undefined));
+                  const c = classifRisco(r.impacto, r.probabilidade);
                   return (
                   <TableRow key={r.id}>
                     <TableCell className="text-xs"><span className="inline-flex items-center gap-1"><Link2 className="h-3 w-3" /> {r.processoNome}</span></TableCell>
                     <TableCell className="font-medium text-sm">
                       {r.risco}
                       {r.causa && <div className="text-xs text-muted-foreground mt-0.5">Causa: {r.causa}</div>}
-                      <div className="text-[10px] text-muted-foreground mt-0.5"><Badge variant="outline" className={cn("text-[10px]", IMPACTO_COLORS[r.impacto])}>{r.impacto}</Badge> · Prob. {r.probabilidade}</div>
                     </TableCell>
-                    <TableCell><Badge variant="outline" className={cn("text-[10px]", IMPACTO_COLORS[r.impacto])}>{r.impacto}</Badge></TableCell>
+                    <TableCell className="text-xs">{r.natureza ?? <span className="text-muted-foreground">—</span>}</TableCell>
+                    <TableCell className="text-xs">{r.tipo ?? <span className="text-muted-foreground">—</span>}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={cn("text-[10px]", c.color)}>
+                        {c.nivel} <span className="ml-1 tabular-nums opacity-70">({r.impacto}×{r.probabilidade}={c.score})</span>
+                      </Badge>
+                    </TableCell>
+
                     <TableCell className="text-sm text-muted-foreground">{r.acaoMitigadora || "—"}</TableCell>
                     <TableCell className="text-sm">{r.responsavel || "—"}</TableCell>
                     <TableCell>
