@@ -7,9 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw, Target, Workflow, ShieldAlert, AlertTriangle } from "lucide-react";
+import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw, Target, Workflow, ShieldAlert, AlertTriangle, Network, Settings2 } from "lucide-react";
 import { E2E_ZONES, zonesForProcesso, type E2EZone } from "@/data/e2eZones";
 import MatrizRiscosInstitucionais from "@/pages/MatrizRiscosInstitucionais";
+import CadeiaValor from "@/pages/CadeiaValor";
+import GerenciarCadeia from "@/pages/GerenciarCadeia";
 
 type Processo = {
   id: string;
@@ -266,9 +268,11 @@ export default function MatrizProcessos() {
       </Card>
 
       <Tabs defaultValue="lista">
-        <TabsList>
+        <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="lista">Lista</TabsTrigger>
-          <TabsTrigger value="cadeia">Cadeia de Valor</TabsTrigger>
+          <TabsTrigger value="cadeia">Cadeia de Valor (Macro)</TabsTrigger>
+          <TabsTrigger value="galeria"><Network className="h-3.5 w-3.5 mr-1" />Galeria de Processos</TabsTrigger>
+          <TabsTrigger value="gerenciar"><Settings2 className="h-3.5 w-3.5 mr-1" />Gerenciar Cadeia</TabsTrigger>
           <TabsTrigger value="vinculo"><Target className="h-3.5 w-3.5 mr-1" />Vínculo Estratégico</TabsTrigger>
           <TabsTrigger value="e2e"><Workflow className="h-3.5 w-3.5 mr-1" />Matriz E2E</TabsTrigger>
           <TabsTrigger value="riscos"><ShieldAlert className="h-3.5 w-3.5 mr-1" />Dashboard de Riscos</TabsTrigger>
@@ -397,6 +401,14 @@ export default function MatrizProcessos() {
               </Card>
             );
           })}
+        </TabsContent>
+
+        <TabsContent value="galeria">
+          <CadeiaValor />
+        </TabsContent>
+
+        <TabsContent value="gerenciar">
+          <GerenciarCadeia />
         </TabsContent>
 
         <TabsContent value="vinculo">
