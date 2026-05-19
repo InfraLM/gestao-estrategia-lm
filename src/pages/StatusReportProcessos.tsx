@@ -156,11 +156,16 @@ export default function StatusReportProcessos() {
   }, []);
 
 
-  const diretores = useMemo(() => Array.from(new Set(processos.map(p => p.diretor).filter(Boolean))).sort(), [processos]);
+  const splitDir = (s?: string) => (s || "").split(/[;,]/).map(x => x.trim()).filter(Boolean);
+
+  const diretores = useMemo(
+    () => Array.from(new Set(processos.flatMap(p => splitDir(p.diretor)))).sort(),
+    [processos]
+  );
 
   const linhas = useMemo(() => {
     return processos
-      .filter(p => diretorFilter === "todos" || p.diretor === diretorFilter)
+      .filter(p => diretorFilter === "todos" || splitDir(p.diretor).includes(diretorFilter))
       .filter(p => statusFilter === "todos" || p.status === statusFilter)
       .map(p => {
         const d = gestao[p.id] || {};
@@ -700,8 +705,13 @@ function IndicadoresGraficos({ counts, linhas, riscosCriticos, atividadesAtraso 
   }, [linhas]);
 
   const porDiretor = useMemo(() => {
+    const split = (s?: string) => (s || "").split(/[;,]/).map(x => x.trim()).filter(Boolean);
     const m = new Map<string, number>();
-    linhas.forEach(({ p }) => m.set(p.diretor || "Sem diretor", (m.get(p.diretor || "Sem diretor") || 0) + 1));
+    linhas.forEach(({ p }) => {
+      const ds = split(p.diretor);
+      if (ds.length === 0) m.set("Sem diretor", (m.get("Sem diretor") || 0) + 1);
+      else ds.forEach(d => m.set(d, (m.get(d) || 0) + 1));
+    });
     return Array.from(m, ([diretor, qtd]) => ({ diretor, qtd })).sort((a, b) => b.qtd - a.qtd).slice(0, 8);
   }, [linhas]);
 
