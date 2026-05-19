@@ -61,12 +61,16 @@ const FAROL_LABEL = { verde: "On-Track", amarelo: "Alerta", vermelho: "Off-Track
 export default function StatusReportProcessos() {
   const { data: processos } = useProcessosDB();
   const [gestao, setGestao] = useState<Record<string, any>>({});
+  const [mcAcoes, setMcAcoes] = useState<any[]>([]);
+  const [mcRiscos, setMcRiscos] = useState<any[]>([]);
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
   const [diretorFilter, setDiretorFilter] = useState<string>("todos");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
 
   useEffect(() => {
     setGestao(loadGestao());
+    setMcAcoes(loadLS<any[]>(MC_ACOES_KEY, []));
+    setMcRiscos(loadLS<any[]>(MC_RISCOS_KEY, []));
   }, []);
 
 
