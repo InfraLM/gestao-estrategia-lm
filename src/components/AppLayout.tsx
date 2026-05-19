@@ -99,8 +99,6 @@ const titles: Record<string, string> = {
   "/matriz-processos": "Matriz de Processos · Cadeia de Valor LM",
   "/gestao-processos": "Gestão de Processos · Mapeamento e Análise",
   "/matriz-riscos": "Matriz de Riscos Institucionais",
-  "/cadeia-valor": "Cadeia de Valor · Processos Ativos",
-  "/mapeamento/gerenciar-cadeia": "Gerenciar Cadeia · Cadastro de Processos (EPP/Admin)",
   "/historico/projetos": "Histórico de Projetos · Versões de Documentos",
   "/historico/processos": "Histórico de Processos · Versões de Documentos",
   "/historico/governanca": "Histórico de Governança · Atas e Deliberações",
