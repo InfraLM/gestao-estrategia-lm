@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ type Status = "Backlog" | "Em Andamento" | "Concluído" | "Pausado" | "Cancelado
 
 const STATUSES: Status[] = ["Backlog","Em Andamento","Aguardando Evidência","Concluído","Pausado","Cancelado"];
 
+interface StatusEvent { status: string; at: string; }
 interface Acao {
   id: string;
   area: Area;
@@ -38,6 +39,8 @@ interface Acao {
   status: Status;
   processoId?: string;
   processoNome?: string;
+  statusChangedAt?: string;
+  statusHistory?: StatusEvent[];
 }
 
 interface RiscoProcesso {
@@ -51,16 +54,24 @@ interface RiscoProcesso {
   acaoMitigadora: string;
   responsavel: string;
   prazo: string;
+  dataConclusao?: string;
   status: "Aberto" | "Em Mitigação" | "Mitigado" | "Aceito";
+  statusChangedAt?: string;
+  statusHistory?: StatusEvent[];
 }
 
+const todayISO = () => new Date().toISOString().slice(0, 10);
+
 const SEED: Acao[] = [
-  { id: "MC-001", area: "Comercial", origem: "OKRs da Área", oQueFazer: "Revisar script de qualificação SDR", justificativa: "Conversão MQL→SQL abaixo da meta (KR Q2)", responsavel: "Líder Comercial", dataPrevista: "2026-06-15", status: "Em Andamento" },
-  { id: "MC-002", area: "BPMO", origem: "BPMO (Processos)", oQueFazer: "Padronizar fluxo de onboarding de aluno", justificativa: "Variação entre polos identificada na matriz de processos", responsavel: "Analista BPMO", dataPrevista: "2026-05-30", status: "Backlog" },
-  { id: "MC-003", area: "CX", origem: "OKRs da Área", oQueFazer: "Reduzir TMA de tickets nível 1", justificativa: "NPS impactado por tempo de resposta", responsavel: "Coord. CX", dataPrevista: "2026-05-20", dataConclusao: "2026-05-18", status: "Concluído" },
+  { id: "MC-001", area: "Comercial", origem: "OKRs da Área", oQueFazer: "Revisar script de qualificação SDR", justificativa: "Conversão MQL→SQL abaixo da meta (KR Q2)", responsavel: "Líder Comercial", dataPrevista: "2026-06-15", status: "Em Andamento", statusChangedAt: "2026-04-10" },
+  { id: "MC-002", area: "BPMO", origem: "BPMO (Processos)", oQueFazer: "Padronizar fluxo de onboarding de aluno", justificativa: "Variação entre polos identificada na matriz de processos", responsavel: "Analista BPMO", dataPrevista: "2026-05-30", status: "Backlog", statusChangedAt: "2026-03-20" },
+  { id: "MC-003", area: "CX", origem: "OKRs da Área", oQueFazer: "Reduzir TMA de tickets nível 1", justificativa: "NPS impactado por tempo de resposta", responsavel: "Coord. CX", dataPrevista: "2026-05-20", dataConclusao: "2026-05-18", status: "Concluído", statusChangedAt: "2026-05-18" },
 ];
 
 const SEED_RISCOS: RiscoProcesso[] = [];
+
+const ACOES_KEY = "melhoria-acoes-v2";
+const RISCOS_KEY = "melhoria-riscos-v2";
 
 const STATUS_COLORS: Record<Status, string> = {
   "Backlog": "bg-muted text-muted-foreground border-border",
@@ -84,6 +95,13 @@ const IMPACTO_COLORS: Record<RiscoProcesso["impacto"], string> = {
   "Alto": "bg-orange-50 text-orange-700 border-orange-200",
   "Crítico": "bg-rose-50 text-rose-700 border-rose-200",
 };
+
+function diasEntre(a?: string, b?: string): number | null {
+  if (!a || !b) return null;
+  const d1 = new Date(a); const d2 = new Date(b);
+  if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return null;
+  return Math.round((d2.getTime() - d1.getTime()) / 86400000);
+}
 
 function downloadTemplate() {
   const headers = ["area","origem","oQueFazer","justificativa","responsavel","dataPrevista","dataConclusao","status","processoNome"];
@@ -119,9 +137,13 @@ function downloadTemplate() {
   XLSX.writeFile(wb, "template_melhoria_continua.xlsx");
 }
 
+function loadLS<T>(key: string, fallback: T): T {
+  try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : fallback; } catch { return fallback; }
+}
+
 export default function MelhoriaContinua() {
-  const [acoes, setAcoes] = useState<Acao[]>(SEED);
-  const [riscos, setRiscos] = useState<RiscoProcesso[]>(SEED_RISCOS);
+  const [acoes, setAcoes] = useState<Acao[]>(() => loadLS(ACOES_KEY, SEED));
+  const [riscos, setRiscos] = useState<RiscoProcesso[]>(() => loadLS(RISCOS_KEY, SEED_RISCOS));
   const [areaSel, setAreaSel] = useState<Area | null>(null);
   const [q, setQ] = useState("");
   const [origemFilter, setOrigemFilter] = useState<string>("Todas");
@@ -132,6 +154,9 @@ export default function MelhoriaContinua() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const { data: processos } = useProcessosDB();
+
+  useEffect(() => { localStorage.setItem(ACOES_KEY, JSON.stringify(acoes)); }, [acoes]);
+  useEffect(() => { localStorage.setItem(RISCOS_KEY, JSON.stringify(riscos)); }, [riscos]);
 
   const counts = useMemo(() => {
     const m = new Map<Area, number>();
@@ -147,10 +172,39 @@ export default function MelhoriaContinua() {
     return true;
   }), [acoes, areaSel, origemFilter, q]);
 
+  function updateAcao(id: string, patch: Partial<Acao>) {
+    setAcoes(prev => prev.map(a => {
+      if (a.id !== id) return a;
+      const next: Acao = { ...a, ...patch };
+      if (patch.status && patch.status !== a.status) {
+        const at = todayISO();
+        next.statusChangedAt = at;
+        next.statusHistory = [...(a.statusHistory ?? []), { status: patch.status, at }];
+        if (patch.status === "Concluído" && !next.dataConclusao) next.dataConclusao = at;
+      }
+      return next;
+    }));
+  }
+
+  function updateRisco(id: string, patch: Partial<RiscoProcesso>) {
+    setRiscos(prev => prev.map(r => {
+      if (r.id !== id) return r;
+      const next: RiscoProcesso = { ...r, ...patch };
+      if (patch.status && patch.status !== r.status) {
+        const at = todayISO();
+        next.statusChangedAt = at;
+        next.statusHistory = [...(r.statusHistory ?? []), { status: patch.status, at }];
+        if (patch.status === "Mitigado" && !next.dataConclusao) next.dataConclusao = at;
+      }
+      return next;
+    }));
+  }
+
   function handleSave() {
     if (!draft.oQueFazer || !draft.area) return;
     const id = `MC-${String(acoes.length + 1).padStart(3, "0")}`;
     const proc = processos.find(p => p.id === draft.processoId);
+    const at = todayISO();
     setAcoes(prev => [...prev, {
       id,
       area: draft.area as Area,
@@ -163,6 +217,8 @@ export default function MelhoriaContinua() {
       status: (draft.status as Status) ?? "Backlog",
       processoId: draft.processoId,
       processoNome: proc?.nome,
+      statusChangedAt: at,
+      statusHistory: [{ status: (draft.status as Status) ?? "Backlog", at }],
     }]);
     setDraft({ origem: "OKRs da Área", status: "Backlog", area: areaSel ?? undefined });
     setOpen(false);
@@ -175,6 +231,8 @@ export default function MelhoriaContinua() {
     }
     const proc = processos.find(p => p.id === riscoDraft.processoId);
     const id = `RP-${String(riscos.length + 1).padStart(3, "0")}`;
+    const at = todayISO();
+    const status = (riscoDraft.status as RiscoProcesso["status"]) ?? "Aberto";
     setRiscos(prev => [...prev, {
       id,
       processoId: riscoDraft.processoId!,
@@ -186,7 +244,9 @@ export default function MelhoriaContinua() {
       acaoMitigadora: riscoDraft.acaoMitigadora ?? "",
       responsavel: riscoDraft.responsavel ?? "",
       prazo: riscoDraft.prazo ?? "",
-      status: (riscoDraft.status as RiscoProcesso["status"]) ?? "Aberto",
+      status,
+      statusChangedAt: at,
+      statusHistory: [{ status, at }],
     }]);
     setRiscoDraft({ impacto: "Médio", probabilidade: "Média", status: "Aberto" });
     setOpenRisco(false);
@@ -202,6 +262,7 @@ export default function MelhoriaContinua() {
       const rows = XLSX.utils.sheet_to_json<any>(ws, { defval: "" });
       let imported = 0;
       const start = acoes.length + 1;
+      const at = todayISO();
       const novas: Acao[] = rows.flatMap((r, idx) => {
         const area = String(r.area ?? "").trim();
         const oq = String(r.oQueFazer ?? "").trim();
@@ -209,6 +270,7 @@ export default function MelhoriaContinua() {
         const procRef = String(r.processoNome ?? "").trim().toLowerCase();
         const proc = procRef ? processos.find(p => p.nome.toLowerCase().includes(procRef) || p.id.toLowerCase() === procRef) : undefined;
         imported++;
+        const status = (STATUSES.includes(r.status) ? r.status : "Backlog") as Status;
         return [{
           id: `MC-${String(start + idx).padStart(3, "0")}`,
           area: area as Area,
@@ -218,9 +280,11 @@ export default function MelhoriaContinua() {
           responsavel: String(r.responsavel ?? ""),
           dataPrevista: String(r.dataPrevista ?? ""),
           dataConclusao: r.dataConclusao ? String(r.dataConclusao) : undefined,
-          status: (STATUSES.includes(r.status) ? r.status : "Backlog") as Status,
+          status,
           processoId: proc?.id,
           processoNome: proc?.nome,
+          statusChangedAt: at,
+          statusHistory: [{ status, at }],
         }];
       });
       setAcoes(prev => [...prev, ...novas]);
@@ -231,6 +295,8 @@ export default function MelhoriaContinua() {
       if (fileRef.current) fileRef.current.value = "";
     }
   }
+
+  const hoje = todayISO();
 
   return (
     <div className="space-y-6">
@@ -416,18 +482,21 @@ export default function MelhoriaContinua() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[140px]">Origem</TableHead>
+                      <TableHead className="w-[130px]">Origem</TableHead>
                       <TableHead>O que fazer?</TableHead>
                       <TableHead>Processo vinculado</TableHead>
-                      <TableHead>Justificativa</TableHead>
-                      <TableHead className="w-[160px]">Responsável</TableHead>
-                      <TableHead className="w-[120px]">Prevista</TableHead>
-                      <TableHead className="w-[120px]">Conclusão</TableHead>
-                      <TableHead className="w-[150px]">Status</TableHead>
+                      <TableHead className="w-[150px]">Responsável</TableHead>
+                      <TableHead className="w-[150px]">Prevista</TableHead>
+                      <TableHead className="w-[150px]">Conclusão</TableHead>
+                      <TableHead className="w-[170px]">Status</TableHead>
+                      <TableHead className="w-[120px]">Δ Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {lista.map(a => (
+                    {lista.map(a => {
+                      const diasNoStatus = a.statusChangedAt ? diasEntre(a.statusChangedAt, hoje) : null;
+                      const descol = diasEntre(a.dataPrevista, a.dataConclusao ?? (a.status !== "Concluído" ? hoje : undefined));
+                      return (
                       <TableRow key={a.id}>
                         <TableCell>
                           <Badge variant="outline" className={cn("text-[10px] font-normal", a.origem === "BPMO (Processos)" ? "bg-purple-50 text-purple-800 border-purple-200" : "bg-blue-50 text-blue-800 border-blue-200")}>
@@ -440,15 +509,31 @@ export default function MelhoriaContinua() {
                             <span className="inline-flex items-center gap-1"><Link2 className="h-3 w-3" /> {a.processoNome}</span>
                           ) : "—"}
                         </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{a.justificativa}</TableCell>
                         <TableCell className="text-sm">{a.responsavel || "—"}</TableCell>
-                        <TableCell className="text-sm tabular-nums">{a.dataPrevista || "—"}</TableCell>
-                        <TableCell className="text-sm tabular-nums">{a.dataConclusao || "—"}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className={cn("text-[10px]", STATUS_COLORS[a.status])}>{a.status}</Badge>
+                          <Input type="date" value={a.dataPrevista ?? ""} onChange={e => updateAcao(a.id, { dataPrevista: e.target.value })} className="h-8 text-xs" />
+                        </TableCell>
+                        <TableCell>
+                          <Input type="date" value={a.dataConclusao ?? ""} onChange={e => updateAcao(a.id, { dataConclusao: e.target.value })} className="h-8 text-xs" />
+                        </TableCell>
+                        <TableCell>
+                          <Select value={a.status} onValueChange={v => updateAcao(a.id, { status: v as Status })}>
+                            <SelectTrigger className={cn("h-8 text-xs", STATUS_COLORS[a.status])}><SelectValue /></SelectTrigger>
+                            <SelectContent>{STATUSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                          </Select>
+                          {a.statusChangedAt && (
+                            <div className="text-[10px] text-muted-foreground mt-1 tabular-nums">desde {a.statusChangedAt}{diasNoStatus != null ? ` · ${diasNoStatus}d` : ""}</div>
+                          )}
+                        </TableCell>
+                        <TableCell className="tabular-nums text-xs">
+                          {descol == null ? "—" : (
+                            <span className={cn(descol > 0 ? "text-red-700 font-medium" : descol < 0 ? "text-emerald-700" : "text-muted-foreground")}>
+                              {descol > 0 ? `+${descol}d` : `${descol}d`}
+                            </span>
+                          )}
                         </TableCell>
                       </TableRow>
-                    ))}
+                    );})}
                     {lista.length === 0 && (
                       <TableRow>
                         <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
@@ -532,7 +617,7 @@ export default function MelhoriaContinua() {
                       <Input value={riscoDraft.responsavel ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, responsavel: e.target.value }))} />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-muted-foreground">Prazo</label>
+                      <label className="text-xs font-medium text-muted-foreground">Prazo (data prevista)</label>
                       <Input type="date" value={riscoDraft.prazo ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, prazo: e.target.value }))} />
                     </div>
                   </div>
@@ -552,32 +637,58 @@ export default function MelhoriaContinua() {
                   <TableHead>Processo</TableHead>
                   <TableHead>Risco</TableHead>
                   <TableHead className="w-[100px]">Impacto</TableHead>
-                  <TableHead className="w-[110px]">Probab.</TableHead>
                   <TableHead>Ação Mitigadora</TableHead>
                   <TableHead className="w-[140px]">Responsável</TableHead>
-                  <TableHead className="w-[110px]">Prazo</TableHead>
-                  <TableHead className="w-[130px]">Status</TableHead>
+                  <TableHead className="w-[150px]">Prevista</TableHead>
+                  <TableHead className="w-[150px]">Conclusão</TableHead>
+                  <TableHead className="w-[160px]">Status</TableHead>
+                  <TableHead className="w-[110px]">Δ Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {riscos.map(r => (
+                {riscos.map(r => {
+                  const diasNoStatus = r.statusChangedAt ? diasEntre(r.statusChangedAt, hoje) : null;
+                  const descol = diasEntre(r.prazo, r.dataConclusao ?? (r.status !== "Mitigado" && r.status !== "Aceito" ? hoje : undefined));
+                  return (
                   <TableRow key={r.id}>
                     <TableCell className="text-xs"><span className="inline-flex items-center gap-1"><Link2 className="h-3 w-3" /> {r.processoNome}</span></TableCell>
                     <TableCell className="font-medium text-sm">
                       {r.risco}
                       {r.causa && <div className="text-xs text-muted-foreground mt-0.5">Causa: {r.causa}</div>}
+                      <div className="text-[10px] text-muted-foreground mt-0.5"><Badge variant="outline" className={cn("text-[10px]", IMPACTO_COLORS[r.impacto])}>{r.impacto}</Badge> · Prob. {r.probabilidade}</div>
                     </TableCell>
                     <TableCell><Badge variant="outline" className={cn("text-[10px]", IMPACTO_COLORS[r.impacto])}>{r.impacto}</Badge></TableCell>
-                    <TableCell className="text-xs">{r.probabilidade}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">{r.acaoMitigadora || "—"}</TableCell>
                     <TableCell className="text-sm">{r.responsavel || "—"}</TableCell>
-                    <TableCell className="text-sm tabular-nums">{r.prazo || "—"}</TableCell>
-                    <TableCell><Badge variant="outline" className={cn("text-[10px]", RISCO_STATUS_COLORS[r.status])}>{r.status}</Badge></TableCell>
+                    <TableCell>
+                      <Input type="date" value={r.prazo ?? ""} onChange={e => updateRisco(r.id, { prazo: e.target.value })} className="h-8 text-xs" />
+                    </TableCell>
+                    <TableCell>
+                      <Input type="date" value={r.dataConclusao ?? ""} onChange={e => updateRisco(r.id, { dataConclusao: e.target.value })} className="h-8 text-xs" />
+                    </TableCell>
+                    <TableCell>
+                      <Select value={r.status} onValueChange={v => updateRisco(r.id, { status: v as RiscoProcesso["status"] })}>
+                        <SelectTrigger className={cn("h-8 text-xs", RISCO_STATUS_COLORS[r.status])}><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {["Aberto","Em Mitigação","Mitigado","Aceito"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      {r.statusChangedAt && (
+                        <div className="text-[10px] text-muted-foreground mt-1 tabular-nums">desde {r.statusChangedAt}{diasNoStatus != null ? ` · ${diasNoStatus}d` : ""}</div>
+                      )}
+                    </TableCell>
+                    <TableCell className="tabular-nums text-xs">
+                      {descol == null ? "—" : (
+                        <span className={cn(descol > 0 ? "text-red-700 font-medium" : descol < 0 ? "text-emerald-700" : "text-muted-foreground")}>
+                          {descol > 0 ? `+${descol}d` : `${descol}d`}
+                        </span>
+                      )}
+                    </TableCell>
                   </TableRow>
-                ))}
+                );})}
                 {riscos.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
+                    <TableCell colSpan={9} className="text-center text-muted-foreground py-10">
                       Nenhum risco cadastrado. Clique em <strong>Novo risco</strong> para vincular a um processo.
                     </TableCell>
                   </TableRow>
