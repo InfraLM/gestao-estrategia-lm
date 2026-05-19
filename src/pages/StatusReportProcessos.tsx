@@ -156,11 +156,16 @@ export default function StatusReportProcessos() {
   }, []);
 
 
-  const diretores = useMemo(() => Array.from(new Set(processos.map(p => p.diretor).filter(Boolean))).sort(), [processos]);
+  const splitDir = (s?: string) => (s || "").split(/[;,]/).map(x => x.trim()).filter(Boolean);
+
+  const diretores = useMemo(
+    () => Array.from(new Set(processos.flatMap(p => splitDir(p.diretor)))).sort(),
+    [processos]
+  );
 
   const linhas = useMemo(() => {
     return processos
-      .filter(p => diretorFilter === "todos" || p.diretor === diretorFilter)
+      .filter(p => diretorFilter === "todos" || splitDir(p.diretor).includes(diretorFilter))
       .filter(p => statusFilter === "todos" || p.status === statusFilter)
       .map(p => {
         const d = gestao[p.id] || {};
