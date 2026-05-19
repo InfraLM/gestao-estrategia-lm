@@ -16,6 +16,18 @@ type Processo = {
 
 const MATRIZ_KEY = "matriz-processos-edits-v1";
 const GP_KEY = "gestao-processos-v1";
+const MC_ACOES_KEY = "melhoria-acoes-v2";
+const MC_RISCOS_KEY = "melhoria-riscos-v2";
+
+function loadLS<T>(key: string, fallback: T): T {
+  try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : fallback; } catch { return fallback; }
+}
+function diasEntre(a?: string, b?: string): number | null {
+  if (!a || !b) return null;
+  const d1 = new Date(a); const d2 = new Date(b);
+  if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return null;
+  return Math.round((d2.getTime() - d1.getTime()) / 86400000);
+}
 
 const STATUS_COLORS: Record<string, string> = {
   "BACKLOG": "bg-muted text-muted-foreground",
