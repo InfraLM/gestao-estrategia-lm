@@ -515,10 +515,10 @@ function MelhoriaIndicadores({ acoes, riscos }: { acoes: any[]; riscos: any[] })
     <Card className="border-indigo-200">
       <CardHeader className="py-3">
         <CardTitle className="text-base flex items-center gap-2 text-indigo-700">
-          <CalendarClock className="h-4 w-4" /> Melhoria Contínua · Status & Descolamento de Datas
+          <CalendarClock className="h-4 w-4" /> Status & Descolamento de Datas
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          Indicadores do BPMO/Melhoria Contínua: tempo no status atual e descolamento entre data prevista e conclusão (positivo = atraso, negativo = adiantado).
+          Consolidado de Melhoria Contínua, Plano de Ação e Matriz de Riscos: tempo no status atual e descolamento entre data prevista e conclusão (positivo = atraso, negativo = adiantado).
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
