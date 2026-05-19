@@ -44,14 +44,22 @@ interface Acao {
   statusHistory?: StatusEvent[];
 }
 
+export const NATUREZAS = ["Variação", "Ambiguidade", "Evento", "Emergente", "Condição de incerteza"] as const;
+export const TIPOS = ["Financeiro", "Legal", "Reputacional", "Processo operacional", "Recursos (Pessoas/Materiais)", "Tecnologia/Sistemas"] as const;
+export type Natureza = typeof NATUREZAS[number];
+export type TipoRisco = typeof TIPOS[number];
+export type Escala = 1 | 2 | 3 | 4 | 5;
+
 interface RiscoProcesso {
   id: string;
   processoId: string;
   processoNome: string;
   risco: string;
   causa: string;
-  impacto: "Baixo" | "Médio" | "Alto" | "Crítico";
-  probabilidade: "Baixa" | "Média" | "Alta";
+  natureza?: Natureza;
+  tipo?: TipoRisco;
+  impacto: Escala;        // 1..5
+  probabilidade: Escala;  // 1..5
   acaoMitigadora: string;
   responsavel: string;
   prazo: string;
@@ -90,12 +98,30 @@ const RISCO_STATUS_COLORS: Record<RiscoProcesso["status"], string> = {
   "Aceito": "bg-muted text-muted-foreground border-border",
 };
 
-const IMPACTO_COLORS: Record<RiscoProcesso["impacto"], string> = {
-  "Baixo": "bg-emerald-50 text-emerald-700 border-emerald-200",
-  "Médio": "bg-amber-50 text-amber-700 border-amber-200",
-  "Alto": "bg-orange-50 text-orange-700 border-orange-200",
-  "Crítico": "bg-rose-50 text-rose-700 border-rose-200",
-};
+// Classificação por score (Impacto × Probabilidade)
+//   1-3 Baixo · 4-6 Moderado · 8-12 Alto · 15-25 Extremo
+export type NivelRisco = "Baixo" | "Moderado" | "Alto" | "Extremo";
+export function classifRisco(impacto?: number, probabilidade?: number): { score: number; nivel: NivelRisco; color: string; cell: string } {
+  const score = (impacto || 0) * (probabilidade || 0);
+  if (score >= 15) return { score, nivel: "Extremo", color: "bg-rose-100 text-rose-800 border-rose-200", cell: "bg-rose-500 text-white" };
+  if (score >= 8)  return { score, nivel: "Alto",    color: "bg-orange-100 text-orange-800 border-orange-200", cell: "bg-orange-500 text-white" };
+  if (score >= 4)  return { score, nivel: "Moderado", color: "bg-amber-100 text-amber-800 border-amber-200", cell: "bg-amber-400 text-amber-950" };
+  return { score, nivel: "Baixo", color: "bg-emerald-100 text-emerald-800 border-emerald-200", cell: "bg-emerald-500 text-white" };
+}
+
+const IMPACTO_LABEL: Record<Escala, string> = { 1: "Insignificante", 2: "Baixo", 3: "Moderado", 4: "Alto", 5: "Crítico" };
+const PROB_LABEL: Record<Escala, string> = { 1: "Raro (<5%)", 2: "Improvável (5–15%)", 3: "Possível (15–40%)", 4: "Provável (40–70%)", 5: "Quase certo (>70%)" };
+
+// Migração: localStorage antigo gravava impacto/probabilidade como string
+function migrateRiscos(arr: any[]): RiscoProcesso[] {
+  const mapImp: Record<string, Escala> = { "Baixo": 2, "Médio": 3, "Alto": 4, "Crítico": 5 };
+  const mapProb: Record<string, Escala> = { "Baixa": 2, "Média": 3, "Alta": 4 };
+  return (arr || []).map((r: any) => ({
+    ...r,
+    impacto: typeof r.impacto === "number" ? r.impacto : (mapImp[r.impacto] ?? 3),
+    probabilidade: typeof r.probabilidade === "number" ? r.probabilidade : (mapProb[r.probabilidade] ?? 3),
+  }));
+}
 
 function diasEntre(a?: string, b?: string): number | null {
   if (!a || !b) return null;
