@@ -282,7 +282,7 @@ export default function StatusReportProcessos() {
   const buildPayload = (): StatusReportPayload => ({
     titulo: "Status Report de Processos — BPMO",
     geradoEm: new Date(),
-    periodo,
+    periodo: `${periodo} · ${janela.label} (${fmtBRFull(janela.start)}–${fmtBRFull(janela.end)})`,
     filtros: {
       diretor: diretorFilter === "todos" ? "Todos" : diretorFilter,
       status: statusFilter === "todos" ? "Todos" : statusFilter,
