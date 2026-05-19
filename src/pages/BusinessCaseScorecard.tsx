@@ -13,6 +13,7 @@ import { Sparkles, Loader2, FileUp, CheckCircle2, AlertTriangle, ShieldAlert, Re
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useProjetosDB } from "@/hooks/useProjetosDB";
 
 type Sub = any;
 
@@ -31,9 +32,11 @@ const GATE_META: Record<string, { label: string; cls: string; icon: any }> = {
 export default function BusinessCaseScorecard() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { data: projetosPortfolio } = useProjetosDB();
   const [list, setList] = useState<Sub[]>([]);
   const [busy, setBusy] = useState(false);
   const [selected, setSelected] = useState<Sub | null>(null);
+  const [projetoVinculado, setProjetoVinculado] = useState<string>("");
 
   const [form, setForm] = useState<any>({
     titulo: "", proponente: "", area: "", tipo_projeto: "eficiencia",
@@ -176,6 +179,34 @@ export default function BusinessCaseScorecard() {
           <CollapsibleContent>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
+            <div className="col-span-2">
+              <Label>Projeto do Portfólio Estratégico</Label>
+              <Select
+                value={projetoVinculado || "__none__"}
+                onValueChange={(v) => {
+                  if (v === "__none__") { setProjetoVinculado(""); return; }
+                  setProjetoVinculado(v);
+                  const p = projetosPortfolio.find((x) => x.id === v);
+                  if (p) {
+                    setForm((s: any) => ({
+                      ...s,
+                      titulo: `${p.id} · ${p.nome}`,
+                      proponente: s.proponente || p.gerente || p.diretor || "",
+                      area: s.area || p.categoria || "",
+                    }));
+                  }
+                }}
+              >
+                <SelectTrigger><SelectValue placeholder="Selecione um projeto cadastrado (opcional)" /></SelectTrigger>
+                <SelectContent className="max-h-72">
+                  <SelectItem value="__none__">— Não vincular (BC avulso) —</SelectItem>
+                  {projetosPortfolio.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>{p.id} · {p.nome}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground mt-1">Unifica o nome e o acompanhamento com o projeto do Portfólio.</p>
+            </div>
             <div className="col-span-2">
               <Label>Título *</Label>
               <Input value={form.titulo} onChange={(e) => set("titulo", e.target.value)} placeholder="Nome do projeto/BC" />
