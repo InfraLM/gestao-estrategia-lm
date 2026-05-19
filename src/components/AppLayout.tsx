@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useLocation, Link } from "react-router-dom";
-import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp, Settings2, LogIn, KeyRound, UserCog, User as UserIcon } from "lucide-react";
+import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp, Settings2, LogIn, KeyRound, UserCog, User as UserIcon, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import ScrollNav from "./ScrollNav";
@@ -124,6 +125,16 @@ export default function AppLayout() {
   const [profile, setProfile] = useState<{ display_name?: string | null; cargo?: string | null; email?: string | null } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("sidebar-collapsed") === "1";
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("sidebar-collapsed", collapsed ? "1" : "0");
+    }
+  }, [collapsed]);
 
   useEffect(() => {
     if (!user) { setProfile(null); setIsAdmin(false); return; }
@@ -140,23 +151,58 @@ export default function AppLayout() {
   return (
     <div className="min-h-screen flex bg-surface">
       {/* Sidebar */}
-      <aside className="hidden md:flex w-64 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border sticky top-0 h-screen">
-        <div className="px-6 py-6 flex items-center gap-3 border-b border-sidebar-border">
-          <div className="h-10 w-10 rounded-lg bg-gradient-primary grid place-items-center font-bold text-primary-foreground shadow-primary">
+      <aside className={cn(
+        "hidden md:flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border sticky top-0 h-screen transition-[width] duration-300",
+        collapsed ? "w-16" : "w-64"
+      )}>
+        <div className={cn("py-6 flex items-center gap-3 border-b border-sidebar-border", collapsed ? "px-3 justify-center" : "px-6")}>
+          <div className="h-10 w-10 rounded-lg bg-gradient-primary grid place-items-center font-bold text-primary-foreground shadow-primary shrink-0">
             LM
           </div>
-          <div className="leading-tight">
-            <div className="font-semibold text-sm">NextLevel LM</div>
-            <div className="text-xs text-sidebar-foreground/60">Liberdade Médica</div>
-          </div>
+          {!collapsed && (
+            <div className="leading-tight">
+              <div className="font-semibold text-sm">NextLevel LM</div>
+              <div className="text-xs text-sidebar-foreground/60">Liberdade Médica</div>
+            </div>
+          )}
         </div>
-        <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+        <TooltipProvider delayDuration={200}>
+        <nav className={cn("flex-1 py-5 space-y-1 overflow-y-auto overflow-x-hidden", collapsed ? "px-2" : "px-3")}>
           {navGroups.map((group) => {
             const isGroupActive = group.children.some((c) =>
               c.to === "/" ? loc.pathname === "/" : loc.pathname.startsWith(c.to)
             );
             const isOpen = openGroups[group.id] ?? isGroupActive;
             const GroupIcon = group.icon;
+            if (collapsed) {
+              return (
+                <div key={group.id} className="space-y-0.5">
+                  {group.children.map(({ to, label, icon: Icon }) => {
+                    const active = to === "/" ? loc.pathname === "/" : loc.pathname.startsWith(to);
+                    return (
+                      <Tooltip key={to}>
+                        <TooltipTrigger asChild>
+                          <NavLink
+                            to={to}
+                            end={to === "/"}
+                            className={cn(
+                              "flex items-center justify-center h-10 w-10 mx-auto rounded-md transition-colors",
+                              active
+                                ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                                : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+                            )}
+                          >
+                            <Icon className="h-4 w-4" />
+                          </NavLink>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">{label}</TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                  <div className="my-2 h-px bg-sidebar-border/40" />
+                </div>
+              );
+            }
             return (
               <div key={group.id} className="space-y-0.5">
                 <button
@@ -199,8 +245,18 @@ export default function AppLayout() {
             );
           })}
         </nav>
-        <div className="px-4 py-4 border-t border-sidebar-border text-xs text-sidebar-foreground/50">
-          v1.0 · Wave 1 · 2026
+        </TooltipProvider>
+        <div className={cn("py-3 border-t border-sidebar-border flex", collapsed ? "px-2 justify-center" : "px-4 items-center justify-between")}>
+          {!collapsed && <span className="text-xs text-sidebar-foreground/50">v1.0 · Wave 1 · 2026</span>}
+          <button
+            type="button"
+            onClick={() => setCollapsed((v) => !v)}
+            className="h-8 w-8 grid place-items-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+            aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+            title={collapsed ? "Expandir menu" : "Recolher menu"}
+          >
+            {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
         </div>
       </aside>
 
