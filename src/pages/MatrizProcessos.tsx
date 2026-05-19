@@ -165,7 +165,7 @@ export default function MatrizProcessos() {
     const q = search.toLowerCase().trim();
     return data.filter(p => {
       if (nivel !== "todos" && p.nivel !== nivel) return false;
-      if (diretor !== "todos" && p.diretor !== diretor) return false;
+      if (diretor !== "todos" && !parseDiretores(p.diretor).includes(diretor)) return false;
       if (status !== "todos" && p.status !== status) return false;
       if (zonaE2E !== "todos") {
         const zs = zonesForProcesso(p.nome).map(z => z.id);
