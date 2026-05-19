@@ -97,7 +97,7 @@ export default function Auth() {
             <form onSubmit={signUp} className="space-y-3">
               <div><Label>Nome</Label><Input required value={name} onChange={e => setName(e.target.value)} /></div>
               <div><Label>E-mail</Label><Input type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
-              <div><Label>Senha</Label><Input type="password" required minLength={6} value={password} onChange={e => setPassword(e.target.value)} /></div>
+              <div><Label>Senha</Label><PasswordInput show={showSignUpPwd} setShow={setShowSignUpPwd} minLength={6} /></div>
               <Button type="submit" disabled={busy} className="w-full">{busy && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Criar conta</Button>
             </form>
           </TabsContent>
