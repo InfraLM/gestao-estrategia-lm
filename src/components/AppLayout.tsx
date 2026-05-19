@@ -42,8 +42,6 @@ const navGroups: NavGroup[] = [
     label: "BPMO",
     icon: GitBranch,
     children: [
-      { to: "/cadeia-valor", label: "Cadeia de Valor", icon: Network },
-      { to: "/mapeamento/gerenciar-cadeia", label: "Gerenciar Cadeia", icon: Settings2 },
       { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
       { to: "/dashboard-processos", label: "Dashboard de Processos", icon: LayoutDashboard },
       { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
