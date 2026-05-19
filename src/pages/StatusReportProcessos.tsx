@@ -218,6 +218,7 @@ export default function StatusReportProcessos() {
   }, [linhas]);
 
   // Atividades em atraso (atividades + plano de ação com prazo passado e não concluído)
+  // Filtra também pelo período selecionado: considera apenas itens cujo prazo cai dentro da janela.
   const atividadesAtraso = useMemo(() => {
     const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
     const out: { processoId: string; processoNome: string; descricao: string; responsavel: string; prazoLabel: string; diasAtraso: number; origem: "Atividade" | "Plano de Ação" }[] = [];
@@ -225,19 +226,19 @@ export default function StatusReportProcessos() {
     linhas.forEach(({ p, d }) => {
       (d.atividades || []).forEach((a: any) => {
         const prazo = parse(a.prazo);
-        if (prazo && prazo < hoje && a.status !== "Concluído") {
+        if (prazo && prazo < hoje && a.status !== "Concluído" && inWindow(a.prazo, janela)) {
           out.push({ processoId: p.id, processoNome: p.nome, descricao: a.descricao || a.titulo || "—", responsavel: a.responsavel || "—", prazoLabel: a.prazo, diasAtraso: Math.floor((hoje.getTime() - prazo.getTime()) / 86400000), origem: "Atividade" });
         }
       });
       (d.plano || []).forEach((a: any) => {
         const prazo = parse(a.prazo);
-        if (prazo && prazo < hoje && a.status !== "Concluído") {
+        if (prazo && prazo < hoje && a.status !== "Concluído" && inWindow(a.prazo, janela)) {
           out.push({ processoId: p.id, processoNome: p.nome, descricao: a.oQueFazer || "—", responsavel: a.responsavel || "—", prazoLabel: a.prazo, diasAtraso: Math.floor((hoje.getTime() - prazo.getTime()) / 86400000), origem: "Plano de Ação" });
         }
       });
     });
     return out.sort((a, b) => b.diasAtraso - a.diasAtraso);
-  }, [linhas]);
+  }, [linhas, janela]);
 
   // Séries mensais (últimos 6 meses)
   const meses6 = useMemo(() => {
