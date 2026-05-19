@@ -298,8 +298,10 @@ export default function MelhoriaContinua() {
       processoNome: proc?.nome ?? "—",
       risco: riscoDraft.risco ?? "",
       causa: riscoDraft.causa ?? "",
-      impacto: (riscoDraft.impacto as RiscoProcesso["impacto"]) ?? "Médio",
-      probabilidade: (riscoDraft.probabilidade as RiscoProcesso["probabilidade"]) ?? "Média",
+      natureza: riscoDraft.natureza,
+      tipo: riscoDraft.tipo,
+      impacto: (typeof riscoDraft.impacto === "number" ? riscoDraft.impacto : 3) as Escala,
+      probabilidade: (typeof riscoDraft.probabilidade === "number" ? riscoDraft.probabilidade : 3) as Escala,
       acaoMitigadora: riscoDraft.acaoMitigadora ?? "",
       responsavel: riscoDraft.responsavel ?? "",
       prazo: riscoDraft.prazo ?? "",
@@ -307,9 +309,10 @@ export default function MelhoriaContinua() {
       statusChangedAt: at,
       statusHistory: [{ status, at }],
     }]);
-    setRiscoDraft({ impacto: "Médio", probabilidade: "Média", status: "Aberto" });
+    setRiscoDraft({ impacto: 3, probabilidade: 3, status: "Aberto" });
     setOpenRisco(false);
   }
+
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
