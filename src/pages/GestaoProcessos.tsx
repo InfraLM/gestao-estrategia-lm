@@ -132,16 +132,30 @@ const emptyData = (): ProcessoData => ({
   atividades: [],
 });
 
-const NATUREZAS: RiscoNatureza[] = ["Variação", "Ambiguidade", "Evento", "Condição de incerteza"];
-const NAT_COLORS: Record<RiscoNatureza, string> = {
+const NAT_COLORS: Record<NaturezaBPMO, string> = {
   "Variação": "bg-orange-500/15 text-orange-700 border-orange-500/30",
   "Ambiguidade": "bg-blue-500/15 text-blue-700 border-blue-500/30",
   "Evento": "bg-red-500/15 text-red-700 border-red-500/30",
+  "Emergente": "bg-fuchsia-500/15 text-fuchsia-700 border-fuchsia-500/30",
   "Condição de incerteza": "bg-purple-500/15 text-purple-700 border-purple-500/30",
 };
-const NAT_ICON: Record<RiscoNatureza, string> = {
-  "Variação": "🔺", "Ambiguidade": "📈", "Evento": "⛔", "Condição de incerteza": "❓",
+const NAT_ICON: Record<NaturezaBPMO, string> = {
+  "Variação": "🔺", "Ambiguidade": "📈", "Evento": "⛔", "Emergente": "🌱", "Condição de incerteza": "❓",
 };
+const RISCO_STATUS_COLORS: Record<StatusRiscoBPMO, string> = {
+  "Identificado": "bg-rose-500/15 text-rose-700 border-rose-500/30",
+  "Em mitigação": "bg-amber-500/15 text-amber-700 border-amber-500/30",
+  "Mitigado": "bg-emerald-500/15 text-emerald-700 border-emerald-500/30",
+  "Aceito": "bg-muted text-muted-foreground border-border",
+};
+const todayISO = () => new Date().toISOString().slice(0, 10);
+function diasEntre(a?: string, b?: string): number | null {
+  if (!a || !b) return null;
+  const d1 = new Date(a); const d2 = new Date(b);
+  if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return null;
+  return Math.round((d2.getTime() - d1.getTime()) / 86400000);
+}
+
 
 const statusColors: Record<string, string> = {
   "BACKLOG": "bg-muted text-muted-foreground",
