@@ -112,6 +112,7 @@ const titles: Record<string, string> = {
   "/minhas-permissoes": "Minhas Permissões",
   "/gestao-usuarios": "Gestão de Usuários e Permissões",
   "/infra-tech/sprints": "Infra & Tech · Gestão de Sprints Semanais",
+  "/governanca-juridico/documentos": "Documentos de Governança · Controle GRC",
   "/pmo/business-case": "PMO · Submissão de Business Case (ScoreCard LM)",
 };
 
