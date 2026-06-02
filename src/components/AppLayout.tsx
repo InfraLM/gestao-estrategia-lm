@@ -78,6 +78,7 @@ const navGroups: NavGroup[] = [
     icon: Server,
     children: [
       { to: "/infra-tech/sprints", label: "Sprints Semanais", icon: ListChecks },
+      { to: "/governanca-juridico/documentos", label: "Documentos de Governança", icon: ScrollText },
     ],
   },
 ];
