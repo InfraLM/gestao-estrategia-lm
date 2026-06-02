@@ -29,6 +29,7 @@ import RepositorioLista from "./pages/RepositorioLista";
 import MinhasPermissoes from "./pages/MinhasPermissoes";
 import GestaoUsuarios from "./pages/GestaoUsuarios";
 import InfraTechSprints from "./pages/InfraTechSprints";
+import DocumentosGovernanca from "./pages/DocumentosGovernanca";
 import BusinessCaseScorecard from "./pages/BusinessCaseScorecard";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
