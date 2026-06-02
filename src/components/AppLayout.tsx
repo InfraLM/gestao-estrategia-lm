@@ -78,6 +78,7 @@ const navGroups: NavGroup[] = [
     icon: Server,
     children: [
       { to: "/infra-tech/sprints", label: "Sprints Semanais", icon: ListChecks },
+      { to: "/governanca-juridico/documentos", label: "Documentos de Governança", icon: ScrollText },
     ],
   },
 ];
@@ -111,6 +112,7 @@ const titles: Record<string, string> = {
   "/minhas-permissoes": "Minhas Permissões",
   "/gestao-usuarios": "Gestão de Usuários e Permissões",
   "/infra-tech/sprints": "Infra & Tech · Gestão de Sprints Semanais",
+  "/governanca-juridico/documentos": "Documentos de Governança · Controle GRC",
   "/pmo/business-case": "PMO · Submissão de Business Case (ScoreCard LM)",
 };
 
