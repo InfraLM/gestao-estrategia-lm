@@ -74,7 +74,7 @@ const navGroups: NavGroup[] = [
   },
   {
     id: "infra_tech",
-    label: "Infra & Tech",
+    label: "Governança e Jurídico",
     icon: Server,
     children: [
       { to: "/infra-tech/sprints", label: "Sprints Semanais", icon: ListChecks },
