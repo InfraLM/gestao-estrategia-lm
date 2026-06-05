@@ -1,73 +1,34 @@
 ## Objetivo
+Gerar um único arquivo **`BPMO_Documentacao.docx`** em `/mnt/documents/` reunindo toda a parte do BPMO do app, pronto para download.
 
-Substituir o toast simulado do botão "Gerar PDF" em `StatusReportProcessos.tsx` por geração real de arquivo, e adicionar exportações em Markdown, CSV e XLSX — respeitando os filtros aplicados (período, diretor, status) e centralizando a lógica em utilitários reutilizáveis.
+## Escopo do BPMO (páginas/arquivos a incluir)
+- `src/pages/MatrizProcessos.tsx` — Matriz de Processos
+- `src/pages/GestaoProcessos.tsx` — Gestão de Processos (escopo, KPIs, riscos, planos)
+- `src/pages/DashboardProcessos.tsx` — Dashboard BPMO
+- `src/pages/StatusReportProcessos.tsx` — Status Report de Processos
+- `src/pages/MatrizRiscosInstitucionais.tsx` — Matriz de Riscos
+- `src/pages/CadeiaValor.tsx` e `src/pages/GerenciarCadeia.tsx` — Cadeia de Valor
+- `src/components/DiretoresMultiSelect.tsx` — multi-seleção de diretores
+- `src/components/UploadRiscosInstitucionais.tsx`
+- `src/hooks/useProcessosDB.ts`, `src/hooks/useRiscosInstitucionaisDB.ts`
+- `src/lib/bpmoRisco.ts`
+- `src/data/processos.json` (referência de seed — incluir apenas amostra)
 
-## Dependências
+## Estrutura do .docx
+1. **Capa** — título, data, projeto.
+2. **Sumário** (TOC).
+3. **Visão geral do BPMO** — propósito do módulo e rotas (`/matriz-processos`, `/gestao-processos`, `/dashboard-processos`, `/status-report-processos`, `/matriz-riscos`).
+4. **Funcionalidades por página** — para cada arquivo acima: descrição, principais ações do usuário, filtros, exports, integrações (Supabase, IA, multi-diretor, etc.).
+5. **Esquema de dados** — tabela `processos` (21 colunas) com tipos, e tabelas auxiliares relevantes (`riscos_institucionais`). Obtido via `supabase--read_query` (`information_schema.columns`).
+6. **Código-fonte** — uma seção por arquivo, com cabeçalho (caminho) e o conteúdo completo do `.tsx`/`.ts` em bloco mono-espaçado (fonte Consolas, tamanho reduzido, `pageBreakBefore` por arquivo).
+7. **Apêndice** — lista de rotas no `App.tsx` ligadas ao BPMO e item do menu em `AppLayout.tsx`.
 
-- `xlsx` já está instalado (`^0.18.5`) — reutilizar.
-- Adicionar `jspdf` e `jspdf-autotable` (mais leve e confiável que html2canvas em Vite/React; gera PDF vetorial com tabelas paginadas automaticamente, sem depender de renderização HTML offscreen).
+## Como será gerado (técnico)
+- Script Node usando `docx` (já em `package.json` via export utils? caso contrário `npm i -g docx`) em `/tmp/gen_bpmo.js`.
+- Lê os arquivos listados via `fs.readFileSync`.
+- Consulta o schema da tabela `processos` no Supabase para listar colunas/tipos atualizados.
+- US Letter, margens 1", Arial 11pt, código em Consolas 8pt, TOC com `HeadingLevel`.
+- Salva em `/mnt/documents/BPMO_Documentacao.docx` e entrega via `<presentation-artifact>`.
 
-## Arquivos novos
-
-### `src/utils/exportUtils.ts`
-Funções utilitárias puras e tipadas:
-- `formatDateForFilename()` → string `YYYY-MM-DD`.
-- `downloadBlob(blob, filename)` → cria `<a>` temporário e dispara download.
-- `escapeCsvValue(v)` → escapa vírgula, aspas, quebras, null/undefined.
-- `exportToCsv(filename, rows, columns?)` → gera CSV UTF-8 com BOM.
-- `exportToXlsx(filename, sheets)` → aceita 1+ planilhas no mesmo workbook usando `xlsx`.
-- `buildStatusReportMarkdown(payload)` → string `.md` com seções, metadados e tabelas markdown.
-- `buildStatusReportHtml(payload)` → HTML estruturado (usado opcionalmente para preview/print).
-- `exportStatusReportPdf(payload, filename)` → usa `jspdf` + `autoTable` para gerar PDF A4 paginado com cabeçalho, metadados, cards-resumo e tabelas de processos, riscos críticos e atrasos.
-
-Tipo `StatusReportPayload` exportado com os dados consolidados (filtros, contagens, linhas, riscos, atrasos, séries mensais).
-
-## Mudanças em `src/pages/StatusReportProcessos.tsx`
-
-1. Substituir botão único "Gerar PDF" por um `DropdownMenu` "Exportar" com itens:
-   - Gerar PDF (Status Report)
-   - Exportar Markdown (.md)
-   - Exportar Matriz (XLSX) — respeita filtros
-   - Exportar Riscos (CSV)
-   - Exportar Planos de Ação (XLSX)
-2. Estado local `exporting` para desabilitar o botão e mostrar spinner durante geração.
-3. Cada handler:
-   - Monta payload a partir de `linhas`, `counts`, `riscosCriticos`, `atividadesAtraso`, `aguardandoValidacao`, filtros (`periodo`, `diretorFilter`, `statusFilter`).
-   - Chama o utilitário correspondente envolto em `try/catch`.
-   - Toast de sucesso apenas após retorno bem-sucedido; toast de erro em caso de exceção.
-4. Nomes de arquivo padronizados:
-   - `status-report-processos-YYYY-MM-DD.pdf|.md`
-   - `matriz-processos-YYYY-MM-DD.xlsx`
-   - `riscos-processos-YYYY-MM-DD.csv`
-   - `planos-acao-processos-YYYY-MM-DD.xlsx`
-
-## Layout do PDF (jspdf + autoTable)
-
-- A4 retrato, margens 14mm.
-- Cabeçalho: título "Status Report de Processos — BPMO", data de geração, período, filtros aplicados.
-- Bloco de cards-resumo (On-Track / Alerta / Off-Track) como mini-tabela.
-- Tabelas (com quebra de página automática):
-  1. Processos filtrados (ID, Nome, Diretor, Status, Maturidade, Completude, Farol).
-  2. Aguardando validação/aprovação.
-  3. Riscos críticos (score ≥ 15).
-  4. Atividades/planos atrasados (com dias de atraso).
-- Rodapé com numeração `Página X / Y`.
-
-## Cuidados técnicos
-
-- Tipagem explícita em todos os utilitários.
-- Tratar valores ausentes (`?? "—"`, `?? 0`).
-- Nenhuma alteração de business logic — apenas leitura dos dados já calculados.
-- Não tocar em `StatusReport.tsx` (escopo do pedido é Processos).
-- Reutilizar `src/lib/exportCsv.ts` existente? Ele só faz XLSX; manteremos para compatibilidade, mas as novas exportações usarão `exportUtils.ts` para multi-sheet e CSV verdadeiro.
-
-## Critérios de aceite (mapeados ao pedido)
-
-- ✅ Botão gera arquivo PDF real (jspdf).
-- ✅ Toast só após sucesso real; toast de erro em falha.
-- ✅ Export Markdown disponível.
-- ✅ Matriz/Riscos/Planos em CSV e XLSX.
-- ✅ Filtros (período, diretor, status) respeitados.
-- ✅ Nomes com data padronizados.
-- ✅ Lógica centralizada em `src/utils/exportUtils.ts`.
-- ✅ Build não quebra (TS estrito, imports limpos).
+## Entrega
+Mensagem final com o componente `<presentation-artifact path="BPMO_Documentacao.docx" mime_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"></presentation-artifact>` para download direto.
