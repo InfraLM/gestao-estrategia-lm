@@ -174,10 +174,12 @@ export default function MatrizProcessos() {
         const zs = zonesForProcesso(p.nome).map(z => z.id);
         if (!zs.includes(zonaE2E)) return false;
       }
+      if (mapeamentoFiltro === "consultoria" && !p.mapeamentoConsultoria) return false;
+      if (mapeamentoFiltro === "interno" && p.mapeamentoConsultoria) return false;
       if (q && !p.nome.toLowerCase().includes(q) && !p.dono.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [search, nivel, diretor, status, zonaE2E, data]);
+  }, [search, nivel, diretor, status, zonaE2E, mapeamentoFiltro, data]);
 
   const stats = useMemo(() => {
     const total = data.length;
