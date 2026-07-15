@@ -194,6 +194,42 @@ export default function StatusReport() {
         <SemaforoCard icon={ShieldAlert} title="Off-Track" subtitle="Desvios críticos" value={offTrack} tone="destructive" />
       </div>
 
+      {/* Melhorias Estratégicas · sincronizado com página Melhorias */}
+      <Card className="p-5 shadow-card">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-primary" />
+            <h3 className="font-semibold">Melhorias Estratégicas · Situação Atual</h3>
+          </div>
+          <Link to="/melhorias" className="text-xs text-primary hover:underline inline-flex items-center gap-1">
+            Abrir Gestão de Melhorias <ExternalLink className="h-3 w-3" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="rounded-md border border-border p-3">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</div>
+            <div className="text-2xl font-semibold tabular-nums">{melhoriasStats.total}</div>
+          </div>
+          <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
+            <div className="text-[10px] uppercase tracking-wider text-blue-700">Em Andamento</div>
+            <div className="text-2xl font-semibold tabular-nums text-blue-800">{melhoriasStats.emAndamento}</div>
+          </div>
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+            <div className="text-[10px] uppercase tracking-wider text-amber-700">Em Validação</div>
+            <div className="text-2xl font-semibold tabular-nums text-amber-800">{melhoriasStats.validacao}</div>
+          </div>
+          <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
+            <div className="text-[10px] uppercase tracking-wider text-emerald-700">Concluídas</div>
+            <div className="text-2xl font-semibold tabular-nums text-emerald-800">{melhoriasStats.concluidas}</div>
+          </div>
+          <div className={cn("rounded-md border p-3", melhoriasStats.atrasadas > 0 ? "border-destructive/30 bg-destructive/10" : "border-border")}>
+            <div className={cn("text-[10px] uppercase tracking-wider", melhoriasStats.atrasadas > 0 ? "text-destructive" : "text-muted-foreground")}>Atrasadas</div>
+            <div className={cn("text-2xl font-semibold tabular-nums", melhoriasStats.atrasadas > 0 && "text-destructive")}>{melhoriasStats.atrasadas}</div>
+          </div>
+        </div>
+      </Card>
+
+
       {/* Resumo de avanços por projeto */}
       <Card className="p-5 shadow-card">
         <div className="flex items-center justify-between mb-3">
