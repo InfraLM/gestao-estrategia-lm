@@ -137,22 +137,39 @@ const CLASSIF_COLORS: Record<Classif, string> = {
 };
 
 const COLS = [
+  { key: "origem", label: "Origem", w: 100 },
   { key: "classificacao", label: "Classificação", w: 130 },
   { key: "oQueFazer", label: "O que fazer?", w: 240 },
-  { key: "justificativa", label: "Justificativa", w: 240 },
-  { key: "resultadoEsperado", label: "Resultado esperado", w: 220 },
-  { key: "vinculo", label: "Vínculo OKR / KR", w: 220 },
-  { key: "responsavel", label: "Responsável", w: 170 },
-  { key: "dataPrevista", label: "Prevista", w: 130 },
-  { key: "dataConclusao", label: "Conclusão", w: 130 },
+  { key: "justificativa", label: "Justificativa", w: 220 },
+  { key: "resultadoEsperado", label: "Resultado esperado", w: 200 },
+  { key: "okr", label: "OKR / KR vinculado", w: 260 },
+  { key: "vinculo", label: "BSC (Obj/KR)", w: 180 },
+  { key: "responsavel", label: "Responsável", w: 160 },
+  { key: "dataPrevista", label: "Prevista", w: 120 },
+  { key: "dataConclusao", label: "Conclusão", w: 120 },
   { key: "status", label: "Status", w: 140 },
-  { key: "acoes", label: "", w: 80 },
+  { key: "acoes", label: "", w: 60 },
 ] as const;
+
+const ORIGEM_COLORS: Record<Origem, string> = {
+  "OKR": "bg-primary/10 text-primary border-primary/30",
+  "Área": "bg-slate-100 text-slate-700 border-slate-200",
+  "BPMO": "bg-blue-100 text-blue-800 border-blue-200",
+};
 
 export default function Melhorias() {
   const [itens, setItens] = useState<MelhoriaEstrategica[]>(() => {
     const stored = loadMelhorias();
-    return stored.length > 0 ? (stored as MelhoriaEstrategica[]) : SEED;
+    if (stored.length === 0) return SEED;
+    // Migração: garantir que as iniciativas de OKR estejam presentes com origem "OKR"
+    const okrIds = new Set(SEED_OKR.map(s => s.id));
+    const existingOkrIds = new Set(stored.filter(s => s.id.startsWith("ME-OKR-")).map(s => s.id));
+    const missing = SEED_OKR.filter(s => !existingOkrIds.has(s.id));
+    // Marcar itens existentes que são OKR mas sem flag
+    const migrated = (stored as MelhoriaEstrategica[]).map(it =>
+      okrIds.has(it.id) && it.origem !== "OKR" ? { ...it, origem: "OKR" as Origem } : it
+    );
+    return missing.length > 0 ? [...migrated, ...missing] : migrated;
   });
   const [areaSel, setAreaSel] = useState<Area | null>(null);
   const [q, setQ] = useState("");
