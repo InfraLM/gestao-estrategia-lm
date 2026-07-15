@@ -574,42 +574,41 @@ export default function Estrategia() {
                 ))}
               </div>
               <EstrategiaToolInsights ferramenta="Matriz SWOT" {...FERRAMENTAS_SWOT} />
+
+              {/* Hipóteses Estratégicas — integradas dentro da SWOT */}
+              <div className="pt-4 mt-2 border-t border-border space-y-4">
+                <div className="flex items-start gap-2">
+                  <Lightbulb className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-semibold text-base">Hipóteses Estratégicas · Cruzamentos TOWS</h3>
+                    <p className="text-sm text-muted-foreground mt-0.5">
+                      Combinação das variáveis da SWOT em 4 cenários (FO · FA · WO · WT). As hipóteses validadas alimentam OKRs, business cases e o backlog estratégico.
+                    </p>
+                  </div>
+                </div>
+                {hipoteses.map((c) => (
+                  <div key={c.cenario} className={`rounded-lg border p-4 ${c.cor}`}>
+                    <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
+                      <h4 className="font-semibold text-sm">{c.cenario}</h4>
+                      <Badge variant="outline" className={`text-[10px] ${c.badge}`}>{c.itens.length} hipóteses</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{c.descricao}</p>
+                    <div className="grid md:grid-cols-2 gap-2">
+                      {c.itens.map((h, idx) => (
+                        <div key={idx} className="p-3 rounded-md bg-card border border-border">
+                          <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">Cruzamento</div>
+                          <p className="text-xs mb-2 leading-snug">{h.cruzamento}</p>
+                          <div className="text-[11px] font-semibold text-primary uppercase tracking-wide mb-1">Hipótese</div>
+                          <p className="text-xs text-foreground/80 leading-snug">{h.hipotese}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
 
-          {/* HIPÓTESES ESTRATÉGICAS */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Lightbulb className="h-5 w-5 text-primary" />
-                <CardTitle>Hipóteses Estratégicas · Cruzamentos SWOT</CardTitle>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                Combinação de variáveis SWOT em 4 cenários para gerar possibilidades de ação. As hipóteses validadas alimentam OKRs, business cases e o backlog estratégico.
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {hipoteses.map((c) => (
-                <div key={c.cenario} className={`rounded-lg border p-4 ${c.cor}`}>
-                  <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
-                    <h4 className="font-semibold text-sm">{c.cenario}</h4>
-                    <Badge variant="outline" className={`text-[10px] ${c.badge}`}>{c.itens.length} hipóteses</Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{c.descricao}</p>
-                  <div className="grid md:grid-cols-2 gap-2">
-                    {c.itens.map((h, idx) => (
-                      <div key={idx} className="p-3 rounded-md bg-card border border-border">
-                        <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">Cruzamento</div>
-                        <p className="text-xs mb-2 leading-snug">{h.cruzamento}</p>
-                        <div className="text-[11px] font-semibold text-primary uppercase tracking-wide mb-1">Hipótese</div>
-                        <p className="text-xs text-foreground/80 leading-snug">{h.hipotese}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
         </TabsContent>
 
         {/* PLANEJAMENTO */}
