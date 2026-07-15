@@ -760,16 +760,29 @@ export default function Dashboard() {
               </PopoverTrigger>
               <PopoverContent align="end" className="w-64 p-2">
                 <div className="text-xs font-medium px-2 py-1 text-muted-foreground">Filtrar por classificação</div>
-                {ALL_CLASSES.map(c => (
-                  <label key={c} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted cursor-pointer text-sm">
-                    <input
-                      type="checkbox"
-                      checked={waveChartClasses.includes(c)}
-                      onChange={() => toggleWaveChartClass(c)}
-                    />
-                    <span className="h-2.5 w-2.5 rounded-sm" style={{ background: CLASS_COLORS[c] }} />
-                    {CLASS_SHORT[c]}
-                  </label>
+                {(["Institucional", "Melhoria Contínua", "Melhoria Contínua com EPP"] as Classificacao[]).map(c => (
+                  <div key={c}>
+                    <label className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted cursor-pointer text-sm">
+                      <input
+                        type="checkbox"
+                        checked={waveChartClasses.includes(c)}
+                        onChange={() => toggleWaveChartClass(c)}
+                      />
+                      <span className="h-2.5 w-2.5 rounded-sm" style={{ background: CLASS_COLORS[c] }} />
+                      {CLASS_SHORT[c]}
+                    </label>
+                    {c === "Institucional" && (
+                      <label className="flex items-center gap-2 pl-7 pr-2 py-1.5 rounded hover:bg-muted cursor-pointer text-xs">
+                        <input
+                          type="checkbox"
+                          checked={waveChartClasses.includes("Novo Produto")}
+                          onChange={() => toggleWaveChartClass("Novo Produto")}
+                        />
+                        <span className="h-2 w-2 rounded-sm" style={{ background: CLASS_COLORS["Novo Produto"] }} />
+                        <span className="text-muted-foreground">└</span> Produtos
+                      </label>
+                    )}
+                  </div>
                 ))}
                 {waveChartClasses.length > 0 && (
                   <Button variant="ghost" size="sm" className="w-full mt-1 h-7 text-xs" onClick={() => setWaveChartClasses([])}>
