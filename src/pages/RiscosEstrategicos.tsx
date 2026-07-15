@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ShieldAlert, TrendingDown, Building2, Cpu, Scale, Download, AlertTriangle, Info, CheckCircle2, Users } from "lucide-react";
 import { classifRiscoBPMO } from "@/lib/bpmoRisco";
-import { exportToXLSX } from "@/lib/exportCsv";
+import { exportToExcel } from "@/lib/exportCsv";
 
 type Bloco = "Estrutural" | "Estratégico" | "Operacional";
 type Risco = {
@@ -46,7 +46,7 @@ const RISCOS_SEED: Risco[] = [
   { id: "R13", numero: 13, nome: "Conflitos de interesse e governança interna", bloco: "Estrutural", natureza: "Ambiguidade", tipos: ["Legal", "Reputacional"], impacto: 3, probabilidade: 4, status: "Novo registro", responsaveis: ["Marcya Santos", "Diretoria"], dueDate: "2026-05-29", acoesMitigadoras: "Política de conflitos de interesse; alçadas e governança decisória; fluxos de aprovação; registro e transparência de decisões críticas.", contingencia: "Revisão da decisão; escalonamento ao comitê; apuração interna; eventual responsabilização." },
   { id: "R14", numero: 14, nome: "Dependência de receita concentrada em um ou poucos produtos", bloco: "Estratégico", natureza: "Variação", tipos: ["Financeiro", "Estratégico"], impacto: 5, probabilidade: 3, status: "Novo registro", responsaveis: ["Iuri Franco", "Bruno Garcia", "Diretoria"], impactoFinanceiro: 5000000, dueDate: "2026-05-29", acoesMitigadoras: "Diversificação de portfólio; desenvolvimento de novas linhas; monitoramento de concentração de faturamento; planejamento estratégico comercial.", contingencia: "Ajuste da estratégia comercial; aceleração de novos produtos; redução de custos operacionais." },
   { id: "R15", numero: 15, nome: "Continuidade da informação e gestão do conhecimento", bloco: "Operacional", natureza: "Condição de incerteza", tipos: ["Tecnologia/Sistemas", "Estratégico"], impacto: 4, probabilidade: 4, status: "Novo registro", responsaveis: ["Marcya Santos", "Naira Yurie", "Renato Mesquita", "Yuri Ribeiro"], impactoFinanceiro: 500000, dueDate: "2026-05-29", acoesMitigadoras: "Política de gestão do conhecimento; backup institucional; centralização de documentos críticos; versionamento; padronização de repositórios (ClickUp, SharePoint).", contingencia: "Recuperação de backup; reconstrução documental; mobilização das áreas para recomposição de informações." },
-  { id: "R16", numero: 16, nome: "Registro de marca", bloco: "Estratégico", natureza: "Condição de incerteza", tipos: ["Reputacional", "Legal", "Financeiro"], impacto: 5, probabilidade: 3, status: "Mitigação em andamento", responsaveis: ["Naira Yurie", "Marcya Santos", "Ian"], dueDate: "2027-11-25", acoesMitigadoras: "Registrar marca junto ao INPI; transferência de demanda para Renata Camozzi; acompanhamento do processo." },
+  { id: "R16", numero: 16, nome: "Registro de marca", bloco: "Estratégico", natureza: "Condição de incerteza", tipos: ["Reputacional", "Legal", "Financeiro"], impacto: 5, probabilidade: 3, status: "Mitigação em andamento", responsaveis: ["Naira Yurie", "Marcya Santos", "Ian"], dueDate: "2027-11-25", acoesMitigadoras: "Registrar marca junto ao INPI; transferência de demanda para Renata Camozzi; acompanhamento do processo.", contingencia: "Oposição a registros conflitantes; acordo de coexistência; ação judicial de nulidade quando necessário." },
 ];
 
 const BLOCO_META: Record<Bloco, { icon: any; cor: string; descricao: string }> = {
