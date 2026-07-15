@@ -297,6 +297,8 @@ export default function MatrizProcessos() {
                     <TableHead className="w-[200px]">Status</TableHead>
                     <TableHead className="w-[160px]">Maturidade</TableHead>
                     <TableHead className="w-[140px]">KPI valor (%)</TableHead>
+                    <TableHead className="w-[130px]">Consultoria</TableHead>
+                    <TableHead className="min-w-[180px]">Resp. Mapeamento</TableHead>
                     <TableHead className="text-center w-[60px]">Rev.</TableHead>
                   </TableRow>
                 </TableHeader>
