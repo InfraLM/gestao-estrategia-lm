@@ -847,6 +847,31 @@ export default function Dashboard() {
               {waveChartActive.flatMap(c => ([
                 <Bar key={`${c}-W1`} dataKey={`${c}__W1`} stackId={c} fill={waveColor.W1} name={`${CLASS_SHORT[c]} · W1`}>
                   <LabelList dataKey={`${c}__W1`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
+                  <LabelList
+                    position="bottom"
+                    content={(props: any) => {
+                      const { x, y, width, height, index } = props;
+                      const row = distSemestre[index];
+                      if (!row) return null;
+                      const total = (row[`${c}__W1`] || 0) + (row[`${c}__W2`] || 0) + (row[`${c}__W3`] || 0);
+                      const cx = x + width / 2;
+                      const baseY = (y ?? 0) + (height ?? 0);
+                      return (
+                        <g>
+                          <text
+                            x={cx}
+                            y={baseY + 14}
+                            textAnchor="middle"
+                            fontSize={9}
+                            fontWeight={600}
+                            fill={total > 0 ? CLASS_COLORS[c] : "hsl(var(--muted-foreground))"}
+                          >
+                            {CLASS_ABBR[c]}
+                          </text>
+                        </g>
+                      );
+                    }}
+                  />
                 </Bar>,
                 <Bar key={`${c}-W2`} dataKey={`${c}__W2`} stackId={c} fill={waveColor.W2} name={`${CLASS_SHORT[c]} · W2`}>
                   <LabelList dataKey={`${c}__W2`} position="center" style={{ fill: "white", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ""} />
