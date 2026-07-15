@@ -32,6 +32,7 @@ type LatestSR = {
 
 export default function StatusReport() {
   const { data: projetos } = useProjetosDB();
+  const melhorias = useMelhoriasEstrategicas();
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [parecerOpen, setParecerOpen] = useState(false);
