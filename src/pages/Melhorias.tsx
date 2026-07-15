@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { ArrowLeft, ArrowRight, Plus, Search, Sparkles, GitBranch, ClipboardList
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { projetos } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+import { loadMelhorias, saveMelhorias, type MelhoriaEstrategicaStored } from "@/hooks/useMelhoriasEstrategicas";
 
 // Objetivos Estratégicos (BSC) — fonte: Estrategia.tsx
 export const OBJETIVOS_ESTRATEGICOS = [
@@ -70,6 +71,7 @@ interface MelhoriaEstrategica {
   projetoId?: string;
   objetivos?: string[]; // códigos de objetivos estratégicos vinculados
   krs?: string[]; // KRs específicos selecionados
+  updatedAt?: string;
 }
 
 // Mapeia diretor → área (aproximação para seed inicial)
@@ -132,7 +134,10 @@ const COLS = [
 ] as const;
 
 export default function Melhorias() {
-  const [itens, setItens] = useState<MelhoriaEstrategica[]>(SEED);
+  const [itens, setItens] = useState<MelhoriaEstrategica[]>(() => {
+    const stored = loadMelhorias();
+    return stored.length > 0 ? (stored as MelhoriaEstrategica[]) : SEED;
+  });
   const [areaSel, setAreaSel] = useState<Area | null>(null);
   const [q, setQ] = useState("");
   const [classifFilter, setClassifFilter] = useState<string>("Todas");
@@ -141,6 +146,11 @@ export default function Melhorias() {
   const [draft, setDraft] = useState<Partial<MelhoriaEstrategica>>({ classificacao: "Melhoria Contínua", status: "Backlog" });
   const [colWidths, setColWidths] = useState<number[]>(COLS.map(c => c.w));
   const [vinculoFor, setVinculoFor] = useState<string | null>(null);
+
+  // Persist to localStorage on every change so o Status Report reflete atualizações em tempo real.
+  useEffect(() => {
+    saveMelhorias(itens as MelhoriaEstrategicaStored[]);
+  }, [itens]);
 
   function startResize(idx: number, e: React.MouseEvent) {
     e.preventDefault();
@@ -159,7 +169,7 @@ export default function Melhorias() {
   }
 
   function updateItem(id: string, patch: Partial<MelhoriaEstrategica>) {
-    setItens(prev => prev.map(i => i.id === id ? { ...i, ...patch } : i));
+    setItens(prev => prev.map(i => i.id === id ? { ...i, ...patch, updatedAt: new Date().toISOString() } as MelhoriaEstrategica : i));
   }
 
   const counts = useMemo(() => {

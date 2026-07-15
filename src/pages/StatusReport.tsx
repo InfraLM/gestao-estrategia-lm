@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, Download, CircleDot, AlertCircle, ShieldAlert, Sparkles, FilePlus2, History, ExternalLink, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ChevronDown, Download, CircleDot, AlertCircle, ShieldAlert, Sparkles, FilePlus2, History, ExternalLink, Loader2, TrendingUp } from "lucide-react";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
 import { SaudeBadge } from "@/components/badges";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { ParecerDialog } from "@/components/ParecerDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { useMelhoriasEstrategicas } from "@/hooks/useMelhoriasEstrategicas";
 
 const periodos = ["Semanal", "Quinzenal", "Mensal"] as const;
 type Periodo = typeof periodos[number];
@@ -30,6 +32,7 @@ type LatestSR = {
 
 export default function StatusReport() {
   const { data: projetos } = useProjetosDB();
+  const melhorias = useMelhoriasEstrategicas();
   const [periodo, setPeriodo] = useState<Periodo>("Quinzenal");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [parecerOpen, setParecerOpen] = useState(false);
@@ -83,6 +86,29 @@ export default function StatusReport() {
   const onTrack = ativos.filter(p => p.saude === "On-Track").length;
   const alerta = ativos.filter(p => p.saude === "Alerta").length;
   const offTrack = ativos.filter(p => p.saude === "Off-Track").length;
+
+  // Índice de Melhorias Estratégicas por projeto (usa projetoId salvo em Melhorias)
+  const melhoriasByProjeto = useMemo(() => {
+    const map: Record<string, typeof melhorias> = {};
+    melhorias.forEach(m => {
+      if (!m.projetoId) return;
+      (map[m.projetoId] ||= []).push(m);
+    });
+    return map;
+  }, [melhorias]);
+
+  const melhoriasStats = useMemo(() => {
+    const hoje = new Date();
+    const emAndamento = melhorias.filter(m => m.status === "Em Andamento").length;
+    const concluidas = melhorias.filter(m => m.status === "Concluído").length;
+    const atrasadas = melhorias.filter(m => {
+      if (m.status === "Concluído" || m.status === "Pausado") return false;
+      if (!m.dataPrevista) return false;
+      return new Date(m.dataPrevista) < hoje;
+    }).length;
+    const validacao = melhorias.filter(m => m.status === "Validação").length;
+    return { total: melhorias.length, emAndamento, concluidas, atrasadas, validacao };
+  }, [melhorias]);
 
   const draftOf = (codigo: string) => {
     const d = drafts[codigo];
@@ -167,6 +193,42 @@ export default function StatusReport() {
         <SemaforoCard icon={AlertCircle} title="Alerta Médio" subtitle="Desvios gerenciáveis" value={alerta} tone="warning" />
         <SemaforoCard icon={ShieldAlert} title="Off-Track" subtitle="Desvios críticos" value={offTrack} tone="destructive" />
       </div>
+
+      {/* Melhorias Estratégicas · sincronizado com página Melhorias */}
+      <Card className="p-5 shadow-card">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-primary" />
+            <h3 className="font-semibold">Melhorias Estratégicas · Situação Atual</h3>
+          </div>
+          <Link to="/melhorias" className="text-xs text-primary hover:underline inline-flex items-center gap-1">
+            Abrir Gestão de Melhorias <ExternalLink className="h-3 w-3" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="rounded-md border border-border p-3">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</div>
+            <div className="text-2xl font-semibold tabular-nums">{melhoriasStats.total}</div>
+          </div>
+          <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
+            <div className="text-[10px] uppercase tracking-wider text-blue-700">Em Andamento</div>
+            <div className="text-2xl font-semibold tabular-nums text-blue-800">{melhoriasStats.emAndamento}</div>
+          </div>
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+            <div className="text-[10px] uppercase tracking-wider text-amber-700">Em Validação</div>
+            <div className="text-2xl font-semibold tabular-nums text-amber-800">{melhoriasStats.validacao}</div>
+          </div>
+          <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
+            <div className="text-[10px] uppercase tracking-wider text-emerald-700">Concluídas</div>
+            <div className="text-2xl font-semibold tabular-nums text-emerald-800">{melhoriasStats.concluidas}</div>
+          </div>
+          <div className={cn("rounded-md border p-3", melhoriasStats.atrasadas > 0 ? "border-destructive/30 bg-destructive/10" : "border-border")}>
+            <div className={cn("text-[10px] uppercase tracking-wider", melhoriasStats.atrasadas > 0 ? "text-destructive" : "text-muted-foreground")}>Atrasadas</div>
+            <div className={cn("text-2xl font-semibold tabular-nums", melhoriasStats.atrasadas > 0 && "text-destructive")}>{melhoriasStats.atrasadas}</div>
+          </div>
+        </div>
+      </Card>
+
 
       {/* Resumo de avanços por projeto */}
       <Card className="p-5 shadow-card">
@@ -294,6 +356,59 @@ export default function StatusReport() {
                         <Textarea rows={3} className="mt-1.5" value={d.plano_acao} onChange={e => setDraft(p.id, { plano_acao: e.target.value })} />
                       </div>
                     </div>
+
+                    {/* Melhorias Estratégicas vinculadas ao projeto */}
+                    {(() => {
+                      const melhoriasProj = melhoriasByProjeto[p.id] ?? [];
+                      if (melhoriasProj.length === 0) return null;
+                      const hoje = new Date();
+                      return (
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                              <TrendingUp className="h-3.5 w-3.5" /> Melhorias Estratégicas Vinculadas
+                              <span className="text-[10px] font-normal text-muted-foreground">({melhoriasProj.length})</span>
+                            </label>
+                            <Link to="/melhorias" className="text-[11px] text-primary hover:underline">Editar em Melhorias →</Link>
+                          </div>
+                          <div className="rounded-md border border-border overflow-hidden">
+                            <table className="w-full text-xs">
+                              <thead className="bg-surface-muted">
+                                <tr>
+                                  <th className="text-left px-2 py-1.5 font-semibold">O que fazer</th>
+                                  <th className="text-left px-2 py-1.5 font-semibold w-28">Responsável</th>
+                                  <th className="text-left px-2 py-1.5 font-semibold w-24">Prevista</th>
+                                  <th className="text-left px-2 py-1.5 font-semibold w-32">Status</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {melhoriasProj.map(m => {
+                                  const atrasada = m.dataPrevista && m.status !== "Concluído" && m.status !== "Pausado" && new Date(m.dataPrevista) < hoje;
+                                  return (
+                                    <tr key={m.id} className="border-t border-border">
+                                      <td className="px-2 py-1.5">
+                                        <div className="font-medium">{m.oQueFazer}</div>
+                                        <div className="text-[10px] text-muted-foreground">{m.classificacao}</div>
+                                      </td>
+                                      <td className="px-2 py-1.5">{m.responsavel || "—"}</td>
+                                      <td className={cn("px-2 py-1.5 tabular-nums", atrasada && "text-destructive font-semibold")}>
+                                        {m.dataPrevista ? new Date(m.dataPrevista).toLocaleDateString("pt-BR") : "—"}
+                                        {atrasada && <div className="text-[10px]">atrasada</div>}
+                                      </td>
+                                      <td className="px-2 py-1.5">
+                                        <Badge variant="outline" className="text-[10px]">{m.status}</Badge>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+
 
                     <div>
                       <div className="flex items-center justify-between text-xs mb-1.5">
