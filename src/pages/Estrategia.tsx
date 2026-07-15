@@ -4,6 +4,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Target, Compass, Trophy, Telescope, Rocket, Layers, Shield, TrendingUp, Users, Cog, GraduationCap, Heart, DollarSign, Building2, Sparkles, Lightbulb, Grid2x2 } from "lucide-react";
 import EstrategiaToolInsights from "@/components/EstrategiaToolInsights";
+import OkrsSemestrais from "@/components/OkrsSemestrais";
 
 const FERRAMENTAS = {
   ICP: {
@@ -352,9 +353,10 @@ export default function Estrategia() {
       </div>
 
       <Tabs defaultValue="formulacao" className="w-full">
-        <TabsList className="grid grid-cols-2 w-full max-w-md">
+        <TabsList className="grid grid-cols-3 w-full max-w-2xl">
           <TabsTrigger value="formulacao">Formulação Estratégica</TabsTrigger>
           <TabsTrigger value="planejamento">Planejamento (BSC)</TabsTrigger>
+          <TabsTrigger value="okrs">OKRs Semestrais</TabsTrigger>
         </TabsList>
 
         {/* FORMULAÇÃO */}
@@ -635,6 +637,11 @@ export default function Estrategia() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* OKRs SEMESTRAIS */}
+        <TabsContent value="okrs" className="space-y-6 mt-6">
+          <OkrsSemestrais />
         </TabsContent>
       </Tabs>
     </div>
