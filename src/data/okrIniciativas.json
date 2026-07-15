@@ -14,7 +14,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af09rx6",
@@ -31,7 +32,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeunpxj",
@@ -48,7 +50,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeukvnt",
@@ -65,7 +68,8 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeumyjr",
@@ -82,7 +86,8 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeup3h3",
@@ -99,7 +104,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeu61ez",
@@ -116,7 +122,8 @@
     "okrs": [
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af0mw31",
@@ -133,7 +140,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af0nxe4",
@@ -150,7 +158,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86aeu4bf9",
@@ -168,7 +177,8 @@
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
       "KR 1.1.1 - Ajudar a reduzir média de CAC em 15%"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af266qq",
@@ -186,7 +196,8 @@
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
       "KR 2.1.1 - Banco de Dados 100% higienizado e unificado"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af29cpk",
@@ -203,7 +214,8 @@
     "okrs": [
       "KR 1.3.1 - 100% dos produtos com aplicativo de gestão"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af2qjep",
@@ -221,7 +233,8 @@
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
       "2.31 - 100% das atas publicadas em 2h"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Geração de Demanda"
   },
   {
     "id": "ME-OKR-86af2qjv4",
@@ -239,7 +252,8 @@
       "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
       "2.21 - 85% de decisões executadas no prazo"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Geração de Demanda"
   },
   {
     "id": "ME-OKR-86af2qkpc",
@@ -257,7 +271,8 @@
       "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
       "2.32 - <95% de realização dos rituais planejados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Geração de Demanda"
   },
   {
     "id": "ME-OKR-86aeun8ca",
@@ -274,7 +289,8 @@
     "okrs": [
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeunvhg",
@@ -291,7 +307,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeu6380",
@@ -308,7 +325,8 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af0nvu7",
@@ -325,7 +343,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86aeunbzz",
@@ -342,7 +361,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeunuxc",
@@ -359,7 +379,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeunrg2",
@@ -376,7 +397,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeup24v",
@@ -393,11 +415,12 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-BACKLOG",
-    "area": "PMO Estratégico",
+    "area": "",
     "classificacao": "Melhoria Contínua",
     "oQueFazer": "",
     "justificativa": "",
@@ -408,7 +431,8 @@
     "origem": "OKR",
     "okr": "",
     "okrs": [],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": ""
   },
   {
     "id": "ME-OKR-86aeur6wt",
@@ -425,7 +449,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86aeup900",
@@ -442,7 +467,8 @@
     "okrs": [
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86aeunk6u",
@@ -459,7 +485,8 @@
     "okrs": [
       "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86aeunp2r",
@@ -476,7 +503,8 @@
     "okrs": [
       "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86aeupkdc",
@@ -493,7 +521,8 @@
     "okrs": [
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86aezgna9",
@@ -510,7 +539,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af2yzdg",
@@ -527,7 +557,8 @@
     "okrs": [
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2yzuz",
@@ -544,7 +575,8 @@
     "okrs": [
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2z0wf",
@@ -561,7 +593,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2z27b",
@@ -578,7 +611,8 @@
     "okrs": [
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3e9t2",
@@ -595,7 +629,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3eab7",
@@ -612,7 +647,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3ea06",
@@ -629,7 +665,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3eb6f",
@@ -646,7 +683,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2z3cf",
@@ -663,7 +701,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2z4hp",
@@ -680,7 +719,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2z4za",
@@ -697,7 +737,8 @@
     "okrs": [
       "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2z5dx",
@@ -714,7 +755,8 @@
     "okrs": [
       "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2z5kw",
@@ -731,7 +773,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2z63d",
@@ -748,7 +791,8 @@
     "okrs": [
       "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2z6yn",
@@ -765,7 +809,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3dz27",
@@ -782,7 +827,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3dzp2",
@@ -799,7 +845,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3e1xp",
@@ -816,7 +863,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3e3rx",
@@ -833,7 +881,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3e5af",
@@ -850,7 +899,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3e6k7",
@@ -867,7 +917,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3e7n8",
@@ -884,7 +935,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3e8an",
@@ -901,7 +953,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3encp",
@@ -918,7 +971,8 @@
     "okrs": [
       "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3eprw",
@@ -935,7 +989,8 @@
     "okrs": [
       "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3era8",
@@ -952,7 +1007,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3erg9",
@@ -969,7 +1025,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3erpq",
@@ -986,7 +1043,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3erw0",
@@ -1003,7 +1061,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3eubr",
@@ -1020,7 +1079,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3euhm",
@@ -1037,7 +1097,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af3eut1",
@@ -1054,7 +1115,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2wcdj",
@@ -1071,7 +1133,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2wgj9",
@@ -1088,7 +1151,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2wk1x",
@@ -1105,7 +1169,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86aeu463f",
@@ -1122,7 +1187,8 @@
     "okrs": [
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Facilities"
   },
   {
     "id": "ME-OKR-86af221p3",
@@ -1139,7 +1205,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Facilities"
   },
   {
     "id": "ME-OKR-86af2xn9e",
@@ -1156,7 +1223,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Financeiro"
   },
   {
     "id": "ME-OKR-86af2xncm",
@@ -1173,7 +1241,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Facilities"
   },
   {
     "id": "ME-OKR-86af361q7",
@@ -1190,7 +1259,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Facilities"
   },
   {
     "id": "ME-OKR-86af2xte3",
@@ -1207,7 +1277,8 @@
     "okrs": [
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Facilities"
   },
   {
     "id": "ME-OKR-86af2xmer",
@@ -1224,7 +1295,8 @@
     "okrs": [
       "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Facilities"
   },
   {
     "id": "ME-OKR-86af2xpkz",
@@ -1241,7 +1313,8 @@
     "okrs": [
       "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Facilities"
   },
   {
     "id": "ME-OKR-86af2xpyh",
@@ -1258,7 +1331,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Facilities"
   },
   {
     "id": "ME-OKR-86af22qeg",
@@ -1275,7 +1349,8 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Facilities"
   },
   {
     "id": "ME-OKR-86af2xu7d",
@@ -1292,7 +1367,8 @@
     "okrs": [
       "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Facilities"
   },
   {
     "id": "ME-OKR-86af2vf38",
@@ -1310,7 +1386,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.51 Gerar 1000 leads de influenciadores"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Áudio Visual"
   },
   {
     "id": "ME-OKR-86af2vft6",
@@ -1328,7 +1405,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.51 Gerar 1000 leads de influenciadores"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Áudio Visual"
   },
   {
     "id": "ME-OKR-86af2vgjp",
@@ -1346,7 +1424,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.51 Gerar 1000 leads de influenciadores"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Áudio Visual"
   },
   {
     "id": "ME-OKR-86af2vh1g",
@@ -1364,7 +1443,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.52 Gerar 500 leads MQLs dos canais do youtube"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Áudio Visual"
   },
   {
     "id": "ME-OKR-86af2vqrj",
@@ -1381,7 +1461,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Áudio Visual"
   },
   {
     "id": "ME-OKR-86af2vqwz",
@@ -1398,7 +1479,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Áudio Visual"
   },
   {
     "id": "ME-OKR-86af2vr02",
@@ -1415,7 +1497,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Áudio Visual"
   },
   {
     "id": "ME-OKR-86af22trq",
@@ -1433,7 +1516,8 @@
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
       "KR 1.1.1 - Ajudar a reduzir média de CAC em 15%"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af2374u",
@@ -1451,7 +1535,8 @@
       "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores.",
       "KR 3.2.1 - Alunos inadimplentes 100% avisados de seu status"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af2446n",
@@ -1469,7 +1554,8 @@
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
       "KR 2.3.1 - 50% dos processos internos com alguma automação implantada"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af24q9v",
@@ -1487,7 +1573,8 @@
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
       "KR 3.1.1 - 100% dos alunos mapeados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af27q9h",
@@ -1505,7 +1592,8 @@
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
       "KR 2.1.2 - BIs e Hubs 100% atualizados e divulgados dentro de 1 semana"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af28btp",
@@ -1523,7 +1611,8 @@
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
       "KR 2.3.2 - 70% das reuniões realizadas pelos times passíveis de análise"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af28d0z",
@@ -1541,7 +1630,8 @@
       "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
       "KR 2.2.1 - Colaboradores experts em 80% das ferramentas e processos corporativos"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af29kbd",
@@ -1559,7 +1649,8 @@
       "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
       "KR 3.3.2 - Dados de CSAT e NPS mapeados e tratados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "TI"
   },
   {
     "id": "ME-OKR-86af2qbna",
@@ -1576,7 +1667,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Geração de Demanda"
   },
   {
     "id": "ME-OKR-86af2qdb9",
@@ -1593,7 +1685,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Geração de Demanda"
   },
   {
     "id": "ME-OKR-86af2qdvu",
@@ -1610,7 +1703,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Geração de Demanda"
   },
   {
     "id": "ME-OKR-86af358z5",
@@ -1627,7 +1721,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Geração de Demanda"
   },
   {
     "id": "ME-OKR-86aeup3jx",
@@ -1644,7 +1739,8 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2wr8m",
@@ -1661,7 +1757,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 2 - Escala com controle"
+    "wave": "Wave 2 - Escala com controle",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af2wrq7",
@@ -1678,7 +1775,8 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento) KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2wt42",
@@ -1695,7 +1793,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af2wtc5",
@@ -1712,7 +1811,8 @@
     "okrs": [
       "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Product Owner"
   },
   {
     "id": "ME-OKR-86af3e85t",
@@ -1729,7 +1829,8 @@
     "okrs": [
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af3e8v8",
@@ -1746,7 +1847,8 @@
     "okrs": [
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af2wu93",
@@ -1763,7 +1865,8 @@
     "okrs": [
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af3eegx",
@@ -1780,7 +1883,8 @@
     "okrs": [
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af3egv6",
@@ -1797,7 +1901,8 @@
     "okrs": [
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af3ehda",
@@ -1814,7 +1919,8 @@
     "okrs": [
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af2wv0b",
@@ -1831,7 +1937,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af3ek5u",
@@ -1848,7 +1955,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Product Owner"
   },
   {
     "id": "ME-OKR-86af3em6p",
@@ -1865,7 +1973,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Product Owner"
   },
   {
     "id": "ME-OKR-86af3emwa",
@@ -1882,7 +1991,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Product Owner"
   },
   {
     "id": "ME-OKR-86af2ww5z",
@@ -1899,7 +2009,8 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af3fwd0",
@@ -1916,7 +2027,8 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2wx2g",
@@ -1933,7 +2045,8 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2wz9b",
@@ -1950,7 +2063,8 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2wtt1",
@@ -1967,11 +2081,12 @@
     "okrs": [
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento) KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Product Owner"
   },
   {
     "id": "ME-OKR-86af2wunj",
-    "area": "PMO Estratégico",
+    "area": "",
     "classificacao": "Melhoria Contínua",
     "oQueFazer": "-",
     "justificativa": "",
@@ -1982,7 +2097,8 @@
     "origem": "OKR",
     "okr": "",
     "okrs": [],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": ""
   },
   {
     "id": "ME-OKR-86af3atup",
@@ -1999,7 +2115,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af3aukn",
@@ -2016,7 +2133,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af3avv5",
@@ -2033,7 +2151,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af3b748",
@@ -2050,7 +2169,8 @@
     "okrs": [
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2x5v4",
@@ -2067,7 +2187,8 @@
     "okrs": [
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af3bc2t",
@@ -2084,7 +2205,8 @@
     "okrs": [
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af3bdhy",
@@ -2101,7 +2223,8 @@
     "okrs": [
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2x6nx",
@@ -2118,7 +2241,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2x7a0",
@@ -2135,7 +2259,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2xav3",
@@ -2152,7 +2277,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af3bgby",
@@ -2169,7 +2295,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af3bndz",
@@ -2186,7 +2313,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af3byz0",
@@ -2203,7 +2331,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2x7n9",
@@ -2220,7 +2349,8 @@
     "okrs": [
       "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2xagk",
@@ -2237,7 +2367,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af3bad8",
@@ -2254,7 +2385,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2x82a",
@@ -2271,7 +2403,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2x8bv",
@@ -2288,7 +2421,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2x8vk",
@@ -2305,7 +2439,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2xa1j",
@@ -2322,11 +2457,12 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2x6wk",
-    "area": "PMO Estratégico",
+    "area": "",
     "classificacao": "Melhoria Contínua",
     "oQueFazer": "-",
     "justificativa": "",
@@ -2337,7 +2473,8 @@
     "origem": "OKR",
     "okr": "",
     "okrs": [],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": ""
   },
   {
     "id": "ME-OKR-86af2u1rr",
@@ -2354,11 +2491,12 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2u26k",
-    "area": "PMO Estratégico",
+    "area": "",
     "classificacao": "Melhoria Contínua",
     "oQueFazer": "-",
     "justificativa": "",
@@ -2372,11 +2510,12 @@
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
       "-"
     ],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": ""
   },
   {
     "id": "ME-OKR-86af2u2p3",
-    "area": "PMO Estratégico",
+    "area": "",
     "classificacao": "Melhoria Contínua",
     "oQueFazer": "-",
     "justificativa": "",
@@ -2390,7 +2529,8 @@
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
       "-"
     ],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": ""
   },
   {
     "id": "ME-OKR-86af2tnex",
@@ -2407,7 +2547,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2thmp",
@@ -2425,7 +2566,8 @@
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
       "KR 1.1.1 Manter custo por aluno ≤ R$ 800"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2tnwq",
@@ -2443,7 +2585,8 @@
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
       "KR 1.2.1 Garantir 100% de visualização dos alunos contemplados, reduzindo erros de acesso para zero"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2u3dm",
@@ -2461,7 +2604,8 @@
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
       "KR 1.2.1 Garantir 100% de visualização dos alunos contemplados, reduzindo erros de acesso para zero"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2tf01",
@@ -2479,7 +2623,8 @@
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
       "KR 1.2.2 Garantir que 100% dos custos com palestrantes estejam registrados e aprovados antes do evento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2tfmt",
@@ -2497,7 +2642,8 @@
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
       "KR 1.2.2 Garantir que 100% dos custos com palestrantes estejam registrados e aprovados antes do evento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2tgk4",
@@ -2515,7 +2661,8 @@
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
       "KR 1.2.2 Garantir que 100% dos custos com palestrantes estejam registrados e aprovados antes do evento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2u9gr",
@@ -2533,7 +2680,8 @@
       "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
       "KR 1.2.2 Garantir que 100% dos custos com palestrantes estejam registrados e aprovados antes do evento"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af42vkr",
@@ -2551,7 +2699,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.1 Alcançar 200 vendas semestral das certificações ACLS/ATLS"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af42yf5",
@@ -2569,7 +2718,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.1 Alcançar 200 vendas semestral das certificações ACLS/ATLS"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af42zqu",
@@ -2587,7 +2737,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.1 Alcançar 200 vendas semestral das certificações ACLS/ATLS"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af434mb",
@@ -2605,7 +2756,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.1 Alcançar 200 vendas semestral das certificações ACLS/ATLS"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af43896",
@@ -2623,7 +2775,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.2 Alcançar 10% de conversão de alunos do ACLS para a Pós-Graduação"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af439n8",
@@ -2641,7 +2794,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.2 Alcançar 10% de conversão de alunos do ACLS para a Pós-Graduação"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af43auf",
@@ -2659,7 +2813,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.2 Alcançar 10% de conversão de alunos do ACLS para a Pós-Graduação"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af43c0b",
@@ -2677,7 +2832,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.2 Alcançar 10% de conversão de alunos do ACLS para a Pós-Graduação"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af43ft2",
@@ -2695,7 +2851,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.2 Alcançar 10% de conversão de alunos do ACLS para a Pós-Graduação"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2u32z",
@@ -2713,7 +2870,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.3 Garantir 100% das inscrições corretas e validadas nos cursos ACLS/ATLS"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2u37g",
@@ -2731,7 +2889,8 @@
       "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.3 Garantir 100% das inscrições corretas e validadas nos cursos ACLS/ATLS"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2umuq",
@@ -2749,7 +2908,8 @@
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\") KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
       "KR 1.5.3 Garantir 100% das inscrições corretas e validadas nos cursos ACLS/ATLS"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af2u9xp",
@@ -2766,7 +2926,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2ubaz",
@@ -2783,7 +2944,8 @@
     "okrs": [
       "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2tr0f",
@@ -2800,7 +2962,8 @@
     "okrs": [
       "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2u50z",
@@ -2818,7 +2981,8 @@
       "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
       "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2u93m",
@@ -2836,7 +3000,8 @@
       "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
       "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2ubjg",
@@ -2854,7 +3019,8 @@
       "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
       "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2ubny",
@@ -2872,7 +3038,8 @@
       "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
       "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2udgr",
@@ -2890,7 +3057,8 @@
       "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
       "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2udzc",
@@ -2908,7 +3076,8 @@
       "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
       "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2th5n",
@@ -2925,7 +3094,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2tqd8",
@@ -2942,7 +3112,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2tujz",
@@ -2959,7 +3130,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2u1bd",
@@ -2976,7 +3148,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2u2xe",
@@ -2993,7 +3166,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Estratégia e Projetos"
   },
   {
     "id": "ME-OKR-86af2ufqx",
@@ -3010,7 +3184,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af41en4",
@@ -3027,7 +3202,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2u4wb",
@@ -3044,7 +3220,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2u96n",
@@ -3061,7 +3238,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2u9ae",
@@ -3078,7 +3256,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2udvv",
@@ -3095,7 +3274,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af2ujkb",
@@ -3112,7 +3292,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86af48h07",
@@ -3129,7 +3310,8 @@
     "okrs": [
       "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Demandas médicas"
   },
   {
     "id": "ME-OKR-86aeumvxz",
@@ -3146,11 +3328,12 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 2 - Escala com controle"
+    "wave": "Wave 2 - Escala com controle",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af2xe92",
-    "area": "PMO Estratégico",
+    "area": "",
     "classificacao": "Melhoria Contínua",
     "oQueFazer": "Estrutura de PD",
     "justificativa": "",
@@ -3163,7 +3346,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": ""
   },
   {
     "id": "ME-OKR-86af36ubw",
@@ -3180,7 +3364,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af36xe2",
@@ -3197,7 +3382,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "RH"
   },
   {
     "id": "ME-OKR-86af3712x",
@@ -3214,7 +3400,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "RH"
   },
   {
     "id": "ME-OKR-86af376w4",
@@ -3231,7 +3418,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "RH"
   },
   {
     "id": "ME-OKR-86af377z1",
@@ -3248,7 +3436,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af37q7c",
@@ -3265,7 +3454,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af382c6",
@@ -3282,7 +3472,8 @@
     "okrs": [
       "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "RH"
   },
   {
     "id": "ME-OKR-86af3846r",
@@ -3299,7 +3490,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af38ggq",
@@ -3316,7 +3508,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af38jr6",
@@ -3333,7 +3526,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "RH"
   },
   {
     "id": "ME-OKR-86af38kcp",
@@ -3350,7 +3544,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "RH"
   },
   {
     "id": "ME-OKR-86af38pcr",
@@ -3367,7 +3562,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af38rfe",
@@ -3384,7 +3580,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af38tte",
@@ -3401,7 +3598,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af38x68",
@@ -3418,7 +3616,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af390mv",
@@ -3435,7 +3634,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "RH"
   },
   {
     "id": "ME-OKR-86af391qy",
@@ -3452,7 +3652,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af3931v",
@@ -3469,7 +3670,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "RH"
   },
   {
     "id": "ME-OKR-86af39401",
@@ -3486,7 +3688,8 @@
     "okrs": [
       "OKR 2 - Governança Institucional e Cultura de Dados"
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Processos e Melhoria contínua"
   },
   {
     "id": "ME-OKR-86af35rw1",
@@ -3504,7 +3707,8 @@
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
       "KR 1.1.1 - Atingir ≥ 85% de acurácia nos dados de negócios do CRM (valor, data prevista de fechamento e probabilidade"
     ],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": "Comercial"
   },
   {
     "id": "ME-OKR-86af39vyg",
@@ -3522,7 +3726,8 @@
       "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
       "KR 1.1.2 - Mensurar e reduzir a variação do tempo de ciclo de venda para ≤ 10 dias"
     ],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": "Comercial"
   },
   {
     "id": "ME-OKR-86af39we5",
@@ -3540,7 +3745,8 @@
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
       "KR 2.1.2 Garantir que 90% dos dados comerciais sejam sincronizados com o Dashboard Oficial em menos de 15 minutos."
     ],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": "Comercial"
   },
   {
     "id": "ME-OKR-86af39x2a",
@@ -3558,7 +3764,8 @@
       "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
       "KR 2.1.4: Reduzir em 50% o número de relatórios manuais sobre vendas e finanças gerados em planilhas."
     ],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": "Comercial"
   },
   {
     "id": "ME-OKR-86af2w4mq",
@@ -3575,7 +3782,8 @@
     "okrs": [
       "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores."
     ],
-    "wave": "Wave 1 - Estrutura mínima"
+    "wave": "Wave 1 - Estrutura mínima",
+    "deptOriginal": "Comercial"
   },
   {
     "id": "ME-OKR-86af2w6k8",
@@ -3593,6 +3801,7 @@
       "KR 3.4 - Classificar 80% dos novos alunos no modelo de segmentação de perfis (Jornada/Financeiro) na primeira semana para evitar mismatching de produto",
       "KR 3.4.1 - Classificar 80% dos novos alunos (Jornada/Financeiro) no momento da venda"
     ],
-    "wave": ""
+    "wave": "",
+    "deptOriginal": "Comercial"
   }
 ]
