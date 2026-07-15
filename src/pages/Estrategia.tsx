@@ -159,7 +159,14 @@ const vrin = [
 const FERRAMENTAS_SWOT = {
   descricao: "Síntese de Forças e Fraquezas (internas) e Oportunidades e Ameaças (externas). O cruzamento entre quadrantes (FO/FA/WO/WT) gera as hipóteses estratégicas que alimentam o BSC, OKRs e o backlog de iniciativas.",
   referencia: "Albert Humphrey — Stanford SRI (1960s); Andrews — The Concept of Corporate Strategy (1971); Weihrich — TOWS Matrix, Long Range Planning (1982).",
+  saidas: [
+    "Quadrantes SWOT consolidados (Forças, Fraquezas, Oportunidades, Ameaças)",
+    "Hipóteses estratégicas por cruzamento TOWS (FO · FA · WO · WT)",
+    "Cenários: Alavancagem, Defesa, Limitação e Vulnerabilidade",
+    "Insumo direto para iniciativas do Backlog Estratégico",
+  ],
 };
+
 
 // SWOT consolidado (extraído de Construcao_Estratégia_LM)
 const swot = {
