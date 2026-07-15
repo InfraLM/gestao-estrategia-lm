@@ -174,6 +174,7 @@ export default function Melhorias() {
   const [areaSel, setAreaSel] = useState<Area | null>(null);
   const [q, setQ] = useState("");
   const [classifFilter, setClassifFilter] = useState<string>("Todas");
+  const [origemFilter, setOrigemFilter] = useState<string>("Todas");
   const [statusFilter, setStatusFilter] = useState<string>("Todos");
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Partial<MelhoriaEstrategica>>({ classificacao: "Melhoria Contínua", status: "Backlog" });
