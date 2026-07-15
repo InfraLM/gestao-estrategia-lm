@@ -162,14 +162,21 @@ export default function Melhorias() {
   const [itens, setItens] = useState<MelhoriaEstrategica[]>(() => {
     const stored = loadMelhorias();
     if (stored.length === 0) return SEED;
-    // Migração: garantir que as iniciativas de OKR estejam presentes com origem "OKR"
     const okrIds = new Set(SEED_OKR.map(s => s.id));
+    const seedById = new Map(SEED_OKR.map(s => [s.id, s]));
     const existingOkrIds = new Set(stored.filter(s => s.id.startsWith("ME-OKR-")).map(s => s.id));
     const missing = SEED_OKR.filter(s => !existingOkrIds.has(s.id));
-    // Marcar itens existentes que são OKR mas sem flag
-    const migrated = (stored as MelhoriaEstrategica[]).map(it =>
-      okrIds.has(it.id) && it.origem !== "OKR" ? { ...it, origem: "OKR" as Origem } : it
-    );
+    // Re-sincroniza área das iniciativas OKR com o seed atual (permite marcar como "Não classificada")
+    const migrated = (stored as MelhoriaEstrategica[]).map(it => {
+      if (!okrIds.has(it.id)) return it;
+      const seed = seedById.get(it.id);
+      const patch: Partial<MelhoriaEstrategica> = { origem: "OKR" as Origem };
+      // Só sobrescreve área se ainda está no fallback antigo "PMO Estratégico" e o seed indica outra coisa
+      if (seed && it.area === "PMO Estratégico" && seed.area !== "PMO Estratégico") {
+        patch.area = seed.area;
+      }
+      return { ...it, ...patch };
+    });
     return missing.length > 0 ? [...migrated, ...missing] : migrated;
   });
   const [areaSel, setAreaSel] = useState<Area | null>(null);
