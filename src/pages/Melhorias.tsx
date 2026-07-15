@@ -460,6 +460,15 @@ export default function Melhorias() {
                     <SelectItem value="Melhoria Contínua com EPP">Com Impacto (EPP)</SelectItem>
                   </SelectContent>
                 </Select>
+                <Select value={origemFilter} onValueChange={setOrigemFilter}>
+                  <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Todas">Todas as origens</SelectItem>
+                    <SelectItem value="OKR">OKR</SelectItem>
+                    <SelectItem value="Área">Área</SelectItem>
+                    <SelectItem value="BPMO">BPMO</SelectItem>
+                  </SelectContent>
+                </Select>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
                   <SelectContent>
