@@ -95,7 +95,9 @@ const DIRETOR_AREA: Record<string, Area> = {
   "Não atribuído": "PMO Estratégico",
 };
 
-const SEED: MelhoriaEstrategica[] = projetos
+import okrIniciativas from "@/data/okrIniciativas.json";
+
+const SEED_PROJ: MelhoriaEstrategica[] = projetos
   .filter(p => p.classificacao === "Melhoria Contínua" || p.classificacao === "Melhoria Contínua com EPP")
   .map(p => ({
     id: `ME-${p.id}`,
@@ -110,7 +112,15 @@ const SEED: MelhoriaEstrategica[] = projetos
     projetoId: p.id,
     objetivos: p.objetivos ?? [],
     krs: p.krs ?? [],
+    origem: "Área" as Origem,
   }));
+
+const SEED_OKR: MelhoriaEstrategica[] = (okrIniciativas as any[]).map(x => ({
+  ...x,
+  area: (AREAS.includes(x.area) ? x.area : "PMO Estratégico") as Area,
+})) as MelhoriaEstrategica[];
+
+const SEED: MelhoriaEstrategica[] = [...SEED_PROJ, ...SEED_OKR];
 
 const STATUS_COLORS: Record<Status, string> = {
   "Backlog": "bg-muted text-muted-foreground border-border",
