@@ -117,7 +117,8 @@ const SEED_PROJ: MelhoriaEstrategica[] = projetos
 
 const SEED_OKR: MelhoriaEstrategica[] = (okrIniciativas as any[]).map(x => ({
   ...x,
-  area: (AREAS.includes(x.area) ? x.area : "PMO Estratégico") as Area,
+  // Mantém área vazia quando não houve mapeamento — item fica em "Não classificadas"
+  area: (AREAS.includes(x.area) ? x.area : "") as Area,
 })) as MelhoriaEstrategica[];
 
 const SEED: MelhoriaEstrategica[] = [...SEED_PROJ, ...SEED_OKR];
