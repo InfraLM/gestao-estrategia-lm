@@ -133,7 +133,10 @@ const COLS = [
 ] as const;
 
 export default function Melhorias() {
-  const [itens, setItens] = useState<MelhoriaEstrategica[]>(SEED);
+  const [itens, setItens] = useState<MelhoriaEstrategica[]>(() => {
+    const stored = loadMelhorias();
+    return stored.length > 0 ? (stored as MelhoriaEstrategica[]) : SEED;
+  });
   const [areaSel, setAreaSel] = useState<Area | null>(null);
   const [q, setQ] = useState("");
   const [classifFilter, setClassifFilter] = useState<string>("Todas");
@@ -142,6 +145,11 @@ export default function Melhorias() {
   const [draft, setDraft] = useState<Partial<MelhoriaEstrategica>>({ classificacao: "Melhoria Contínua", status: "Backlog" });
   const [colWidths, setColWidths] = useState<number[]>(COLS.map(c => c.w));
   const [vinculoFor, setVinculoFor] = useState<string | null>(null);
+
+  // Persist to localStorage on every change so o Status Report reflete atualizações em tempo real.
+  useEffect(() => {
+    saveMelhorias(itens as MelhoriaEstrategicaStored[]);
+  }, [itens]);
 
   function startResize(idx: number, e: React.MouseEvent) {
     e.preventDefault();
@@ -160,7 +168,7 @@ export default function Melhorias() {
   }
 
   function updateItem(id: string, patch: Partial<MelhoriaEstrategica>) {
-    setItens(prev => prev.map(i => i.id === id ? { ...i, ...patch } : i));
+    setItens(prev => prev.map(i => i.id === id ? { ...i, ...patch, updatedAt: new Date().toISOString() } as MelhoriaEstrategica : i));
   }
 
   const counts = useMemo(() => {
