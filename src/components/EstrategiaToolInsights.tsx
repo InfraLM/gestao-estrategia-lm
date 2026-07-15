@@ -27,7 +27,9 @@ interface Props {
   ferramenta: string;
   descricao: string;
   referencia: string;
+  saidas?: string[];
 }
+
 
 function fileIcon(tipo?: string | null) {
   if (!tipo) return <Paperclip className="h-3.5 w-3.5" />;
