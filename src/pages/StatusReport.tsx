@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, Download, CircleDot, AlertCircle, ShieldAlert, Sparkles, FilePlus2, History, ExternalLink, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ChevronDown, Download, CircleDot, AlertCircle, ShieldAlert, Sparkles, FilePlus2, History, ExternalLink, Loader2, TrendingUp } from "lucide-react";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
 import { SaudeBadge } from "@/components/badges";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { ParecerDialog } from "@/components/ParecerDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { useMelhoriasEstrategicas } from "@/hooks/useMelhoriasEstrategicas";
 
 const periodos = ["Semanal", "Quinzenal", "Mensal"] as const;
 type Periodo = typeof periodos[number];
