@@ -87,6 +87,29 @@ export default function StatusReport() {
   const alerta = ativos.filter(p => p.saude === "Alerta").length;
   const offTrack = ativos.filter(p => p.saude === "Off-Track").length;
 
+  // Índice de Melhorias Estratégicas por projeto (usa projetoId salvo em Melhorias)
+  const melhoriasByProjeto = useMemo(() => {
+    const map: Record<string, typeof melhorias> = {};
+    melhorias.forEach(m => {
+      if (!m.projetoId) return;
+      (map[m.projetoId] ||= []).push(m);
+    });
+    return map;
+  }, [melhorias]);
+
+  const melhoriasStats = useMemo(() => {
+    const hoje = new Date();
+    const emAndamento = melhorias.filter(m => m.status === "Em Andamento").length;
+    const concluidas = melhorias.filter(m => m.status === "Concluído").length;
+    const atrasadas = melhorias.filter(m => {
+      if (m.status === "Concluído" || m.status === "Pausado") return false;
+      if (!m.dataPrevista) return false;
+      return new Date(m.dataPrevista) < hoje;
+    }).length;
+    const validacao = melhorias.filter(m => m.status === "Validação").length;
+    return { total: melhorias.length, emAndamento, concluidas, atrasadas, validacao };
+  }, [melhorias]);
+
   const draftOf = (codigo: string) => {
     const d = drafts[codigo];
     if (d) return d;
