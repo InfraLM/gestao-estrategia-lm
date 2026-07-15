@@ -171,7 +171,8 @@ export default function Melhorias() {
       if (!okrIds.has(it.id)) return it;
       const seed = seedById.get(it.id);
       const patch: Partial<MelhoriaEstrategica> = { origem: "OKR" as Origem };
-      // Só sobrescreve área se ainda está no fallback antigo "PMO Estratégico" e o seed indica outra coisa
+      // Sobrescreve área quando o item ainda está no fallback antigo "PMO Estratégico"
+      // e o seed atual aponta para outra área (inclusive "" = Não classificada)
       if (seed && it.area === "PMO Estratégico" && seed.area !== "PMO Estratégico") {
         patch.area = seed.area;
       }
