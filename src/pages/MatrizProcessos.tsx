@@ -142,7 +142,7 @@ export default function MatrizProcessos() {
     data.forEach(p => {
       const seed = (processosSeed as Processo[]).find(s => s.id === p.id)!;
       const diff: Partial<Processo> = {};
-      (["nivel", "diretor", "status", "maturidade", "kpiValor", "vinculo"] as const).forEach(k => {
+      (["nivel", "diretor", "status", "maturidade", "kpiValor", "vinculo", "mapeamentoConsultoria", "responsavelMapeamento"] as const).forEach(k => {
         if ((p as any)[k] !== (seed as any)[k]) (diff as any)[k] = (p as any)[k];
       });
       if (Object.keys(diff).length) edits[p.id] = diff;
