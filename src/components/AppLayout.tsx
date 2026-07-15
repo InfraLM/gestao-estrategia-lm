@@ -79,6 +79,7 @@ const navGroups: NavGroup[] = [
     children: [
       { to: "/infra-tech/sprints", label: "Sprints Semanais", icon: ListChecks },
       { to: "/governanca-juridico/documentos", label: "Documentos de Governança", icon: ScrollText },
+      { to: "/governanca-juridico/riscos-estrategicos", label: "Riscos Estratégicos", icon: ShieldAlert },
     ],
   },
 ];
@@ -113,6 +114,7 @@ const titles: Record<string, string> = {
   "/gestao-usuarios": "Gestão de Usuários e Permissões",
   "/infra-tech/sprints": "Infra & Tech · Gestão de Sprints Semanais",
   "/governanca-juridico/documentos": "Documentos de Governança · Controle GRC",
+  "/governanca-juridico/riscos-estrategicos": "Riscos Estratégicos · Mapa de Riscos LM",
   "/pmo/business-case": "PMO · Submissão de Business Case (ScoreCard LM)",
 };
 
