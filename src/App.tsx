@@ -30,6 +30,7 @@ import MinhasPermissoes from "./pages/MinhasPermissoes";
 import GestaoUsuarios from "./pages/GestaoUsuarios";
 import InfraTechSprints from "./pages/InfraTechSprints";
 import DocumentosGovernanca from "./pages/DocumentosGovernanca";
+import RiscosEstrategicos from "./pages/RiscosEstrategicos";
 import BusinessCaseScorecard from "./pages/BusinessCaseScorecard";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
@@ -79,6 +80,7 @@ const App = () => (
               <Route path="/matriz-riscos" element={<MatrizRiscosInstitucionais />} />
               <Route path="/infra-tech/sprints" element={<InfraTechSprints />} />
               <Route path="/governanca-juridico/documentos" element={<DocumentosGovernanca />} />
+              <Route path="/governanca-juridico/riscos-estrategicos" element={<RiscosEstrategicos />} />
               <Route path="/pmo/business-case" element={<BusinessCaseScorecard />} />
             </Route>
             <Route path="*" element={<NotFound />} />
