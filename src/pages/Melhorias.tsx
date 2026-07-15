@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { ArrowLeft, ArrowRight, Plus, Search, Sparkles, GitBranch, ClipboardList
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { projetos } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+import { loadMelhorias, saveMelhorias, type MelhoriaEstrategicaStored } from "@/hooks/useMelhoriasEstrategicas";
 
 // Objetivos Estratégicos (BSC) — fonte: Estrategia.tsx
 export const OBJETIVOS_ESTRATEGICOS = [
