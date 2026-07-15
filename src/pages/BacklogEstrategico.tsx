@@ -517,7 +517,11 @@ export default function BacklogEstrategico() {
                           <span className="text-xs font-mono text-muted-foreground">{i.id}</span>
                           <Badge variant="outline" className={`text-[10px] ${tipoMeta[i.tipo].chip}`}>{i.tipo}</Badge>
                           <Badge className={`text-[10px] ${prioridadeMeta[i.prioridade]}`}>{i.prioridade}</Badge>
-                          <Badge variant="outline" className={`text-[10px] ${statusMeta[i.status]}`}>{i.status}</Badge>
+                          {(() => { const d = derivarStatus(i); return (
+                            <Badge variant="outline" className={`text-[10px] ${statusMeta[d.status]}`} title={d.derivado ? `Status derivado dos vínculos — ${d.detalhe}` : "Status manual (sem vínculos)"}>
+                              {d.status}{d.derivado ? " · auto" : ""}
+                            </Badge>
+                          ); })()}
                           <Badge variant="outline" className="text-[10px]" title={`Wave ${i.wave}`}>{i.wave}</Badge>
                         </div>
                         <h3 className="font-semibold text-sm mt-1.5">{i.titulo}</h3>
