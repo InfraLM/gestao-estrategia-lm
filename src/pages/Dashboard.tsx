@@ -715,7 +715,7 @@ export default function Dashboard() {
               <CartesianGrid horizontal={false} stroke="hsl(var(--border))" />
               <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <YAxis dataKey="classe" type="category" tick={{ fontSize: 11 }} width={110} stroke="hsl(var(--muted-foreground))" />
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }} />
+              <Tooltip shared={false} contentStyle={tooltipStyle} cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
               <Bar dataKey="Em Andamento" stackId="a" fill="hsl(var(--success))">
                 <LabelList dataKey="Em Andamento" position="center" style={{ fill: "white", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 2 ? v : ""} />
@@ -924,7 +924,7 @@ export default function Dashboard() {
                 >
                   {classDistData.map((d, i) => <Cell key={i} fill={d.color} />)}
                 </Pie>
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number, _n: string, p: any) => [`${v} projetos (${Math.round((v / totalFiltered) * 100)}%)`, p.payload.full]} />
+                <Tooltip shared={false} contentStyle={tooltipStyle} formatter={(v: number, _n: string, p: any) => [`${v} projetos (${Math.round((v / totalFiltered) * 100)}%)`, p.payload.full]} />
               </PieChart>
             </ResponsiveContainer>
             <ul className="flex-1 space-y-2 text-sm">
@@ -968,7 +968,7 @@ export default function Dashboard() {
                 >
                   {bcDist.map((d, i) => <Cell key={i} fill={d.color} />)}
                 </Pie>
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v}%`} />
+                <Tooltip shared={false} contentStyle={tooltipStyle} formatter={(v: number) => `${v}%`} />
               </PieChart>
             </ResponsiveContainer>
             <ul className="flex-1 space-y-1.5 text-sm">
@@ -995,7 +995,7 @@ export default function Dashboard() {
               <CartesianGrid horizontal={false} stroke="hsl(var(--border))" />
               <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <YAxis dataKey="obj" type="category" tick={{ fontSize: 11 }} width={50} stroke="hsl(var(--muted-foreground))" />
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }} />
+              <Tooltip shared={false} contentStyle={tooltipStyle} cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }} />
               <Bar dataKey="n" fill="hsl(var(--primary))" radius={[0, 6, 6, 0]}>
                 <LabelList dataKey="n" position="right" style={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 600 }} />
               </Bar>
