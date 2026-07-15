@@ -27,7 +27,9 @@ interface Props {
   ferramenta: string;
   descricao: string;
   referencia: string;
+  saidas?: string[];
 }
+
 
 function fileIcon(tipo?: string | null) {
   if (!tipo) return <Paperclip className="h-3.5 w-3.5" />;
@@ -38,7 +40,7 @@ function fileIcon(tipo?: string | null) {
   return <FileText className="h-3.5 w-3.5" />;
 }
 
-export default function EstrategiaToolInsights({ ferramenta, descricao, referencia }: Props) {
+export default function EstrategiaToolInsights({ ferramenta, descricao, referencia, saidas }: Props) {
   const { user } = useAuth();
   const [openRef, setOpenRef] = useState(false);
   const [openList, setOpenList] = useState(false);
@@ -105,6 +107,18 @@ export default function EstrategiaToolInsights({ ferramenta, descricao, referenc
 
   return (
     <div className="mt-4 pt-3 border-t border-border space-y-2">
+      {saidas && saidas.length > 0 && (
+        <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-primary mb-1.5">
+            Principais saídas desta ferramenta
+          </div>
+          <ul className="grid sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-foreground/90">
+            {saidas.map((s) => (
+              <li key={s} className="flex gap-1.5"><span className="text-primary shrink-0">→</span><span>{s}</span></li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="flex flex-wrap items-center gap-2">
         <Collapsible open={openRef} onOpenChange={setOpenRef}>
           <CollapsibleTrigger asChild>

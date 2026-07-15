@@ -287,6 +287,23 @@ export default function BacklogEstrategico() {
   const [origemFiltro, setOrigemFiltro] = useState<Origem | "Todas">("Todas");
   const [lista, setLista] = useState<Iniciativa[]>(iniciativas);
 
+  // Status derivado dos vínculos (agregação das iniciativas ligadas)
+  const derivarStatus = (i: Iniciativa): { status: Status; derivado: boolean; detalhe?: string } => {
+    const vs = i.vinculos ?? [];
+    const metas = vs.map(v => projetoMap.get(v.refId)).filter(Boolean) as { status: string; saude: string; termino: string }[];
+    if (metas.length === 0) return { status: i.status, derivado: false };
+    const st = metas.map(m => m.status);
+    const total = st.length;
+    const concl = st.filter(s => s === "Concluído").length;
+    const cancel = st.filter(s => s === "Cancelado").length;
+    let out: Status;
+    if (concl + cancel === total && concl > 0) out = "Concluído";
+    else if (st.some(s => s === "Em Andamento" || s === "Pausado")) out = "Em Execução";
+    else if (st.some(s => s === "A Iniciar")) out = "Priorizado";
+    else out = "Backlog";
+    return { status: out, derivado: true, detalhe: `${total} vínculo(s) · ${concl} concluído(s) · ${st.filter(s => s === "Em Andamento").length} em andamento` };
+  };
+
   // Edição (ação · resultado esperado · vínculos)
   const [editId, setEditId] = useState<string | null>(null);
   const [draft, setDraft] = useState<{ acao: string; resultadoEsperado: string; vinculos: VinculoIniciativa[] }>({
@@ -363,12 +380,16 @@ export default function BacklogEstrategico() {
                 variant="outline"
                 size="sm"
                 className="gap-1.5"
-                onClick={() => exportToCSV("backlog_estrategico", filtradas.map(i => ({
-                  ID: i.id, Titulo: i.titulo, Tipo: i.tipo, Origem: (i.origem || []).join(" | "),
-                  Wave: i.wave, Status: i.status, Prioridade: i.prioridade, ICE: i.ice,
-                  Responsavel: i.responsavel, Acao: i.acao, ResultadoEsperado: i.resultadoEsperado,
-                  Vinculos: (i.vinculos || []).map(v => `${v.fonte}:${v.refId}`).join(" | "),
-                })))}
+                onClick={() => exportToCSV("backlog_estrategico", filtradas.map(i => {
+                  const d = derivarStatus(i);
+                  return {
+                    ID: i.id, Titulo: i.titulo, Tipo: i.tipo, Origem: (i.origem || []).join(" | "),
+                    Wave: i.wave, Status: d.status, StatusOrigem: d.derivado ? "derivado" : "manual",
+                    Prioridade: i.prioridade, ICE: i.ice,
+                    Responsavel: i.responsavel, Acao: i.acao, ResultadoEsperado: i.resultadoEsperado,
+                    Vinculos: (i.vinculos || []).map(v => `${v.fonte}:${v.refId}`).join(" | "),
+                  };
+                }))}
               >
                 <Download className="h-4 w-4" /> Exportar CSV
               </Button>
@@ -500,7 +521,11 @@ export default function BacklogEstrategico() {
                           <span className="text-xs font-mono text-muted-foreground">{i.id}</span>
                           <Badge variant="outline" className={`text-[10px] ${tipoMeta[i.tipo].chip}`}>{i.tipo}</Badge>
                           <Badge className={`text-[10px] ${prioridadeMeta[i.prioridade]}`}>{i.prioridade}</Badge>
-                          <Badge variant="outline" className={`text-[10px] ${statusMeta[i.status]}`}>{i.status}</Badge>
+                          {(() => { const d = derivarStatus(i); return (
+                            <Badge variant="outline" className={`text-[10px] ${statusMeta[d.status]}`} title={d.derivado ? `Status derivado dos vínculos — ${d.detalhe}` : "Status manual (sem vínculos)"}>
+                              {d.status}{d.derivado ? " · auto" : ""}
+                            </Badge>
+                          ); })()}
                           <Badge variant="outline" className="text-[10px]" title={`Wave ${i.wave}`}>{i.wave}</Badge>
                         </div>
                         <h3 className="font-semibold text-sm mt-1.5">{i.titulo}</h3>
@@ -643,7 +668,9 @@ export default function BacklogEstrategico() {
                       </TableCell>
                       <TableCell><Badge variant="outline" className="text-[10px]">{i.wave}</Badge></TableCell>
                       <TableCell><Badge className={`text-[10px] ${prioridadeMeta[i.prioridade]}`}>{i.prioridade}</Badge></TableCell>
-                      <TableCell><Badge variant="outline" className={`text-[10px] ${statusMeta[i.status]}`}>{i.status}</Badge></TableCell>
+                      <TableCell>{(() => { const d = derivarStatus(i); return (
+                        <Badge variant="outline" className={`text-[10px] ${statusMeta[d.status]}`} title={d.derivado ? `Derivado dos vínculos — ${d.detalhe}` : "Manual"}>{d.status}{d.derivado ? " · auto" : ""}</Badge>
+                      ); })()}</TableCell>
                       <TableCell className="text-xs">{i.responsavel}</TableCell>
                       <TableCell>
                         {i.vinculos && i.vinculos.length > 0 ? (
