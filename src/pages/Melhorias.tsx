@@ -51,11 +51,13 @@ const AREAS = [
   "PFO em Hospitais",
   "Produtos",
   "Novos Produtos",
+  "RH",
 ] as const;
 
 type Area = typeof AREAS[number];
 type Classif = "Melhoria Contínua" | "Melhoria Contínua com EPP";
 type Status = "Backlog" | "A Iniciar" | "Em Andamento" | "Validação" | "Concluído" | "Pausado";
+type Origem = "OKR" | "Área" | "BPMO";
 
 interface MelhoriaEstrategica {
   id: string;
@@ -71,6 +73,10 @@ interface MelhoriaEstrategica {
   projetoId?: string;
   objetivos?: string[]; // códigos de objetivos estratégicos vinculados
   krs?: string[]; // KRs específicos selecionados
+  origem?: Origem;
+  okr?: string;
+  okrs?: string[];
+  wave?: string;
   updatedAt?: string;
 }
 
