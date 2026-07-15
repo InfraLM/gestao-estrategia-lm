@@ -9,7 +9,8 @@
     "status": "MAPEAMENTO AS-IS/TO-BE",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 3
   },
   {
     "id": "86ae9pt7u",
@@ -26,7 +27,8 @@
     "clientes": [
       "03.07.03 - Realizar Auditorias Internas e Externas"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9ptc9",
@@ -57,7 +59,8 @@
       "AC.01": 3,
       "AC.02": 2,
       "AC.03": 2
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86ae9ptkp",
@@ -74,7 +77,8 @@
     "clientes": [
       "01.01.05 - Gerir Compliance e Conformidade Institucional"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 2
   },
   {
     "id": "86ae9prrr",
@@ -89,7 +93,8 @@
       "01.04.01 - Desdobrar Estratégia em Objetivos e Indicadores",
       "01.03.01 - Gerir Portfólio do Ecossistema e Inovação Estratégica"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ae9prr7",
@@ -106,7 +111,8 @@
       "01.04.02 - Monitorar Performance e Resultados",
       "03.02.01 - Planejar, Orçar e Controlar a Performance Financeira"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9prtd",
@@ -124,7 +130,8 @@
       "01.05.02 - Gerir Melhoria Contínua dos Processos",
       "01.01.03 - Governar Comitês, Fóruns e Rituais Decisórios"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 3
   },
   {
     "id": "86ae9ptmf",
@@ -140,7 +147,8 @@
     "clientes": [
       "01.02.02 - Proteger e Evoluir a Marca como Ativo de Confiança"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9prvk",
@@ -157,7 +165,8 @@
       "02.08.01 - Atrair Leads Qualificados",
       "02.01.01 - Posicionar a Proposta de Valor do Ecossistema"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9ptpb",
@@ -173,7 +182,8 @@
     "clientes": [
       "01.04.03 - Gerir Projetos Estratégicos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9pryy",
@@ -191,7 +201,8 @@
       "01.05.03 - Gerir Processos",
       "01.05.04 - Gerir Projetos de Melhoria"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 5
   },
   {
     "id": "86ae9pt8h",
@@ -207,7 +218,8 @@
     "clientes": [
       "01.05.02 - Gerir Melhoria Contínua dos Processos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9prxf",
@@ -223,7 +235,8 @@
     "clientes": [
       "02.04.02 - Estruturar Produto e Jornada Educacional"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9przt",
@@ -254,7 +267,8 @@
       "AC.01": 0,
       "AC.02": 1,
       "AC.03": 0
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86ae9ptcu",
@@ -271,7 +285,8 @@
     "clientes": [
       "02.04.01 - Realizar Curadoria Educacional"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9prjj",
@@ -288,7 +303,8 @@
     "clientes": [
       "02.06.01 - Criar, Configurar e Submeter Cursos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 3
   },
   {
     "id": "86ae9prm5",
@@ -316,7 +332,8 @@
       "AC.01": 0,
       "AC.02": 0,
       "AC.03": 0
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86ae9prn2",
@@ -341,7 +358,8 @@
       "AC.01": 0,
       "AC.02": 0,
       "AC.03": 0
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86ae9pqya",
@@ -357,7 +375,8 @@
     "clientes": [
       "02.08.02 - Nutrir Leads"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 3
   },
   {
     "id": "86ae9pqzh",
@@ -373,7 +392,8 @@
     "clientes": [
       "02.07.03 - Qualificar Leads (MQL/SQL)"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ae9pqxh",
@@ -393,7 +413,8 @@
       ": https://app.clickup.com/t/86ae9pqu5",
       "03.02.02 - Gerir Recebíveis e Cobrança"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ae9prtx",
@@ -424,7 +445,8 @@
       "AC.01": 1,
       "AC.02": 2,
       "AC.03": 0
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86ae9pt97",
@@ -440,7 +462,8 @@
     "clientes": [
       "03.01.04 - Promover e Realocar Pessoas"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9prdv",
@@ -456,7 +479,8 @@
     "clientes": [
       "03.01.03 - Gerir Remuneração Variável"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ae9pt2g",
@@ -472,7 +496,8 @@
     "clientes": [
       "03.02.05 - Gerir Contabilidade, Fiscal e Reporte Financeiro"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 3
   },
   {
     "id": "86ae9pt4r",
@@ -489,7 +514,8 @@
     "clientes": [
       "01.04.02 - Monitorar Performance e Resultados"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9prwh",
@@ -505,7 +531,8 @@
     "clientes": [
       "03.02.04 - Gerir Tesouraria, Liquidez, Endividamento e Capital"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9pr7y",
@@ -520,7 +547,8 @@
       "03.06.02 - Gerir estoque de materiais",
       "03.02.03 - Gerir Pagamentos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ae9pt5d",
@@ -536,7 +564,8 @@
     "clientes": [
       "03.06.04 - Contratar e Gerir Serviços de Suporte"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 2
   },
   {
     "id": "86ae9pr9a",
@@ -553,7 +582,8 @@
       "03.06.05 - Gerir Alimentação, Coffee e Amenidades",
       "03.06.06 - Gerir Limpeza e Conservação"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ae9prh0",
@@ -569,7 +599,8 @@
     "clientes": [
       "02.10.01 - Imersões Presenciais"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ae9ptj2",
@@ -598,7 +629,8 @@
       "AC.01": 2,
       "AC.02": 1,
       "AC.03": 2
-    }
+    },
+    "maturidade": 3
   },
   {
     "id": "86ae9prf5",
@@ -616,7 +648,8 @@
       "03.02.03 - Gerir Pagamentos",
       "03.04.02 Gerir Obrigações Legais e Regulatórias"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 2
   },
   {
     "id": "86ae9prnz",
@@ -633,7 +666,8 @@
       "03.05.02 - Gerir Contratos, Pagamentos e Agenda de Professores",
       "03.04.01 - Elaborar, Revisar e Rescindir Contratos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9pta4",
@@ -651,7 +685,8 @@
       "02.05.02 – Produzir Conteúdo (aulas, gravações, materiais)",
       "02.03.02 - Operar Campos de Prática e Preceptoria"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 2
   },
   {
     "id": "86ae9pt0f",
@@ -667,7 +702,8 @@
     "clientes": [
       "03.05.04 - Apoiar Execução Acadêmica (aulas, gravações, imersões)"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9pt6y",
@@ -683,7 +719,8 @@
     "clientes": [
       "03.02.05 - Gerir Contabilidade, Fiscal e Reporte Financeiro"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9prg4",
@@ -699,7 +736,8 @@
     "clientes": [
       "03.06.07 Gerir Patrimônio"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ae9pr20",
@@ -711,7 +749,8 @@
     "status": "MELHORIAS/ ANÁLISE",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ae9pr33",
@@ -723,7 +762,8 @@
     "status": "BACKLOG",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9pr6k",
@@ -735,7 +775,8 @@
     "status": "MELHORIAS/ ANÁLISE",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ae9pr5u",
@@ -750,7 +791,8 @@
       "02.05.03 - Desenvolver e Configurar Plataformas Educacionais",
       "02.06.03 - Garantir Acesso e Estabilidade da Plataforma"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9pra0",
@@ -764,7 +806,8 @@
     "clientes": [
       "03.07.03 - Realizar Auditorias Internas e Externas"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 2
   },
   {
     "id": "86ae9pth8",
@@ -780,7 +823,8 @@
     "clientes": [
       "03.07.03 - Realizar Auditorias Internas e Externas"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9pt36",
@@ -797,7 +841,8 @@
     "clientes": [
       "03.07.04 - Gerir Não Conformidades"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9pt42",
@@ -813,7 +858,8 @@
     "clientes": [
       "01.05.02 - Gerir Melhoria Contínua dos Processos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9prug",
@@ -829,7 +875,8 @@
     "clientes": [
       "03.02.03 - Gerir Pagamentos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9prbj",
@@ -845,7 +892,8 @@
     "clientes": [
       "03.02.02 - Gerir Recebíveis e Cobrança"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 3
   },
   {
     "id": "86ae9pree",
@@ -857,7 +905,8 @@
     "status": "PARALISADO",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9yxx2",
@@ -873,7 +922,8 @@
     "clientes": [
       "01.04.02 - Monitorar Performance e Resultados"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9yy1r",
@@ -903,7 +953,8 @@
       "AC.01": 3,
       "AC.02": 1,
       "AC.03": 1
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86ae9yy6f",
@@ -932,7 +983,8 @@
       "AC.01": 3,
       "AC.02": 0,
       "AC.03": 0
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86ae9yy8t",
@@ -961,7 +1013,8 @@
       "AC.01": 3,
       "AC.02": 2,
       "AC.03": 2
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86ae9yyfv",
@@ -977,7 +1030,8 @@
     "clientes": [
       "01.04.02 - Monitorar Performance e Resultados"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9yyph",
@@ -991,7 +1045,8 @@
       "01.05.02 - Gerir Melhoria Contínua dos Processos"
     ],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9z1fn",
@@ -1005,7 +1060,8 @@
       "01.02.03 - Definir e Governar Posicionamento Institucional"
     ],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9z1r5",
@@ -1019,7 +1075,8 @@
     "clientes": [
       "02.01.04 - Realizar Entrada Qualificada no Ecossistema"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9z1v6",
@@ -1036,7 +1093,8 @@
     "clientes": [
       "02.01.05 - Preparar Médico para a Jornada de Desenvolvimento"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9z1yt",
@@ -1052,7 +1110,8 @@
     "clientes": [
       "02.10.01 - Mapear Estágios da Jornada de Carreira"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9z2qh",
@@ -1068,7 +1127,8 @@
     "clientes": [
       "02.02.02 - Estruturar Trilhas de Desenvolvimento Clínico"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9z2uy",
@@ -1084,7 +1144,8 @@
     "clientes": [
       "02.02.02 - Desenvolver Conteúdos e Experiências de Aprendizagem"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9z2zz",
@@ -1102,7 +1163,8 @@
       "02.02.03 - Avaliar Evolução e Certificar Competência Clínica",
       "02.05.02 – Produzir Conteúdo (aulas, gravações, materiais)"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9z33c",
@@ -1132,7 +1194,8 @@
       "AC.01": 3,
       "AC.02": 0,
       "AC.03": 1
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86ae9z3b8",
@@ -1148,7 +1211,8 @@
     "clientes": [
       "02.03.02 - Operar Campos de Prática e Preceptoria"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9z3tb",
@@ -1165,7 +1229,8 @@
     "clientes": [
       "02.03.03 - Garantir Supervisão, Feedback e Segurança Assistencial"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9z3ur",
@@ -1181,7 +1246,8 @@
     "clientes": [
       "02.02.03 - Avaliar Evolução e Certificar Competência Clínica"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9zvvp",
@@ -1198,7 +1264,8 @@
       "02.05.02 – Produzir Conteúdo (aulas, gravações, materiais)",
       "03.05.04 - Apoiar Execução Acadêmica (aulas, gravações, imersões)"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9zye6",
@@ -1215,7 +1282,8 @@
     "clientes": [
       "02.06.02 - Operar Transmissões e Ambientes Digitais"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ae9zyrh",
@@ -1231,7 +1299,8 @@
     "clientes": [
       "02.10.06 – Operar Experiência, Suporte e Sucesso do Aluno"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 2
   },
   {
     "id": "86aea02pc",
@@ -1247,7 +1316,8 @@
     "clientes": [
       "02.08.02 - Realizar venda"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea07qk",
@@ -1259,7 +1329,8 @@
     "status": "MAPEAMENTO AS-IS/TO-BE",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 3
   },
   {
     "id": "86aea07x2",
@@ -1271,7 +1342,8 @@
     "status": "VALIDAÇÃO INTERNA",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea0846",
@@ -1283,7 +1355,8 @@
     "status": "A INICIAR",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea0863",
@@ -1295,7 +1368,8 @@
     "status": "VALIDAÇÃO INTERNA",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea08wv",
@@ -1307,7 +1381,8 @@
     "status": "BACKLOG",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea0936",
@@ -1319,7 +1394,8 @@
     "status": "BACKLOG",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea09eg",
@@ -1344,7 +1420,8 @@
       "AC.01": 0,
       "AC.02": 1,
       "AC.03": 0
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86aea09kf",
@@ -1356,7 +1433,8 @@
     "status": "A INICIAR",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea09w2",
@@ -1385,7 +1463,8 @@
       "AC.01": 0,
       "AC.02": 2,
       "AC.03": 0
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86aea0a7u",
@@ -1414,7 +1493,8 @@
       "AC.01": 0,
       "AC.02": 1,
       "AC.03": 2
-    }
+    },
+    "maturidade": 3
   },
   {
     "id": "86aea0aw7",
@@ -1430,7 +1510,8 @@
     "clientes": [
       "02.10.04 - Acompanhar Progressão e Retenção no Ecossistema"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea0axx",
@@ -1460,7 +1541,8 @@
       "AC.01": 2,
       "AC.02": 0,
       "AC.03": 0
-    }
+    },
+    "maturidade": 1
   },
   {
     "id": "86aea0bj6",
@@ -1477,7 +1559,8 @@
     "clientes": [
       "01.04.02 - Monitorar Performance e Resultados"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea0dqm",
@@ -1493,7 +1576,8 @@
     "clientes": [
       "03.02.03 - Gerir Pagamentos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea0emc",
@@ -1508,7 +1592,8 @@
       "03.02.03 - Gerir Pagamentos",
       "03.04.01 - Elaborar, Revisar e Rescindir Contratos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 2
   },
   {
     "id": "86aea1pnq",
@@ -1525,7 +1610,8 @@
       "03.02.03 - Gerir Pagamentos",
       "03.02.04 - Gerir Tesouraria, Liquidez, Endividamento e Capital"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea1q60",
@@ -1542,7 +1628,8 @@
     "clientes": [
       "03.02.06 - Gerir Controles Financeiros Internos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea1qdn",
@@ -1560,7 +1647,8 @@
       "03.02.06 - Gerir Controles Financeiros Internos",
       "03.04.02 Gerir Obrigações Legais e Regulatórias"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea2944",
@@ -1576,7 +1664,8 @@
     "clientes": [
       "03.07.02 - Gerir Requisitos Normativos do Sistema de Gestão Integrado"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea2apy",
@@ -1593,7 +1682,8 @@
       "03.02.03 - Gerir Pagamentos",
       "03.05.03 - Fornecer Suporte Operacional ao Professor"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86aea2mkq",
@@ -1607,7 +1697,8 @@
     "clientes": [
       "03.08.02 - Gerir Viagens e Passagens"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86af9z5w1",
@@ -1619,7 +1710,8 @@
     "status": "VALIDAÇÃO INTERNA",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 3
   },
   {
     "id": "86afz7pvn",
@@ -1631,7 +1723,8 @@
     "status": "BACKLOG",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ag7rzj4",
@@ -1646,7 +1739,8 @@
       "03.01.04 - Avaliações periódicas",
       "03.04.01 - Elaborar, Revisar e Rescindir Contratos"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ag7rzna",
@@ -1676,7 +1770,8 @@
       "AC.01": 0,
       "AC.02": 1,
       "AC.03": 0
-    }
+    },
+    "maturidade": 4
   },
   {
     "id": "86ag7rzqb",
@@ -1701,7 +1796,8 @@
       "03.06.06 - Gerir Limpeza e Conservação",
       "02.09.01 - Imersões Presenciais"
     ],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86ag7t10z",
@@ -1730,7 +1826,8 @@
       "AC.01": 0,
       "AC.02": 0,
       "AC.03": 1
-    }
+    },
+    "maturidade": 4
   },
   {
     "id": "86agf2bxh",
@@ -1742,7 +1839,8 @@
     "status": "MAPEAMENTO AS-IS/TO-BE",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 4
   },
   {
     "id": "86agvjv7m",
@@ -1754,7 +1852,8 @@
     "status": "VALIDAÇÃO INTERNA",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86agxu6gn",
@@ -1778,7 +1877,8 @@
     "status": "A INICIAR",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86agz9n8h",
@@ -1790,7 +1890,8 @@
     "status": "BACKLOG",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 1
   },
   {
     "id": "86ah4wgyn",
@@ -1802,7 +1903,8 @@
     "status": "BACKLOG",
     "fornecedores": [],
     "clientes": [],
-    "documentos": []
+    "documentos": [],
+    "maturidade": 2
   },
   {
     "id": "86ah6c6zc",
