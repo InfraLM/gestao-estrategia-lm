@@ -357,6 +357,59 @@ export default function StatusReport() {
                       </div>
                     </div>
 
+                    {/* Melhorias Estratégicas vinculadas ao projeto */}
+                    {(() => {
+                      const melhoriasProj = melhoriasByProjeto[p.id] ?? [];
+                      if (melhoriasProj.length === 0) return null;
+                      const hoje = new Date();
+                      return (
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                              <TrendingUp className="h-3.5 w-3.5" /> Melhorias Estratégicas Vinculadas
+                              <span className="text-[10px] font-normal text-muted-foreground">({melhoriasProj.length})</span>
+                            </label>
+                            <Link to="/melhorias" className="text-[11px] text-primary hover:underline">Editar em Melhorias →</Link>
+                          </div>
+                          <div className="rounded-md border border-border overflow-hidden">
+                            <table className="w-full text-xs">
+                              <thead className="bg-surface-muted">
+                                <tr>
+                                  <th className="text-left px-2 py-1.5 font-semibold">O que fazer</th>
+                                  <th className="text-left px-2 py-1.5 font-semibold w-28">Responsável</th>
+                                  <th className="text-left px-2 py-1.5 font-semibold w-24">Prevista</th>
+                                  <th className="text-left px-2 py-1.5 font-semibold w-32">Status</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {melhoriasProj.map(m => {
+                                  const atrasada = m.dataPrevista && m.status !== "Concluído" && m.status !== "Pausado" && new Date(m.dataPrevista) < hoje;
+                                  return (
+                                    <tr key={m.id} className="border-t border-border">
+                                      <td className="px-2 py-1.5">
+                                        <div className="font-medium">{m.oQueFazer}</div>
+                                        <div className="text-[10px] text-muted-foreground">{m.classificacao}</div>
+                                      </td>
+                                      <td className="px-2 py-1.5">{m.responsavel || "—"}</td>
+                                      <td className={cn("px-2 py-1.5 tabular-nums", atrasada && "text-destructive font-semibold")}>
+                                        {m.dataPrevista ? new Date(m.dataPrevista).toLocaleDateString("pt-BR") : "—"}
+                                        {atrasada && <div className="text-[10px]">atrasada</div>}
+                                      </td>
+                                      <td className="px-2 py-1.5">
+                                        <Badge variant="outline" className="text-[10px]">{m.status}</Badge>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+
+
                     <div>
                       <div className="flex items-center justify-between text-xs mb-1.5">
                         <span className="font-semibold uppercase tracking-wider text-muted-foreground">Execução Financeira</span>
