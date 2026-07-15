@@ -54,7 +54,7 @@ const AREAS = [
   "RH",
 ] as const;
 
-type Area = typeof AREAS[number];
+type Area = typeof AREAS[number] | "";
 type Classif = "Melhoria Contínua" | "Melhoria Contínua com EPP";
 type Status = "Backlog" | "A Iniciar" | "Em Andamento" | "Validação" | "Concluído" | "Pausado";
 type Origem = "OKR" | "Área" | "BPMO";
