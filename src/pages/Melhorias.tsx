@@ -216,10 +216,11 @@ export default function Melhorias() {
   const lista = useMemo(() => itens.filter(i => {
     if (areaSel && i.area !== areaSel) return false;
     if (classifFilter !== "Todas" && i.classificacao !== classifFilter) return false;
+    if (origemFilter !== "Todas" && (i.origem ?? "Área") !== origemFilter) return false;
     if (statusFilter !== "Todos" && i.status !== statusFilter) return false;
-    if (q && !`${i.oQueFazer} ${i.justificativa} ${i.responsavel}`.toLowerCase().includes(q.toLowerCase())) return false;
+    if (q && !`${i.oQueFazer} ${i.justificativa} ${i.responsavel} ${i.okr ?? ""}`.toLowerCase().includes(q.toLowerCase())) return false;
     return true;
-  }), [itens, areaSel, classifFilter, statusFilter, q]);
+  }), [itens, areaSel, classifFilter, origemFilter, statusFilter, q]);
 
   const total = itens.length;
   const local = itens.filter(i => i.classificacao === "Melhoria Contínua").length;
