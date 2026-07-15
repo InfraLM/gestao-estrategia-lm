@@ -380,12 +380,16 @@ export default function BacklogEstrategico() {
                 variant="outline"
                 size="sm"
                 className="gap-1.5"
-                onClick={() => exportToCSV("backlog_estrategico", filtradas.map(i => ({
-                  ID: i.id, Titulo: i.titulo, Tipo: i.tipo, Origem: (i.origem || []).join(" | "),
-                  Wave: i.wave, Status: i.status, Prioridade: i.prioridade, ICE: i.ice,
-                  Responsavel: i.responsavel, Acao: i.acao, ResultadoEsperado: i.resultadoEsperado,
-                  Vinculos: (i.vinculos || []).map(v => `${v.fonte}:${v.refId}`).join(" | "),
-                })))}
+                onClick={() => exportToCSV("backlog_estrategico", filtradas.map(i => {
+                  const d = derivarStatus(i);
+                  return {
+                    ID: i.id, Titulo: i.titulo, Tipo: i.tipo, Origem: (i.origem || []).join(" | "),
+                    Wave: i.wave, Status: d.status, StatusOrigem: d.derivado ? "derivado" : "manual",
+                    Prioridade: i.prioridade, ICE: i.ice,
+                    Responsavel: i.responsavel, Acao: i.acao, ResultadoEsperado: i.resultadoEsperado,
+                    Vinculos: (i.vinculos || []).map(v => `${v.fonte}:${v.refId}`).join(" | "),
+                  };
+                }))}
               >
                 <Download className="h-4 w-4" /> Exportar CSV
               </Button>
