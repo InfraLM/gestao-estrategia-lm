@@ -1,0 +1,3598 @@
+[
+  {
+    "id": "ME-OKR-86aeuqb77",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Capacitar lideranças de projetos estratégicos no modelo de gestão de projetos da LM, garantindo controle financeiro e governança",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Gerson Correia, Rafaella Ferraz, Renata Campos",
+    "dataPrevista": "2026-03-31",
+    "status": "Concluído",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af09rx6",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Propor criação de local com informações sobre comparecimento no plantão flexível",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio",
+    "dataPrevista": "2026-02-20",
+    "status": "Concluído",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeunpxj",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Desenvolver modelo de ata automaticas e padronizadas para os rituais",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio",
+    "dataPrevista": "2026-02-20",
+    "status": "Concluído",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeukvnt",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Realizar acompanhamento das melhorias e ações de mitigação de risco junto aos departamentos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio, Rany Araújo ",
+    "dataPrevista": "2026-03-06",
+    "status": "Concluído",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeumyjr",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Monitoramento de SLA na Zeev com notificação para superior imediato",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio",
+    "dataPrevista": "2026-06-30",
+    "status": "Concluído",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeup3h3",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Priorização de automações de projetos que impactam receita junto a área de Tech",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio, Renato Mesquita",
+    "dataPrevista": "2026-02-20",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeu61ez",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar ritual semanal de análise do fluxo de caixa dos projetos do escritório",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Gerson Correia",
+    "dataPrevista": "2026-04-22",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af0mw31",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Rituais sagrados do Escritório de Projetos - Comitê Steering, Reunião de resultados internos, Status report (semanal/quinzenal), Kick off",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Renata Campos, Áurea Emílio",
+    "dataPrevista": "",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af0nxe4",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Status report de projetos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Rafaella Ferraz, Renata Campos",
+    "dataPrevista": "",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeu4bf9",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Implementação do Google Analytics 4",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Gabriel Melo",
+    "dataPrevista": "",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+      "KR 1.1.1 - Ajudar a reduzir média de CAC em 15%"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af266qq",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Garantir que dados de toda a LM esteja contemplada no Banco em tables unificadas",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "ana beatriz",
+    "dataPrevista": "",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+      "KR 2.1.1 - Banco de Dados 100% higienizado e unificado"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af29cpk",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Aplicativo PFO",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Vinicius Leandro",
+    "dataPrevista": "",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 1.3.1 - 100% dos produtos com aplicativo de gestão",
+    "okrs": [
+      "KR 1.3.1 - 100% dos produtos com aplicativo de gestão"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2qjep",
+    "area": "Geração de Demanda",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Padronizar uso de atas",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+      "2.31 - 100% das atas publicadas em 2h"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2qjv4",
+    "area": "Geração de Demanda",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Execução de decisões",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
+    "okrs": [
+      "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
+      "2.21 - 85% de decisões executadas no prazo"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2qkpc",
+    "area": "Geração de Demanda",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Organização e padronização de rituais de geração de demanda",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
+    "okrs": [
+      "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
+      "2.32 - <95% de realização dos rituais planejados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeun8ca",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Realizar mapeamento do processo E2E para integração dos processos que geram valor ao cliente",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio",
+    "dataPrevista": "2026-04-03",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeunvhg",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Implantar KPIs estratégicos junto ao Time de Tech",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio, Renato Mesquita",
+    "dataPrevista": "2026-03-30",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeu6380",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Implantar dashboard de visualização de resultados por area na Zeev",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio",
+    "dataPrevista": "",
+    "status": "Em Andamento",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af0nvu7",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Implantar pauta de Projetos estratégicos nos Comitês",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Gerson Correia, Marcya Santos",
+    "dataPrevista": "",
+    "status": "A Iniciar",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeunbzz",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Transformar em gates operacionais regras estabelecidas em politicas e ou procedimentos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio",
+    "dataPrevista": "2026-04-24",
+    "status": "A Iniciar",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeunuxc",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Padronizar formulários de saidas de interações formais (one a one, feedback)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio",
+    "dataPrevista": "2026-04-30",
+    "status": "A Iniciar",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeunrg2",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Desenvolver processos de acompanhamento e garantia de rituais (alertas)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio",
+    "dataPrevista": "2026-05-30",
+    "status": "A Iniciar",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeup24v",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Definir SLAs dos processos E2E que geram valor ao cliente",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio",
+    "dataPrevista": "2026-03-20",
+    "status": "A Iniciar",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-BACKLOG",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "",
+    "okrs": [],
+    "wave": ""
+  },
+  {
+    "id": "ME-OKR-86aeur6wt",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar iniciativa conjunta para um fluxo de caixa atualizado em tempo real para acompanhamento dos projetos priorizados.",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Rafaella Ferraz, Renata Campos, Gerson Correia",
+    "dataPrevista": "2026-03-30",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeup900",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Estabelecer governança compartilhada com financeiro para projetos de alto investimento",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Gerson Correia",
+    "dataPrevista": "2026-04-17",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeunk6u",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Implantar ritual de compliance e plano de ação para os pontos críticos - comitê de compliance garantindo 100% dos riscos tratados, analisados o ou aceitos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Marcya Santos",
+    "dataPrevista": "2026-04-30",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
+    "okrs": [
+      "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeunp2r",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Alocar mensalmente X% do fluxo de caixa operacional para reserva de emergência de projeto ",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Gerson Correia",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários",
+    "okrs": [
+      "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeupkdc",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Garantir que 100% dos novos investimentos passem por analise de viabilidade financeira e controle orçamento",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aezgna9",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Automatizar atividades manuais recorrentes dos projetos estratégicos, reduzindo retrabalho, erros operacionais e tempo de execução.",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Rafaella Ferraz, Renata Campos, Gerson Correia",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2yzdg",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Orçamento 2026",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2yzuz",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Rituais de acompanhamento orçado x realizado (Comitê de custos?)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2z0wf",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Business Case de projetos estratégicos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2z27b",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Padronizar KPIs financeiros",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3e9t2",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Conciliar DRE com DFC e Balanço",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3eab7",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Ajustes contáveis e gerenciais para aumento de precisão de lucratividade e projeções de disponibilidades financeiras após consideração de passivos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3ea06",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Garantir que todos os ativos estejam corretamente contabilizados no balanço",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3eb6f",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Implementar rituais prévios as reuniões de resultados em que os donos de centros de custos possam entender e criticar seus resultados com antecedência",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2z3cf",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Disponibilizar o DRE Gerencial por produto até o 5º dia útil",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2z4hp",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Definir formatos de depreciação e amortização condizentes com a realidade operacional da empresa",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2z4za",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Acompanhar em tempo real o vpl dos financiamentos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários",
+    "okrs": [
+      "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2z5dx",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Treinamento interno de tributos e eficiência tributária",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários",
+    "okrs": [
+      "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2z5kw",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Reserva de emergência",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2z63d",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Construção e implantação de plano tributário histórico",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários",
+    "okrs": [
+      "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2z6yn",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Geração caixa operacional",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3dz27",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Construção da modelagem de longo prazo da empresa, com premissas críticas de cada produto/ BU",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3dzp2",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Mapear disponibilidade e condições de linhas de financiamento/ crédito (incentivados, fomento, estruturados, padrão, financiamento estudantil e antecipação de cartão de crédito)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3e1xp",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Oferecer visibilidade para capital próprio (sócios) sobre as alternativas e custos de capitalização com terceiros e necessidade de capitalização e rentabilidade do plano estratégico (modelo financeiro de longo prazo)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3e3rx",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Suporte na estruturação de parcerias estratégicas e potenciais M&A",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3e5af",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Viabilizar decisões fundamentadas de investimento em imobilizado através de comparação com demais oportunidades de alocação de capital",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3e6k7",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Garantir manutenção e preservação de ativos através de inventário e identificação de ativos (processos entre aquisição -> baixa)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3e7n8",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Iniciar relacionamento com fundos de investimento de risco e grandes grupos educacionais",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3e8an",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Construir apresentação institucional da LM (colaboradores, bancos, parceiros, empresas compradoras e vendedoras)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3encp",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Construir e implementar política de aplicação de caixa (liquidez, prazo, rentabilidade, risco, caixa mínimo)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários",
+    "okrs": [
+      "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3eprw",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Diagnostico, dimensionamento e ações corretivas/ mitigadoras para demais passivos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários",
+    "okrs": [
+      "KR 1.4 - Consolidar Reserva de Emergência de 3 meses de OPEX em investimentos de liquidez imediata, considerando passivos trabalhistas e tributários"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3era8",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Ter reunião com todos os principais bancos e nutrir relacionamento",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3erg9",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Presar pelo Score de crédito da LM",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3erpq",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Definições para eficiência tributária (natureza de lançamentos, regime tributário, domicílio fiscal, estrutura societária, distribuição de dividendos)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3erw0",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Diagnostico e acompanhamento de inadimplência para implementação de mudanças em formatos de pagamento, régua de cobrança e ações de recuperação",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3eubr",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Reestruturação e implementação do processo de contas a receber",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3euhm",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Plano de ação estruturado para recuperação de carteira de clientes inadimplentes crônicos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3eut1",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Regularizar Balanço da Empresa",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wcdj",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Padronização do processo de onboarding",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wgj9",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "KAM - Key account manager",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wk1x",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Segmentar aluno",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeu463f",
+    "area": "Facilities",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Reduzir a variação entre orçamento de obras/reformas",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af221p3",
+    "area": "Facilities",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Garantir 100% das notas e contratos lançados corretamente no fluxo financeiro dentro do prazo previsto de 48 horas após a compra.",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2xn9e",
+    "area": "Financeiro",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Controle patrimonial",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2xncm",
+    "area": "Facilities",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Controle de estoque de materiais",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af361q7",
+    "area": "Facilities",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Reduzir desperdício de insumos em 15%",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2xte3",
+    "area": "Facilities",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Plataforma de onboarding dos prestadores LM",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2xmer",
+    "area": "Facilities",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Compras com 3 orçamentos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
+    "okrs": [
+      "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2xpkz",
+    "area": "Facilities",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Serviços de alta periculosidade (EPIs, contratos, treinamentos0",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
+    "okrs": [
+      "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2xpyh",
+    "area": "Facilities",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Calendário de manutenção preventiva",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af22qeg",
+    "area": "Facilities",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": " Garantir 100% de Disponibilidade e higiene das salas de aula e Centro de Simulações- ambiente funcional de ",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2xu7d",
+    "area": "Facilities",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Adequação da infraestrutura física para melhorar experiência do aluno",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores.",
+    "okrs": [
+      "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2vf38",
+    "area": "Áudio Visual",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Aumentar a base de influenciadores para 100 até o final",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.51 Gerar 1000 leads de influenciadores"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2vft6",
+    "area": "Áudio Visual",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Medir a conversão de leads gerados por cada influenciados",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.51 Gerar 1000 leads de influenciadores"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2vgjp",
+    "area": "Áudio Visual",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar campanha de embaixadores",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.51 Gerar 1000 leads de influenciadores"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2vh1g",
+    "area": "Áudio Visual",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Novo canal no youtube para shorts",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "2026-03-31",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.52 Gerar 500 leads MQLs dos canais do youtube"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2vqrj",
+    "area": "Áudio Visual",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Clippeiros produção em massa",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2vqwz",
+    "area": "Áudio Visual",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Aluno destaque",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2vr02",
+    "area": "Áudio Visual",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Curadoria em qualidade",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af22trq",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Estratégia de pesca de leads por freebies",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Gabriel Melo",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+      "KR 1.1.1 - Ajudar a reduzir média de CAC em 15%"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2374u",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Disparo proativo de cobranças de inadimplência",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Vinicius Leandro",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores.",
+    "okrs": [
+      "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores.",
+      "KR 3.2.1 - Alunos inadimplentes 100% avisados de seu status"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2446n",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Consultoria de automação nos departamentos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Gabriel Melo, isaac monteiro",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+      "KR 2.3.1 - 50% dos processos internos com alguma automação implantada"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af24q9v",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Disparo proativo de retenção de engajamento",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Vinicius Leandro",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+      "KR 3.1.1 - 100% dos alunos mapeados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af27q9h",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Atualização automática de BI’s em sintonia com Banco de Dados",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "ana beatriz",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+      "KR 2.1.2 - BIs e Hubs 100% atualizados e divulgados dentro de 1 semana"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af28btp",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Implementação de App de Reuniões",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Gabriel Melo, isaac monteiro",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+      "KR 2.3.2 - 70% das reuniões realizadas pelos times passíveis de análise"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af28d0z",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Treinamento e capacitação pela TI",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Renato Mesquita",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
+    "okrs": [
+      "KR 2.2 - Garantir que 100% das Decisões “Críticas” passem pelo regime formal de aprovação seguindo regimentos internos dos comitês e as políticas (Business Case + Análise de Risco + Veto Técnico",
+      "KR 2.2.1 - Colaboradores experts em 80% das ferramentas e processos corporativos"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af29kbd",
+    "area": "Infra & Tech",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Centralizar a gestão de dados de CSAT e NPS na TI",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "ana beatriz",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+    "okrs": [
+      "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+      "KR 3.3.2 - Dados de CSAT e NPS mapeados e tratados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2qbna",
+    "area": "Geração de Demanda",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Eficiência de Aquisição (CPL)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2qdb9",
+    "area": "Geração de Demanda",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Validação de Funis",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2qdvu",
+    "area": "Geração de Demanda",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Público de Relacionamento",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af358z5",
+    "area": "Geração de Demanda",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Geração de leads via mídia paga",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeup3jx",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Propor processos com uso de agentes focados no E2E",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "Áurea Emílio",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wr8m",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Mapeamento de fontes + automações de captura (SSOT Financeiro do P&L)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 2 - Escala com controle"
+  },
+  {
+    "id": "ME-OKR-86af2wrq7",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Modelo de P&L por produto (plano de contas + regras de alocação)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento) KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento) KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wt42",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Gestão a vista dos KPIs de produto/ Dashboard P&L + Orçado vs Realizado (diário) + Fechamento D+5 (mensal)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wtc5",
+    "area": "Produtos",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Ritual semanal de gastos + ACR por desvio (gatilho ±10%)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3e85t",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Dicionário de métricas + contrato de dados (Produto + Turma)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3e8v8",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Mapeamento de fontes + chaves de integração (Lead→Venda→Aluno→Turma)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wu93",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Instrumentação mínima e padronização de timestamps (quase real time)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3eegx",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Pipeline/Jobs de atualização + camada SSOT (views oficiais)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3egv6",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Data QA + fila de exceções (SLA 48h)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3ehda",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Dashboard Lovable v1 + adoção (anti-planilha paralela)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wv0b",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Arquitetura de rituais (desenhar antes de executar)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3ek5u",
+    "area": "Produtos",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "ClickUp como sistema do ritual (registro obrigatório)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3em6p",
+    "area": "Produtos",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Template de ata (doc externo) + checklist “não fecha sem ata”",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3emwa",
+    "area": "Produtos",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Rastreabilidade KPI →(tarefas padronizadas)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2ww5z",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Definir e instrumentar TTFV e eventos de onboarding e encerramento por produto",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3fwd0",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Gatilho “travado +6h sem 1º contato” + fila de intervenção",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wx2g",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Sequência de 3 mensagens no Blip (D0–D1)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wz9b",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Painel operacional diário de onboarding (produto + turma)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wtt1",
+    "area": "Produtos",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Ritual semanal dos relatórios de gastos + acr por desvio",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento) KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento) KR 1.3 - Disponibilizar o P&L (DRE) Gerencial por Produto automatizado até o 5º dia útil para 100% do portfólio ativo, eliminando a gestão por planilhas manuais"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2wunj",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "-",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "",
+    "okrs": [],
+    "wave": ""
+  },
+  {
+    "id": "ME-OKR-86af3atup",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Template padrão de P&L por produto",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3aukn",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Estudo de mercado mínimo obrigatório (Gate)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3avv5",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Checklist de viabilidade operacional (capacidade e execução)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3b748",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Matriz simples de riscos e mitigação no Gate",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2x5v4",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Metrificar as Imersões Presenciais (execução + qualidade)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3bc2t",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Garantir o preenchimento dos dados (automático ou manual)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3bdhy",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "KPIs de qualidade técnica/atualização do conteúdo",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2x6nx",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Revisão de NPS/Feedback pós-imersão",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2x7a0",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Ritual trimestral de atualização de conteúdo",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2xav3",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Rotina de gravação dos médicos / produção de conteúdo",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3bgby",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Alinhamento de expectativas com MOSCoW do aluno no PFO",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3bndz",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Checkout Plantão (fechamento do plantão)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3byz0",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Ritual de pré-evento das imersões",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2x7n9",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Aumento de vagas PFO",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores.",
+    "okrs": [
+      "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2xagk",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Acadêmico: ajudar com iniciativas dos rituais sagrados",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3bad8",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Metrificar a experiência do Plantão Flexível (execução + qualidade)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2x82a",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Expansão de imersão SP",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2x8bv",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Checkpoint todo o dia",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2x8vk",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Alinhamento de expectativa dos PFO com alunos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2xa1j",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Demandas médicas atuar como novos funis",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2x6wk",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "-",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "",
+    "okrs": [],
+    "wave": ""
+  },
+  {
+    "id": "ME-OKR-86af2u1rr",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Quantificar 100% dos pagamentos efetivos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u26k",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "-",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+      "-"
+    ],
+    "wave": ""
+  },
+  {
+    "id": "ME-OKR-86af2u2p3",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "-",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+      "-"
+    ],
+    "wave": ""
+  },
+  {
+    "id": "ME-OKR-86af2tnex",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Criar política clara de cancelamento (cancelamento até 7 dias → crédito futuro)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2thmp",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar rotina de visualização e atualização da tabela dos custos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+      "KR 1.1.1 Manter custo por aluno ≤ R$ 800"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2tnwq",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Criar processo de indicação de cursos das certificações ATLS/ACLS",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+      "KR 1.2.1 Garantir 100% de visualização dos alunos contemplados, reduzindo erros de acesso para zero"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u3dm",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Converter cortesia em lead premium para upsell ATLS",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+      "KR 1.2.1 Garantir 100% de visualização dos alunos contemplados, reduzindo erros de acesso para zero"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2tf01",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar ranking de custo x avaliação por instrutor",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+      "KR 1.2.2 Garantir que 100% dos custos com palestrantes estejam registrados e aprovados antes do evento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2tfmt",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Priorizar palestrantes com CSAT alto e menor custo",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+      "KR 1.2.2 Garantir que 100% dos custos com palestrantes estejam registrados e aprovados antes do evento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2tgk4",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Negociar pacotes de múltiplas turmas",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+      "KR 1.2.2 Garantir que 100% dos custos com palestrantes estejam registrados e aprovados antes do evento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u9gr",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Negociar contratos trimestrais com palestrantes",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+    "okrs": [
+      "KR 1.2 - Garantir que 100% dos novos investimentos e produtos passem pelo Gate Financeiro com viabilidade (ROI/Margem) aprovada antes do início da execução",
+      "KR 1.2.2 Garantir que 100% dos custos com palestrantes estejam registrados e aprovados antes do evento"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af42vkr",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Ter um Instagram somente de certificações internacionais",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.1 Alcançar 200 vendas semestral das certificações ACLS/ATLS"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af42yf5",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar rotina de reunião semanal com o time de geração de demanda para garantir leads",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.1 Alcançar 200 vendas semestral das certificações ACLS/ATLS"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af42zqu",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Garantir 37 reuniões com alunos efetivas no semestre",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.1 Alcançar 200 vendas semestral das certificações ACLS/ATLS"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af434mb",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Visualizar 100% os leads qualificado do Instagram",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.1 Alcançar 200 vendas semestral das certificações ACLS/ATLS"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af43896",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Roteirizar estratégia para abordagem",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.2 Alcançar 10% de conversão de alunos do ACLS para a Pós-Graduação"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af439n8",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Fazer um pitch do curso",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.2 Alcançar 10% de conversão de alunos do ACLS para a Pós-Graduação"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af43auf",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Melhorar Onboarding",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.2 Alcançar 10% de conversão de alunos do ACLS para a Pós-Graduação"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af43c0b",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Mostrar UTI do Hospital",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.2 Alcançar 10% de conversão de alunos do ACLS para a Pós-Graduação"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af43ft2",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar estratégia de manter o lead aquecido pós curso",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.2 Alcançar 10% de conversão de alunos do ACLS para a Pós-Graduação"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u32z",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar campanhas de urgência por turma para inscrições nos cursos de ATLC/ACLS",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.3 Garantir 100% das inscrições corretas e validadas nos cursos ACLS/ATLS"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u37g",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar Remarketing por curso para quem abandonou inscrição - ATLS/ACLS",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.3 Garantir 100% das inscrições corretas e validadas nos cursos ACLS/ATLS"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2umuq",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar landing pages exclusivas por curso - ATLS/ACLS",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\") KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\") KR 1.5 Geração de Caixa Operacional (Validar Número após aprovação do orçamento",
+      "KR 1.5.3 Garantir 100% das inscrições corretas e validadas nos cursos ACLS/ATLS"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u9xp",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Estabelecer 100% dos rituais de governanças (realizados vs. planejados)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2ubaz",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Garantir que 95% das ações do departamento sejam concluídas no prazo",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro",
+    "okrs": [
+      "KR 2.3 - Garantir ≥ 90% de assertividade dos Rituais Sagrados de Gestão (Weekly/Monthly) com ata de decisão publicada em até 2h após o encontro"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2tr0f",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "X% de alunos com onboarding feito nas 24h",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1.",
+    "okrs": [
+      "KR 3.1 - Implementar SLA de 15 dias do Onboarding (3 Horas ou 6 Aulas, 01 CheckPoint, 01 Marcação de Prática, Obtenção dos Dados) em 80% dos alunos na Wave 1."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u50z",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Enviar pesquisa automática ao final de cada curso (QR code na sala + WhatsApp)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+    "okrs": [
+      "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+      "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u93m",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar meta mínima de CSAT por instrutor",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+    "okrs": [
+      "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+      "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2ubjg",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Avaliar instrutores todo mês por CSAT + taxa de aprovação",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+    "okrs": [
+      "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+      "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2ubny",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Reunião mensal de revisão dos 3 piores feedbacks através do comitê de qualidade",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+    "okrs": [
+      "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+      "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2udgr",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Criar jornada padrão do aluno (venda → pré-curso → curso → pós-curso)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+    "okrs": [
+      "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+      "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2udzc",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar checklist de estrutura e materiais necessário para os encontros presencias do curso",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+    "okrs": [
+      "KR 3.3 - Alcançar 80% de enriquecimento de dados e classificação dos novos alunos (perfil, dores e \"White Space Wallet\") no CRM até o 15º dia.",
+      "KR 3.3.1 % NPS (↑ 9.0) / Satisfação do aluno – CSAT (↑ 4,5"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2th5n",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Ajustar e padronizar o processo de custo por lead – ATLS/ACLS",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2tqd8",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Definir regras de Comissão média por venda (Comissão maior para vendas sem desconto/Comissão extra para upsell/Redução de comissão em cancelamentos)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2tujz",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Garantir que os custos das imersões fora da Goiânia sejam previstos em orçamento de aluguel",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u1bd",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Colocar mais de um curso por dia para otimizar os gastos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u2xe",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar site para vendas automáticas (checkout Pix e cartão)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2ufqx",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "% de leads p/ ATLS / ACLS",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af41en4",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Criar plano de recorrência de renovação das certificações",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u4wb",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Tx de aprovação: Reduzir X% de alunos que precisam repetir prova teórica (ACLS / ATLS)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u96n",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Reduzir em X% o grau de insatisfação do aluno",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2u9ae",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Garantir que 100% dos alunos recebam o material no prazo previsto (7 dias após pagamento)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2udvv",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criar calendário de disparos de comunicação (Funil de comunicação D-30, D-15, D-7, D-1)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2ujkb",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Reduzir X% No-show",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af48h07",
+    "area": "Demandas Médicas",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Xº depoimentos após o curso",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\"",
+    "okrs": [
+      "OKR 3 - Jornada do Aluno e Retenção na Origem (O \"Balde Furado\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86aeumvxz",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Sistema gerenciamento de férias em caso CLT",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 2 - Escala com controle"
+  },
+  {
+    "id": "ME-OKR-86af2xe92",
+    "area": "PMO Estratégico",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Estrutura de PD",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": ""
+  },
+  {
+    "id": "ME-OKR-86af36ubw",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Criar plano de Cargos e Salários (clareza nos níveis salariais e  cargos)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af36xe2",
+    "area": "RH",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Pesquisa salarial avaliando mercado tanto para salários fixos quanto remuneração variável, garantindo competitividade e atratividade no mercado",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3712x",
+    "area": "RH",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Mapeamento de fornecedores (headhunters, em caso de CLT empresas medicina do trabalho, rede de contatos consistentes)",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af376w4",
+    "area": "RH",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Mapeamento de vagas críticas para negócio",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af377z1",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Padronização dos processos com indicadores e prazos para fechamento de vagas",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af37q7c",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Definir meta de quebra de contrato com pagamento de multa",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af382c6",
+    "area": "RH",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Definir meta de turnover",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\"",
+    "okrs": [
+      "OKR 1 - Blindagem Financeira e Visibilidade de Margem (O \"Cofre de Vidro\""
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3846r",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Gestão de Atração e Seleção, sistemas ligados a IA para análise de currículos e triagens rápidas",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af38ggq",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Sistema de desenvolvimento de carreira com visão da gestão imediata, gestão de pessoas e Diretoria.",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af38jr6",
+    "area": "RH",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Descrições de cargos alinhadas ao negócio",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af38kcp",
+    "area": "RH",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "PDIs com acompanhamentos bimestrais",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af38pcr",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Cultura de Feedback e 1/1 estruturadas com líderes treinados em um único formato alinhado as diretrizes da empresa",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af38rfe",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Acompanhamento da Gestão via sistema",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af38tte",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Plano de Treinamentos estruturados com meta de hora/homem e pílulas de incentivos ao desenvolvimento",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af38x68",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Criar processo para RI com critérios claros.",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af390mv",
+    "area": "RH",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Cronograma fixo anual com datas estabelecidas para alinhamentos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af391qy",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Acompanhamento de Planos de Ação com datas e checagem de entregas vinculadas a remuneração variável ou bônus",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af3931v",
+    "area": "RH",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Comunicar propósito ao mercado/candidatos e não só requisitos",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af39401",
+    "area": "BPMO",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Onboarding estruturado gerando valor experiência ao candidato/aprovado.",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "OKR 2 - Governança Institucional e Cultura de Dados",
+    "okrs": [
+      "OKR 2 - Governança Institucional e Cultura de Dados"
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af35rw1",
+    "area": "Comercial",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Treinamento de Preenchimento do CRM",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+      "KR 1.1.1 - Atingir ≥ 85% de acurácia nos dados de negócios do CRM (valor, data prevista de fechamento e probabilidade"
+    ],
+    "wave": ""
+  },
+  {
+    "id": "ME-OKR-86af39vyg",
+    "area": "Comercial",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Criação do Ciclo de Vendas na Interface de Dashboard",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+    "okrs": [
+      "KR 1.1 - Atingir ≥ 85% de acurácia no Forecast de Fluxo de Caixa (Realizado vs. Projetado) para o horizonte D+90",
+      "KR 1.1.2 - Mensurar e reduzir a variação do tempo de ciclo de venda para ≤ 10 dias"
+    ],
+    "wave": ""
+  },
+  {
+    "id": "ME-OKR-86af39we5",
+    "area": "Comercial",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Otimização da Rotina de Sincronização de Dados",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+      "KR 2.1.2 Garantir que 90% dos dados comerciais sejam sincronizados com o Dashboard Oficial em menos de 15 minutos."
+    ],
+    "wave": ""
+  },
+  {
+    "id": "ME-OKR-86af39x2a",
+    "area": "Comercial",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Mapeamento e Substituição de Relatórios manuais",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+    "okrs": [
+      "KR 2.1 - Unificar as bases de dados (Financeiro/Vendas/Aluno) em um Dashboard Oficial (Single Source of Truth) atualizado tempestivamente com visibilidade de todos os KPIS estratégicos e táticos definidos no BSC.",
+      "KR 2.1.4: Reduzir em 50% o número de relatórios manuais sobre vendas e finanças gerados em planilhas."
+    ],
+    "wave": ""
+  },
+  {
+    "id": "ME-OKR-86af2w4mq",
+    "area": "Comercial",
+    "classificacao": "Melhoria Contínua com EPP",
+    "oQueFazer": "Quando houver early churn haverá revisão da gravação da venda",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores.",
+    "okrs": [
+      "KR 3.2 - Reduzir o early churn (cancelamento 0–90 dias) em 20% comparado à média dos trimestres anteriores."
+    ],
+    "wave": "Wave 1 - Estrutura mínima"
+  },
+  {
+    "id": "ME-OKR-86af2w6k8",
+    "area": "Comercial",
+    "classificacao": "Melhoria Contínua",
+    "oQueFazer": "Classificar apetite financeiro através de formulário padrão a ser respondido pelo aluno",
+    "justificativa": "",
+    "resultadoEsperado": "",
+    "responsavel": "",
+    "dataPrevista": "",
+    "status": "Backlog",
+    "origem": "OKR",
+    "okr": "KR 3.4 - Classificar 80% dos novos alunos no modelo de segmentação de perfis (Jornada/Financeiro) na primeira semana para evitar mismatching de produto",
+    "okrs": [
+      "KR 3.4 - Classificar 80% dos novos alunos no modelo de segmentação de perfis (Jornada/Financeiro) na primeira semana para evitar mismatching de produto",
+      "KR 3.4.1 - Classificar 80% dos novos alunos (Jornada/Financeiro) no momento da venda"
+    ],
+    "wave": ""
+  }
+]
