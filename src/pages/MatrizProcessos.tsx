@@ -28,6 +28,8 @@ type Processo = {
   maturidade?: number;
   kpiValor?: number;
   vinculo?: Record<string, number>;
+  mapeamentoConsultoria?: boolean;
+  responsavelMapeamento?: string;
 };
 
 const STORAGE_KEY = "matriz-processos-edits-v1";
@@ -124,6 +126,7 @@ export default function MatrizProcessos() {
   const [diretor, setDiretor] = useState<string>("todos");
   const [status, setStatus] = useState<string>("todos");
   const [zonaE2E, setZonaE2E] = useState<string>("todos");
+  const [mapeamentoFiltro, setMapeamentoFiltro] = useState<string>("todos");
   const [selected, setSelected] = useState<Processo | null>(null);
   const [data, setData] = useState<Processo[]>(() => {
     try {
@@ -140,7 +143,7 @@ export default function MatrizProcessos() {
     data.forEach(p => {
       const seed = (processosSeed as Processo[]).find(s => s.id === p.id)!;
       const diff: Partial<Processo> = {};
-      (["nivel", "diretor", "status", "maturidade", "kpiValor", "vinculo"] as const).forEach(k => {
+      (["nivel", "diretor", "status", "maturidade", "kpiValor", "vinculo", "mapeamentoConsultoria", "responsavelMapeamento"] as const).forEach(k => {
         if ((p as any)[k] !== (seed as any)[k]) (diff as any)[k] = (p as any)[k];
       });
       if (Object.keys(diff).length) edits[p.id] = diff;
@@ -171,10 +174,12 @@ export default function MatrizProcessos() {
         const zs = zonesForProcesso(p.nome).map(z => z.id);
         if (!zs.includes(zonaE2E)) return false;
       }
+      if (mapeamentoFiltro === "consultoria" && !p.mapeamentoConsultoria) return false;
+      if (mapeamentoFiltro === "interno" && p.mapeamentoConsultoria) return false;
       if (q && !p.nome.toLowerCase().includes(q) && !p.dono.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [search, nivel, diretor, status, zonaE2E, data]);
+  }, [search, nivel, diretor, status, zonaE2E, mapeamentoFiltro, data]);
 
   const stats = useMemo(() => {
     const total = data.length;
@@ -229,7 +234,7 @@ export default function MatrizProcessos() {
 
       {/* Filtros */}
       <Card>
-        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-7 gap-3">
+        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-8 gap-3">
           <div className="relative md:col-span-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Buscar processo ou dono..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
@@ -260,6 +265,14 @@ export default function MatrizProcessos() {
             <SelectContent>
               <SelectItem value="todos">Todas as zonas E2E</SelectItem>
               {E2E_ZONES.map(z => <SelectItem key={z.id} value={z.id}>{z.id} · {z.titulo}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={mapeamentoFiltro} onValueChange={setMapeamentoFiltro}>
+            <SelectTrigger><SelectValue placeholder="Mapeamento" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos mapeamentos</SelectItem>
+              <SelectItem value="consultoria">→ Consultoria</SelectItem>
+              <SelectItem value="interno">Interno</SelectItem>
             </SelectContent>
           </Select>
           <button onClick={resetAll} className="flex items-center justify-center gap-2 text-xs px-3 rounded-md border border-border hover:bg-surface-muted transition-colors">
@@ -295,6 +308,8 @@ export default function MatrizProcessos() {
                     <TableHead className="w-[200px]">Status</TableHead>
                     <TableHead className="w-[160px]">Maturidade</TableHead>
                     <TableHead className="w-[140px]">KPI valor (%)</TableHead>
+                    <TableHead className="w-[130px]">Consultoria</TableHead>
+                    <TableHead className="min-w-[180px]">Resp. Mapeamento</TableHead>
                     <TableHead className="text-center w-[60px]">Rev.</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -354,6 +369,28 @@ export default function MatrizProcessos() {
                             {p.kpiValor != null ? `${p.kpiValor}%` : "—"}
                           </span>
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <button
+                          type="button"
+                          onClick={() => updateField(p.id, "mapeamentoConsultoria", !p.mapeamentoConsultoria)}
+                          className={`text-[10px] px-2 py-1 rounded-full border font-medium transition-colors ${
+                            p.mapeamentoConsultoria
+                              ? "bg-fuchsia-500/15 text-fuchsia-700 border-fuchsia-500/40 hover:bg-fuchsia-500/25"
+                              : "bg-muted text-muted-foreground border-border hover:bg-muted/70"
+                          }`}
+                          title="Etiqueta: direcionar mapeamento à consultoria"
+                        >
+                          {p.mapeamentoConsultoria ? "→ Consultoria" : "Interno"}
+                        </button>
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          value={p.responsavelMapeamento ?? ""}
+                          onChange={e => updateField(p.id, "responsavelMapeamento", e.target.value)}
+                          placeholder="Nome do responsável"
+                          className="h-8 text-xs"
+                        />
                       </TableCell>
                       <TableCell className="text-center text-xs">{p.revisao ?? "—"}</TableCell>
                     </TableRow>
