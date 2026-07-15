@@ -18,7 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 const AREAS = [
   "Comercial","Geração de Demanda","CX","Áudio Visual","Infra & Tech",
   "Coordenação Acadêmica","Demandas Médicas","Governança e Jurídico","Financeiro",
-  "BPMO","PMO Estratégico","Facilities","PFO em Hospitais","Produtos","Novos Produtos","Growth",
+  "BPMO","PMO Estratégico","Facilities","PFO em Hospitais","Produtos","Novos Produtos","Growth","RH",
 ] as const;
 
 type Area = typeof AREAS[number];
