@@ -492,6 +492,16 @@ export default function Melhorias() {
                       const krsLegacy = (i.krs ?? []).filter(k => !k.includes("::"));
                       return (
                       <tr key={i.id} className="border-b hover:bg-muted/20 align-top">
+                        <td className="px-2 py-2">
+                          <Select value={i.origem ?? "Área"} onValueChange={v => updateItem(i.id, { origem: v as Origem })}>
+                            <SelectTrigger className={cn("h-7 text-[11px]", ORIGEM_COLORS[(i.origem ?? "Área") as Origem])}><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="OKR">OKR</SelectItem>
+                              <SelectItem value="Área">Área</SelectItem>
+                              <SelectItem value="BPMO">BPMO</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </td>
                         <td className="px-3 py-2">
                           <Select value={i.classificacao} onValueChange={v => updateItem(i.id, { classificacao: v as Classif })}>
                             <SelectTrigger className="h-7 text-[11px]"><SelectValue /></SelectTrigger>
@@ -509,6 +519,15 @@ export default function Melhorias() {
                         </td>
                         <td className="px-2 py-1">
                           <Textarea value={i.resultadoEsperado} rows={2} onChange={e => updateItem(i.id, { resultadoEsperado: e.target.value })} className="text-xs min-h-[36px] resize-none" />
+                        </td>
+                        <td className="px-2 py-1">
+                          <Textarea
+                            value={i.okr ?? ""}
+                            rows={2}
+                            onChange={e => updateItem(i.id, { okr: e.target.value })}
+                            placeholder={i.origem === "OKR" ? "KR vinculado" : "—"}
+                            className="text-[11px] min-h-[36px] resize-none"
+                          />
                         </td>
                         <td className="px-3 py-2">
                           {(i.objetivos && i.objetivos.length > 0) || krsLegacy.length > 0 ? (
