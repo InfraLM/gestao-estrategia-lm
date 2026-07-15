@@ -40,7 +40,7 @@ function fileIcon(tipo?: string | null) {
   return <FileText className="h-3.5 w-3.5" />;
 }
 
-export default function EstrategiaToolInsights({ ferramenta, descricao, referencia }: Props) {
+export default function EstrategiaToolInsights({ ferramenta, descricao, referencia, saidas }: Props) {
   const { user } = useAuth();
   const [openRef, setOpenRef] = useState(false);
   const [openList, setOpenList] = useState(false);
