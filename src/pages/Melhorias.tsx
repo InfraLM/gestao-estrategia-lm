@@ -297,6 +297,7 @@ export default function Melhorias() {
           </div>
 
           {!areaSel ? (
+            <>
             <Card className="p-6 shadow-card">
               <div className="flex items-center justify-between mb-4">
                 <div>
@@ -323,6 +324,60 @@ export default function Melhorias() {
                 })}
               </div>
             </Card>
+
+            {/* Iniciativas sem área — classificação manual */}
+            {(() => {
+              const semArea = itens.filter(i => !i.area);
+              if (semArea.length === 0) return null;
+              return (
+                <Card className="p-6 shadow-card border-amber-300 bg-amber-50/40">
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                      <h3 className="font-semibold text-lg flex items-center gap-2">
+                        <ClipboardList className="h-5 w-5 text-amber-700" />
+                        Iniciativas sem área definida
+                        <Badge variant="outline" className="border-amber-400 bg-amber-100 text-amber-900">{semArea.length}</Badge>
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Estas iniciativas foram importadas dos OKRs sem departamento mapeado. Atribua uma área para movê-las para o plano correspondente.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-xs uppercase text-muted-foreground border-b">
+                          <th className="py-2 pr-3">Iniciativa</th>
+                          <th className="py-2 pr-3">OKR / KR</th>
+                          <th className="py-2 pr-3">Responsável</th>
+                          <th className="py-2 pr-3">Depto original</th>
+                          <th className="py-2 pr-3 w-56">Atribuir área</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {semArea.map(it => (
+                          <tr key={it.id} className="border-b last:border-b-0 align-top">
+                            <td className="py-2 pr-3 max-w-[380px]">{it.oQueFazer}</td>
+                            <td className="py-2 pr-3 text-xs text-muted-foreground max-w-[260px]">{it.okr ?? ""}</td>
+                            <td className="py-2 pr-3 text-xs">{it.responsavel ?? "—"}</td>
+                            <td className="py-2 pr-3 text-xs italic text-muted-foreground">{(it as any).deptOriginal || "—"}</td>
+                            <td className="py-2 pr-3">
+                              <Select value="" onValueChange={v => updateItem(it.id, { area: v as Area })}>
+                                <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Selecionar área…" /></SelectTrigger>
+                                <SelectContent>
+                                  {AREAS.map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                                </SelectContent>
+                              </Select>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              );
+            })()}
+            </>
           ) : (
             <>
               <div className="flex flex-wrap items-center justify-between gap-3">
