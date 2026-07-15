@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 export type MelhoriaStatus = "Backlog" | "A Iniciar" | "Em Andamento" | "Validação" | "Concluído" | "Pausado";
 export type MelhoriaClassif = "Melhoria Contínua" | "Melhoria Contínua com EPP";
+export type MelhoriaOrigem = "OKR" | "Área" | "BPMO";
 
 export interface MelhoriaEstrategicaStored {
   id: string;
@@ -17,6 +18,10 @@ export interface MelhoriaEstrategicaStored {
   projetoId?: string;
   objetivos?: string[];
   krs?: string[];
+  origem?: MelhoriaOrigem;
+  okr?: string;
+  okrs?: string[];
+  wave?: string;
   updatedAt?: string;
 }
 

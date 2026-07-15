@@ -51,11 +51,13 @@ const AREAS = [
   "PFO em Hospitais",
   "Produtos",
   "Novos Produtos",
+  "RH",
 ] as const;
 
 type Area = typeof AREAS[number];
 type Classif = "Melhoria Contínua" | "Melhoria Contínua com EPP";
 type Status = "Backlog" | "A Iniciar" | "Em Andamento" | "Validação" | "Concluído" | "Pausado";
+type Origem = "OKR" | "Área" | "BPMO";
 
 interface MelhoriaEstrategica {
   id: string;
@@ -71,6 +73,10 @@ interface MelhoriaEstrategica {
   projetoId?: string;
   objetivos?: string[]; // códigos de objetivos estratégicos vinculados
   krs?: string[]; // KRs específicos selecionados
+  origem?: Origem;
+  okr?: string;
+  okrs?: string[];
+  wave?: string;
   updatedAt?: string;
 }
 
@@ -89,7 +95,9 @@ const DIRETOR_AREA: Record<string, Area> = {
   "Não atribuído": "PMO Estratégico",
 };
 
-const SEED: MelhoriaEstrategica[] = projetos
+import okrIniciativas from "@/data/okrIniciativas.json";
+
+const SEED_PROJ: MelhoriaEstrategica[] = projetos
   .filter(p => p.classificacao === "Melhoria Contínua" || p.classificacao === "Melhoria Contínua com EPP")
   .map(p => ({
     id: `ME-${p.id}`,
@@ -104,7 +112,15 @@ const SEED: MelhoriaEstrategica[] = projetos
     projetoId: p.id,
     objetivos: p.objetivos ?? [],
     krs: p.krs ?? [],
+    origem: "Área" as Origem,
   }));
+
+const SEED_OKR: MelhoriaEstrategica[] = (okrIniciativas as any[]).map(x => ({
+  ...x,
+  area: (AREAS.includes(x.area) ? x.area : "PMO Estratégico") as Area,
+})) as MelhoriaEstrategica[];
+
+const SEED: MelhoriaEstrategica[] = [...SEED_PROJ, ...SEED_OKR];
 
 const STATUS_COLORS: Record<Status, string> = {
   "Backlog": "bg-muted text-muted-foreground border-border",
@@ -121,26 +137,44 @@ const CLASSIF_COLORS: Record<Classif, string> = {
 };
 
 const COLS = [
+  { key: "origem", label: "Origem", w: 100 },
   { key: "classificacao", label: "Classificação", w: 130 },
   { key: "oQueFazer", label: "O que fazer?", w: 240 },
-  { key: "justificativa", label: "Justificativa", w: 240 },
-  { key: "resultadoEsperado", label: "Resultado esperado", w: 220 },
-  { key: "vinculo", label: "Vínculo OKR / KR", w: 220 },
-  { key: "responsavel", label: "Responsável", w: 170 },
-  { key: "dataPrevista", label: "Prevista", w: 130 },
-  { key: "dataConclusao", label: "Conclusão", w: 130 },
+  { key: "justificativa", label: "Justificativa", w: 220 },
+  { key: "resultadoEsperado", label: "Resultado esperado", w: 200 },
+  { key: "okr", label: "OKR / KR vinculado", w: 260 },
+  { key: "vinculo", label: "BSC (Obj/KR)", w: 180 },
+  { key: "responsavel", label: "Responsável", w: 160 },
+  { key: "dataPrevista", label: "Prevista", w: 120 },
+  { key: "dataConclusao", label: "Conclusão", w: 120 },
   { key: "status", label: "Status", w: 140 },
-  { key: "acoes", label: "", w: 80 },
+  { key: "acoes", label: "", w: 60 },
 ] as const;
+
+const ORIGEM_COLORS: Record<Origem, string> = {
+  "OKR": "bg-primary/10 text-primary border-primary/30",
+  "Área": "bg-slate-100 text-slate-700 border-slate-200",
+  "BPMO": "bg-blue-100 text-blue-800 border-blue-200",
+};
 
 export default function Melhorias() {
   const [itens, setItens] = useState<MelhoriaEstrategica[]>(() => {
     const stored = loadMelhorias();
-    return stored.length > 0 ? (stored as MelhoriaEstrategica[]) : SEED;
+    if (stored.length === 0) return SEED;
+    // Migração: garantir que as iniciativas de OKR estejam presentes com origem "OKR"
+    const okrIds = new Set(SEED_OKR.map(s => s.id));
+    const existingOkrIds = new Set(stored.filter(s => s.id.startsWith("ME-OKR-")).map(s => s.id));
+    const missing = SEED_OKR.filter(s => !existingOkrIds.has(s.id));
+    // Marcar itens existentes que são OKR mas sem flag
+    const migrated = (stored as MelhoriaEstrategica[]).map(it =>
+      okrIds.has(it.id) && it.origem !== "OKR" ? { ...it, origem: "OKR" as Origem } : it
+    );
+    return missing.length > 0 ? [...migrated, ...missing] : migrated;
   });
   const [areaSel, setAreaSel] = useState<Area | null>(null);
   const [q, setQ] = useState("");
   const [classifFilter, setClassifFilter] = useState<string>("Todas");
+  const [origemFilter, setOrigemFilter] = useState<string>("Todas");
   const [statusFilter, setStatusFilter] = useState<string>("Todos");
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Partial<MelhoriaEstrategica>>({ classificacao: "Melhoria Contínua", status: "Backlog" });
@@ -182,10 +216,11 @@ export default function Melhorias() {
   const lista = useMemo(() => itens.filter(i => {
     if (areaSel && i.area !== areaSel) return false;
     if (classifFilter !== "Todas" && i.classificacao !== classifFilter) return false;
+    if (origemFilter !== "Todas" && (i.origem ?? "Área") !== origemFilter) return false;
     if (statusFilter !== "Todos" && i.status !== statusFilter) return false;
-    if (q && !`${i.oQueFazer} ${i.justificativa} ${i.responsavel}`.toLowerCase().includes(q.toLowerCase())) return false;
+    if (q && !`${i.oQueFazer} ${i.justificativa} ${i.responsavel} ${i.okr ?? ""}`.toLowerCase().includes(q.toLowerCase())) return false;
     return true;
-  }), [itens, areaSel, classifFilter, statusFilter, q]);
+  }), [itens, areaSel, classifFilter, origemFilter, statusFilter, q]);
 
   const total = itens.length;
   const local = itens.filter(i => i.classificacao === "Melhoria Contínua").length;
@@ -425,6 +460,15 @@ export default function Melhorias() {
                     <SelectItem value="Melhoria Contínua com EPP">Com Impacto (EPP)</SelectItem>
                   </SelectContent>
                 </Select>
+                <Select value={origemFilter} onValueChange={setOrigemFilter}>
+                  <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Todas">Todas as origens</SelectItem>
+                    <SelectItem value="OKR">OKR</SelectItem>
+                    <SelectItem value="Área">Área</SelectItem>
+                    <SelectItem value="BPMO">BPMO</SelectItem>
+                  </SelectContent>
+                </Select>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -459,6 +503,16 @@ export default function Melhorias() {
                       const krsLegacy = (i.krs ?? []).filter(k => !k.includes("::"));
                       return (
                       <tr key={i.id} className="border-b hover:bg-muted/20 align-top">
+                        <td className="px-2 py-2">
+                          <Select value={i.origem ?? "Área"} onValueChange={v => updateItem(i.id, { origem: v as Origem })}>
+                            <SelectTrigger className={cn("h-7 text-[11px]", ORIGEM_COLORS[(i.origem ?? "Área") as Origem])}><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="OKR">OKR</SelectItem>
+                              <SelectItem value="Área">Área</SelectItem>
+                              <SelectItem value="BPMO">BPMO</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </td>
                         <td className="px-3 py-2">
                           <Select value={i.classificacao} onValueChange={v => updateItem(i.id, { classificacao: v as Classif })}>
                             <SelectTrigger className="h-7 text-[11px]"><SelectValue /></SelectTrigger>
@@ -476,6 +530,15 @@ export default function Melhorias() {
                         </td>
                         <td className="px-2 py-1">
                           <Textarea value={i.resultadoEsperado} rows={2} onChange={e => updateItem(i.id, { resultadoEsperado: e.target.value })} className="text-xs min-h-[36px] resize-none" />
+                        </td>
+                        <td className="px-2 py-1">
+                          <Textarea
+                            value={i.okr ?? ""}
+                            rows={2}
+                            onChange={e => updateItem(i.id, { okr: e.target.value })}
+                            placeholder={i.origem === "OKR" ? "KR vinculado" : "—"}
+                            className="text-[11px] min-h-[36px] resize-none"
+                          />
                         </td>
                         <td className="px-3 py-2">
                           {(i.objetivos && i.objetivos.length > 0) || krsLegacy.length > 0 ? (
