@@ -122,7 +122,7 @@ export default function RiscosEstrategicos() {
         "Data Prevista": r.dueDate || "",
       };
     });
-    exportToXLSX(rows, "riscos-estrategicos-LM");
+    exportToExcel("riscos-estrategicos-LM", rows, "Riscos");
   };
 
   return (
