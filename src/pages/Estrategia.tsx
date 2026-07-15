@@ -353,9 +353,10 @@ export default function Estrategia() {
       </div>
 
       <Tabs defaultValue="formulacao" className="w-full">
-        <TabsList className="grid grid-cols-2 w-full max-w-md">
+        <TabsList className="grid grid-cols-3 w-full max-w-2xl">
           <TabsTrigger value="formulacao">Formulação Estratégica</TabsTrigger>
           <TabsTrigger value="planejamento">Planejamento (BSC)</TabsTrigger>
+          <TabsTrigger value="okrs">OKRs Semestrais</TabsTrigger>
         </TabsList>
 
         {/* FORMULAÇÃO */}
