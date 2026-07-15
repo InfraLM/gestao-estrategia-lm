@@ -359,6 +359,28 @@ export default function MatrizProcessos() {
                           </span>
                         </div>
                       </TableCell>
+                      <TableCell>
+                        <button
+                          type="button"
+                          onClick={() => updateField(p.id, "mapeamentoConsultoria", !p.mapeamentoConsultoria)}
+                          className={`text-[10px] px-2 py-1 rounded-full border font-medium transition-colors ${
+                            p.mapeamentoConsultoria
+                              ? "bg-fuchsia-500/15 text-fuchsia-700 border-fuchsia-500/40 hover:bg-fuchsia-500/25"
+                              : "bg-muted text-muted-foreground border-border hover:bg-muted/70"
+                          }`}
+                          title="Etiqueta: direcionar mapeamento à consultoria"
+                        >
+                          {p.mapeamentoConsultoria ? "→ Consultoria" : "Interno"}
+                        </button>
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          value={p.responsavelMapeamento ?? ""}
+                          onChange={e => updateField(p.id, "responsavelMapeamento", e.target.value)}
+                          placeholder="Nome do responsável"
+                          className="h-8 text-xs"
+                        />
+                      </TableCell>
                       <TableCell className="text-center text-xs">{p.revisao ?? "—"}</TableCell>
                     </TableRow>
                   ))}
