@@ -35,6 +35,13 @@ const CLASS_SHORT: Record<Classificacao, string> = {
   "Novo Produto": "Novo Produto",
 };
 
+const CLASS_ABBR: Record<Classificacao, string> = {
+  "Institucional": "INST",
+  "Melhoria Contínua": "MC",
+  "Melhoria Contínua com EPP": "MC+EPP",
+  "Novo Produto": "PROD",
+};
+
 const ALL_CLASSES: Classificacao[] = ["Institucional", "Melhoria Contínua", "Melhoria Contínua com EPP", "Novo Produto"];
 
 // Breakdown total do portfólio (144) por classificação — proporcional realista
