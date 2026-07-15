@@ -669,7 +669,7 @@ function MonthlyBars({ data, accent }: { data: { mes: string; concluidas: number
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
             <XAxis dataKey="mes" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
-            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+            <Tooltip shared={false} contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
             <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" />
             <Bar dataKey="planejadas" name="Planejadas" fill="hsl(var(--muted))" radius={[4, 4, 0, 0]} />
             <Bar dataKey="concluidas" name="Concluídas" fill={accentColor} radius={[4, 4, 0, 0]} />
@@ -741,7 +741,7 @@ function IndicadoresGraficos({ counts, linhas, riscosCriticos, atividadesAtraso 
                 <Pie data={semaforoData} dataKey="value" nameKey="name" innerRadius={42} outerRadius={70} paddingAngle={2}>
                   {semaforoData.map((d) => <Cell key={d.name} fill={d.color} />)}
                 </Pie>
-                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+                <Tooltip shared={false} contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
                 <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" />
               </PieChart>
             </ResponsiveContainer>
@@ -763,7 +763,7 @@ function IndicadoresGraficos({ counts, linhas, riscosCriticos, atividadesAtraso 
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
                 <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <YAxis type="category" dataKey="status" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} width={140} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+                <Tooltip shared={false} contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
                 <Bar dataKey="qtd" name="Processos" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -785,7 +785,7 @@ function IndicadoresGraficos({ counts, linhas, riscosCriticos, atividadesAtraso 
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                 <XAxis dataKey="diretor" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} angle={-30} textAnchor="end" interval={0} height={56} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+                <Tooltip shared={false} contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
                 <Bar dataKey="qtd" name="Processos" fill="hsl(238 75% 60%)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -806,7 +806,7 @@ function IndicadoresGraficos({ counts, linhas, riscosCriticos, atividadesAtraso 
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                   <XAxis dataKey="nome" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} angle={-30} textAnchor="end" interval={0} height={56} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+                  <Tooltip shared={false} contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
                   <Bar dataKey="score" name="Score (I×O)" fill="hsl(0 84% 60%)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -817,7 +817,7 @@ function IndicadoresGraficos({ counts, linhas, riscosCriticos, atividadesAtraso 
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                   <XAxis dataKey="origem" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
-                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
+                  <Tooltip shared={false} contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }} />
                   <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" />
                   <Bar dataKey="qtd" name="Qtd. atrasos" fill="hsl(38 92% 50%)" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="media" name="Média (dias)" fill="hsl(0 84% 60%)" radius={[4, 4, 0, 0]} />

@@ -177,7 +177,7 @@ export default function GestaoProjeto() {
               <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
               <XAxis dataKey="mes" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} stroke="hsl(var(--muted-foreground))" />
-              <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `R$ ${v.toLocaleString("pt-BR")}`} />
+              <Tooltip shared={false} contentStyle={tooltipStyle} formatter={(v: number) => `R$ ${v.toLocaleString("pt-BR")}`} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
               <Bar dataKey="bc" name="BC" fill="hsl(var(--neutral))" radius={[4, 4, 0, 0]}>
                 <LabelList dataKey="bc" position="top" style={{ fill: "hsl(var(--neutral))", fontSize: 9, fontWeight: 600 }} formatter={(v: number) => v > 0 ? `${(v / 1000).toFixed(0)}k` : ""} />
@@ -241,7 +241,7 @@ export default function GestaoProjeto() {
               <CartesianGrid horizontal={false} stroke="hsl(var(--border))" />
               <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `${v}sem`} />
               <YAxis dataKey="fase" type="category" tick={{ fontSize: 11 }} width={130} stroke="hsl(var(--muted-foreground))" />
-              <Tooltip contentStyle={tooltipStyle} formatter={(v: number, n: string) => [`${v} sem`, n]} cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }} />
+              <Tooltip shared={false} contentStyle={tooltipStyle} formatter={(v: number, n: string) => [`${v} sem`, n]} cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }} />
               <Bar dataKey="previsto" name="Previsto" fill="hsl(var(--neutral))" stackId="x">
                 <LabelList dataKey="previsto" position="right" style={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontWeight: 600 }} formatter={(v: number) => v > 0 ? `${v}sem` : ""} />
               </Bar>
@@ -385,7 +385,7 @@ export default function GestaoProjeto() {
                   <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
                   <XAxis dataKey="mes" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" />
                   <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `R$ ${v.toLocaleString("pt-BR")}`} />
+                  <Tooltip shared={false} contentStyle={tooltipStyle} formatter={(v: number) => `R$ ${v.toLocaleString("pt-BR")}`} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
                   <Line type="monotone" dataKey="planejado" name="Planejado" stroke="hsl(var(--neutral))" strokeDasharray="5 5" dot={{ r: 2 }}>
                     <LabelList dataKey="planejado" position="top" style={{ fill: "hsl(var(--muted-foreground))", fontSize: 9 }} formatter={(v: number) => v > 0 ? `${(v / 1000).toFixed(0)}k` : ""} />
@@ -440,7 +440,7 @@ export default function GestaoProjeto() {
                     <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
                     <XAxis dataKey="mes" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                     <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}%`} domain={[0, 100]} stroke="hsl(var(--muted-foreground))" />
-                    <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => v == null ? "—" : `${v}%`} />
+                    <Tooltip shared={false} contentStyle={tooltipStyle} formatter={(v: number) => v == null ? "—" : `${v}%`} />
                     <Legend wrapperStyle={{ fontSize: 11 }} />
                     <Line type="monotone" dataKey="planejado" name="Planejado" stroke="hsl(var(--neutral))" strokeDasharray="5 5" dot={{ r: 2 }}>
                       <LabelList dataKey="planejado" position="top" style={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} formatter={(v: number) => v != null ? `${v}%` : ""} />
