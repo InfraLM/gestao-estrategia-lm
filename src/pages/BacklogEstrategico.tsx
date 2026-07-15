@@ -287,6 +287,23 @@ export default function BacklogEstrategico() {
   const [origemFiltro, setOrigemFiltro] = useState<Origem | "Todas">("Todas");
   const [lista, setLista] = useState<Iniciativa[]>(iniciativas);
 
+  // Status derivado dos vínculos (agregação das iniciativas ligadas)
+  const derivarStatus = (i: Iniciativa): { status: Status; derivado: boolean; detalhe?: string } => {
+    const vs = i.vinculos ?? [];
+    const metas = vs.map(v => projetoMap.get(v.refId)).filter(Boolean) as { status: string; saude: string; termino: string }[];
+    if (metas.length === 0) return { status: i.status, derivado: false };
+    const st = metas.map(m => m.status);
+    const total = st.length;
+    const concl = st.filter(s => s === "Concluído").length;
+    const cancel = st.filter(s => s === "Cancelado").length;
+    let out: Status;
+    if (concl + cancel === total && concl > 0) out = "Concluído";
+    else if (st.some(s => s === "Em Andamento" || s === "Pausado")) out = "Em Execução";
+    else if (st.some(s => s === "A Iniciar")) out = "Priorizado";
+    else out = "Backlog";
+    return { status: out, derivado: true, detalhe: `${total} vínculo(s) · ${concl} concluído(s) · ${st.filter(s => s === "Em Andamento").length} em andamento` };
+  };
+
   // Edição (ação · resultado esperado · vínculos)
   const [editId, setEditId] = useState<string | null>(null);
   const [draft, setDraft] = useState<{ acao: string; resultadoEsperado: string; vinculos: VinculoIniciativa[] }>({
