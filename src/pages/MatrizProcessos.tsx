@@ -267,6 +267,14 @@ export default function MatrizProcessos() {
               {E2E_ZONES.map(z => <SelectItem key={z.id} value={z.id}>{z.id} · {z.titulo}</SelectItem>)}
             </SelectContent>
           </Select>
+          <Select value={mapeamentoFiltro} onValueChange={setMapeamentoFiltro}>
+            <SelectTrigger><SelectValue placeholder="Mapeamento" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos mapeamentos</SelectItem>
+              <SelectItem value="consultoria">→ Consultoria</SelectItem>
+              <SelectItem value="interno">Interno</SelectItem>
+            </SelectContent>
+          </Select>
           <button onClick={resetAll} className="flex items-center justify-center gap-2 text-xs px-3 rounded-md border border-border hover:bg-surface-muted transition-colors">
             <RotateCcw className="h-3.5 w-3.5" /> Resetar edições
           </button>
