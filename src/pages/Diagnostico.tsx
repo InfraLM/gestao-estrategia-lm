@@ -342,14 +342,14 @@ export default function Diagnostico() {
 
       {/* Tabs por framework */}
       <Tabs defaultValue="pestel" className="w-full">
-        <TabsList className="grid grid-cols-3 lg:grid-cols-7 w-full">
-          <TabsTrigger value="pestel">PESTEL</TabsTrigger>
-          <TabsTrigger value="porter">Porter</TabsTrigger>
-          <TabsTrigger value="rbv">RBV/VRIN</TabsTrigger>
-          <TabsTrigger value="oceano">Oceano Azul</TabsTrigger>
-          <TabsTrigger value="swot">SWOT</TabsTrigger>
-          <TabsTrigger value="ansoff">Ansoff</TabsTrigger>
-          <TabsTrigger value="insights">Insights ({insights.length})</TabsTrigger>
+        <TabsList className="flex flex-wrap h-auto gap-1.5 p-1.5 bg-primary/5 border border-primary/20 rounded-lg justify-start">
+          <TabsTrigger value="pestel" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md font-medium px-3.5 py-1.5 text-xs">1 · PESTEL</TabsTrigger>
+          <TabsTrigger value="porter" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md font-medium px-3.5 py-1.5 text-xs">2 · Porter</TabsTrigger>
+          <TabsTrigger value="swot" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md font-medium px-3.5 py-1.5 text-xs">3 · SWOT</TabsTrigger>
+          <TabsTrigger value="rbv" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md font-medium px-3.5 py-1.5 text-xs">4 · RBV/VRIN</TabsTrigger>
+          <TabsTrigger value="oceano" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md font-medium px-3.5 py-1.5 text-xs">5 · Oceano Azul</TabsTrigger>
+          <TabsTrigger value="ansoff" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md font-medium px-3.5 py-1.5 text-xs">6 · Ansoff</TabsTrigger>
+          <TabsTrigger value="insights" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md font-medium px-3.5 py-1.5 text-xs ml-auto">Insights ({insights.length})</TabsTrigger>
         </TabsList>
 
         {/* PESTEL */}
