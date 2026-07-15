@@ -638,6 +638,12 @@ export default function Estrategia() {
             </CardContent>
           </Card>
         </TabsContent>
+        </TabsContent>
+
+        {/* OKRs SEMESTRAIS */}
+        <TabsContent value="okrs" className="space-y-6 mt-6">
+          <OkrsSemestrais />
+        </TabsContent>
       </Tabs>
     </div>
   );
