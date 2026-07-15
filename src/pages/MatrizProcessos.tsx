@@ -28,6 +28,8 @@ type Processo = {
   maturidade?: number;
   kpiValor?: number;
   vinculo?: Record<string, number>;
+  mapeamentoConsultoria?: boolean;
+  responsavelMapeamento?: string;
 };
 
 const STORAGE_KEY = "matriz-processos-edits-v1";
