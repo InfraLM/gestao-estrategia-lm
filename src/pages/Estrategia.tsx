@@ -345,47 +345,47 @@ export default function Estrategia() {
         </CardContent>
       </Card>
 
-      {/* PILARES IMPRESCINDÍVEIS — sustentam a tese (compacto) */}
-      <Card className="border-2 border-primary/40 bg-gradient-to-br from-primary/5 via-background to-warning/5">
-        <CardHeader className="pb-2">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Shield className="h-5 w-5 text-primary" />
-            <CardTitle className="text-base">Pilares que Sustentam a Tese</CardTitle>
-            <Badge variant="destructive" className="ml-auto text-[10px]">Não-negociáveis</Badge>
-          </div>
-          <p className="text-[11px] text-muted-foreground">
-            Condições necessárias para o moat e o BHAG de 1M de vidas. Passe o mouse para detalhes.
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      {/* PILARES IMPRESCINDÍVEIS — sustentam a tese (ultra-compacto) */}
+      <Card className="border border-primary/30 bg-gradient-to-r from-primary/5 via-background to-warning/5">
+        <CardContent className="py-2.5 px-3">
           <TooltipProvider delayDuration={150}>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-              {[
-                { icon: Heart, titulo: "Prática hospitalar real", desc: "Núcleo do método LM — não substituível por conteúdo digital. Define o diferencial percebido pelo médico early-career." },
-                { icon: Building2, titulo: "Rede padronizada", desc: "Polos com método LM replicável. Sem padronização, escala destrói qualidade e mata a marca técnica." },
-                { icon: Users, titulo: "ICP respeitado", desc: "Médico early-career exposto ao paciente grave. Sair do ICP dilui posicionamento e abre flanco para Afya/Sanar." },
-                { icon: Trophy, titulo: "Autoridade docente", desc: "Médicos ativos em plantão. Sem isso, vira plataforma de conteúdo genérica." },
-                { icon: Sparkles, titulo: "Comunidade longitudinal", desc: "Pertencimento + integração de portfólio = LTV alto. Fragmentar a jornada destrói o lock-in de carreira." },
-                { icon: DollarSign, titulo: "Disciplina premium", desc: "Margem >35% e ticket high. Descontar preço corrói o moat e atrai o público errado." },
-              ].map((p) => (
-                <Tooltip key={p.titulo}>
-                  <TooltipTrigger asChild>
-                    <div className="p-2 rounded-md bg-card border border-primary/20 hover:border-primary/60 hover:bg-primary/5 transition-colors cursor-default flex flex-col items-center text-center gap-1">
-                      <p.icon className="h-4 w-4 text-primary" />
-                      <span className="text-[11px] font-medium leading-tight line-clamp-2">{p.titulo}</span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    <div className="font-semibold mb-1">{p.titulo}</div>
-                    <p className="text-muted-foreground">{p.desc}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ))}
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Shield className="h-4 w-4 text-primary" />
+                <span className="text-xs font-semibold">Pilares que sustentam a tese</span>
+                <Badge variant="destructive" className="text-[9px] px-1.5 py-0 h-4">Não-negociáveis</Badge>
+              </div>
+              <div className="flex items-center gap-1 flex-wrap">
+                {[
+                  { icon: Heart, titulo: "Prática hospitalar real", desc: "Núcleo do método LM — não substituível por conteúdo digital. Define o diferencial percebido pelo médico early-career." },
+                  { icon: Building2, titulo: "Rede padronizada", desc: "Polos com método LM replicável. Sem padronização, escala destrói qualidade e mata a marca técnica." },
+                  { icon: Users, titulo: "ICP respeitado", desc: "Médico early-career exposto ao paciente grave. Sair do ICP dilui posicionamento e abre flanco para Afya/Sanar." },
+                  { icon: Trophy, titulo: "Autoridade docente", desc: "Médicos ativos em plantão. Sem isso, vira plataforma de conteúdo genérica." },
+                  { icon: Sparkles, titulo: "Comunidade longitudinal", desc: "Pertencimento + integração de portfólio = LTV alto. Fragmentar a jornada destrói o lock-in de carreira." },
+                  { icon: DollarSign, titulo: "Disciplina premium", desc: "Margem >35% e ticket high. Descontar preço corrói o moat e atrai o público errado." },
+                ].map((p) => (
+                  <Tooltip key={p.titulo}>
+                    <TooltipTrigger asChild>
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-card border border-primary/20 hover:border-primary/60 hover:bg-primary/5 transition-colors cursor-default">
+                        <p.icon className="h-3 w-3 text-primary shrink-0" />
+                        <span className="text-[10.5px] font-medium leading-none">{p.titulo}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs text-xs">
+                      <div className="font-semibold mb-1">{p.titulo}</div>
+                      <p className="text-muted-foreground">{p.desc}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </div>
+              <div className="ml-auto">
+                <EstrategiaToolInsights ferramenta="Pilares Imprescindíveis" {...FERRAMENTAS.Pilares} />
+              </div>
             </div>
           </TooltipProvider>
-          <EstrategiaToolInsights ferramenta="Pilares Imprescindíveis" {...FERRAMENTAS.Pilares} />
         </CardContent>
       </Card>
+
 
       {/* AMBICAO CARDS */}
       <div className="grid md:grid-cols-3 gap-4">
