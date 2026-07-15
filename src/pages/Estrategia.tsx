@@ -10,32 +10,75 @@ const FERRAMENTAS = {
   ICP: {
     descricao: "Perfil de Cliente Ideal (ICP) define quem é o cliente que mais se beneficia da oferta e gera maior LTV. Foca esforços de aquisição, produto e atendimento no segmento com melhor fit estratégico, evitando dispersão.",
     referencia: "Lincoln Murphy — Sales Acceleration Formula / Customer Success: How Innovative Companies Are Reducing Churn (2016).",
+    saidas: [
+      "Definição do ICP primário (core) e anti-ICP",
+      "Dor central não-negociável e dores secundárias mapeadas",
+      "Desejos latentes que orientam mensagem e produto",
+      "Critérios de qualificação para leadscore comercial",
+    ],
   },
   PlayToWin: {
     descricao: "Framework de cinco escolhas integradas: Aspiração vencedora, Onde Jogar, Como Vencer, Capacidades necessárias, Sistemas de gestão. Garante coerência entre escopo competitivo e diferenciação.",
     referencia: "A. G. Lafley & Roger L. Martin — Playing to Win: How Strategy Really Works (Harvard Business Review Press, 2013).",
+    saidas: [
+      "Aspiração vencedora explícita",
+      "Onde Jogar / Onde NÃO Jogar (escopo competitivo)",
+      "Como Vencer (proposta de valor e vantagem)",
+      "Capacidades críticas e sistemas de gestão exigidos",
+    ],
   },
   Ansoff: {
     descricao: "Matriz que cruza produtos (existentes/novos) com mercados (existentes/novos), gerando 4 avenidas de crescimento: Penetração, Desenvolvimento de Mercado, Desenvolvimento de Produto e Diversificação. Permite balancear risco e ambição.",
     referencia: "H. Igor Ansoff — Strategies for Diversification, Harvard Business Review (1957); Corporate Strategy (McGraw-Hill, 1965).",
+    saidas: [
+      "Alocação % de esforço entre as 4 avenidas de crescimento",
+      "Priorização de iniciativas por avenida (Penetração/Produto/Mercado/Diversificação)",
+      "Perfil de risco-retorno do portfólio de crescimento",
+      "Direcionadores de M&A e novos negócios",
+    ],
   },
   OceanoAzul: {
     descricao: "Matriz ERRC (Eliminar, Reduzir, Elevar, Criar) reconfigura a curva de valor do setor para tornar a concorrência irrelevante, criando demanda em espaço de mercado novo (oceano azul) em vez de competir em mercado saturado (oceano vermelho).",
     referencia: "W. Chan Kim & Renée Mauborgne — Blue Ocean Strategy (Harvard Business Review Press, 2005; ed. expandida 2015).",
+    saidas: [
+      "Nova curva de valor (o que Eliminar, Reduzir, Elevar, Criar)",
+      "Fatores de diferenciação insubstituíveis",
+      "Espaço de mercado não-contestado (oceano azul)",
+      "Racional para evitar guerra de preço",
+    ],
   },
   VRIN: {
     descricao: "Visão Baseada em Recursos (RBV) avalia se um recurso é fonte de vantagem competitiva sustentável pelos critérios VRIN: Valioso, Raro, Inimitável e Não-substituível (também conhecido como VRIO).",
     referencia: "Jay B. Barney — Firm Resources and Sustained Competitive Advantage, Journal of Management (1991); Gaining and Sustaining Competitive Advantage (Pearson, 2014).",
+    saidas: [
+      "Inventário de ativos estratégicos (moat candidates)",
+      "Classificação VRIN por ativo (Valioso/Raro/Inimitável/Não-substituível)",
+      "Riscos de erosão de cada ativo",
+      "Investimentos necessários para proteger o moat",
+    ],
   },
   BSC: {
     descricao: "Balanced Scorecard traduz a estratégia em objetivos e indicadores em 4 perspectivas equilibradas: Financeira, Cliente, Processos Internos e Aprendizado & Crescimento, conectados por relações de causa e efeito (mapa estratégico).",
     referencia: "Robert S. Kaplan & David P. Norton — The Balanced Scorecard: Translating Strategy into Action (Harvard Business School Press, 1996); Strategy Maps (2004).",
+    saidas: [
+      "Mapa estratégico com objetivos causais nas 4 perspectivas",
+      "KPIs e metas por objetivo (F/C/P/AC)",
+      "Iniciativas estratégicas alinhadas aos objetivos",
+      "Cascata da estratégia para OKRs e áreas",
+    ],
   },
   Pilares: {
     descricao: "Pilares estratégicos não-negociáveis: condições necessárias (must-haves) que sustentam a tese. Se qualquer um falhar, a vantagem competitiva colapsa. Análoga ao conceito de 'core competencies' e 'must-win battles'.",
     referencia: "Hamel & Prahalad — The Core Competence of the Corporation, HBR (1990); Killing & Malnight — Must-Win Battles (Wharton, 2005).",
+    saidas: [
+      "Lista de pilares não-negociáveis da tese",
+      "Consequência explícita da falha de cada pilar",
+      "Guard-rails para decisões (o que nunca sacrificar)",
+      "Sinais de alerta e métricas de saúde por pilar",
+    ],
   },
 };
+
 
 
 const ambicaoCards = [
