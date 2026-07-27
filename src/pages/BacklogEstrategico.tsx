@@ -637,8 +637,8 @@ export default function BacklogEstrategico() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-20">ID</TableHead>
-                    <TableHead>Iniciativa</TableHead>
+                    <TableHead className="w-20 freeze-col-1">ID</TableHead>
+                    <TableHead className="freeze-col-2 left-[80px] min-w-[260px]">Iniciativa</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Origem</TableHead>
                     <TableHead>Wave</TableHead>
