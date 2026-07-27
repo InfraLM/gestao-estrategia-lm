@@ -284,8 +284,8 @@ export default function RiscosEstrategicos() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-10">#</TableHead>
-                    <TableHead>Risco</TableHead>
+                    <TableHead className="w-10 freeze-col-1">#</TableHead>
+                    <TableHead className="freeze-col-2 left-[40px] min-w-[220px]">Risco</TableHead>
                     <TableHead>Bloco</TableHead>
                     <TableHead>Natureza</TableHead>
                     <TableHead>Tipos</TableHead>
