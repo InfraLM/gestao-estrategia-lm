@@ -209,7 +209,12 @@ export default function GestaoRepositorio() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="matriz" className="space-y-4 mt-4">
+          <MatrizDocumentos docs={docs} loading={loading} />
+        </TabsContent>
+
         <TabsContent value="fila" className="space-y-4 mt-4">
+
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
