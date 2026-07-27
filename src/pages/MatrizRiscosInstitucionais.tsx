@@ -236,7 +236,7 @@ export default function MatrizRiscosInstitucionais() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="min-w-[220px]">Processo</TableHead>
+                      <TableHead className="min-w-[220px] freeze-col-1">Processo</TableHead>
                       <TableHead className="min-w-[240px]">Risco</TableHead>
                       <TableHead className="w-[140px]">Natureza</TableHead>
                       <TableHead className="w-[120px]">I × O</TableHead>
