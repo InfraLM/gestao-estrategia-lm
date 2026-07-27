@@ -231,7 +231,7 @@ Retorne JSON:
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: `Você é um analista do PMO da Liberdade Médica. Aplique o framework ScoreCard LM com rigor. Sempre responda em JSON válido conforme solicitado.\n\n${FRAMEWORK}` },
+          { role: "system", content: `Você é um analista do PMO da Liberdade Médica. Aplique os frameworks ScoreCard LM e Wave com rigor. Sempre responda em JSON válido conforme solicitado.\n\n${FRAMEWORK}\n\n${WAVE_FRAMEWORK}` },
           { role: "user", content: userContent },
         ],
         response_format: { type: "json_object" },
