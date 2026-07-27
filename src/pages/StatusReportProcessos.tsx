@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useProcessosDB } from "@/hooks/useProcessosDB";
+import { useRefetchOnFocus } from "@/hooks/useRefetchOnFocus";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -149,11 +151,19 @@ export default function StatusReportProcessos() {
     [opcoesPeriodo, opcaoPeriodo]
   );
 
-  useEffect(() => {
+  const recarregarListasLocais = useCallback(() => {
     setGestao(loadGestao());
     setMcAcoes(loadLS<any[]>(MC_ACOES_KEY, []));
     setMcRiscos(loadLS<any[]>(MC_RISCOS_KEY, []));
   }, []);
+
+  useEffect(() => {
+    recarregarListasLocais();
+  }, [recarregarListasLocais]);
+
+  useRefetchOnFocus(recarregarListasLocais);
+
+
 
 
   const splitDir = (s?: string) => (s || "").split(/[;,]/).map(x => x.trim()).filter(Boolean);
