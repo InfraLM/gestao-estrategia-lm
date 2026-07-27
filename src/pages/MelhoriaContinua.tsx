@@ -217,7 +217,59 @@ export default function MelhoriaContinua() {
   const [openRisco, setOpenRisco] = useState(false);
   const [riscoDraft, setRiscoDraft] = useState<Partial<RiscoProcesso>>({ impacto: 3, probabilidade: 3, status: "Aberto" });
   const [aiLoading, setAiLoading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const fileRefRiscos = useRef<HTMLInputElement>(null);
+
+  async function handleUploadRiscos(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array" });
+      const ws = wb.Sheets["Riscos"] ?? wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json<any>(ws, { defval: "" });
+      let imported = 0;
+      const start = riscos.length + 1;
+      const at = todayISO();
+      const STATUS_RISCO = ["Aberto","Em Mitigação","Mitigado","Aceito"] as const;
+      const novos: RiscoProcesso[] = rows.flatMap((r, idx) => {
+        const risco = String(r.risco ?? "").trim();
+        const procRef = String(r.processoNome ?? "").trim().toLowerCase();
+        const proc = procRef ? processos.find(p => p.nome.toLowerCase().includes(procRef) || p.id.toLowerCase() === procRef) : undefined;
+        if (!risco || !proc) return [];
+        const impacto = Math.min(5, Math.max(1, Number(r.impacto) || 3)) as Escala;
+        const probabilidade = Math.min(5, Math.max(1, Number(r.probabilidade) || 3)) as Escala;
+        const status = (STATUS_RISCO.includes(r.status) ? r.status : "Aberto") as RiscoProcesso["status"];
+        const natureza = (NATUREZAS as readonly string[]).includes(r.natureza) ? r.natureza as Natureza : undefined;
+        const tipo = (TIPOS as readonly string[]).includes(r.tipo) ? r.tipo as TipoRisco : undefined;
+        imported++;
+        return [{
+          id: `RP-${String(start + idx).padStart(3, "0")}`,
+          processoId: proc.id,
+          processoNome: proc.nome,
+          risco,
+          causa: String(r.causa ?? ""),
+          natureza,
+          tipo,
+          impacto,
+          probabilidade,
+          acaoMitigadora: String(r.acaoMitigadora ?? ""),
+          responsavel: String(r.responsavel ?? ""),
+          prazo: String(r.prazo ?? ""),
+          status,
+          statusChangedAt: at,
+          statusHistory: [{ status, at }],
+        }];
+      });
+      setRiscos(prev => [...prev, ...novos]);
+      if (imported === 0) toast.warning("Nenhum risco importado. Verifique se o processoNome existe na Matriz de Processos.");
+      else toast.success(`${imported} ${imported === 1 ? "risco importado" : "riscos importados"} com sucesso.`);
+    } catch (err: any) {
+      toast.error("Falha ao importar planilha: " + (err?.message ?? "erro desconhecido"));
+    } finally {
+      if (fileRefRiscos.current) fileRefRiscos.current.value = "";
+    }
+  }
+
 
   const { data: processos } = useProcessosDB();
 
