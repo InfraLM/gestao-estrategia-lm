@@ -635,8 +635,8 @@ export default function MelhoriaContinua() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[130px]">Origem</TableHead>
-                      <TableHead>O que fazer?</TableHead>
+                      <TableHead className="w-[130px] freeze-col-1">Origem</TableHead>
+                      <TableHead className="freeze-col-2 left-[130px] min-w-[240px]">O que fazer?</TableHead>
                       <TableHead>Processo vinculado</TableHead>
                       <TableHead className="w-[150px]">Responsável</TableHead>
                       <TableHead className="w-[150px]">Prevista</TableHead>
