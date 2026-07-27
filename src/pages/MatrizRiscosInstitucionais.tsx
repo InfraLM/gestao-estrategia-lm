@@ -249,7 +249,7 @@ export default function MatrizRiscosInstitucionais() {
                   <TableBody>
                     {riscosProcessosCriticos.map(({ processo, risco, n }) => (
                       <TableRow key={`${processo.id}-${risco.id}`}>
-                        <TableCell className="text-sm font-medium">{processo.nome}<div className="text-[11px] text-muted-foreground">{processo.diretor}</div></TableCell>
+                        <TableCell className="text-sm font-medium freeze-col-1">{processo.nome}<div className="text-[11px] text-muted-foreground">{processo.diretor}</div></TableCell>
                         <TableCell className="text-sm">{risco.nome}</TableCell>
                         <TableCell><Badge variant="outline" className="text-xs">{NAT_ICON[risco.natureza as Natureza] || ""} {risco.natureza}</Badge></TableCell>
                         <TableCell className="text-xs tabular-nums">{risco.impacto} × {risco.ocorrencia} = <strong>{n.valor}</strong></TableCell>
