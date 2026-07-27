@@ -199,8 +199,8 @@ export default function MatrizRiscosInstitucionais() {
                 <TableBody>
                   {riscosInstFiltrados.map(({ r, n }) => (
                     <TableRow key={r.id}>
-                      <TableCell className="font-mono text-xs">{r.id}</TableCell>
-                      <TableCell>
+                      <TableCell className="font-mono text-xs freeze-col-1">{r.id}</TableCell>
+                      <TableCell className="freeze-col-2 left-[80px]">
                         <div className="font-medium text-sm">{r.nome}</div>
                         <div className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{r.acoesMitigadoras}</div>
                       </TableCell>
