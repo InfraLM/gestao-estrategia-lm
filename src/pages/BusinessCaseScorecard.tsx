@@ -417,6 +417,31 @@ function AnaliseDetalhe({ sub }: { sub: any }) {
           </div>
         )}
 
+        {r.wave && (
+          <div className={`p-3 rounded-md border ${
+            r.wave.alinhamento === "ok" ? "bg-emerald-500/10 border-emerald-500/40" :
+            r.wave.alinhamento === "desalinhado" ? "bg-rose-500/10 border-rose-500/40" :
+            "bg-amber-500/10 border-amber-500/40"
+          }`}>
+            <div className="text-xs font-semibold text-muted-foreground mb-1">CLASSIFICAÇÃO DE WAVE</div>
+            <div className="text-sm">
+              Declarada: <b>{r.wave.declarada ?? "não declarada"}</b> · Sugerida: <b>{r.wave.sugerida}</b>
+              {" · "}
+              <span className="capitalize">{
+                r.wave.alinhamento === "ok" ? "alinhada" :
+                r.wave.alinhamento === "desalinhado" ? "desalinhada" : "não declarada"
+              }</span>
+            </div>
+            {r.wave.justificativa && <p className="text-xs text-muted-foreground mt-1">{r.wave.justificativa}</p>}
+            {Array.isArray(r.wave.capacidades_dependentes) && r.wave.capacidades_dependentes.length > 0 && (
+              <div className="mt-2 text-xs">
+                <span className="font-semibold">Capacidades pré-requisito:</span>{" "}
+                {r.wave.capacidades_dependentes.join(" · ")}
+              </div>
+            )}
+          </div>
+        )}
+
         {Array.isArray(r.dimensoes) && (
           <div className="space-y-3">
             {r.dimensoes.map((d: any, i: number) => (

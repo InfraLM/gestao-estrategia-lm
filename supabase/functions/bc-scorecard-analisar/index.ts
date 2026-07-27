@@ -47,6 +47,51 @@ Pontos: Exclusividade (1–3) + Urgência (1–3) + Custo de inação (1–3)
 - 3–4 Indiferente: sem concessão
 `;
 
+// Framework institucional de Wave (fonte: documento "O QUE É WAVE").
+// Usado para sugerir a wave adequada ao projeto e comparar com a wave declarada.
+const WAVE_FRAMEWORK = `
+# Framework Wave — Liberdade Médica
+
+Wave é um agrupamento intencional e sequenciado de iniciativas que remove
+restrições críticas do sistema, instala capacidades organizacionais e habilita
+o próximo nível de execução da estratégia, respeitando dependências lógicas,
+risco e capacidade de absorção da organização.
+
+Wave NÃO é fase (cronológica), roadmap (entregas), sprint (tático) ou OKR (resultado).
+Wave ordena CAPACIDADES e RESTRIÇÕES.
+
+## WAVE 1 — Estrutura mínima
+Remove risco sistêmico. Governança, dados, financeiro, processos, método,
+pessoas e liderança. Sem isso, crescer quebra.
+Exemplos: teto de despesas variáveis, PA financeira 36m, cohort P&L, CAPEX roadmap,
+dashboards estratégicos/táticos/operacionais, documentos de governança, rituais
+de decisão, gestão à vista, checklist de qualidade de aulas, gates de prontidão,
+sistema de alerta de inatividade, treinamento de liderança, matriz de performance,
+PDI por cadeira, remuneração variável, ritual 1:1, Selo de Governança de IA.
+
+## WAVE 2 — Escala com controle
+Cresce com previsibilidade, eficiência e repetição. DEPENDE de W1 instalada.
+Exemplos: leadscore avançado, otimização de funil, DRE de vendedores, squads
+de alta performance, times de aquisição/expansão/field/outbound, escada de valor,
+BU Paciente Grave, app UX próprio, alerta de engajamento integrado à jornada,
+ITC simulação com cadáveres, centro de simulação com IA, robô de follow-up,
+central de scripts, pitch com IA, insights diários por IA, pricing & packaging 2.0.
+
+## WAVE 3 — Aceleração e diferenciação
+Vantagem competitiva, novos modelos, IA avançada, expansão estrutural.
+Só entra depois de W2 estável.
+Exemplos: Chat IA especializado, copilotos internos, biblioteca de algoritmos
+educacionais, Emy Education, portfólio de agentes, Aluno ALUMNI, calendário
+editorial anual, Projeto Pílulas, social selling, branding LM, plataforma de
+provas com IA, LM Capital (seguro, empréstimos, FIDC), multi-hub hospital-escola,
+filial LM SP, Faculty Cloud, SVST, P04 Angola Pós Online.
+
+## Regra de classificação
+1. Remove gargalo estrutural / risco sistêmico? → W1
+2. Depende de capacidades W1 e permite crescer com previsibilidade/repetição? → W2
+3. Diferenciação, novo modelo ou expansão estrutural que exige W1+W2 estáveis? → W3
+`;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -152,12 +197,18 @@ ${sub.arquivo_path ? "IMPORTANTE: o anexo contém o Business Case completo. EXTR
 
 ${extractedText ? `--- CONTEÚDO DO ARQUIVO ANEXO ---\n${extractedText.slice(0, 20000)}\n--- FIM DO ARQUIVO ---` : ""}
 
-Aplique RIGOROSAMENTE o framework ScoreCard LM. Retorne JSON:
+Aplique RIGOROSAMENTE o framework ScoreCard LM E o framework Wave.
+Ao classificar a Wave: extraia do formulário/anexo se o proponente declarou uma
+wave (W1/W2/W3). Determine a wave adequada segundo o framework Wave e aponte
+alinhamento (ok | desalinhado | nao_declarado). Justifique em 1–2 frases.
+
+Retorne JSON:
 {
   "gate": "saudavel" | "condicional" | "bloqueado",
   "resumo_executivo": "string (até 3 parágrafos)",
   "dados_extraidos": { "titulo":"", "proponente":"", "area":"", "tipo_projeto":"", "problema":"", "hipotese":"", "publico_alvo":"", "roi_pct":null, "payback_meses":null, "pct_base_demanda":null, "qualidade_fonte":"", "evidencia_demanda":"", "risco_juridico":"", "risco_reputacional":"", "risco_clinico":"", "peso_tecnico":"", "sequestro_capacidade_pct":null, "conflito_fila":"" },
   "janela": { "pontos": number, "classificacao": "Única|Passiva|Indiferente", "concessao_aplicada": boolean, "justificativa": "string" },
+  "wave": { "declarada": "W1|W2|W3|null", "sugerida": "W1|W2|W3", "alinhamento": "ok|desalinhado|nao_declarado", "justificativa": "string", "capacidades_dependentes": ["string"] },
   "dimensoes": [
     { "nome": "Tese Financeira", "tipo": "estrutural", "cor": "verde|amarelo|vermelho", "criterios": [{"nome": "string","cor":"verde|amarelo|vermelho","comentario":"string"}], "analise": "string" }
   ],
@@ -180,7 +231,7 @@ Aplique RIGOROSAMENTE o framework ScoreCard LM. Retorne JSON:
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: `Você é um analista do PMO da Liberdade Médica. Aplique o framework ScoreCard LM com rigor. Sempre responda em JSON válido conforme solicitado.\n\n${FRAMEWORK}` },
+          { role: "system", content: `Você é um analista do PMO da Liberdade Médica. Aplique os frameworks ScoreCard LM e Wave com rigor. Sempre responda em JSON válido conforme solicitado.\n\n${FRAMEWORK}\n\n${WAVE_FRAMEWORK}` },
           { role: "user", content: userContent },
         ],
         response_format: { type: "json_object" },
