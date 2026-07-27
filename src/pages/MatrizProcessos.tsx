@@ -316,7 +316,7 @@ export default function MatrizProcessos() {
                 <TableBody>
                   {filtered.map(p => (
                     <TableRow key={p.id}>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium freeze-col-1">
                         <button onClick={() => setSelected(p)} className="text-left hover:underline">{p.nome}</button>
                       </TableCell>
                       <TableCell>
