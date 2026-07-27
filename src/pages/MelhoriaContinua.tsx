@@ -164,6 +164,44 @@ function downloadTemplate() {
   XLSX.writeFile(wb, "template_melhoria_continua.xlsx");
 }
 
+function downloadTemplateRiscos() {
+  const headers = ["processoNome","risco","causa","natureza","tipo","impacto","probabilidade","acaoMitigadora","responsavel","prazo","status"];
+  const sample = [{
+    processoNome: "01.02.03 - Abertura de Polo",
+    risco: "Atraso na liberação de alvará municipal",
+    causa: "Dependência de terceiros e documentação incompleta",
+    natureza: "Evento",
+    tipo: "Legal",
+    impacto: 4,
+    probabilidade: 3,
+    acaoMitigadora: "Checklist prévio + acompanhamento semanal com jurídico",
+    responsavel: "Coord. Jurídico",
+    prazo: "2026-07-30",
+    status: "Aberto",
+  }];
+  const ws = XLSX.utils.json_to_sheet(sample, { header: headers });
+  ws["!cols"] = headers.map(h => ({ wch: Math.max(h.length + 2, 22) }));
+  const instr = XLSX.utils.aoa_to_sheet([
+    ["Campo","Obrigatório","Valores aceitos / Formato"],
+    ["processoNome","Sim","Nome (ou ID) do processo na Matriz de Processos"],
+    ["risco","Sim","Texto livre"],
+    ["causa","Não","Texto livre (causa raiz)"],
+    ["natureza","Não", NATUREZAS.join(" | ")],
+    ["tipo","Não", TIPOS.join(" | ")],
+    ["impacto","Sim","Inteiro 1 a 5"],
+    ["probabilidade","Sim","Inteiro 1 a 5"],
+    ["acaoMitigadora","Não","Texto livre"],
+    ["responsavel","Não","Nome do responsável"],
+    ["prazo","Não","AAAA-MM-DD"],
+    ["status","Não","Aberto | Em Mitigação | Mitigado | Aceito"],
+  ]);
+  instr["!cols"] = [{ wch: 18 }, { wch: 12 }, { wch: 80 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Riscos");
+  XLSX.utils.book_append_sheet(wb, instr, "Instruções");
+  XLSX.writeFile(wb, "template_riscos_processos.xlsx");
+}
+
 function loadLS<T>(key: string, fallback: T): T {
   try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : fallback; } catch { return fallback; }
 }
@@ -180,6 +218,59 @@ export default function MelhoriaContinua() {
   const [riscoDraft, setRiscoDraft] = useState<Partial<RiscoProcesso>>({ impacto: 3, probabilidade: 3, status: "Aberto" });
   const [aiLoading, setAiLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const fileRefRiscos = useRef<HTMLInputElement>(null);
+
+  async function handleUploadRiscos(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array" });
+      const ws = wb.Sheets["Riscos"] ?? wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json<any>(ws, { defval: "" });
+      let imported = 0;
+      const start = riscos.length + 1;
+      const at = todayISO();
+      const STATUS_RISCO = ["Aberto","Em Mitigação","Mitigado","Aceito"] as const;
+      const novos: RiscoProcesso[] = rows.flatMap((r, idx) => {
+        const risco = String(r.risco ?? "").trim();
+        const procRef = String(r.processoNome ?? "").trim().toLowerCase();
+        const proc = procRef ? processos.find(p => p.nome.toLowerCase().includes(procRef) || p.id.toLowerCase() === procRef) : undefined;
+        if (!risco || !proc) return [];
+        const impacto = Math.min(5, Math.max(1, Number(r.impacto) || 3)) as Escala;
+        const probabilidade = Math.min(5, Math.max(1, Number(r.probabilidade) || 3)) as Escala;
+        const status = (STATUS_RISCO.includes(r.status) ? r.status : "Aberto") as RiscoProcesso["status"];
+        const natureza = (NATUREZAS as readonly string[]).includes(r.natureza) ? r.natureza as Natureza : undefined;
+        const tipo = (TIPOS as readonly string[]).includes(r.tipo) ? r.tipo as TipoRisco : undefined;
+        imported++;
+        return [{
+          id: `RP-${String(start + idx).padStart(3, "0")}`,
+          processoId: proc.id,
+          processoNome: proc.nome,
+          risco,
+          causa: String(r.causa ?? ""),
+          natureza,
+          tipo,
+          impacto,
+          probabilidade,
+          acaoMitigadora: String(r.acaoMitigadora ?? ""),
+          responsavel: String(r.responsavel ?? ""),
+          prazo: String(r.prazo ?? ""),
+          status,
+          statusChangedAt: at,
+          statusHistory: [{ status, at }],
+        }];
+      });
+      setRiscos(prev => [...prev, ...novos]);
+      if (imported === 0) toast.warning("Nenhum risco importado. Verifique se o processoNome existe na Matriz de Processos.");
+      else toast.success(`${imported} ${imported === 1 ? "risco importado" : "riscos importados"} com sucesso.`);
+    } catch (err: any) {
+      toast.error("Falha ao importar planilha: " + (err?.message ?? "erro desconhecido"));
+    } finally {
+      if (fileRefRiscos.current) fileRefRiscos.current.value = "";
+    }
+  }
+
 
   const { data: processos } = useProcessosDB();
 
@@ -616,10 +707,18 @@ export default function MelhoriaContinua() {
               <h3 className="text-lg font-semibold flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-amber-600" /> Riscos & Ações Mitigadoras por Processo</h3>
               <p className="text-sm text-muted-foreground">Cada risco é vinculado a um processo da Matriz de Processos.</p>
             </div>
-            <Dialog open={openRisco} onOpenChange={setOpenRisco}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="gap-1.5"><Plus className="h-4 w-4" /> Novo risco</Button>
-              </DialogTrigger>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button size="sm" variant="outline" className="gap-1.5" onClick={downloadTemplateRiscos}>
+                <Download className="h-4 w-4" /> Baixar template
+              </Button>
+              <Button size="sm" variant="outline" className="gap-1.5" onClick={() => fileRefRiscos.current?.click()}>
+                <Upload className="h-4 w-4" /> Subir planilha
+              </Button>
+              <input ref={fileRefRiscos} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleUploadRiscos} />
+              <Dialog open={openRisco} onOpenChange={setOpenRisco}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="gap-1.5"><Plus className="h-4 w-4" /> Novo risco</Button>
+                </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader><DialogTitle>Novo risco de processo</DialogTitle></DialogHeader>
                 <div className="space-y-3">
@@ -724,7 +823,8 @@ export default function MelhoriaContinua() {
                   <Button onClick={handleSaveRisco}>Salvar</Button>
                 </DialogFooter>
               </DialogContent>
-            </Dialog>
+              </Dialog>
+            </div>
           </div>
 
 
