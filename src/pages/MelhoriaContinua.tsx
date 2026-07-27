@@ -707,10 +707,18 @@ export default function MelhoriaContinua() {
               <h3 className="text-lg font-semibold flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-amber-600" /> Riscos & Ações Mitigadoras por Processo</h3>
               <p className="text-sm text-muted-foreground">Cada risco é vinculado a um processo da Matriz de Processos.</p>
             </div>
-            <Dialog open={openRisco} onOpenChange={setOpenRisco}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="gap-1.5"><Plus className="h-4 w-4" /> Novo risco</Button>
-              </DialogTrigger>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button size="sm" variant="outline" className="gap-1.5" onClick={downloadTemplateRiscos}>
+                <Download className="h-4 w-4" /> Baixar template
+              </Button>
+              <Button size="sm" variant="outline" className="gap-1.5" onClick={() => fileRefRiscos.current?.click()}>
+                <Upload className="h-4 w-4" /> Subir planilha
+              </Button>
+              <input ref={fileRefRiscos} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleUploadRiscos} />
+              <Dialog open={openRisco} onOpenChange={setOpenRisco}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="gap-1.5"><Plus className="h-4 w-4" /> Novo risco</Button>
+                </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader><DialogTitle>Novo risco de processo</DialogTitle></DialogHeader>
                 <div className="space-y-3">
