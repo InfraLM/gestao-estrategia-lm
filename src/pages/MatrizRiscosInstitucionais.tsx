@@ -185,8 +185,8 @@ export default function MatrizRiscosInstitucionais() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[80px]">ID</TableHead>
-                    <TableHead className="min-w-[260px]">Risco</TableHead>
+                    <TableHead className="w-[80px] freeze-col-1">ID</TableHead>
+                    <TableHead className="min-w-[260px] freeze-col-2 left-[80px]">Risco</TableHead>
                     <TableHead className="w-[140px]">Natureza</TableHead>
                     <TableHead className="min-w-[200px]">Tipo</TableHead>
                     <TableHead className="w-[130px]">Impacto × Ocorrência</TableHead>
