@@ -164,6 +164,44 @@ function downloadTemplate() {
   XLSX.writeFile(wb, "template_melhoria_continua.xlsx");
 }
 
+function downloadTemplateRiscos() {
+  const headers = ["processoNome","risco","causa","natureza","tipo","impacto","probabilidade","acaoMitigadora","responsavel","prazo","status"];
+  const sample = [{
+    processoNome: "01.02.03 - Abertura de Polo",
+    risco: "Atraso na liberação de alvará municipal",
+    causa: "Dependência de terceiros e documentação incompleta",
+    natureza: "Evento",
+    tipo: "Legal",
+    impacto: 4,
+    probabilidade: 3,
+    acaoMitigadora: "Checklist prévio + acompanhamento semanal com jurídico",
+    responsavel: "Coord. Jurídico",
+    prazo: "2026-07-30",
+    status: "Aberto",
+  }];
+  const ws = XLSX.utils.json_to_sheet(sample, { header: headers });
+  ws["!cols"] = headers.map(h => ({ wch: Math.max(h.length + 2, 22) }));
+  const instr = XLSX.utils.aoa_to_sheet([
+    ["Campo","Obrigatório","Valores aceitos / Formato"],
+    ["processoNome","Sim","Nome (ou ID) do processo na Matriz de Processos"],
+    ["risco","Sim","Texto livre"],
+    ["causa","Não","Texto livre (causa raiz)"],
+    ["natureza","Não", NATUREZAS.join(" | ")],
+    ["tipo","Não", TIPOS.join(" | ")],
+    ["impacto","Sim","Inteiro 1 a 5"],
+    ["probabilidade","Sim","Inteiro 1 a 5"],
+    ["acaoMitigadora","Não","Texto livre"],
+    ["responsavel","Não","Nome do responsável"],
+    ["prazo","Não","AAAA-MM-DD"],
+    ["status","Não","Aberto | Em Mitigação | Mitigado | Aceito"],
+  ]);
+  instr["!cols"] = [{ wch: 18 }, { wch: 12 }, { wch: 80 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Riscos");
+  XLSX.utils.book_append_sheet(wb, instr, "Instruções");
+  XLSX.writeFile(wb, "template_riscos_processos.xlsx");
+}
+
 function loadLS<T>(key: string, fallback: T): T {
   try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : fallback; } catch { return fallback; }
 }
