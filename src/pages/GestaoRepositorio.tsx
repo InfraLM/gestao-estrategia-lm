@@ -165,11 +165,13 @@ export default function GestaoRepositorio() {
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <TabsList>
             <TabsTrigger value="dashboard">Dashboard consolidado</TabsTrigger>
+            <TabsTrigger value="matriz">Matriz</TabsTrigger>
             <TabsTrigger value="fila">Fila de aprovação</TabsTrigger>
             <TabsTrigger value="documentos">Todos os documentos</TabsTrigger>
           </TabsList>
           <NovaSubmissaoDialog onCreated={load} />
         </div>
+
 
         <TabsContent value="dashboard" className="space-y-4 mt-4">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -207,7 +209,12 @@ export default function GestaoRepositorio() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="matriz" className="space-y-4 mt-4">
+          <MatrizDocumentos docs={docs} loading={loading} />
+        </TabsContent>
+
         <TabsContent value="fila" className="space-y-4 mt-4">
+
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
@@ -273,6 +280,117 @@ export default function GestaoRepositorio() {
     </div>
   );
 }
+
+function MatrizDocumentos({ docs, loading }: { docs: Doc[]; loading: boolean }) {
+  const [busca, setBusca] = useState("");
+
+  const matriz = useMemo(() => {
+    // agrupa por nome do documento; para cada repositório guarda o registro mais recente
+    const map = new Map<string, Record<string, Doc | undefined>>();
+    for (const d of docs) {
+      const key = d.nome.trim();
+      if (!map.has(key)) map.set(key, {});
+      const row = map.get(key)!;
+      const cur = row[d.repositorio];
+      if (!cur || new Date(d.created_at) > new Date(cur.created_at)) {
+        row[d.repositorio] = d;
+      }
+    }
+    return Array.from(map.entries())
+      .map(([nome, cols]) => ({ nome, cols }))
+      .filter(r => !busca || r.nome.toLowerCase().includes(busca.toLowerCase()))
+      .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  }, [docs, busca]);
+
+  const totalPorRepo = useMemo(() => {
+    const t: Record<string, number> = {};
+    for (const r of REPOS) t[r.value] = docs.filter(d => d.repositorio === r.value).length;
+    return t;
+  }, [docs]);
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <CardTitle className="text-base">Matriz de documentos × repositórios</CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              Consolidação em tempo real. Cada célula mostra a última versão submetida do documento naquele repositório.
+            </p>
+          </div>
+          <Input
+            value={busca}
+            onChange={e => setBusca(e.target.value)}
+            placeholder="Buscar documento…"
+            className="max-w-[260px]"
+          />
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">
+        {loading ? (
+          <div className="p-6 text-center text-sm text-muted-foreground">Carregando…</div>
+        ) : matriz.length === 0 ? (
+          <div className="p-12 text-center text-sm text-muted-foreground">
+            Nenhum documento submetido ainda. A matriz é preenchida automaticamente conforme as listas recebem novos arquivos.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[240px]">Documento</TableHead>
+                  {REPOS.map(r => (
+                    <TableHead key={r.value} className="text-center min-w-[160px]">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <r.icon className="h-3.5 w-3.5 text-primary" />
+                        <span>{r.label}</span>
+                      </div>
+                      <div className="text-[10px] font-normal text-muted-foreground">
+                        {totalPorRepo[r.value]} submissão(ões)
+                      </div>
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {matriz.map(row => (
+                  <TableRow key={row.nome}>
+                    <TableCell className="font-medium text-sm">{row.nome}</TableCell>
+                    {REPOS.map(r => {
+                      const cell = row.cols[r.value];
+                      if (!cell) {
+                        return (
+                          <TableCell key={r.value} className="text-center text-xs text-muted-foreground/50">—</TableCell>
+                        );
+                      }
+                      const meta = STATUS_META[cell.status];
+                      const Icon = meta.icon;
+                      return (
+                        <TableCell key={r.value} className="text-center align-top">
+                          <div className="inline-flex flex-col items-center gap-1">
+                            <Badge variant="outline" className="font-mono text-[10px]">{cell.versao}</Badge>
+                            <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>
+                              <Icon className="h-3 w-3 mr-1" />
+                              {meta.label}
+                            </Badge>
+                            <div className="text-[10px] text-muted-foreground tabular-nums">
+                              {new Date(cell.created_at).toLocaleDateString("pt-BR")}
+                            </div>
+                          </div>
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 
 function KPI({ label, value, icon: Icon, cls = "" }: { label: string; value: number; icon: any; cls?: string }) {
   return (
