@@ -823,7 +823,8 @@ export default function MelhoriaContinua() {
                   <Button onClick={handleSaveRisco}>Salvar</Button>
                 </DialogFooter>
               </DialogContent>
-            </Dialog>
+              </Dialog>
+            </div>
           </div>
 
 
