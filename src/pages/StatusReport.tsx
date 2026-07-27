@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { ParecerDialog } from "@/components/ParecerDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useMelhoriasEstrategicas } from "@/hooks/useMelhoriasEstrategicas";
+import { useRefetchOnFocus } from "@/hooks/useRefetchOnFocus";
+
 
 const periodos = ["Semanal", "Quinzenal", "Mensal"] as const;
 type Periodo = typeof periodos[number];
@@ -75,6 +77,8 @@ export default function StatusReport() {
   };
 
   useEffect(() => { loadStatusReports(); }, []);
+  useRefetchOnFocus(() => { loadStatusReports(); });
+
 
   // Default expanded: primeiro fora do On-Track
   useEffect(() => {
