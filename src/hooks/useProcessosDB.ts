@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import seedJson from "@/data/processos.json";
+import { useRefetchOnFocus } from "./useRefetchOnFocus";
+
 
 export type Processo = {
   id: string; nome: string; nivel: string; revisao: number | null;
@@ -62,6 +64,8 @@ export function useProcessosDB() {
   }, []);
 
   useEffect(() => { reload(); }, [reload]);
+  useRefetchOnFocus(reload);
 
   return { data, loading, reload };
 }
+

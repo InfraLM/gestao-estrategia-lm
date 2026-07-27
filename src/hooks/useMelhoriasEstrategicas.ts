@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useRefetchOnFocus } from "./useRefetchOnFocus";
+
 
 export type MelhoriaStatus = "Backlog" | "A Iniciar" | "Em Andamento" | "Validação" | "Concluído" | "Pausado";
 export type MelhoriaClassif = "Melhoria Contínua" | "Melhoria Contínua com EPP";
@@ -58,6 +60,10 @@ export function useMelhoriasEstrategicas() {
       window.removeEventListener("storage", reload);
     };
   }, []);
+
+  useRefetchOnFocus(() => setItems(loadMelhorias()));
+
+
 
   return items;
 }
