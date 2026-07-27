@@ -197,12 +197,18 @@ ${sub.arquivo_path ? "IMPORTANTE: o anexo contém o Business Case completo. EXTR
 
 ${extractedText ? `--- CONTEÚDO DO ARQUIVO ANEXO ---\n${extractedText.slice(0, 20000)}\n--- FIM DO ARQUIVO ---` : ""}
 
-Aplique RIGOROSAMENTE o framework ScoreCard LM. Retorne JSON:
+Aplique RIGOROSAMENTE o framework ScoreCard LM E o framework Wave.
+Ao classificar a Wave: extraia do formulário/anexo se o proponente declarou uma
+wave (W1/W2/W3). Determine a wave adequada segundo o framework Wave e aponte
+alinhamento (ok | desalinhado | nao_declarado). Justifique em 1–2 frases.
+
+Retorne JSON:
 {
   "gate": "saudavel" | "condicional" | "bloqueado",
   "resumo_executivo": "string (até 3 parágrafos)",
   "dados_extraidos": { "titulo":"", "proponente":"", "area":"", "tipo_projeto":"", "problema":"", "hipotese":"", "publico_alvo":"", "roi_pct":null, "payback_meses":null, "pct_base_demanda":null, "qualidade_fonte":"", "evidencia_demanda":"", "risco_juridico":"", "risco_reputacional":"", "risco_clinico":"", "peso_tecnico":"", "sequestro_capacidade_pct":null, "conflito_fila":"" },
   "janela": { "pontos": number, "classificacao": "Única|Passiva|Indiferente", "concessao_aplicada": boolean, "justificativa": "string" },
+  "wave": { "declarada": "W1|W2|W3|null", "sugerida": "W1|W2|W3", "alinhamento": "ok|desalinhado|nao_declarado", "justificativa": "string", "capacidades_dependentes": ["string"] },
   "dimensoes": [
     { "nome": "Tese Financeira", "tipo": "estrutural", "cor": "verde|amarelo|vermelho", "criterios": [{"nome": "string","cor":"verde|amarelo|vermelho","comentario":"string"}], "analise": "string" }
   ],
