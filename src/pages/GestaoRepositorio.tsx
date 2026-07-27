@@ -165,11 +165,13 @@ export default function GestaoRepositorio() {
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <TabsList>
             <TabsTrigger value="dashboard">Dashboard consolidado</TabsTrigger>
+            <TabsTrigger value="matriz">Matriz</TabsTrigger>
             <TabsTrigger value="fila">Fila de aprovação</TabsTrigger>
             <TabsTrigger value="documentos">Todos os documentos</TabsTrigger>
           </TabsList>
           <NovaSubmissaoDialog onCreated={load} />
         </div>
+
 
         <TabsContent value="dashboard" className="space-y-4 mt-4">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
