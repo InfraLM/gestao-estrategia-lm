@@ -217,6 +217,7 @@ export default function MelhoriaContinua() {
   const [openRisco, setOpenRisco] = useState(false);
   const [riscoDraft, setRiscoDraft] = useState<Partial<RiscoProcesso>>({ impacto: 3, probabilidade: 3, status: "Aberto" });
   const [aiLoading, setAiLoading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
   const fileRefRiscos = useRef<HTMLInputElement>(null);
 
   async function handleUploadRiscos(e: React.ChangeEvent<HTMLInputElement>) {
