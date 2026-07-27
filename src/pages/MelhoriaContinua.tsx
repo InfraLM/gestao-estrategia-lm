@@ -852,8 +852,8 @@ export default function MelhoriaContinua() {
                   const c = classifRisco(r.impacto, r.probabilidade);
                   return (
                   <TableRow key={r.id}>
-                    <TableCell className="text-xs"><span className="inline-flex items-center gap-1"><Link2 className="h-3 w-3" /> {r.processoNome}</span></TableCell>
-                    <TableCell className="font-medium text-sm">
+                    <TableCell className="text-xs freeze-col-1"><span className="inline-flex items-center gap-1"><Link2 className="h-3 w-3" /> {r.processoNome}</span></TableCell>
+                    <TableCell className="font-medium text-sm freeze-col-2 left-[200px]">
                       {r.risco}
                       {r.causa && <div className="text-xs text-muted-foreground mt-0.5">Causa: {r.causa}</div>}
                     </TableCell>
