@@ -302,8 +302,8 @@ export default function RiscosEstrategicos() {
                     const c = classifRiscoBPMO(r.impacto, r.probabilidade);
                     return (
                       <TableRow key={r.id}>
-                        <TableCell className="font-mono text-xs">{r.numero}</TableCell>
-                        <TableCell className="font-medium text-sm">{r.nome}</TableCell>
+                        <TableCell className="font-mono text-xs freeze-col-1">{r.numero}</TableCell>
+                        <TableCell className="font-medium text-sm freeze-col-2 left-[40px]">{r.nome}</TableCell>
                         <TableCell><Badge variant="outline" className="text-[10px]">{r.bloco}</Badge></TableCell>
                         <TableCell className="text-xs">{r.natureza}</TableCell>
                         <TableCell>
