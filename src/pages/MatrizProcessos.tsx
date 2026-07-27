@@ -301,7 +301,7 @@ export default function MatrizProcessos() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="min-w-[280px]">Processo</TableHead>
+                    <TableHead className="min-w-[280px] freeze-col-1">Processo</TableHead>
                     <TableHead className="w-[140px]">Nível</TableHead>
                     <TableHead className="w-[120px]">Diretor</TableHead>
                     <TableHead className="min-w-[160px]">Dono</TableHead>
