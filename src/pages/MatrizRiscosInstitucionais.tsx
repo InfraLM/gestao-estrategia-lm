@@ -185,8 +185,8 @@ export default function MatrizRiscosInstitucionais() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[80px]">ID</TableHead>
-                    <TableHead className="min-w-[260px]">Risco</TableHead>
+                    <TableHead className="w-[80px] freeze-col-1">ID</TableHead>
+                    <TableHead className="min-w-[260px] freeze-col-2 left-[80px]">Risco</TableHead>
                     <TableHead className="w-[140px]">Natureza</TableHead>
                     <TableHead className="min-w-[200px]">Tipo</TableHead>
                     <TableHead className="w-[130px]">Impacto × Ocorrência</TableHead>
@@ -199,8 +199,8 @@ export default function MatrizRiscosInstitucionais() {
                 <TableBody>
                   {riscosInstFiltrados.map(({ r, n }) => (
                     <TableRow key={r.id}>
-                      <TableCell className="font-mono text-xs">{r.id}</TableCell>
-                      <TableCell>
+                      <TableCell className="font-mono text-xs freeze-col-1">{r.id}</TableCell>
+                      <TableCell className="freeze-col-2 left-[80px]">
                         <div className="font-medium text-sm">{r.nome}</div>
                         <div className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{r.acoesMitigadoras}</div>
                       </TableCell>
@@ -236,7 +236,7 @@ export default function MatrizRiscosInstitucionais() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="min-w-[220px]">Processo</TableHead>
+                      <TableHead className="min-w-[220px] freeze-col-1">Processo</TableHead>
                       <TableHead className="min-w-[240px]">Risco</TableHead>
                       <TableHead className="w-[140px]">Natureza</TableHead>
                       <TableHead className="w-[120px]">I × O</TableHead>
@@ -249,7 +249,7 @@ export default function MatrizRiscosInstitucionais() {
                   <TableBody>
                     {riscosProcessosCriticos.map(({ processo, risco, n }) => (
                       <TableRow key={`${processo.id}-${risco.id}`}>
-                        <TableCell className="text-sm font-medium">{processo.nome}<div className="text-[11px] text-muted-foreground">{processo.diretor}</div></TableCell>
+                        <TableCell className="text-sm font-medium freeze-col-1">{processo.nome}<div className="text-[11px] text-muted-foreground">{processo.diretor}</div></TableCell>
                         <TableCell className="text-sm">{risco.nome}</TableCell>
                         <TableCell><Badge variant="outline" className="text-xs">{NAT_ICON[risco.natureza as Natureza] || ""} {risco.natureza}</Badge></TableCell>
                         <TableCell className="text-xs tabular-nums">{risco.impacto} × {risco.ocorrencia} = <strong>{n.valor}</strong></TableCell>

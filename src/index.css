@@ -122,4 +122,11 @@
   .text-balance { text-wrap: balance; }
   .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
+  /* Congelar coluna(s) em tabelas com rolagem horizontal */
+  .freeze-col-1 { position: sticky; left: 0; background-color: hsl(var(--background)); z-index: 2; }
+  thead .freeze-col-1 { z-index: 3; background-color: hsl(var(--background)); }
+  .freeze-col-2 { position: sticky; background-color: hsl(var(--background)); z-index: 2; }
+  thead .freeze-col-2 { z-index: 3; background-color: hsl(var(--background)); }
+  .freeze-col-1, .freeze-col-2 { box-shadow: 1px 0 0 0 hsl(var(--border)); }
 }
+

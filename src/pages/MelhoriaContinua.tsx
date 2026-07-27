@@ -635,8 +635,8 @@ export default function MelhoriaContinua() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[130px]">Origem</TableHead>
-                      <TableHead>O que fazer?</TableHead>
+                      <TableHead className="w-[130px] freeze-col-1">Origem</TableHead>
+                      <TableHead className="freeze-col-2 left-[130px] min-w-[240px]">O que fazer?</TableHead>
                       <TableHead>Processo vinculado</TableHead>
                       <TableHead className="w-[150px]">Responsável</TableHead>
                       <TableHead className="w-[150px]">Prevista</TableHead>
@@ -651,12 +651,12 @@ export default function MelhoriaContinua() {
                       const descol = diasEntre(a.dataPrevista, a.dataConclusao ?? (a.status !== "Concluído" ? hoje : undefined));
                       return (
                       <TableRow key={a.id}>
-                        <TableCell>
+                        <TableCell className="freeze-col-1">
                           <Badge variant="outline" className={cn("text-[10px] font-normal", a.origem === "BPMO (Processos)" ? "bg-purple-50 text-purple-800 border-purple-200" : "bg-blue-50 text-blue-800 border-blue-200")}>
                             {a.origem}
                           </Badge>
                         </TableCell>
-                        <TableCell className="font-medium">{a.oQueFazer}</TableCell>
+                        <TableCell className="font-medium freeze-col-2 left-[130px]">{a.oQueFazer}</TableCell>
                         <TableCell className="text-xs text-muted-foreground">
                           {a.processoNome ? (
                             <span className="inline-flex items-center gap-1"><Link2 className="h-3 w-3" /> {a.processoNome}</span>
@@ -832,8 +832,8 @@ export default function MelhoriaContinua() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Processo</TableHead>
-                  <TableHead>Risco</TableHead>
+                  <TableHead className="min-w-[200px] freeze-col-1">Processo</TableHead>
+                  <TableHead className="freeze-col-2 left-[200px] min-w-[240px]">Risco</TableHead>
                   <TableHead className="w-[130px]">Natureza</TableHead>
                   <TableHead className="w-[150px]">Tipo</TableHead>
                   <TableHead className="w-[130px]">Classificação</TableHead>
@@ -852,8 +852,8 @@ export default function MelhoriaContinua() {
                   const c = classifRisco(r.impacto, r.probabilidade);
                   return (
                   <TableRow key={r.id}>
-                    <TableCell className="text-xs"><span className="inline-flex items-center gap-1"><Link2 className="h-3 w-3" /> {r.processoNome}</span></TableCell>
-                    <TableCell className="font-medium text-sm">
+                    <TableCell className="text-xs freeze-col-1"><span className="inline-flex items-center gap-1"><Link2 className="h-3 w-3" /> {r.processoNome}</span></TableCell>
+                    <TableCell className="font-medium text-sm freeze-col-2 left-[200px]">
                       {r.risco}
                       {r.causa && <div className="text-xs text-muted-foreground mt-0.5">Causa: {r.causa}</div>}
                     </TableCell>

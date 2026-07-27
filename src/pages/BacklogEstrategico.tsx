@@ -637,8 +637,8 @@ export default function BacklogEstrategico() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-20">ID</TableHead>
-                    <TableHead>Iniciativa</TableHead>
+                    <TableHead className="w-20 freeze-col-1">ID</TableHead>
+                    <TableHead className="freeze-col-2 left-[80px] min-w-[260px]">Iniciativa</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Origem</TableHead>
                     <TableHead>Wave</TableHead>
@@ -653,8 +653,8 @@ export default function BacklogEstrategico() {
                 <TableBody>
                   {filtradas.map((i) => (
                     <TableRow key={i.id}>
-                      <TableCell className="font-mono text-xs">{i.id}</TableCell>
-                      <TableCell className="max-w-sm">
+                      <TableCell className="font-mono text-xs freeze-col-1">{i.id}</TableCell>
+                      <TableCell className="max-w-sm freeze-col-2 left-[80px]">
                         <div className="font-medium text-sm">{i.titulo}</div>
                         <div className="text-xs text-muted-foreground">{i.vinculo}</div>
                       </TableCell>
