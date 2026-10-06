@@ -25,9 +25,6 @@ import MatrizProcessos from "./pages/MatrizProcessos";
 import GestaoProcessos from "./pages/GestaoProcessos";
 import DashboardProcessos from "./pages/DashboardProcessos";
 import StatusReportProcessos from "./pages/StatusReportProcessos";
-import ProcessosPublicados from "./pages/ProcessosPublicados";
-import GestaoRepositorio from "./pages/GestaoRepositorio";
-import RepositorioLista from "./pages/RepositorioLista";
 import MinhasPermissoes from "./pages/MinhasPermissoes";
 import GestaoUsuarios from "./pages/GestaoUsuarios";
 import BusinessCaseScorecard from "./pages/BusinessCaseScorecard";
@@ -63,11 +60,6 @@ const App = () => (
               <Route path="/historico/cesta-metas" element={<HistoricoModulo titulo="Histórico de Cesta de Metas" descricao="Arquivos enviados para atualizar a Cesta de Metas por diretoria." modulo="cesta" prefixos={[]} />} />
 
               {/* Repositórios — apenas a versão vigente de cada documento */}
-              <Route path="/repositorios/frameworks" element={<RepositorioLista repositorio="frameworks" titulo="Frameworks Vigentes" descricao="Frameworks institucionais em uso (estratégia, BSC, OKRs, ICE, EAP, BC). Submeta novos documentos e visualize os vigentes." />} />
-              <Route path="/repositorios/processos-publicados" element={<ProcessosPublicados />} />
-              <Route path="/repositorios/documentos-controlados" element={<RepositorioLista repositorio="documentos-controlados" titulo="Documentos Controlados" descricao="POPs, instruções de trabalho, manuais e checklists sob controle de qualidade." />} />
-              <Route path="/repositorios/politicas-institucionais" element={<RepositorioLista repositorio="politicas-institucionais" titulo="Políticas Institucionais" descricao="Políticas oficiais da Liberdade Médica disponíveis para consulta." />} />
-              <Route path="/repositorios/gestao" element={<GestaoRepositorio />} />
               <Route path="/diagnostico" element={<Diagnostico />} />
               <Route path="/estrategia" element={<Estrategia />} />
               <Route path="/okrs" element={<Okrs />} />

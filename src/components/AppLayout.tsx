@@ -56,18 +56,6 @@ const navGroups: NavGroup[] = [
       { to: "/historico/cesta-metas", label: "Histórico de Cesta de Metas", icon: ListChecks },
     ],
   },
-  {
-    id: "repositorios",
-    label: "Repositórios",
-    icon: Library,
-    children: [
-      { to: "/repositorios/frameworks", label: "Frameworks Vigentes", icon: BookOpen },
-      { to: "/repositorios/processos-publicados", label: "Processos Publicados", icon: FileCheck2 },
-      { to: "/repositorios/documentos-controlados", label: "Documentos Controlados", icon: FolderArchive },
-      { to: "/repositorios/politicas-institucionais", label: "Políticas Institucionais", icon: ShieldCheck },
-      { to: "/repositorios/gestao", label: "Gestão do Repositório", icon: Settings2 },
-    ],
-  },
 ];
 
 const titles: Record<string, string> = {
@@ -93,11 +81,6 @@ const titles: Record<string, string> = {
   "/historico/okrs": "Histórico de OKRs",
   "/historico/cesta-metas": "Histórico de Cesta de Metas",
   "/historico/projetos": "Histórico de Projetos · Versões de Documentos",
-  "/repositorios/frameworks": "Frameworks Vigentes · Repositório Controlado",
-  "/repositorios/processos-publicados": "Processos Publicados · Repositório Controlado",
-  "/repositorios/documentos-controlados": "Documentos Controlados · Controle de Qualidade",
-  "/repositorios/politicas-institucionais": "Políticas Institucionais · Repositório Controlado",
-  "/repositorios/gestao": "Gestão do Repositório · Controle de Revisão e Aprovações",
   "/minhas-permissoes": "Minhas Permissões",
   "/gestao-usuarios": "Gestão de Usuários e Permissões",
   "/pmo/business-case": "PMO · Submissão de Business Case (ScoreCard LM)",
