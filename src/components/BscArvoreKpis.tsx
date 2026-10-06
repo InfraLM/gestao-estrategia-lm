@@ -6,6 +6,8 @@ import { DollarSign, Heart, Cog, GraduationCap, History, ChevronDown, ChevronRig
 import rev02 from "@/data/bscRev02.json";
 import BaseSubmissaoIA from "@/components/BaseSubmissaoIA";
 import { useBaseOverrides } from "@/hooks/useBaseOverrides";
+import { useConteudo } from "@/hooks/useConteudo";
+import { EditarConteudo } from "@/components/EditarConteudo";
 
 type Kpi = { kpi: string; nivel: string; diretor: string; coDiretor: string; formula: string; situacaoAtual: string; meta2026: string; farol: string; responsavelImplantacao: string; statusImplantacao: string };
 type Obj = { codigo: string; nome: string; kpis: Kpi[] };
@@ -57,7 +59,8 @@ export type BscRev01 = { perspectiva: string; icon: any; cor: string; objetivos:
 export default function BscArvoreKpis({ rev01 }: { rev01: BscRev01 }) {
   const [hist, setHist] = useState(false);
   const { aplicar } = useBaseOverrides("estrategia");
-  const objs = (rev02 as Obj[]).map((o) => ({ ...aplicar("objetivo", o.codigo, o), kpis: o.kpis.map((k) => aplicar("kpi", k.kpi, k)) }));
+  const base = useConteudo("bsc.rev02", rev02 as Obj[]).data;
+  const objs = (base as Obj[]).map((o) => ({ ...aplicar("objetivo", o.codigo, o), kpis: o.kpis.map((k) => aplicar("kpi", k.kpi, k)) }));
   return (
     <div className="space-y-6">
       <BaseSubmissaoIA modulo="estrategia" titulo="Atualizar BSC / Árvore de KPIs com IA" contexto={() => objs} />
@@ -70,6 +73,7 @@ export default function BscArvoreKpis({ rev01 }: { rev01: BscRev01 }) {
       </div>
       <div className="flex items-center gap-2 flex-wrap text-xs text-muted-foreground">
         <Badge className="bg-primary text-primary-foreground">Rev.02 · vigente</Badge>
+        <EditarConteudo chave="bsc.rev02" padrao={rev02 as Obj[]} titulo="BSC Rev.02 · Objetivos e KPIs" />
         <span>Árvore de KPIs LM · rev. 17.09.26 — apenas KPIs Estratégicos e Táticos (operacionais desconsiderados).</span>
       </div>
       <p className="text-xs text-muted-foreground italic">Leitura de baixo para cima: pessoas, cultura e tecnologia habilitam os processos; processos entregam valor ao cliente; o cliente sustenta o resultado financeiro.</p>
