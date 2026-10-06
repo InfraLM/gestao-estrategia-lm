@@ -16,6 +16,7 @@ import MelhoriaDetalhe from "./pages/MelhoriaDetalhe";
 import PlaceholderDoc from "./pages/PlaceholderDoc";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
+import Okrs from "./pages/Okrs";
 import BacklogEstrategico from "./pages/BacklogEstrategico";
 import ImpactoEstrategico from "./pages/ImpactoEstrategico";
 import MatrizProcessos from "./pages/MatrizProcessos";
@@ -71,6 +72,7 @@ const App = () => (
               <Route path="/repositorios/gestao" element={<GestaoRepositorio />} />
               <Route path="/diagnostico" element={<Diagnostico />} />
               <Route path="/estrategia" element={<Estrategia />} />
+              <Route path="/okrs" element={<Okrs />} />
               <Route path="/backlog-estrategico" element={<BacklogEstrategico />} />
               <Route path="/impacto-estrategico" element={<ImpactoEstrategico />} />
               <Route path="/matriz-processos" element={<MatrizProcessos />} />
