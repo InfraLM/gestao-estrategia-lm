@@ -56,10 +56,18 @@ export default function BscArvoreKpis({ rev01 }: { rev01: BscRev01 }) {
   const objs = rev02 as Obj[];
   return (
     <div className="space-y-6">
+      <div className="rounded-lg bg-card border border-border p-4 flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-bold tracking-widest text-primary">BHAG</span>
+          <span className="font-semibold">Salvar 1 milhão de vidas até 2030</span>
+        </div>
+        <span className="text-xs text-muted-foreground">Visão sistêmica 2026-2030 · 9 objetivos estratégicos</span>
+      </div>
       <div className="flex items-center gap-2 flex-wrap text-xs text-muted-foreground">
         <Badge className="bg-primary text-primary-foreground">Rev.02 · vigente</Badge>
         <span>Árvore de KPIs LM · rev. 17.09.26 — apenas KPIs Estratégicos e Táticos (operacionais desconsiderados).</span>
       </div>
+      <p className="text-xs text-muted-foreground italic">Leitura de baixo para cima: pessoas, cultura e tecnologia habilitam os processos; processos entregam valor ao cliente; o cliente sustenta o resultado financeiro.</p>
 
       {PERSP.map((p) => {
         const grupo = objs.filter((o) => o.codigo.startsWith(p.prefixo));
