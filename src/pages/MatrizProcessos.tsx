@@ -36,17 +36,15 @@ const STORAGE_KEY = "matriz-processos-edits-v1";
 
 // Objetivos estratégicos (BSC LM)
 const OBJETIVOS = [
-  { codigo: "F.01", nome: "Previsibilidade de Caixa", perspectiva: "Financeira" },
-  { codigo: "F.02", nome: "Crescimento Rentável", perspectiva: "Financeira" },
-  { codigo: "C.01", nome: "Experiência WOW", perspectiva: "Cliente" },
-  { codigo: "C.02", nome: "Penetração de Mercado", perspectiva: "Cliente" },
-  { codigo: "C.03", nome: "Marca & Autoridade", perspectiva: "Cliente" },
-  { codigo: "P.01", nome: "Conversão Comercial", perspectiva: "Processos" },
-  { codigo: "P.02", nome: "Eficiência de Cobrança", perspectiva: "Processos" },
-  { codigo: "P.03", nome: "Automação de Processos Core", perspectiva: "Processos" },
-  { codigo: "AC.01", nome: "Cultura & Performance", perspectiva: "Aprendizagem" },
-  { codigo: "AC.02", nome: "Capacitação & Talentos", perspectiva: "Aprendizagem" },
-  { codigo: "AC.03", nome: "AI First · Human First", perspectiva: "Aprendizagem" },
+  { codigo: "F.01", nome: "Maximizar LTV e NRR via Ecossistema", perspectiva: "Financeira" },
+  { codigo: "F.02", nome: "Blindar Margem Premium e Eficiência (Asset-Light)", perspectiva: "Financeira" },
+  { codigo: "C.01", nome: "Pertencimento, Identidade e Confiança na Marca", perspectiva: "Cliente" },
+  { codigo: "P.01", nome: "Execução Impecável dos Processos Sagrados", perspectiva: "Processos" },
+  { codigo: "P.02", nome: "Aquisição Disciplinada e Gestão de ICP", perspectiva: "Processos" },
+  { codigo: "P.03", nome: "Expansão Estruturada da Prática Hospitalar", perspectiva: "Processos" },
+  { codigo: "AC.01", nome: "Execução do Método LIVRE (gestão, rituais, decisão)", perspectiva: "Aprendizagem" },
+  { codigo: "AC.02", nome: "Maturidade e Desenvolvimento de Talentos (Bar Raisers)", perspectiva: "Aprendizagem" },
+  { codigo: "AC.03", nome: "Tecnologia Human-First, AI-Amplified", perspectiva: "Aprendizagem" },
 ] as const;
 
 const PERSP_COLORS: Record<string, string> = {
