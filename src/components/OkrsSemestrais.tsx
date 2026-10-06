@@ -76,6 +76,7 @@ export default function OkrsSemestrais() {
           <p className="text-sm text-muted-foreground mt-1">
             Cada Key Result pode ser vinculado a projetos do portfólio estratégico e a iniciativas do backlog, deixando explícito quem impacta diretamente cada resultado-chave.
           </p>
+          <div><EditarConteudo chave="estr.okrs-semestrais" padrao={OKRS_DEF} titulo="OKRs Semestrais" /></div>
         </CardHeader>
         <CardContent>
           <Tabs value={semId} onValueChange={setSemId}>
