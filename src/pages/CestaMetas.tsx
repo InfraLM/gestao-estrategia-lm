@@ -13,8 +13,9 @@ const nomeObj = (c: string) => (bsc as { codigo: string; nome: string }[]).find(
 const pct = (v: any) => (typeof v === "number" ? `${Math.round(v * 100)}%` : "—");
 
 export default function CestaMetas() {
-  const { aplicar } = useBaseOverrides("okrs");
-  const diretores = data.diretores.map((d) => ({ ...d, metas: d.metas.map((m) => aplicar("meta_diretor", `${d.nome}::${m.indicador}`, m)) }));
+  const { aplicar: aplicarOkrs } = useBaseOverrides("okrs");
+  const { aplicar: aplicarCesta } = useBaseOverrides("cesta");
+  const diretores = data.diretores.map((d) => ({ ...d, metas: d.metas.map((m) => { const ref = `${d.nome}::${m.indicador}`; return aplicarCesta("meta_diretor", ref, aplicarOkrs("meta_diretor", ref, m)); }) }));
   return (
     <TooltipProvider>
       <div className="space-y-4">
@@ -26,7 +27,7 @@ export default function CestaMetas() {
           <Badge className="bg-primary text-primary-foreground">2026/2 · 1º ciclo</Badge>
         </div>
 
-        <BaseSubmissaoIA modulo="okrs" titulo="Atualizar Cesta de Metas com IA" contexto={() => ({ okrs: data.okrs, diretores })} />
+        <BaseSubmissaoIA modulo="cesta" titulo="Atualizar Cesta de Metas com IA" contexto={() => ({ okrs: data.okrs, diretores })} />
 
         <Tabs defaultValue="2026-2">
           <TabsList>

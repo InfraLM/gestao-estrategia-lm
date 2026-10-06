@@ -51,9 +51,9 @@ const navGroups: NavGroup[] = [
     icon: History,
     children: [
       { to: "/historico/projetos", label: "Histórico de Projetos", icon: FolderKanban },
-      { to: "/historico/processos", label: "Histórico de Processos", icon: Workflow },
-      { to: "/historico/governanca", label: "Histórico de Governança", icon: ScrollText },
-      { to: "/historico/infra-tech", label: "Histórico de Infra & Tech", icon: Server },
+      { to: "/historico/estrategia", label: "Histórico de Estratégia", icon: Compass },
+      { to: "/historico/okrs", label: "Histórico de OKRs", icon: Target },
+      { to: "/historico/cesta-metas", label: "Histórico de Cesta de Metas", icon: ListChecks },
     ],
   },
   {
@@ -89,10 +89,10 @@ const titles: Record<string, string> = {
   "/matriz-processos": "Matriz de Processos · Cadeia de Valor LM",
   "/gestao-processos": "Gestão de Processos · Mapeamento e Análise",
   "/matriz-riscos": "Matriz de Riscos Institucionais",
+  "/historico/estrategia": "Histórico de Estratégia",
+  "/historico/okrs": "Histórico de OKRs",
+  "/historico/cesta-metas": "Histórico de Cesta de Metas",
   "/historico/projetos": "Histórico de Projetos · Versões de Documentos",
-  "/historico/processos": "Histórico de Processos · Versões de Documentos",
-  "/historico/governanca": "Histórico de Governança · Atas e Deliberações",
-  "/historico/infra-tech": "Histórico de Infra & Tech · Arquiteturas e Runbooks",
   "/repositorios/frameworks": "Frameworks Vigentes · Repositório Controlado",
   "/repositorios/processos-publicados": "Processos Publicados · Repositório Controlado",
   "/repositorios/documentos-controlados": "Documentos Controlados · Controle de Qualidade",
@@ -100,9 +100,6 @@ const titles: Record<string, string> = {
   "/repositorios/gestao": "Gestão do Repositório · Controle de Revisão e Aprovações",
   "/minhas-permissoes": "Minhas Permissões",
   "/gestao-usuarios": "Gestão de Usuários e Permissões",
-  "/infra-tech/sprints": "Infra & Tech · Gestão de Sprints Semanais",
-  "/governanca-juridico/documentos": "Documentos de Governança · Controle GRC",
-  "/governanca-juridico/riscos-estrategicos": "Riscos Estratégicos · Mapa de Riscos LM",
   "/pmo/business-case": "PMO · Submissão de Business Case (ScoreCard LM)",
 };
 

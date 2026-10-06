@@ -21,6 +21,8 @@ const ENTIDADES: Record<string, string> = {
   okrs: `Entidades permitidas:
 - "kr": ref = código do KR (ex.: OKR1-KR2, NSM-1). campos: "meta", "status", "responsavel", "obs", "tipo", "peso" (peso decimal 0..1).
 - "meta_diretor": ref = "<Diretor>::<Indicador exato>". campos: "meta", "peso" (decimal 0..1), "obs", "tipo".`,
+  cesta: `Entidades permitidas:
+- "meta_diretor": ref = "<Diretor>::<Indicador exato>". campos: "meta", "peso" (decimal 0..1), "obs", "tipo".`,
   pmo: `Entidades permitidas:
 - "projeto": ref = código do projeto (ex.: P014). campos: "status" (Backlog|A Iniciar|Em Andamento|Pausado|Atrasado|Concluído|Cancelado|Em Avaliação|Validação|Encerramento), "saude" (On-Track|Alerta|Off-Track), "avancos", "causa_raiz", "plano_acao", "diretor", "gerente", "budget" (número), "realizado" (número), "termino" (ex.: 2026/2), "wave" (W1|W2|W3).`,
 };
