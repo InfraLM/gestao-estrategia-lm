@@ -72,62 +72,6 @@
      "peso": 0.25,
      "responsavel": "Guilherme + Iuri + Felipe",
      "obs": "Projeto SP — aloca peso do Projeto SP também no OKR corporativo"
-    },
-    {
-     "codigo": "OKR1-REM (antigo KR1)",
-     "titulo": "Conversão de MQL em venda na PPG",
-     "objetivos": [
-      "P.02",
-      "F.02"
-     ],
-     "tipo": "patamar",
-     "meta": "6,5%",
-     "peso": null,
-     "responsavel": "Felipe · Guilherme",
-     "status": "REMOVIDO",
-     "obs": "Consta na meta do diretor Felipe — \"Conversão MQL→venda na PPG\" (peso 50%)"
-    },
-    {
-     "codigo": "OKR1-REM (antigo KR4)",
-     "titulo": "Custo por MQL",
-     "objetivos": [
-      "P.02",
-      "F.02"
-     ],
-     "tipo": "patamar",
-     "meta": "R$ 248",
-     "peso": null,
-     "responsavel": "Guilherme",
-     "status": "REMOVIDO",
-     "obs": "Consta na meta do diretor Iuri Franco — \"Geração de MQLs para PPG e custo por MQL (CPMQL < R$ 248)\" (peso 34%)"
-    },
-    {
-     "codigo": "OKR1-REM (antigo KR5)",
-     "titulo": "ROAS das campanhas da PPG",
-     "objetivos": [
-      "P.02",
-      "F.02"
-     ],
-     "tipo": "patamar",
-     "meta": "10x",
-     "peso": null,
-     "responsavel": "Iuri · Guilherme",
-     "status": "REMOVIDO",
-     "obs": "Consta na meta do diretor Iuri Franco — \"ROAS nas campanhas PPG\" (peso 33%)"
-    },
-    {
-     "codigo": "OKR1-REM (antigo KR7)",
-     "titulo": "Vendas ACLS em SP",
-     "objetivos": [
-      "P.02",
-      "F.02"
-     ],
-     "tipo": "patamar",
-     "meta": "26/semana",
-     "peso": null,
-     "responsavel": "Guilherme",
-     "status": "REMOVIDO",
-     "obs": "Consta na meta do diretor Guilherme — \"Projeto SP: ACLS, ATLS & outros cursos de curta duração > vendas ACLS em SP\" (peso 33%) — sugestão em verde na revisão anterior"
     }
    ]
   },
