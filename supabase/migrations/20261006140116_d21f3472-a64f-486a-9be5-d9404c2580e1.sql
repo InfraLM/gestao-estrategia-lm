@@ -1,0 +1,1 @@
+create or replace function public.mt_email_corporativo() returns boolean language sql stable set search_path = public as $$ select auth.uid() is not null $$;

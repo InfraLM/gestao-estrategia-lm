@@ -63,14 +63,6 @@ export default function MetasCadastros() {
   ), [b.indicadores, origemF, cadF, statusF]);
 
   if (b.loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
-  if (!b.corporativo && !b.isGov) {
-    return (
-      <Card className="p-6 max-w-lg">
-        <div className="flex items-center gap-2 font-semibold"><Lock className="h-4 w-4" /> Acesso restrito</div>
-        <p className="text-sm text-muted-foreground mt-2">O Sistema de Metas é exclusivo para e-mails corporativos ({EMAIL_CORP}).</p>
-      </Card>
-    );
-  }
   const ro = !b.isGov;
   const abrir = (tipo: string, row: any) => setEdit({ tipo, row: { ...row } });
   const set = (k: string, v: any) => setEdit((e) => e && { ...e, row: { ...e.row, [k]: v } });
