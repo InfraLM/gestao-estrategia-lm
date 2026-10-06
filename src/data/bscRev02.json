@@ -55,7 +55,7 @@
  },
  {
   "codigo": "F.02",
-  "nome": "Blindar margem premium e eficiência operacional",
+  "nome": "Blindar Margem Premium e Eficiência (Asset-Light)",
   "kpis": [
    {
     "kpi": "F02 Geração de Caixa Operacional",
@@ -211,7 +211,7 @@
  },
  {
   "codigo": "P.01",
-  "nome": "Execução impecável dos processos sagrados",
+  "nome": "Execução Impecável dos Processos Sagrados",
   "kpis": [
    {
     "kpi": "P01 Taxa de Conclusão da Jornada do Aluno",
@@ -331,7 +331,7 @@
  },
  {
   "codigo": "P.03",
-  "nome": "Expansão estruturada da prática hospitalar",
+  "nome": "Expansão Estruturada da Prática Hospitalar",
   "kpis": [
    {
     "kpi": "P03-a Cobertura de prática (% até x R$) para alunos",
@@ -439,7 +439,7 @@
  },
  {
   "codigo": "AC.02",
-  "nome": "Maturidade e desenvolvimento de talentos",
+  "nome": "Maturidade e Desenvolvimento de Talentos (Bar Raisers)",
   "kpis": [
    {
     "kpi": "AC02 Score de Maturidade de Liderança",
@@ -529,7 +529,7 @@
  },
  {
   "codigo": "AC.03",
-  "nome": "Tecnologia human-first, AI-amplified",
+  "nome": "Tecnologia Human-First, AI-Amplified",
   "kpis": [
    {
     "kpi": "AC03 Saving financeiro por IA e automação",
