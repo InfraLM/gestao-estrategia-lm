@@ -9,6 +9,7 @@ import { useConteudo } from "@/hooks/useConteudo";
 
 const clone = (v: any) => JSON.parse(JSON.stringify(v));
 const OCULTOS = ["cor", "badge", "chip", "icon", "cls"];
+const rotulo = (k: string) => k.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
 const oculto = (k: string) => k.startsWith("__") || OCULTOS.includes(k);
 
 function vazioDe(exemplo: any): any {
@@ -44,7 +45,7 @@ function Campo({ value, onChange, label }: { value: any; onChange: (v: any) => v
       <div className="space-y-2 rounded-md border p-2">
         {label && <div className="text-xs font-semibold">{label}</div>}
         {Object.entries(value).filter(([k]) => !oculto(k)).map(([k, v]) => (
-          <Campo key={k} label={k} value={v} onChange={(nv) => onChange({ ...value, [k]: nv })} />
+          <Campo key={k} label={rotulo(k)} value={v} onChange={(nv) => onChange({ ...value, [k]: nv })} />
         ))}
       </div>
     );
