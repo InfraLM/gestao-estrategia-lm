@@ -626,35 +626,8 @@ export default function Estrategia() {
             </CardContent>
           </Card>
 
-          {bsc.map((p) => (
-            <Card key={p.perspectiva} className={`bg-gradient-to-br ${p.cor} border`}>
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <p.icon className="h-5 w-5" />
-                  <CardTitle className="text-lg">Perspectiva {p.perspectiva}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="grid md:grid-cols-2 gap-4">
-                {p.objetivos.map((o) => (
-                  <div key={o.codigo} className="p-4 rounded-lg bg-card border border-border">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="outline" className="font-mono text-xs">{o.codigo}</Badge>
-                      <h4 className="font-semibold text-sm">{o.nome}</h4>
-                    </div>
-                    <div className="text-xs text-muted-foreground mb-3 italic">Meta: {o.meta}</div>
-                    <div className="space-y-1">
-                      {o.kpis.map((k) => (
-                        <div key={k} className="text-xs flex items-start gap-2">
-                          <span className="text-primary mt-0.5">▸</span>
-                          <span>{k}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          ))}
+          <BscArvoreKpis rev01={bsc} />
+
 
           {/* WAVES */}
           <Card>
