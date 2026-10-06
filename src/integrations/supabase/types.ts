@@ -877,6 +877,35 @@ export type Database = {
         }
         Relationships: []
       }
+      mt_convites: {
+        Row: {
+          cadeira_id: string | null
+          created_at: string
+          email: string
+          perfil: string
+        }
+        Insert: {
+          cadeira_id?: string | null
+          created_at?: string
+          email: string
+          perfil?: string
+        }
+        Update: {
+          cadeira_id?: string | null
+          created_at?: string
+          email?: string
+          perfil?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_convites_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mt_indicadores: {
         Row: {
           cadeira_id: string | null
