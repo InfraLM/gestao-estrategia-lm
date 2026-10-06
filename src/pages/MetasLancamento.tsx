@@ -251,7 +251,7 @@ export default function MetasLancamento() {
             {erros[i.id] && <p className="text-sm text-destructive">{erros[i.id]}</p>}
           </>
         )}
-        {kids.map((k) => <Linha key={k.id} i={k} nivel={nivel + 1} />)}
+        {kids.map((k) => <div key={k.id}>{Linha({ i: k, nivel: nivel + 1 })}</div>)}
       </div>
     );
   };
@@ -314,9 +314,9 @@ export default function MetasLancamento() {
         )}
       </Card>
 
-      {secoes.map((s) => <Secao key={s.t} t={s.t} n={s.itens.length}>{s.itens.map((i) => <Linha key={i.id} i={i} />)}</Secao>)}
+      {secoes.map((s) => <div key={s.t}>{Secao({ t: s.t, n: s.itens.length, children: s.itens.map((i) => <div key={i.id}>{Linha({ i })}</div>) })}</div>)}
 
-      <Secao t="5. Iniciativas vinculadas" n={iniciativas.length}>
+      {Secao({ t: "5. Iniciativas vinculadas", n: iniciativas.length, children: <>
         {iniciativas.map((i) => {
           const n = ini[i.id] ?? { status: i.status, prazo: i.prazo ?? "", comentario: i.comentario ?? "" };
           const set = (p: Partial<typeof n>) => setIni((x) => ({ ...x, [i.id]: { ...n, ...p } }));
@@ -340,7 +340,7 @@ export default function MetasLancamento() {
             </div>
           );
         })}
-      </Secao>
+      </> })}
 
       {podeEditar && (
         <div className="fixed bottom-0 inset-x-0 z-30 border-t bg-background/95 backdrop-blur p-3">
