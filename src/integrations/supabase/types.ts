@@ -847,6 +847,365 @@ export type Database = {
         }
         Relationships: []
       }
+      mt_cadeiras: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          diretor_nome: string | null
+          diretor_user_id: string | null
+          id: string
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          diretor_nome?: string | null
+          diretor_user_id?: string | null
+          id?: string
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          diretor_nome?: string | null
+          diretor_user_id?: string | null
+          id?: string
+          nome?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mt_indicadores: {
+        Row: {
+          cadeira_id: string | null
+          codigo: string
+          created_at: string
+          id: string
+          meta_semestre: number | null
+          meta_texto: string | null
+          nome: string
+          objetivo_id: string | null
+          observacoes: string | null
+          okr_id: string | null
+          origem: string
+          parent_id: string | null
+          peso: number
+          peso_componente: number | null
+          regra_consolidacao: string
+          sentido: string
+          status: string
+          unidade: string | null
+          updated_at: string
+        }
+        Insert: {
+          cadeira_id?: string | null
+          codigo: string
+          created_at?: string
+          id?: string
+          meta_semestre?: number | null
+          meta_texto?: string | null
+          nome: string
+          objetivo_id?: string | null
+          observacoes?: string | null
+          okr_id?: string | null
+          origem: string
+          parent_id?: string | null
+          peso?: number
+          peso_componente?: number | null
+          regra_consolidacao?: string
+          sentido?: string
+          status?: string
+          unidade?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cadeira_id?: string | null
+          codigo?: string
+          created_at?: string
+          id?: string
+          meta_semestre?: number | null
+          meta_texto?: string | null
+          nome?: string
+          objetivo_id?: string | null
+          observacoes?: string | null
+          okr_id?: string | null
+          origem?: string
+          parent_id?: string | null
+          peso?: number
+          peso_componente?: number | null
+          regra_consolidacao?: string
+          sentido?: string
+          status?: string
+          unidade?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_indicadores_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_indicadores_objetivo_id_fkey"
+            columns: ["objetivo_id"]
+            isOneToOne: false
+            referencedRelation: "mt_objetivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_indicadores_okr_id_fkey"
+            columns: ["okr_id"]
+            isOneToOne: false
+            referencedRelation: "mt_okrs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_indicadores_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "mt_indicadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_iniciativas: {
+        Row: {
+          cadeira_id: string | null
+          comentario: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          indicador_id: string | null
+          objetivo_id: string | null
+          okr_id: string | null
+          prazo: string | null
+          responsavel_nome: string | null
+          responsavel_user_id: string | null
+          status: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          cadeira_id?: string | null
+          comentario?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          indicador_id?: string | null
+          objetivo_id?: string | null
+          okr_id?: string | null
+          prazo?: string | null
+          responsavel_nome?: string | null
+          responsavel_user_id?: string | null
+          status?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          cadeira_id?: string | null
+          comentario?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          indicador_id?: string | null
+          objetivo_id?: string | null
+          okr_id?: string | null
+          prazo?: string | null
+          responsavel_nome?: string | null
+          responsavel_user_id?: string | null
+          status?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_iniciativas_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_iniciativas_indicador_id_fkey"
+            columns: ["indicador_id"]
+            isOneToOne: false
+            referencedRelation: "mt_indicadores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_iniciativas_objetivo_id_fkey"
+            columns: ["objetivo_id"]
+            isOneToOne: false
+            referencedRelation: "mt_objetivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_iniciativas_okr_id_fkey"
+            columns: ["okr_id"]
+            isOneToOne: false
+            referencedRelation: "mt_okrs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_metas_mensais: {
+        Row: {
+          competencia: string
+          created_at: string
+          id: string
+          indicador_id: string
+          meta_acumulada: number | null
+          meta_mes: number | null
+          updated_at: string
+        }
+        Insert: {
+          competencia: string
+          created_at?: string
+          id?: string
+          indicador_id: string
+          meta_acumulada?: number | null
+          meta_mes?: number | null
+          updated_at?: string
+        }
+        Update: {
+          competencia?: string
+          created_at?: string
+          id?: string
+          indicador_id?: string
+          meta_acumulada?: number | null
+          meta_mes?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_metas_mensais_indicador_id_fkey"
+            columns: ["indicador_id"]
+            isOneToOne: false
+            referencedRelation: "mt_indicadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_objetivos: {
+        Row: {
+          codigo: string
+          created_at: string
+          descricao: string
+          id: string
+          perspectiva: string
+          updated_at: string
+        }
+        Insert: {
+          codigo: string
+          created_at?: string
+          descricao: string
+          id?: string
+          perspectiva: string
+          updated_at?: string
+        }
+        Update: {
+          codigo?: string
+          created_at?: string
+          descricao?: string
+          id?: string
+          perspectiva?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mt_okr_objetivos: {
+        Row: {
+          objetivo_id: string
+          okr_id: string
+        }
+        Insert: {
+          objetivo_id: string
+          okr_id: string
+        }
+        Update: {
+          objetivo_id?: string
+          okr_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_okr_objetivos_objetivo_id_fkey"
+            columns: ["objetivo_id"]
+            isOneToOne: false
+            referencedRelation: "mt_objetivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_okr_objetivos_okr_id_fkey"
+            columns: ["okr_id"]
+            isOneToOne: false
+            referencedRelation: "mt_okrs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_okrs: {
+        Row: {
+          codigo: string
+          created_at: string
+          id: string
+          nome: string
+          semestre: string
+          updated_at: string
+        }
+        Insert: {
+          codigo: string
+          created_at?: string
+          id?: string
+          nome: string
+          semestre?: string
+          updated_at?: string
+        }
+        Update: {
+          codigo?: string
+          created_at?: string
+          id?: string
+          nome?: string
+          semestre?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mt_usuarios: {
+        Row: {
+          cadeira_id: string | null
+          created_at: string
+          perfil: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cadeira_id?: string | null
+          created_at?: string
+          perfil?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cadeira_id?: string | null
+          created_at?: string
+          perfil?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_usuarios_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       processos: {
         Row: {
           area: string | null
@@ -1423,6 +1782,9 @@ export type Database = {
         Returns: boolean
       }
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
+      mt_cadeira_do_usuario: { Args: { _uid: string }; Returns: string }
+      mt_email_corporativo: { Args: never; Returns: boolean }
+      mt_is_governanca: { Args: { _uid: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "pmo" | "viewer" | "super_admin"

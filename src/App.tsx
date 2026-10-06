@@ -15,6 +15,7 @@ import MelhoriaContinua from "./pages/MelhoriaContinua";
 import MelhoriaDetalhe from "./pages/MelhoriaDetalhe";
 import PlaceholderDoc from "./pages/PlaceholderDoc";
 import HistoricoModulo from "./pages/HistoricoModulo";
+import MetasCadastros from "./pages/MetasCadastros";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
 import Okrs from "./pages/Okrs";
@@ -64,6 +65,7 @@ const App = () => (
               <Route path="/estrategia" element={<Estrategia />} />
               <Route path="/okrs" element={<Okrs />} />
               <Route path="/cesta-metas" element={<CestaMetas />} />
+              <Route path="/metas/cadastros" element={<MetasCadastros />} />
               <Route path="/backlog-estrategico" element={<BacklogEstrategico />} />
               <Route path="/impacto-estrategico" element={<ImpactoEstrategico />} />
               <Route path="/matriz-processos" element={<MatrizProcessos />} />
