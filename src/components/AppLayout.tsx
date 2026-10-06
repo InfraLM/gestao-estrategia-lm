@@ -20,7 +20,6 @@ const navGroups: NavGroup[] = [
       { to: "/", label: "Dashboard Estratégico", icon: LayoutDashboard },
       { to: "/diagnostico", label: "Diagnóstico Estratégico", icon: Compass },
       { to: "/estrategia", label: "Estratégia LM", icon: Target },
-      { to: "/matriz-riscos", label: "Matriz de Riscos Institucionais", icon: ShieldAlert },
       { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
       { to: "/impacto-estrategico", label: "Impacto Estratégico", icon: TrendingUp },
     ],
