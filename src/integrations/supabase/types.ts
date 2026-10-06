@@ -847,6 +847,42 @@ export type Database = {
         }
         Relationships: []
       }
+      mt_auditoria: {
+        Row: {
+          alterado_em: string
+          alterado_por: string | null
+          campo: string
+          competencia: string | null
+          id: string
+          registro_id: string
+          tabela: string
+          valor_anterior: string | null
+          valor_novo: string | null
+        }
+        Insert: {
+          alterado_em?: string
+          alterado_por?: string | null
+          campo: string
+          competencia?: string | null
+          id?: string
+          registro_id: string
+          tabela: string
+          valor_anterior?: string | null
+          valor_novo?: string | null
+        }
+        Update: {
+          alterado_em?: string
+          alterado_por?: string | null
+          campo?: string
+          competencia?: string | null
+          id?: string
+          registro_id?: string
+          tabela?: string
+          valor_anterior?: string | null
+          valor_novo?: string | null
+        }
+        Relationships: []
+      }
       mt_cadeiras: {
         Row: {
           ativo: boolean
@@ -877,6 +913,36 @@ export type Database = {
         }
         Relationships: []
       }
+      mt_competencias: {
+        Row: {
+          competencia: string
+          created_at: string
+          estado: string
+          fechado_em: string | null
+          fechado_por: string | null
+          revisao: number
+          updated_at: string
+        }
+        Insert: {
+          competencia: string
+          created_at?: string
+          estado?: string
+          fechado_em?: string | null
+          fechado_por?: string | null
+          revisao?: number
+          updated_at?: string
+        }
+        Update: {
+          competencia?: string
+          created_at?: string
+          estado?: string
+          fechado_em?: string | null
+          fechado_por?: string | null
+          revisao?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       mt_convites: {
         Row: {
           cadeira_id: string | null
@@ -899,6 +965,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "mt_convites_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_envios: {
+        Row: {
+          cadeira_id: string
+          competencia: string
+          created_at: string
+          enviado_em: string | null
+          enviado_por: string | null
+          enviado_por_nome: string | null
+          nota: number | null
+          revisao: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          cadeira_id: string
+          competencia: string
+          created_at?: string
+          enviado_em?: string | null
+          enviado_por?: string | null
+          enviado_por_nome?: string | null
+          nota?: number | null
+          revisao?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          cadeira_id?: string
+          competencia?: string
+          created_at?: string
+          enviado_em?: string | null
+          enviado_por?: string | null
+          enviado_por_nome?: string | null
+          nota?: number | null
+          revisao?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_envios_cadeira_id_fkey"
             columns: ["cadeira_id"]
             isOneToOne: false
             referencedRelation: "mt_cadeiras"
@@ -1077,6 +1190,53 @@ export type Database = {
             columns: ["okr_id"]
             isOneToOne: false
             referencedRelation: "mt_okrs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_lancamentos: {
+        Row: {
+          comentario: string | null
+          competencia: string
+          created_at: string
+          id: string
+          indicador_id: string
+          revisao: number
+          sem_medicao: boolean
+          updated_at: string
+          updated_by: string | null
+          valor: number | null
+        }
+        Insert: {
+          comentario?: string | null
+          competencia: string
+          created_at?: string
+          id?: string
+          indicador_id: string
+          revisao?: number
+          sem_medicao?: boolean
+          updated_at?: string
+          updated_by?: string | null
+          valor?: number | null
+        }
+        Update: {
+          comentario?: string | null
+          competencia?: string
+          created_at?: string
+          id?: string
+          indicador_id?: string
+          revisao?: number
+          sem_medicao?: boolean
+          updated_at?: string
+          updated_by?: string | null
+          valor?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_lancamentos_indicador_id_fkey"
+            columns: ["indicador_id"]
+            isOneToOne: false
+            referencedRelation: "mt_indicadores"
             referencedColumns: ["id"]
           },
         ]
@@ -1813,7 +1973,13 @@ export type Database = {
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       mt_cadeira_do_usuario: { Args: { _uid: string }; Returns: string }
       mt_email_corporativo: { Args: never; Returns: boolean }
+      mt_fechar: { Args: { _comp: string }; Returns: undefined }
       mt_is_governanca: { Args: { _uid: string }; Returns: boolean }
+      mt_pode_lancar: {
+        Args: { _comp: string; _ind: string }
+        Returns: boolean
+      }
+      mt_reabrir: { Args: { _comp: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "pmo" | "viewer" | "super_admin"
