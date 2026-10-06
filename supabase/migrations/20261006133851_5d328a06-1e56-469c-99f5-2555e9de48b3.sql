@@ -1,0 +1,2 @@
+alter table public.base_submissoes drop constraint base_submissoes_modulo_check;
+alter table public.base_submissoes add constraint base_submissoes_modulo_check check (modulo = any (array['estrategia','okrs','cesta','pmo']));
