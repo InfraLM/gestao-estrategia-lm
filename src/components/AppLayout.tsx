@@ -38,18 +38,6 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    id: "bpmo",
-    label: "BPMO",
-    icon: GitBranch,
-    children: [
-      { to: "/matriz-processos", label: "Matriz de Processos", icon: Network },
-      { to: "/dashboard-processos", label: "Dashboard de Processos", icon: LayoutDashboard },
-      { to: "/gestao-processos", label: "Gestão de Processos", icon: Workflow },
-      { to: "/status-report-processos", label: "Status Report de Processos", icon: LineChart },
-      { to: "/melhoria-continua", label: "Melhoria Contínua", icon: Repeat },
-    ],
-  },
-  {
     id: "historico",
     label: "Histórico de Documentações",
     icon: History,
