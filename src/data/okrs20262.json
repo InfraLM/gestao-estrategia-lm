@@ -1,0 +1,401 @@
+{
+ "okrs": [
+  {
+   "codigo": "OKR1",
+   "titulo": "OKR1 — VOLUME E EFICIÊNCIA COMERCIAL",
+   "objetivos": [
+    "P.02",
+    "F.02",
+    "P.03"
+   ],
+   "primarios": [
+    "P.02",
+    "F.02"
+   ],
+   "secundarios": [
+    "P.03"
+   ],
+   "leitura": "Aquisição/eficiência comercial + proteção de margem; expansão SP como vínculo adicional.",
+   "krs": [
+    {
+     "codigo": "OKR1-KR1",
+     "titulo": "Ticket médio na PPG",
+     "status": "ATIVO",
+     "objetivos": [
+      "F.02",
+      "P.02"
+     ]
+    },
+    {
+     "codigo": "OKR1-KR2",
+     "titulo": "VGV da PPG",
+     "status": "ATIVO",
+     "objetivos": [
+      "F.02",
+      "P.02"
+     ]
+    },
+    {
+     "codigo": "OKR1-KR3",
+     "titulo": "Conversão de eventos presenciais em oportunidade",
+     "status": "ATIVO",
+     "objetivos": [
+      "P.02"
+     ]
+    },
+    {
+     "codigo": "OKR1-KR4",
+     "titulo": "VGV ACLS, ATLS e Formação em Paciente Grave SP",
+     "status": "ADICIONADO",
+     "objetivos": [
+      "P.03",
+      "P.02",
+      "F.02"
+     ]
+    }
+   ]
+  },
+  {
+   "codigo": "OKR2",
+   "titulo": "OKR2 — Caixa para financiar a máquina de receita",
+   "objetivos": [
+    "F.02"
+   ],
+   "primarios": [
+    "F.02"
+   ],
+   "secundarios": [],
+   "leitura": "Caixa, capital de giro, inadimplência e produtividade econômica da estrutura.",
+   "krs": [
+    {
+     "codigo": "OKR2-KR1",
+     "titulo": "Recuperação de inadimplência",
+     "status": "ATIVO",
+     "objetivos": [
+      "F.02"
+     ]
+    },
+    {
+     "codigo": "OKR2-KR2",
+     "titulo": "Antecipação de recebíveis",
+     "status": "ATIVO",
+     "objetivos": [
+      "F.02"
+     ]
+    },
+    {
+     "codigo": "OKR2-KR3",
+     "titulo": "Aumento do prazo médio de pagamento a fornecedores",
+     "status": "ATIVO",
+     "objetivos": [
+      "F.02"
+     ]
+    },
+    {
+     "codigo": "OKR2-KR4",
+     "titulo": "Entrada de caixa operacional por headcount",
+     "status": "ATIVO",
+     "objetivos": [
+      "F.02"
+     ]
+    }
+   ]
+  },
+  {
+   "codigo": "OKR3",
+   "titulo": "OKR3 — PRESENCIALIDADE",
+   "objetivos": [
+    "P.03",
+    "P.01",
+    "C.01",
+    "C.02"
+   ],
+   "primarios": [
+    "P.03",
+    "P.01",
+    "C.01"
+   ],
+   "secundarios": [
+    "C.02"
+   ],
+   "leitura": "Expansão da prática + processos sagrados + segurança clínica; pertencimento como efeito adicional.",
+   "krs": [
+    {
+     "codigo": "OKR3-KR1",
+     "titulo": "TTFV entregue aos alunos ativos da PPG",
+     "status": "ATIVO",
+     "objetivos": [
+      "P.01",
+      "F.01",
+      "C.01"
+     ]
+    },
+    {
+     "codigo": "OKR3-KR2",
+     "titulo": "Vagas de PFO em SP — 12 ativas e 12 no pipeline",
+     "status": "ATIVO",
+     "objetivos": [
+      "P.03"
+     ]
+    },
+    {
+     "codigo": "OKR3-KR3",
+     "titulo": "Mitigação dos riscos críticos da PPG",
+     "status": "ATIVO",
+     "objetivos": [
+      "P.01",
+      "C.01"
+     ]
+    }
+   ]
+  },
+  {
+   "codigo": "NSM",
+   "titulo": "NSM — Alunos ativos e adimplentes",
+   "objetivos": [
+    "F.01",
+    "C.02",
+    "P.01"
+   ],
+   "primarios": [
+    "F.01"
+   ],
+   "secundarios": [
+    "C.02",
+    "P.01"
+   ],
+   "leitura": "Base retida/economicamente saudável para LTV/NRR; permanência também depende de vínculo e jornada.",
+   "krs": [
+    {
+     "codigo": "NSM-1",
+     "titulo": "Alunos ativos e adimplentes",
+     "status": "ATIVO",
+     "objetivos": [
+      "F.01",
+      "C.02",
+      "P.01"
+     ]
+    }
+   ]
+  }
+ ],
+ "diretores": [
+  {
+   "titulo": "4.1 Ian — CEO",
+   "metas": [
+    {
+     "indicador": "EBITDA (antes da PCLD, P&L consolidado)",
+     "tipo": "Financeiro",
+     "meta": "R$ 3,94 mi · marg ≥ 16,7%",
+     "peso": 0.33,
+     "obs": ""
+    },
+    {
+     "indicador": "NPS da marca",
+     "tipo": "Resultado",
+     "meta": "Baseline → manutenção do NPS geral atual de 86,8",
+     "peso": 0.33,
+     "obs": ""
+    }
+   ],
+   "nome": "Ian",
+   "cargo": "CEO"
+  },
+  {
+   "titulo": "4.2 Cleto — Diretor Institucional",
+   "metas": [
+    {
+     "indicador": "Expansão hospitalar fora do HJF (vagas de prática com convênio assinado)",
+     "tipo": "Resultado",
+     "meta": "24 vagas",
+     "peso": 0.34,
+     "obs": "Projeto SP — expansão de vagas de prática conta como meta específica de SP para o Cleto"
+    },
+    {
+     "indicador": "CSAT do PFO no HJF",
+     "tipo": "Resultado",
+     "meta": "≥ 9,0",
+     "peso": 0.33,
+     "obs": ""
+    },
+    {
+     "indicador": "Conformidade dos riscos críticos no HJF",
+     "tipo": "Resultado",
+     "meta": "100%",
+     "peso": 0.33,
+     "obs": ""
+    }
+   ],
+   "nome": "Cleto",
+   "cargo": "Diretor Institucional"
+  },
+  {
+   "titulo": "4.3 Yuri — COO",
+   "metas": [
+    {
+     "indicador": "Margem bruta / Lucro bruto do semestre",
+     "tipo": "Financeiro",
+     "meta": "≥ 73,5% · R$ 17,33 mi",
+     "peso": 0.5,
+     "obs": ""
+    },
+    {
+     "indicador": "Vendas ACLS em SP",
+     "tipo": "Resultado",
+     "meta": "192 no semestre",
+     "peso": 0.5,
+     "obs": ""
+    }
+   ],
+   "nome": "Yuri",
+   "cargo": "COO"
+  },
+  {
+   "titulo": "4.4 Bruno — CFO",
+   "metas": [
+    {
+     "indicador": "Lucro líquido (com PCLD implantada e critérios documentados)",
+     "tipo": "Financeiro",
+     "meta": "R$ 2,53 mi",
+     "peso": 0.34,
+     "obs": "Caminhamos para atingir"
+    },
+    {
+     "indicador": "Geração de caixa operacional mensal",
+     "tipo": "Financeiro",
+     "meta": "≥ R$ 750 mil",
+     "peso": 0.33,
+     "obs": "Sob análise, aguardando revisão orçamentária (22/09)"
+    },
+    {
+     "indicador": "VGV Novos negócios",
+     "tipo": "Resultado",
+     "meta": "500k",
+     "peso": 0.33,
+     "obs": "Não devemos atingir: Clube da Liberdade postergado para Mar/abr 2027"
+    }
+   ],
+   "nome": "Bruno",
+   "cargo": "CFO"
+  },
+  {
+   "titulo": "4.5 Guilherme — CRO",
+   "metas": [
+    {
+     "indicador": "% despesas comerciais",
+     "tipo": "Financeiro",
+     "meta": "desp. ≤ 34,9%",
+     "peso": 0.25,
+     "obs": ""
+    },
+    {
+     "indicador": "ROL",
+     "tipo": "Financeiro",
+     "meta": "R$ 18,3 mi",
+     "peso": 0.25,
+     "obs": ""
+    },
+    {
+     "indicador": "TtFV — ativação da base",
+     "tipo": "Resultado",
+     "meta": "≥ 80%",
+     "peso": 0.25,
+     "obs": ""
+    },
+    {
+     "indicador": "Projeto SP: vendas ACLS em SP",
+     "tipo": "patamar",
+     "meta": "192 no semestre",
+     "peso": 0.25,
+     "obs": ""
+    }
+   ],
+   "nome": "Guilherme",
+   "cargo": "CRO"
+  },
+  {
+   "titulo": "4.6 Naira — Diretora de Governança e Eficiência Operacional",
+   "metas": [
+    {
+     "indicador": "Saving auditado de eficiência (validação financeira do Bruno)",
+     "tipo": "Financeiro",
+     "meta": "70k",
+     "peso": 0.25,
+     "obs": ""
+    },
+    {
+     "indicador": "Projeto 1 — Calendário simplificado de reuniões",
+     "tipo": "Projeto",
+     "meta": "Implantado até [novembro 26]",
+     "peso": 0.25,
+     "obs": ""
+    },
+    {
+     "indicador": "Projeto 2 — Pipeline de políticas importantes",
+     "tipo": "Projeto",
+     "meta": "5 políticas críticas implantadas",
+     "peso": 0.25,
+     "obs": ""
+    },
+    {
+     "indicador": "Projeto 3 — Pipeline de processos importantes",
+     "tipo": "Projeto",
+     "meta": "Publicados e rodando na zeev",
+     "peso": 0.25,
+     "obs": ""
+    }
+   ],
+   "nome": "Naira",
+   "cargo": "Diretora de Governança e Eficiência Operacional"
+  },
+  {
+   "titulo": "4.7 Iuri Franco — CMO / BU Certificações",
+   "metas": [
+    {
+     "indicador": "Geração de MQLs para PPG e custo por MQL (CPMQL < R$ 248)",
+     "tipo": "Esforço",
+     "meta": "≥ 9.370 · custo unit. < R$ 248",
+     "peso": 0.34,
+     "obs": "Fica somente na cesta de metas. Removido OKR1-KR4 (Custo por MQL) removido do OKR1"
+    },
+    {
+     "indicador": "Vendas ACLS em SP",
+     "tipo": "Projeto",
+     "meta": "192 no semestre",
+     "peso": 0.33,
+     "obs": ""
+    },
+    {
+     "indicador": "ROAS nas campanhas PPG",
+     "tipo": "Eficiência",
+     "meta": "≥ 10x",
+     "peso": 0.33,
+     "obs": "Fica somente na cesta de metas. Removido  OKR1-KR5 (ROAS das campanhas da PPG) removido do OKR1"
+    }
+   ],
+   "nome": "Iuri Franco",
+   "cargo": "CMO / BU Certificações"
+  },
+  {
+   "titulo": "4.8 Felipe — Diretor Comercial",
+   "metas": [
+    {
+     "indicador": "Conversão MQL→venda na PPG",
+     "tipo": "Eficiência",
+     "meta": "≥ 6,5%",
+     "peso": 0.5,
+     "obs": "Fica somente na cesta de metas. Removido OKR1-KR1 (Conversão de MQL em venda na PPG) removido do OKR1"
+    },
+    {
+     "indicador": "VGV outros produtos (ex- PPG) - paliativos, imersão pocus, pocus online",
+     "tipo": "Resultado",
+     "meta": "",
+     "peso": 0.5,
+     "obs": ""
+    }
+   ],
+   "nome": "Felipe",
+   "cargo": "Diretor Comercial"
+  }
+ ]
+}
