@@ -1,3 +1,5 @@
+import { useConteudo } from "@/hooks/useConteudo";
+import { EditarConteudo } from "@/components/EditarConteudo";
 import BscArvoreKpis from "@/components/BscArvoreKpis";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -88,28 +90,28 @@ const ambicaoCards = [
   { icon: Trophy, title: "Posicionamento", text: "Principal ecossistema de formação prática para médicos que atuam no paciente grave no início da carreira — diferenciação por prática hospitalar real supervisionada e jornada estruturada de evolução profissional." },
 ];
 
-const icp = {
+const icp_DEF = {
   primario: ["Médicos em formação ou atuação com alta responsabilidade clínica", "Sentem insegurança em decisões críticas", "Sem residência", "Dependência ≥ 50% da renda de plantões", "Atua em PS, UPA, UTI ou alta complexidade", "Alta exposição clínica com baixa supervisão"],
   dorCentral: "Medo de errar e insegurança clínica diante do paciente grave.",
   doresSec: ["Falta de prática real", "Plantão sem suporte", "Insegurança diagnóstica"],
   desejos: ["Segurança clínica", "Empregabilidade", "Status entre pares", "Respeito da equipe", "Progressão de carreira"],
 };
 
-const playToWin = [
+const playToWin_DEF = [
   { titulo: "Onde Jogar", cor: "border-l-primary bg-primary/5", itens: ["Ecossistema de formação prática e progressão de carreira para médicos expostos ao paciente grave no início da trajetória profissional"] },
   { titulo: "Onde NÃO Jogar", cor: "border-l-destructive bg-destructive/5", itens: ["Outras profissões assistenciais", "Plataforma generalista de conteúdo médico", "Substituto de residência", "Educação médica massificada de baixo ticket"] },
   { titulo: "Como Vencer", cor: "border-l-success bg-success/5", itens: ["Prática hospitalar real supervisionada no método LM", "Expandir geograficamente polos padronizados", "Comunidade e pertencimento", "Integrar portfólio para LTV e retenção", "Margem premium via diferenciação prática"] },
   { titulo: "O que NÃO Faremos", cor: "border-l-warning bg-warning/5", itens: ["Guerra de preço", "Conteúdo superficial para volume", "Promessas de titulação", "Escala sem controle de qualidade prática"] },
 ];
 
-const ansoff = [
+const ansoff_DEF = [
   { titulo: "1. Penetração de Mercado", peso: "40%", cor: "bg-primary/10 text-primary border-primary/30", desc: "Expansão do core — Pós em Paciente Grave via expansão geográfica, parcerias hospitalares e autoridade local." },
   { titulo: "2. Desenvolvimento de Produto", peso: "30%", cor: "bg-info/10 text-info border-info/30", desc: "Expansão de valor do core — certificações, mentorias high-ticket, trilhas com IA, Clube LM." },
   { titulo: "3. Desenvolvimento de Mercado", peso: "20%", cor: "bg-success/10 text-success border-success/30", desc: "Escala do modelo — novos polos padronizados, expansão geográfica disciplinada." },
   { titulo: "4. Diversificação · Ecossistema", peso: "10%", cor: "bg-warning/10 text-warning border-warning/30", desc: "Construção do ecossistema de carreira — produtos adjacentes, M&A, lock-in de carreira." },
 ];
 
-const errc = [
+const errc_DEF = [
   { tipo: "Eliminar", cor: "bg-destructive/10 border-destructive/30 text-destructive", itens: ["Conteúdo teórico desconectado da prática", "Promessa de titulação sem entrega clínica", "Massificação sem padrão"] },
   { tipo: "Reduzir", cor: "bg-warning/10 border-warning/30 text-warning", itens: ["Dependência de tráfego pago", "Tickets baixos sem margem", "Escala sem qualidade"] },
   { tipo: "Elevar", cor: "bg-info/10 border-info/30 text-info", itens: ["Prática hospitalar supervisionada", "Comunidade e mentoria", "Padronização do método LM"] },
@@ -148,7 +150,7 @@ const bsc = [
   },
 ];
 
-const vrin = [
+const vrin_DEF = [
   { ativo: "Rede hospitalar estruturada", risco: "Virar ativo físico caro sem diferenciação metodológica" },
   { ativo: "Método pedagógico aplicado ao ambiente real", risco: "Virar plataforma de conteúdo sem densidade real" },
   { ativo: "Marca no nicho", risco: "Sem consolidação, perde autoridade" },
@@ -170,7 +172,7 @@ const FERRAMENTAS_SWOT = {
 
 
 // SWOT consolidado (extraído de Construcao_Estratégia_LM)
-const swot = {
+const swot_DEF = {
   forcas: [
     "Propósito claro: formar médicos para salvar vidas",
     "Imersões clínicas supervisionadas + centro de simulação próprio",
@@ -244,7 +246,7 @@ const swot = {
 };
 
 // Hipóteses estratégicas — cruzamentos SWOT (4 cenários)
-const hipoteses = [
+const hipoteses_DEF = [
   {
     cenario: "Cenário 1 · Alavancagem (F + O)",
     descricao: "Potencializar oportunidades com forças internas. Cenário favorável a investimento e expansão.",
@@ -328,6 +330,13 @@ const hipoteses = [
 ];
 
 export default function Estrategia() {
+  const icp = useConteudo("estr.icp", icp_DEF).data;
+  const playToWin = useConteudo("estr.playtowin", playToWin_DEF).data;
+  const ansoff = useConteudo("estr.ansoff", ansoff_DEF).data;
+  const errc = useConteudo("estr.errc", errc_DEF).data;
+  const vrin = useConteudo("estr.vrin", vrin_DEF).data;
+  const swot = useConteudo("estr.swot", swot_DEF).data;
+  const hipoteses = useConteudo("estr.hipoteses", hipoteses_DEF).data;
   return (
     <div className="space-y-6 max-w-[1400px]">
       {/* HERO */}
@@ -417,7 +426,7 @@ export default function Estrategia() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-primary" />
-                <CardTitle>ICP — Perfil de Cliente Ideal</CardTitle>
+                <CardTitle>ICP — Perfil de Cliente Ideal</CardTitle><span className="ml-auto"><EditarConteudo chave="estr.icp" padrao={icp_DEF} titulo="ICP" /></span>
               </div>
             </CardHeader>
             <CardContent className="grid md:grid-cols-3 gap-4">
@@ -456,7 +465,7 @@ export default function Estrategia() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Target className="h-5 w-5 text-primary" />
-                <CardTitle>Play to Win</CardTitle>
+                <CardTitle>Play to Win</CardTitle><span className="ml-auto"><EditarConteudo chave="estr.playtowin" padrao={playToWin_DEF} titulo="Play to Win" /></span>
               </div>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 gap-4">
@@ -479,7 +488,7 @@ export default function Estrategia() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Rocket className="h-5 w-5 text-primary" />
-                <CardTitle>Matriz Ansoff — Avenidas de Crescimento</CardTitle>
+                <CardTitle>Matriz Ansoff — Avenidas de Crescimento</CardTitle><span className="ml-auto"><EditarConteudo chave="estr.ansoff" padrao={ansoff_DEF} titulo="Ansoff" /></span>
               </div>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -503,7 +512,7 @@ export default function Estrategia() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Layers className="h-5 w-5 text-primary" />
-                <CardTitle>Oceano Azul — Matriz ERRC</CardTitle>
+                <CardTitle>Oceano Azul — Matriz ERRC</CardTitle><span className="ml-auto"><EditarConteudo chave="estr.errc" padrao={errc_DEF} titulo="Oceano Azul ERRC" /></span>
               </div>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -526,7 +535,7 @@ export default function Estrategia() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-primary" />
-                <CardTitle>VRIN Projetado · Geração de Moat</CardTitle>
+                <CardTitle>VRIN Projetado · Geração de Moat</CardTitle><span className="ml-auto"><EditarConteudo chave="estr.vrin" padrao={vrin_DEF} titulo="VRIN" /></span>
               </div>
             </CardHeader>
             <CardContent>
@@ -549,7 +558,7 @@ export default function Estrategia() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Grid2x2 className="h-5 w-5 text-primary" />
-                <CardTitle>Matriz SWOT</CardTitle>
+                <CardTitle>Matriz SWOT</CardTitle><span className="ml-auto"><EditarConteudo chave="estr.swot" padrao={swot_DEF} titulo="SWOT" /></span>
               </div>
               <p className="text-sm text-muted-foreground mt-1">
                 Diagnóstico interno (Forças/Fraquezas) e externo (Oportunidades/Ameaças) consolidado a partir de PESTEL, 5 Forças e RBV. Base para gerar as hipóteses estratégicas.
@@ -581,7 +590,7 @@ export default function Estrategia() {
                 <div className="flex items-start gap-2">
                   <Lightbulb className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-base">Hipóteses Estratégicas · Cruzamentos TOWS</h3>
+                    <h3 className="font-semibold text-base">Hipóteses Estratégicas · Cruzamentos TOWS <span className="ml-auto"><EditarConteudo chave="estr.hipoteses" padrao={hipoteses_DEF} titulo="Hipóteses TOWS" /></span></h3>
                     <p className="text-sm text-muted-foreground mt-0.5">
                       Combinação das variáveis da SWOT em 4 cenários (FO · FA · WO · WT). As hipóteses validadas alimentam OKRs, business cases e o backlog estratégico.
                     </p>

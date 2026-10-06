@@ -8,13 +8,15 @@ import { toast } from "sonner";
 import { useConteudo } from "@/hooks/useConteudo";
 
 const clone = (v: any) => JSON.parse(JSON.stringify(v));
+const OCULTOS = ["cor", "badge", "chip", "icon", "cls"];
+const oculto = (k: string) => k.startsWith("__") || OCULTOS.includes(k);
 
 function vazioDe(exemplo: any): any {
   if (typeof exemplo === "string") return "";
   if (typeof exemplo === "number") return 0;
   if (typeof exemplo === "boolean") return false;
   if (Array.isArray(exemplo)) return [];
-  if (exemplo && typeof exemplo === "object") return Object.fromEntries(Object.entries(exemplo).map(([k, v]) => [k, vazioDe(v)]));
+  if (exemplo && typeof exemplo === "object") return Object.fromEntries(Object.entries(exemplo).map(([k, v]) => [k, oculto(k) ? v : vazioDe(v)]));
   return "";
 }
 
@@ -41,7 +43,7 @@ function Campo({ value, onChange, label }: { value: any; onChange: (v: any) => v
     return (
       <div className="space-y-2 rounded-md border p-2">
         {label && <div className="text-xs font-semibold">{label}</div>}
-        {Object.entries(value).filter(([k]) => !k.startsWith("__")).map(([k, v]) => (
+        {Object.entries(value).filter(([k]) => !oculto(k)).map(([k, v]) => (
           <Campo key={k} label={k} value={v} onChange={(nv) => onChange({ ...value, [k]: nv })} />
         ))}
       </div>
