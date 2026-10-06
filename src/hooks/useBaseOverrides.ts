@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type ModuloBase = "estrategia" | "okrs" | "pmo";
+export type ModuloBase = "estrategia" | "okrs" | "cesta" | "pmo";
 export type PropostaBase = {
   id: string; submissao_id: string; modulo: ModuloBase; entidade: string; ref: string; campo: string;
   valor_atual: string | null; valor_novo: string; justificativa: string | null; confianca: number | null;

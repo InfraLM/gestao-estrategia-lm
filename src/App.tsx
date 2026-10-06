@@ -14,6 +14,7 @@ import Melhorias from "./pages/Melhorias";
 import MelhoriaContinua from "./pages/MelhoriaContinua";
 import MelhoriaDetalhe from "./pages/MelhoriaDetalhe";
 import PlaceholderDoc from "./pages/PlaceholderDoc";
+import HistoricoModulo from "./pages/HistoricoModulo";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
 import Okrs from "./pages/Okrs";
@@ -29,9 +30,6 @@ import GestaoRepositorio from "./pages/GestaoRepositorio";
 import RepositorioLista from "./pages/RepositorioLista";
 import MinhasPermissoes from "./pages/MinhasPermissoes";
 import GestaoUsuarios from "./pages/GestaoUsuarios";
-import InfraTechSprints from "./pages/InfraTechSprints";
-import DocumentosGovernanca from "./pages/DocumentosGovernanca";
-import RiscosEstrategicos from "./pages/RiscosEstrategicos";
 import BusinessCaseScorecard from "./pages/BusinessCaseScorecard";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
@@ -60,9 +58,9 @@ const App = () => (
               <Route path="/melhorias/:id" element={<MelhoriaDetalhe />} />
               {/* Histórico de Documentações — versões de todos os uploads do app */}
               <Route path="/historico/projetos" element={<PlaceholderDoc titulo="Histórico de Projetos" descricao="Versões de todos os documentos enviados ao app vinculados a projetos: BCs, atas, entregas, status reports, anexos e gravações." bullets={["Listagem cronológica de uploads por projeto", "Versionamento automático ao re-submeter", "Filtros por projeto, autor, tipo de arquivo e período", "Download de qualquer versão histórica", "Visível a todos os usuários autenticados"]} />} />
-              <Route path="/historico/processos" element={<PlaceholderDoc titulo="Histórico de Processos" descricao="Versões de todos os documentos enviados ao app vinculados a processos: mapeamentos, fluxogramas, POPs, relatórios e evidências." bullets={["Trilha de versões por processo", "Comparativo entre versões", "Filtros por processo, dono e área", "Download de qualquer versão histórica"]} />} />
-              <Route path="/historico/governanca" element={<PlaceholderDoc titulo="Histórico de Governança" descricao="Versões de documentos de governança: atas de comitês, decisões, regimentos, políticas, deliberações da diretoria e excom." bullets={["Atas e deliberações por comitê", "Histórico de políticas e regimentos", "Filtros por órgão, data e tipo", "Acesso auditável"]} />} />
-              <Route path="/historico/infra-tech" element={<PlaceholderDoc titulo="Histórico de Infra & Tech" descricao="Versões de documentos de infraestrutura e tecnologia: arquiteturas, diagramas, runbooks, configurações, contratos de SaaS e segurança." bullets={["Diagramas e arquiteturas versionadas", "Runbooks e procedimentos técnicos", "Inventário de SaaS e contratos", "Logs de mudança e segurança"]} />} />
+              <Route path="/historico/estrategia" element={<HistoricoModulo titulo="Histórico de Estratégia" descricao="Arquivos enviados para atualizar o BSC/Árvore de KPIs e edições feitas no Diagnóstico e na Estratégia." modulo="estrategia" prefixos={["diag.", "estr.", "bsc."]} />} />
+              <Route path="/historico/okrs" element={<HistoricoModulo titulo="Histórico de OKRs" descricao="Arquivos enviados para atualizar os OKRs do semestre." modulo="okrs" prefixos={[]} />} />
+              <Route path="/historico/cesta-metas" element={<HistoricoModulo titulo="Histórico de Cesta de Metas" descricao="Arquivos enviados para atualizar a Cesta de Metas por diretoria." modulo="cesta" prefixos={[]} />} />
 
               {/* Repositórios — apenas a versão vigente de cada documento */}
               <Route path="/repositorios/frameworks" element={<RepositorioLista repositorio="frameworks" titulo="Frameworks Vigentes" descricao="Frameworks institucionais em uso (estratégia, BSC, OKRs, ICE, EAP, BC). Submeta novos documentos e visualize os vigentes." />} />
@@ -80,9 +78,6 @@ const App = () => (
               <Route path="/gestao-processos" element={<GestaoProcessos />} />
               <Route path="/dashboard-processos" element={<DashboardProcessos />} />
               <Route path="/status-report-processos" element={<StatusReportProcessos />} />
-              <Route path="/infra-tech/sprints" element={<InfraTechSprints />} />
-              <Route path="/governanca-juridico/documentos" element={<DocumentosGovernanca />} />
-              <Route path="/governanca-juridico/riscos-estrategicos" element={<RiscosEstrategicos />} />
               <Route path="/pmo/business-case" element={<BusinessCaseScorecard />} />
             </Route>
             <Route path="*" element={<NotFound />} />
