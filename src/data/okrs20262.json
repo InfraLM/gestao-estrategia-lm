@@ -24,7 +24,12 @@
      "objetivos": [
       "F.02",
       "P.02"
-     ]
+     ],
+     "tipo": "patamar",
+     "meta": "R$ 46.000",
+     "peso": 0.25,
+     "responsavel": "Guilherme",
+     "obs": "aguardar meta"
     },
     {
      "codigo": "OKR1-KR2",
@@ -33,7 +38,12 @@
      "objetivos": [
       "F.02",
       "P.02"
-     ]
+     ],
+     "tipo": "acúmulo",
+     "meta": "R$ 28 mi",
+     "peso": 0.25,
+     "responsavel": "Guilherme",
+     "obs": "Abaixo mês a mês"
     },
     {
      "codigo": "OKR1-KR3",
@@ -41,17 +51,83 @@
      "status": "ATIVO",
      "objetivos": [
       "P.02"
-     ]
+     ],
+     "tipo": "patamar",
+     "meta": "10% de leads convertidos",
+     "peso": 0.25,
+     "responsavel": "Iuri + Felipe",
+     "obs": ""
     },
     {
      "codigo": "OKR1-KR4",
      "titulo": "VGV ACLS, ATLS e Formação em Paciente Grave SP",
-     "status": "ADICIONADO",
+     "status": "ATIVO",
      "objetivos": [
       "P.03",
       "P.02",
       "F.02"
-     ]
+     ],
+     "tipo": "acúmulo",
+     "meta": "verificar com ian ACLS",
+     "peso": 0.25,
+     "responsavel": "Guilherme + Iuri + Felipe",
+     "obs": "Projeto SP — aloca peso do Projeto SP também no OKR corporativo"
+    },
+    {
+     "codigo": "OKR1-REM (antigo KR1)",
+     "titulo": "Conversão de MQL em venda na PPG",
+     "objetivos": [
+      "P.02",
+      "F.02"
+     ],
+     "tipo": "patamar",
+     "meta": "6,5%",
+     "peso": null,
+     "responsavel": "Felipe · Guilherme",
+     "status": "REMOVIDO",
+     "obs": "Consta na meta do diretor Felipe — \"Conversão MQL→venda na PPG\" (peso 50%)"
+    },
+    {
+     "codigo": "OKR1-REM (antigo KR4)",
+     "titulo": "Custo por MQL",
+     "objetivos": [
+      "P.02",
+      "F.02"
+     ],
+     "tipo": "patamar",
+     "meta": "R$ 248",
+     "peso": null,
+     "responsavel": "Guilherme",
+     "status": "REMOVIDO",
+     "obs": "Consta na meta do diretor Iuri Franco — \"Geração de MQLs para PPG e custo por MQL (CPMQL < R$ 248)\" (peso 34%)"
+    },
+    {
+     "codigo": "OKR1-REM (antigo KR5)",
+     "titulo": "ROAS das campanhas da PPG",
+     "objetivos": [
+      "P.02",
+      "F.02"
+     ],
+     "tipo": "patamar",
+     "meta": "10x",
+     "peso": null,
+     "responsavel": "Iuri · Guilherme",
+     "status": "REMOVIDO",
+     "obs": "Consta na meta do diretor Iuri Franco — \"ROAS nas campanhas PPG\" (peso 33%)"
+    },
+    {
+     "codigo": "OKR1-REM (antigo KR7)",
+     "titulo": "Vendas ACLS em SP",
+     "objetivos": [
+      "P.02",
+      "F.02"
+     ],
+     "tipo": "patamar",
+     "meta": "26/semana",
+     "peso": null,
+     "responsavel": "Guilherme",
+     "status": "REMOVIDO",
+     "obs": "Consta na meta do diretor Guilherme — \"Projeto SP: ACLS, ATLS & outros cursos de curta duração > vendas ACLS em SP\" (peso 33%) — sugestão em verde na revisão anterior"
     }
    ]
   },
@@ -73,7 +149,12 @@
      "status": "ATIVO",
      "objetivos": [
       "F.02"
-     ]
+     ],
+     "tipo": "acúmulo",
+     "meta": "R$ 2,5 mi",
+     "peso": 0.25,
+     "responsavel": "Bruno",
+     "obs": "Julho - Agosto em linha. Porém Setembro deve gerar deficit."
     },
     {
      "codigo": "OKR2-KR2",
@@ -81,7 +162,12 @@
      "status": "ATIVO",
      "objetivos": [
       "F.02"
-     ]
+     ],
+     "tipo": "acúmulo",
+     "meta": "R$ 1 mi",
+     "peso": 0.25,
+     "responsavel": "Bruno",
+     "obs": "Antecipação de CAR mudou para uso de CAR como garantia de divida. Previsão de atingir 200% do semestre em setembro."
     },
     {
      "codigo": "OKR2-KR3",
@@ -89,7 +175,12 @@
      "status": "ATIVO",
      "objetivos": [
       "F.02"
-     ]
+     ],
+     "tipo": "patamar",
+     "meta": "1S26 = 23,7 · Meta: +25% = 29,6",
+     "peso": 0.25,
+     "responsavel": "Bruno",
+     "obs": "Julho e Agosto excederam em muito a meta (58 e 44 dias). O desafio é manter até o final do ano."
     },
     {
      "codigo": "OKR2-KR4",
@@ -97,7 +188,12 @@
      "status": "ATIVO",
      "objetivos": [
       "F.02"
-     ]
+     ],
+     "tipo": "patamar",
+     "meta": "R$ 30.233",
+     "peso": 0.25,
+     "responsavel": "Bruno",
+     "obs": "Média Jul+Ago abaixo da meta (27,1k)"
     }
    ]
   },
@@ -128,7 +224,12 @@
       "P.01",
       "F.01",
       "C.01"
-     ]
+     ],
+     "tipo": "patamar",
+     "meta": "80% dos alunos ativos da PPG",
+     "peso": 0.25,
+     "responsavel": "Guilherme",
+     "obs": ""
     },
     {
      "codigo": "OKR3-KR2",
@@ -136,7 +237,12 @@
      "status": "ATIVO",
      "objetivos": [
       "P.03"
-     ]
+     ],
+     "tipo": "patamar",
+     "meta": "24",
+     "peso": 0.25,
+     "responsavel": "Yuri",
+     "obs": "Projeto SP — aloca peso do Projeto SP também no OKR corporativo"
     },
     {
      "codigo": "OKR3-KR3",
@@ -145,7 +251,27 @@
      "objetivos": [
       "P.01",
       "C.01"
-     ]
+     ],
+     "tipo": "conformidade",
+     "meta": "90%",
+     "peso": 0.25,
+     "responsavel": "Naira + Yuri",
+     "obs": "Matriz de riscos PPG"
+    },
+    {
+     "codigo": "OKR3-KR4",
+     "titulo": "CSAT de imersões e de PFO fora do HJF",
+     "objetivos": [
+      "P.03",
+      "P.01",
+      "C.01"
+     ],
+     "tipo": "conformidade",
+     "meta": "≥ 9,0 · ≥ 9,0 mensal",
+     "peso": 0.25,
+     "responsavel": "Yuri",
+     "status": "ATIVO",
+     "obs": "Projeto SP — aloca peso do Projeto SP também no OKR corporativo"
     }
    ]
   },
@@ -174,7 +300,12 @@
       "F.01",
       "C.02",
       "P.01"
-     ]
+     ],
+     "tipo": "patamar",
+     "meta": "1.650",
+     "peso": null,
+     "responsavel": "Bruno",
+     "obs": "Situação atual: 1.158 (atualizado 20/09)"
     }
    ]
   }
@@ -474,5 +605,86 @@
    "nome": "Felipe",
    "cargo": "Diretor Comercial"
   }
+ ],
+ "regra": [
+  {
+   "componente": "Corporativo",
+   "peso": "50%",
+   "composicao": "OKR1 + OKR2 + OKR3 + NSM (pesos variam por cadeira)"
+  },
+  {
+   "componente": "Metas específicas da cadeira",
+   "peso": "50%",
+   "composicao": "Metas individuais com pesos iguais"
+  }
+ ],
+ "pesosCorporativos": [
+  {
+   "diretor": "Ian",
+   "cadeira": "CEO",
+   "OKR1": 0.3,
+   "OKR2": 0.3,
+   "OKR3": 0.3,
+   "NSM": 0.1
+  },
+  {
+   "diretor": "Cleto",
+   "cadeira": "Institucional",
+   "OKR1": 0.1,
+   "OKR2": 0.1,
+   "OKR3": 0.7,
+   "NSM": 0.1
+  },
+  {
+   "diretor": "Yuri",
+   "cadeira": "COO",
+   "OKR1": 0.1,
+   "OKR2": 0.1,
+   "OKR3": 0.7,
+   "NSM": 0.1
+  },
+  {
+   "diretor": "Bruno",
+   "cadeira": "CFO",
+   "OKR1": 0.1,
+   "OKR2": 0.7,
+   "OKR3": 0.1,
+   "NSM": 0.1
+  },
+  {
+   "diretor": "Guilherme",
+   "cadeira": "CRO",
+   "OKR1": 0.7,
+   "OKR2": 0.1,
+   "OKR3": 0.1,
+   "NSM": 0.1
+  },
+  {
+   "diretor": "Naira",
+   "cadeira": "Governança e Eficiência",
+   "OKR1": 0.1,
+   "OKR2": 0.4,
+   "OKR3": 0.4,
+   "NSM": 0.1
+  },
+  {
+   "diretor": "Iuri Franco",
+   "cadeira": "CMO / BU Certificações",
+   "OKR1": 0.7,
+   "OKR2": 0.1,
+   "OKR3": 0.1,
+   "NSM": 0.1
+  },
+  {
+   "diretor": "Felipe",
+   "cadeira": "Comercial",
+   "OKR1": 0.7,
+   "OKR2": 0.1,
+   "OKR3": 0.1,
+   "NSM": 0.1
+  }
+ ],
+ "notas": [
+  "Nota:"
  ]
 }
