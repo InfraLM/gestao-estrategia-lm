@@ -13,6 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useConteudo } from "@/hooks/useConteudo";
+import { EditarConteudo } from "@/components/EditarConteudo";
 
 type Framework = "PESTEL" | "Porter" | "RBV_VRIN" | "Oceano_Azul" | "SWOT" | "Ansoff" | "Geral";
 
@@ -26,7 +28,7 @@ const FRAMEWORK_META: Record<Framework, { label: string; icon: any; color: strin
   Geral:       { label: "Geral",        icon: Lightbulb, color: "text-muted-foreground", descr: "Insight transversal." },
 };
 
-const VISAO_MISSAO = {
+const VISAO_MISSAO_DEF = {
   proposito: "Capacitar médicos e médicas para salvarem vidas.",
   bhag: "1 milhão de vidas salvas até 2026",
   valores: [
@@ -40,7 +42,7 @@ const VISAO_MISSAO = {
   ],
 };
 
-const PESTEL_DATA: Record<string, string[]> = {
+const PESTEL_DATA_DEF: Record<string, string[]> = {
   "Político":   ["Fomento via FINEP, Start-Ed", "Relações entre países", "Risco regulatório/corrupção"],
   "Econômico":  ["Inflação e juros (custo de capital)", "Câmbio internacional", "Poder de compra do médico"],
   "Social":     ["Mudança no perfil do médico (digital)", "Demanda por especialização prática", "Problemas éticos"],
@@ -49,7 +51,7 @@ const PESTEL_DATA: Record<string, string[]> = {
   "Legal":      ["Normas do CFM/MEC", "LGPD", "Normas específicas de saúde"],
 };
 
-const PORTER_DATA = [
+const PORTER_DATA_DEF = [
   { forca: "Novos entrantes",  intensidade: "Alta",  acao: "Desenvolver barreiras (marca forte, parcerias exclusivas, conteúdo proprietário)." },
   { forca: "Poder de clientes", intensidade: "Alta", acao: "Programas de fidelização e comunidade para reduzir churn." },
   { forca: "Poder de fornecedores", intensidade: "Média", acao: "IA para gerar drafts técnicos — professores supervisionam." },
@@ -57,7 +59,7 @@ const PORTER_DATA = [
   { forca: "Rivalidade",        intensidade: "Alta",  acao: "Posicionamento de nicho premium com autoridade técnica." },
 ];
 
-const RBV_RECURSOS = [
+const RBV_RECURSOS_DEF = [
   { tipo: "Físicos",        item: "Hospitais parceiros, infraestrutura de simulação", vrin: "◐" },
   { tipo: "Humanos",        item: "Corpo docente médico ativo em plantão",            vrin: "✔" },
   { tipo: "Organizacionais",item: "Método didático integrado prática-teoria",          vrin: "✔" },
@@ -65,21 +67,21 @@ const RBV_RECURSOS = [
   { tipo: "Reputacionais",  item: "Marca técnica, comunidade de ex-alunos",            vrin: "✔" },
 ];
 
-const SWOT_DATA = {
+const SWOT_DATA_DEF = {
   Forças:        ["Conexão forte com plantão", "Time unido com autonomia", "Autoridade técnica de docentes", "Ecossistema integrado"],
   Fraquezas:     ["Capital limitado", "Dependência operacional hospitalar", "Escala restrita", "Processos ainda manuais"],
   Oportunidades: ["IA para escala de conteúdo", "Internacionalização (LatAm)", "Parcerias com hospitais/universidades", "Novos produtos digitais"],
   Ameaças:       ["Afya com investimento pesado em nicho", "Sanar competindo digital em escala", "Mudança regulatória", "Substitutos gratuitos com IA"],
 };
 
-const ANSOFF = [
+const ANSOFF_DEF = [
   { quad: "Penetração de Mercado",      ex: "Ampliar share nas residências atuais com upsell e fidelização." },
   { quad: "Desenvolvimento de Mercado", ex: "Expandir para novas regiões/países com mesmo portfólio." },
   { quad: "Desenvolvimento de Produto", ex: "Lançar trilhas/IA tutor/simulação para clientes existentes." },
   { quad: "Diversificação",             ex: "Novo modelo (B2B hospitais, fellowships, EdTech vertical)." },
 ];
 
-const ERRC = {
+const ERRC_DEF = {
   Eliminar: ["Conteúdo genérico que não ensina prática", "Burocracia que afasta o médico ocupado"],
   Reduzir:  ["Tempo de produção de conteúdo (com IA)", "Dependência de presença física"],
   Elevar:   ["Experiência de simulação prática", "Comunidade e mentoria entre pares"],
@@ -102,6 +104,13 @@ type Insight = {
 };
 
 export default function Diagnostico() {
+  const VISAO_MISSAO = useConteudo("diag.proposito", VISAO_MISSAO_DEF).data;
+  const PESTEL_DATA = useConteudo("diag.pestel", PESTEL_DATA_DEF).data;
+  const PORTER_DATA = useConteudo("diag.porter", PORTER_DATA_DEF).data;
+  const RBV_RECURSOS = useConteudo("diag.rbv", RBV_RECURSOS_DEF).data;
+  const SWOT_DATA = useConteudo("diag.swot", SWOT_DATA_DEF).data;
+  const ANSOFF = useConteudo("diag.ansoff", ANSOFF_DEF).data;
+  const ERRC = useConteudo("diag.errc", ERRC_DEF).data;
   const { user } = useAuth();
   const [insights, setInsights] = useState<Insight[]>([]);
   const [loading, setLoading] = useState(true);
@@ -268,6 +277,7 @@ export default function Diagnostico() {
 
       {/* Propósito */}
       <Card className="p-5 shadow-card bg-gradient-to-br from-primary/5 to-transparent">
+        <div className="flex justify-end -mt-2 -mr-2"><span className="ml-auto"><EditarConteudo chave="diag.proposito" padrao={VISAO_MISSAO_DEF} titulo="Propósito, BHAG e Valores" /></span></div>
         <div className="grid md:grid-cols-3 gap-5">
           <div>
             <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1">Propósito</div>
@@ -355,7 +365,7 @@ export default function Diagnostico() {
         {/* PESTEL */}
         <TabsContent value="pestel" className="mt-5">
           <Card className="p-5 shadow-card">
-            <h3 className="font-semibold mb-1 flex items-center gap-2"><Compass className="h-4 w-4 text-info" /> Análise PESTEL</h3>
+            <h3 className="font-semibold mb-1 flex items-center gap-2"><Compass className="h-4 w-4 text-info" /> Análise PESTEL <span className="ml-auto"><EditarConteudo chave="diag.pestel" padrao={PESTEL_DATA_DEF} titulo="PESTEL" /></span></h3>
             <p className="text-xs text-muted-foreground mb-4">Macroambiente — fatores externos que afetam o negócio.</p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Object.entries(PESTEL_DATA).map(([k, items]) => (
@@ -373,7 +383,7 @@ export default function Diagnostico() {
         {/* PORTER */}
         <TabsContent value="porter" className="mt-5">
           <Card className="p-5 shadow-card">
-            <h3 className="font-semibold mb-1 flex items-center gap-2"><Shield className="h-4 w-4 text-destructive" /> 5 Forças de Porter</h3>
+            <h3 className="font-semibold mb-1 flex items-center gap-2"><Shield className="h-4 w-4 text-destructive" /> 5 Forças de Porter <span className="ml-auto"><EditarConteudo chave="diag.porter" padrao={PORTER_DATA_DEF} titulo="5 Forças de Porter" /></span></h3>
             <p className="text-xs text-muted-foreground mb-4">Análise da competição setorial.</p>
             <div className="space-y-2">
               {PORTER_DATA.map(p => (
@@ -396,7 +406,7 @@ export default function Diagnostico() {
         {/* RBV */}
         <TabsContent value="rbv" className="mt-5">
           <Card className="p-5 shadow-card">
-            <h3 className="font-semibold mb-1 flex items-center gap-2"><Layers className="h-4 w-4 text-primary" /> RBV / VRIN</h3>
+            <h3 className="font-semibold mb-1 flex items-center gap-2"><Layers className="h-4 w-4 text-primary" /> RBV / VRIN <span className="ml-auto"><EditarConteudo chave="diag.rbv" padrao={RBV_RECURSOS_DEF} titulo="RBV / VRIN" /></span></h3>
             <p className="text-xs text-muted-foreground mb-4">Recursos internos · ✔ atende plenamente · ◐ parcial · ✖ não atende.</p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -422,7 +432,7 @@ export default function Diagnostico() {
         {/* OCEANO AZUL */}
         <TabsContent value="oceano" className="mt-5">
           <Card className="p-5 shadow-card">
-            <h3 className="font-semibold mb-1 flex items-center gap-2"><Workflow className="h-4 w-4 text-success" /> Oceano Azul — Matriz ERRC</h3>
+            <h3 className="font-semibold mb-1 flex items-center gap-2"><Workflow className="h-4 w-4 text-success" /> Oceano Azul — Matriz ERRC <span className="ml-auto"><EditarConteudo chave="diag.errc" padrao={ERRC_DEF} titulo="Oceano Azul ERRC" /></span></h3>
             <p className="text-xs text-muted-foreground mb-4">Eliminar · Reduzir · Elevar · Criar.</p>
             <div className="grid md:grid-cols-2 gap-3">
               {Object.entries(ERRC).map(([k, items]) => {
@@ -442,7 +452,7 @@ export default function Diagnostico() {
         {/* SWOT */}
         <TabsContent value="swot" className="mt-5">
           <Card className="p-5 shadow-card">
-            <h3 className="font-semibold mb-1 flex items-center gap-2"><Target className="h-4 w-4 text-warning" /> Matriz SWOT</h3>
+            <h3 className="font-semibold mb-1 flex items-center gap-2"><Target className="h-4 w-4 text-warning" /> Matriz SWOT <span className="ml-auto"><EditarConteudo chave="diag.swot" padrao={SWOT_DATA_DEF} titulo="SWOT" /></span></h3>
             <p className="text-xs text-muted-foreground mb-4">Síntese estratégica — base para hipóteses e BSC.</p>
             <div className="grid md:grid-cols-2 gap-3">
               {Object.entries(SWOT_DATA).map(([k, items]) => {
@@ -462,7 +472,7 @@ export default function Diagnostico() {
         {/* ANSOFF */}
         <TabsContent value="ansoff" className="mt-5">
           <Card className="p-5 shadow-card">
-            <h3 className="font-semibold mb-1 flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" /> Matriz Ansoff</h3>
+            <h3 className="font-semibold mb-1 flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" /> Matriz Ansoff <span className="ml-auto"><EditarConteudo chave="diag.ansoff" padrao={ANSOFF_DEF} titulo="Ansoff" /></span></h3>
             <p className="text-xs text-muted-foreground mb-4">Estratégias de crescimento.</p>
             <div className="grid md:grid-cols-2 gap-3">
               {ANSOFF.map(a => (
