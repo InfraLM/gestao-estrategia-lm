@@ -31,6 +31,7 @@ const navGroups: NavGroup[] = [
     icon: TrendingUp,
     children: [
       { to: "/okrs", label: "OKRs do Semestre", icon: Target },
+      { to: "/cesta-metas", label: "Cesta de Metas", icon: UserCog },
     ],
   },
   {
@@ -84,6 +85,7 @@ const titles: Record<string, string> = {
   "/": "Dashboard Estratégico",
   "/diagnostico": "Diagnóstico Estratégico LM",
   "/okrs": "OKRs · 2026/2",
+  "/cesta-metas": "Cesta de Metas · 2026/2",
   "/estrategia": "Estratégia LM · Formulação + Planejamento",
   "/backlog-estrategico": "Backlog Estratégico · Plano de Ação Institucional",
   "/impacto-estrategico": "Impacto Estratégico · Consolidação por Objetivo BSC",
