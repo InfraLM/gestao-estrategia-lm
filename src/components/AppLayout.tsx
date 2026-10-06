@@ -68,16 +68,6 @@ const navGroups: NavGroup[] = [
       { to: "/repositorios/gestao", label: "Gestão do Repositório", icon: Settings2 },
     ],
   },
-  {
-    id: "infra_tech",
-    label: "Governança e Jurídico",
-    icon: Server,
-    children: [
-      { to: "/infra-tech/sprints", label: "Sprints Semanais", icon: ListChecks },
-      { to: "/governanca-juridico/documentos", label: "Documentos de Governança", icon: ScrollText },
-      { to: "/governanca-juridico/riscos-estrategicos", label: "Riscos Estratégicos", icon: ShieldAlert },
-    ],
-  },
 ];
 
 const titles: Record<string, string> = {
