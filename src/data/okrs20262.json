@@ -188,14 +188,20 @@
      "tipo": "Financeiro",
      "meta": "R$ 3,94 mi · marg ≥ 16,7%",
      "peso": 0.33,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "F.02"
+     ]
     },
     {
      "indicador": "NPS da marca",
      "tipo": "Resultado",
      "meta": "Baseline → manutenção do NPS geral atual de 86,8",
      "peso": 0.33,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "C.01"
+     ]
     }
    ],
    "nome": "Ian",
@@ -209,21 +215,32 @@
      "tipo": "Resultado",
      "meta": "24 vagas",
      "peso": 0.34,
-     "obs": "Projeto SP — expansão de vagas de prática conta como meta específica de SP para o Cleto"
+     "obs": "Projeto SP — expansão de vagas de prática conta como meta específica de SP para o Cleto",
+     "objetivos": [
+      "P.03"
+     ]
     },
     {
      "indicador": "CSAT do PFO no HJF",
      "tipo": "Resultado",
      "meta": "≥ 9,0",
      "peso": 0.33,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "P.03",
+      "C.01"
+     ]
     },
     {
      "indicador": "Conformidade dos riscos críticos no HJF",
      "tipo": "Resultado",
      "meta": "100%",
      "peso": 0.33,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "P.01",
+      "C.01"
+     ]
     }
    ],
    "nome": "Cleto",
@@ -237,14 +254,21 @@
      "tipo": "Financeiro",
      "meta": "≥ 73,5% · R$ 17,33 mi",
      "peso": 0.5,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "F.02"
+     ]
     },
     {
      "indicador": "Vendas ACLS em SP",
      "tipo": "Resultado",
      "meta": "192 no semestre",
      "peso": 0.5,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "P.03",
+      "P.02"
+     ]
     }
    ],
    "nome": "Yuri",
@@ -258,21 +282,30 @@
      "tipo": "Financeiro",
      "meta": "R$ 2,53 mi",
      "peso": 0.34,
-     "obs": "Caminhamos para atingir"
+     "obs": "Caminhamos para atingir",
+     "objetivos": [
+      "F.02"
+     ]
     },
     {
      "indicador": "Geração de caixa operacional mensal",
      "tipo": "Financeiro",
      "meta": "≥ R$ 750 mil",
      "peso": 0.33,
-     "obs": "Sob análise, aguardando revisão orçamentária (22/09)"
+     "obs": "Sob análise, aguardando revisão orçamentária (22/09)",
+     "objetivos": [
+      "F.02"
+     ]
     },
     {
      "indicador": "VGV Novos negócios",
      "tipo": "Resultado",
      "meta": "500k",
      "peso": 0.33,
-     "obs": "Não devemos atingir: Clube da Liberdade postergado para Mar/abr 2027"
+     "obs": "Não devemos atingir: Clube da Liberdade postergado para Mar/abr 2027",
+     "objetivos": [
+      "F.01"
+     ]
     }
    ],
    "nome": "Bruno",
@@ -286,28 +319,43 @@
      "tipo": "Financeiro",
      "meta": "desp. ≤ 34,9%",
      "peso": 0.25,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "F.02",
+      "P.02"
+     ]
     },
     {
      "indicador": "ROL",
      "tipo": "Financeiro",
      "meta": "R$ 18,3 mi",
      "peso": 0.25,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "F.01"
+     ]
     },
     {
      "indicador": "TtFV — ativação da base",
      "tipo": "Resultado",
      "meta": "≥ 80%",
      "peso": 0.25,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "P.01",
+      "F.01"
+     ]
     },
     {
      "indicador": "Projeto SP: vendas ACLS em SP",
      "tipo": "patamar",
      "meta": "192 no semestre",
      "peso": 0.25,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "P.03",
+      "P.02"
+     ]
     }
    ],
    "nome": "Guilherme",
@@ -321,28 +369,41 @@
      "tipo": "Financeiro",
      "meta": "70k",
      "peso": 0.25,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "AC.03",
+      "F.02"
+     ]
     },
     {
      "indicador": "Projeto 1 — Calendário simplificado de reuniões",
      "tipo": "Projeto",
      "meta": "Implantado até [novembro 26]",
      "peso": 0.25,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "AC.01"
+     ]
     },
     {
      "indicador": "Projeto 2 — Pipeline de políticas importantes",
      "tipo": "Projeto",
      "meta": "5 políticas críticas implantadas",
      "peso": 0.25,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "AC.01"
+     ]
     },
     {
      "indicador": "Projeto 3 — Pipeline de processos importantes",
      "tipo": "Projeto",
      "meta": "Publicados e rodando na zeev",
      "peso": 0.25,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "P.01"
+     ]
     }
    ],
    "nome": "Naira",
@@ -356,21 +417,31 @@
      "tipo": "Esforço",
      "meta": "≥ 9.370 · custo unit. < R$ 248",
      "peso": 0.34,
-     "obs": "Fica somente na cesta de metas. Removido OKR1-KR4 (Custo por MQL) removido do OKR1"
+     "obs": "Fica somente na cesta de metas. Removido OKR1-KR4 (Custo por MQL) removido do OKR1",
+     "objetivos": [
+      "P.02"
+     ]
     },
     {
      "indicador": "Vendas ACLS em SP",
      "tipo": "Projeto",
      "meta": "192 no semestre",
      "peso": 0.33,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "P.03",
+      "P.02"
+     ]
     },
     {
      "indicador": "ROAS nas campanhas PPG",
      "tipo": "Eficiência",
      "meta": "≥ 10x",
      "peso": 0.33,
-     "obs": "Fica somente na cesta de metas. Removido  OKR1-KR5 (ROAS das campanhas da PPG) removido do OKR1"
+     "obs": "Fica somente na cesta de metas. Removido  OKR1-KR5 (ROAS das campanhas da PPG) removido do OKR1",
+     "objetivos": [
+      "P.02"
+     ]
     }
    ],
    "nome": "Iuri Franco",
@@ -384,14 +455,20 @@
      "tipo": "Eficiência",
      "meta": "≥ 6,5%",
      "peso": 0.5,
-     "obs": "Fica somente na cesta de metas. Removido OKR1-KR1 (Conversão de MQL em venda na PPG) removido do OKR1"
+     "obs": "Fica somente na cesta de metas. Removido OKR1-KR1 (Conversão de MQL em venda na PPG) removido do OKR1",
+     "objetivos": [
+      "P.02"
+     ]
     },
     {
      "indicador": "VGV outros produtos (ex- PPG) - paliativos, imersão pocus, pocus online",
      "tipo": "Resultado",
      "meta": "",
      "peso": 0.5,
-     "obs": ""
+     "obs": "",
+     "objetivos": [
+      "F.01"
+     ]
     }
    ],
    "nome": "Felipe",
