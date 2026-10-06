@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Target, Users, History } from "lucide-react";
+import { Target, History } from "lucide-react";
 import data from "@/data/okrs20262.json";
 import bsc from "@/data/bscRev02.json";
 import { OKRS } from "@/data/okrs";
@@ -31,13 +31,12 @@ export default function Okrs() {
       <div className="space-y-4">
         <div>
           <h2 className="text-lg font-semibold tracking-tight">OKRs</h2>
-          <p className="text-sm text-muted-foreground">Objetivos priorizados do semestre e cesta de metas por diretor, vinculados aos objetivos estratégicos do BSC (Rev.02).</p>
+          <p className="text-sm text-muted-foreground">Objetivos priorizados do semestre (OKR 2026/2 consolidado 20.08.26), vinculados aos objetivos estratégicos do BSC (Rev.02).</p>
         </div>
 
         <Tabs defaultValue="atual">
           <TabsList>
             <TabsTrigger value="atual">2026/2 · vigente</TabsTrigger>
-            <TabsTrigger value="diretores">Metas por diretor 2026/2</TabsTrigger>
             <TabsTrigger value="historico">Histórico · 2026/1</TabsTrigger>
           </TabsList>
 
@@ -53,40 +52,25 @@ export default function Okrs() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-1.5">
-                  {o.krs.map((k) => (
-                    <div key={k.codigo} className="flex items-start gap-2 text-xs p-2 rounded border border-border">
-                      <Badge variant="outline" className="font-mono text-[10px] shrink-0">{k.codigo}</Badge>
-                      <span className="flex-1">{k.titulo}</span>
-                      <ObjBadges cods={k.objetivos} />
-                      <Badge variant={k.status === "ADICIONADO" ? "default" : "secondary"} className="text-[10px] shrink-0">{k.status}</Badge>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            ))}
-          </TabsContent>
-
-          <TabsContent value="diretores" className="grid md:grid-cols-2 gap-4 mt-4">
-            {data.diretores.map((d) => (
-              <Card key={d.titulo}>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm flex items-center gap-2"><Users className="h-4 w-4 text-primary" />{d.nome} <span className="text-muted-foreground font-normal">· {d.cargo}</span></CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-1.5">
-                  {d.metas.map((m) => (
-                    <div key={m.indicador} className="text-xs p-2 rounded border border-border space-y-1">
+                  {o.krs.map((k: any) => {
+                    const rem = k.status === "REMOVIDO";
+                    return (
+                    <div key={k.codigo} className={`text-xs p-2 rounded border border-border space-y-1 ${rem ? "opacity-60 border-dashed" : ""}`}>
                       <div className="flex items-start gap-2">
-                        <span className="flex-1 font-medium">{m.indicador}</span>
-                        {m.peso != null && <Badge variant="outline" className="text-[10px]">peso {Math.round(m.peso * 100)}%</Badge>}
-                        <Badge variant="secondary" className="text-[10px]">{m.tipo}</Badge>
+                        <Badge variant="outline" className="font-mono text-[10px] shrink-0">{k.codigo}</Badge>
+                        <span className={`flex-1 ${rem ? "line-through" : "font-medium"}`}>{k.titulo}</span>
+                        <ObjBadges cods={k.objetivos} />
+                        <Badge variant={rem ? "outline" : k.status === "ADICIONADO" ? "default" : "secondary"} className="text-[10px] shrink-0">{k.status}</Badge>
                       </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span><span className="text-muted-foreground">Meta 2026/2:</span> <strong>{m.meta}</strong></span>
-                        <ObjBadges cods={m.objetivos} />
+                      <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-muted-foreground">
+                        {k.meta && <span>Meta 2026/2: <strong className="text-foreground">{k.meta}</strong></span>}
+                        {k.tipo && <span>Tipo: {k.tipo}</span>}
+                        {k.peso != null && <span>Peso no OKR: {Math.round(k.peso * 100)}%</span>}
+                        {k.responsavel && <span>Responsável: {k.responsavel}</span>}
                       </div>
-                      {m.obs && <p className="text-[11px] text-muted-foreground italic">{m.obs}</p>}
+                      {k.obs && <p className="text-[11px] text-muted-foreground italic">{k.obs}</p>}
                     </div>
-                  ))}
+                  );})}
                 </CardContent>
               </Card>
             ))}
