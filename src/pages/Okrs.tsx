@@ -6,6 +6,8 @@ import { Target, History } from "lucide-react";
 import data from "@/data/okrs20262.json";
 import bsc from "@/data/bscRev02.json";
 import { OKRS } from "@/data/okrs";
+import BaseSubmissaoIA from "@/components/BaseSubmissaoIA";
+import { useBaseOverrides } from "@/hooks/useBaseOverrides";
 
 const nomeObj = (c: string) => (bsc as { codigo: string; nome: string }[]).find((o) => o.codigo === c)?.nome ?? c;
 
@@ -26,6 +28,8 @@ function ObjBadges({ cods, destaque = [] as string[] }: { cods: string[]; destaq
 
 export default function Okrs() {
   const hist = OKRS.find((s) => s.id === "2026-1");
+  const { aplicar } = useBaseOverrides("okrs");
+  const okrs = data.okrs.map((o) => ({ ...o, krs: o.krs.map((k: any) => aplicar("kr", k.codigo, k)) }));
   return (
     <TooltipProvider>
       <div className="space-y-4">
@@ -34,6 +38,8 @@ export default function Okrs() {
           <p className="text-sm text-muted-foreground">Objetivos priorizados do semestre (OKR 2026/2 consolidado 20.08.26), vinculados aos objetivos estratégicos do BSC (Rev.02).</p>
         </div>
 
+        <BaseSubmissaoIA modulo="okrs" titulo="Atualizar OKRs e Cesta de Metas com IA" contexto={() => ({ okrs, diretores: data.diretores })} />
+
         <Tabs defaultValue="atual">
           <TabsList>
             <TabsTrigger value="atual">2026/2 · vigente</TabsTrigger>
@@ -41,7 +47,7 @@ export default function Okrs() {
           </TabsList>
 
           <TabsContent value="atual" className="grid md:grid-cols-2 gap-4 mt-4">
-            {data.okrs.map((o) => (
+            {okrs.map((o) => (
               <Card key={o.codigo}>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2"><Target className="h-4 w-4 text-primary" />{o.titulo}</CardTitle>
@@ -61,6 +67,7 @@ export default function Okrs() {
                         <span className={`flex-1 ${rem ? "line-through" : "font-medium"}`}>{k.titulo}</span>
                         <ObjBadges cods={k.objetivos} />
                         <Badge variant={rem ? "outline" : k.status === "ADICIONADO" ? "default" : "secondary"} className="text-[10px] shrink-0">{k.status}</Badge>
+                        {k.__atualizado && <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30">atualizado</Badge>}
                       </div>
                       <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-muted-foreground">
                         {k.meta && <span>Meta 2026/2: <strong className="text-foreground">{k.meta}</strong></span>}

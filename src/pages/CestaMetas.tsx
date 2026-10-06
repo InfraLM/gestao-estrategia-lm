@@ -6,11 +6,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Users, Scale } from "lucide-react";
 import data from "@/data/okrs20262.json";
 import bsc from "@/data/bscRev02.json";
+import BaseSubmissaoIA from "@/components/BaseSubmissaoIA";
+import { useBaseOverrides } from "@/hooks/useBaseOverrides";
 
 const nomeObj = (c: string) => (bsc as { codigo: string; nome: string }[]).find((o) => o.codigo === c)?.nome ?? c;
 const pct = (v: any) => (typeof v === "number" ? `${Math.round(v * 100)}%` : "—");
 
 export default function CestaMetas() {
+  const { aplicar } = useBaseOverrides("okrs");
+  const diretores = data.diretores.map((d) => ({ ...d, metas: d.metas.map((m) => aplicar("meta_diretor", `${d.nome}::${m.indicador}`, m)) }));
   return (
     <TooltipProvider>
       <div className="space-y-4">
@@ -21,6 +25,8 @@ export default function CestaMetas() {
           </div>
           <Badge className="bg-primary text-primary-foreground">2026/2 · 1º ciclo</Badge>
         </div>
+
+        <BaseSubmissaoIA modulo="okrs" titulo="Atualizar Cesta de Metas com IA" contexto={() => ({ okrs: data.okrs, diretores })} />
 
         <Tabs defaultValue="2026-2">
           <TabsList>
@@ -60,7 +66,7 @@ export default function CestaMetas() {
             </Card>
 
             <div className="grid md:grid-cols-2 gap-4">
-              {data.diretores.map((d) => (
+              {diretores.map((d) => (
                 <Card key={d.titulo}>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2"><Users className="h-4 w-4 text-primary" />{d.nome} <span className="text-muted-foreground font-normal">· {d.cargo}</span></CardTitle>

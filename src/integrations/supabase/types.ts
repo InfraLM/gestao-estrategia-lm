@@ -142,6 +142,125 @@ export type Database = {
         }
         Relationships: []
       }
+      base_propostas_ia: {
+        Row: {
+          campo: string
+          confianca: number | null
+          created_at: string
+          entidade: string
+          id: string
+          justificativa: string | null
+          modulo: string
+          ref: string
+          revisado_em: string | null
+          revisado_por: string | null
+          status: string
+          submissao_id: string
+          updated_at: string
+          valor_atual: string | null
+          valor_novo: string
+        }
+        Insert: {
+          campo: string
+          confianca?: number | null
+          created_at?: string
+          entidade: string
+          id?: string
+          justificativa?: string | null
+          modulo: string
+          ref: string
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          submissao_id: string
+          updated_at?: string
+          valor_atual?: string | null
+          valor_novo: string
+        }
+        Update: {
+          campo?: string
+          confianca?: number | null
+          created_at?: string
+          entidade?: string
+          id?: string
+          justificativa?: string | null
+          modulo?: string
+          ref?: string
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          submissao_id?: string
+          updated_at?: string
+          valor_atual?: string | null
+          valor_novo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "base_propostas_ia_submissao_id_fkey"
+            columns: ["submissao_id"]
+            isOneToOne: false
+            referencedRelation: "base_submissoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      base_submissoes: {
+        Row: {
+          arquivo_nome: string
+          arquivo_path: string
+          arquivo_tamanho: number | null
+          arquivo_tipo: string | null
+          contexto: string | null
+          created_at: string
+          descricao: string | null
+          erro: string | null
+          id: string
+          modulo: string
+          resumo_ia: string | null
+          status: string
+          submitted_by: string
+          submitted_by_nome: string | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          arquivo_nome: string
+          arquivo_path: string
+          arquivo_tamanho?: number | null
+          arquivo_tipo?: string | null
+          contexto?: string | null
+          created_at?: string
+          descricao?: string | null
+          erro?: string | null
+          id?: string
+          modulo: string
+          resumo_ia?: string | null
+          status?: string
+          submitted_by: string
+          submitted_by_nome?: string | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          arquivo_nome?: string
+          arquivo_path?: string
+          arquivo_tamanho?: number | null
+          arquivo_tipo?: string | null
+          contexto?: string | null
+          created_at?: string
+          descricao?: string | null
+          erro?: string | null
+          id?: string
+          modulo?: string
+          resumo_ia?: string | null
+          status?: string
+          submitted_by?: string
+          submitted_by_nome?: string | null
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bc_scorecard_submissoes: {
         Row: {
           ai_erro: string | null
@@ -1256,6 +1375,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_review_modulo: {
+        Args: { _modulo: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

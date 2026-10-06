@@ -158,10 +158,10 @@ const BC_NAO_FINALIZADO: BCRow[] = ["BC em Construção", "Em Revisão", "Sem BC
 const JA_INICIADO: AndamentoCol[] = ["Em Andamento", "Atrasado"];
 
 const objCoberturaByClass: Record<Classificacao, { obj: string; n: number }[]> = {
-  "Institucional":             [{ obj: "P.03", n: 22 }, { obj: "C.01", n: 18 }, { obj: "P.01", n: 16 }, { obj: "AC.03", n: 14 }, { obj: "F.01", n: 12 }, { obj: "C.02", n: 10 }, { obj: "F.02", n: 8 }, { obj: "C.03", n: 5 }],
-  "Melhoria Contínua":         [{ obj: "F.01", n: 20 }, { obj: "F.02", n: 18 }, { obj: "AC.01", n: 16 }, { obj: "P.01", n: 14 }, { obj: "AC.03", n: 12 }, { obj: "P.02", n: 10 }, { obj: "C.02", n: 6 }, { obj: "C.03", n: 4 }],
-  "Melhoria Contínua com EPP": [{ obj: "AC.03", n: 14 }, { obj: "F.01", n: 10 }, { obj: "AC.01", n: 9 }, { obj: "P.01", n: 8 }, { obj: "F.02", n: 6 }, { obj: "C.01", n: 5 }, { obj: "P.02", n: 4 }, { obj: "C.02", n: 2 }],
-  "Novo Produto":              [{ obj: "AC.03", n: 12 }, { obj: "F.01", n: 8 }, { obj: "C.02", n: 7 }, { obj: "C.03", n: 6 }, { obj: "P.03", n: 5 }, { obj: "AC.01", n: 4 }, { obj: "P.01", n: 3 }, { obj: "F.02", n: 2 }],
+  "Institucional":             [{ obj: "C.01", n: 33 }, { obj: "P.03", n: 22 }, { obj: "P.01", n: 16 }, { obj: "AC.03", n: 14 }, { obj: "F.01", n: 12 }, { obj: "F.02", n: 8 }],
+  "Melhoria Contínua":         [{ obj: "F.01", n: 20 }, { obj: "F.02", n: 18 }, { obj: "AC.01", n: 16 }, { obj: "P.01", n: 14 }, { obj: "AC.03", n: 12 }, { obj: "P.02", n: 10 }, { obj: "C.01", n: 10 }],
+  "Melhoria Contínua com EPP": [{ obj: "AC.03", n: 14 }, { obj: "F.01", n: 10 }, { obj: "AC.01", n: 9 }, { obj: "P.01", n: 8 }, { obj: "C.01", n: 7 }, { obj: "F.02", n: 6 }, { obj: "P.02", n: 4 }],
+  "Novo Produto":              [{ obj: "C.01", n: 13 }, { obj: "AC.03", n: 12 }, { obj: "F.01", n: 8 }, { obj: "P.03", n: 5 }, { obj: "AC.01", n: 4 }, { obj: "P.01", n: 3 }, { obj: "F.02", n: 2 }],
 };
 
 const ROI_BASE = [

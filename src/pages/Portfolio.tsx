@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers, ChevronUp } from "lucide-react";
 import { type Projeto, type CategoriaEstrategica, diretores, objetivosBSC, okrs, categoriasEstrategicas } from "@/data/mockData";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
+import BaseSubmissaoIA from "@/components/BaseSubmissaoIA";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import Submissao from "./Submissao";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
@@ -170,6 +171,7 @@ export default function Portfolio() {
 
   return (
     <div className="space-y-5">
+      <BaseSubmissaoIA modulo="pmo" titulo="Atualizar portfólio de projetos com IA" contexto={() => initial.map((p) => ({ codigo: p.id, nome: p.nome, status: p.status, saude: p.saude, wave: p.wave, diretor: p.diretor, gerente: p.gerente, budget: p.budget, realizado: p.realizado, termino: p.termino }))} />
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>

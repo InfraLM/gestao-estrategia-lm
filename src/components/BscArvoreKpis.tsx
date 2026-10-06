@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Heart, Cog, GraduationCap, History, ChevronDown, ChevronRight } from "lucide-react";
 import rev02 from "@/data/bscRev02.json";
+import BaseSubmissaoIA from "@/components/BaseSubmissaoIA";
+import { useBaseOverrides } from "@/hooks/useBaseOverrides";
 
 type Kpi = { kpi: string; nivel: string; diretor: string; coDiretor: string; formula: string; situacaoAtual: string; meta2026: string; farol: string; responsavelImplantacao: string; statusImplantacao: string };
 type Obj = { codigo: string; nome: string; kpis: Kpi[] };
@@ -31,6 +33,7 @@ function KpiLinha({ k }: { k: Kpi }) {
       <button type="button" onClick={() => setOpen(!open)} className="w-full flex items-start gap-2 p-2 text-left">
         {open ? <ChevronDown className="h-3.5 w-3.5 mt-0.5 shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 mt-0.5 shrink-0" />}
         <span className={`flex-1 ${estr ? "font-semibold" : ""}`}>{k.kpi}</span>
+        {(k as any).__atualizado && <Badge variant="outline" className="text-[10px] shrink-0 bg-primary/10 text-primary border-primary/30">atualizado</Badge>}
         <Badge variant="outline" className="text-[10px] shrink-0">{k.nivel}</Badge>
         {k.farol && <Badge variant="outline" className={`text-[10px] shrink-0 ${farolCls(k.farol)}`}>{k.farol}</Badge>}
       </button>
@@ -53,9 +56,11 @@ export type BscRev01 = { perspectiva: string; icon: any; cor: string; objetivos:
 
 export default function BscArvoreKpis({ rev01 }: { rev01: BscRev01 }) {
   const [hist, setHist] = useState(false);
-  const objs = rev02 as Obj[];
+  const { aplicar } = useBaseOverrides("estrategia");
+  const objs = (rev02 as Obj[]).map((o) => ({ ...aplicar("objetivo", o.codigo, o), kpis: o.kpis.map((k) => aplicar("kpi", k.kpi, k)) }));
   return (
     <div className="space-y-6">
+      <BaseSubmissaoIA modulo="estrategia" titulo="Atualizar BSC / Árvore de KPIs com IA" contexto={() => objs} />
       <div className="rounded-lg bg-card border border-border p-4 flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3">
           <span className="text-xs font-bold tracking-widest text-primary">BHAG</span>

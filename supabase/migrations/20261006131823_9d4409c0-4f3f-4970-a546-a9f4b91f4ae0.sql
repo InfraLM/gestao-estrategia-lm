@@ -1,0 +1,1 @@
+revoke execute on function public.can_review_modulo(uuid, text) from public, anon;
