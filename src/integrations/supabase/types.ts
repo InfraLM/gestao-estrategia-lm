@@ -372,6 +372,30 @@ export type Database = {
         }
         Relationships: []
       }
+      conteudo_editavel: {
+        Row: {
+          atualizado_por: string | null
+          atualizado_por_nome: string | null
+          chave: string
+          updated_at: string
+          valor: Json
+        }
+        Insert: {
+          atualizado_por?: string | null
+          atualizado_por_nome?: string | null
+          chave: string
+          updated_at?: string
+          valor: Json
+        }
+        Update: {
+          atualizado_por?: string | null
+          atualizado_por_nome?: string | null
+          chave?: string
+          updated_at?: string
+          valor?: Json
+        }
+        Relationships: []
+      }
       cronograma_itens: {
         Row: {
           created_at: string

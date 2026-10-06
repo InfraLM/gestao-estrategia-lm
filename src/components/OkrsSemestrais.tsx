@@ -7,7 +7,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { Target, Link2, Plus, X, User, Rocket, Lightbulb } from "lucide-react";
-import { OKRS } from "@/data/okrs";
+import { OKRS as OKRS_DEF } from "@/data/okrs";
+import { useConteudo } from "@/hooks/useConteudo";
+import { EditarConteudo } from "@/components/EditarConteudo";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
 
 const STORAGE_KEY = "okrs-vinculos-v1";
@@ -21,6 +23,7 @@ function loadMap(): Mapa {
 function saveMap(m: Mapa) { localStorage.setItem(STORAGE_KEY, JSON.stringify(m)); }
 
 export default function OkrsSemestrais() {
+  const OKRS = useConteudo("estr.okrs-semestrais", OKRS_DEF).data;
   const { data: projetos } = useProjetosDB();
   const [mapa, setMapa] = useState<Mapa>({});
   const [semId, setSemId] = useState(OKRS[0].id);
@@ -73,6 +76,7 @@ export default function OkrsSemestrais() {
           <p className="text-sm text-muted-foreground mt-1">
             Cada Key Result pode ser vinculado a projetos do portfólio estratégico e a iniciativas do backlog, deixando explícito quem impacta diretamente cada resultado-chave.
           </p>
+          <div><EditarConteudo chave="estr.okrs-semestrais" padrao={OKRS_DEF} titulo="OKRs Semestrais" /></div>
         </CardHeader>
         <CardContent>
           <Tabs value={semId} onValueChange={setSemId}>
