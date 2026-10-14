@@ -117,9 +117,16 @@ export default function MetasLancamento() {
     const d = rasc[i.id];
     if (!d || d.sem) return { mes: null, dez: null, nota: null };
     const real = parseNum(d.valor);
-    const mes = atingimento(real, metaDe(i.id, comp)?.meta_mes ?? null, i.sentido);
-    const dez = atingimento(real, metaDez(i), i.sentido);
-    return { mes, dez, nota: dez ?? mes };
+    const mm = metaDe(i.id, comp);
+    const mes = atingimento(real, mm?.meta_mes ?? null, i.sentido);
+    // Acumulativa (curva soma mês a mês): soma realizados jul..mês e compara com a meta acumulada; também mostra vs. dezembro.
+    const acumulativa = mm?.meta_acumulada != null && mm.meta_mes != null && mm.meta_acumulada !== mm.meta_mes;
+    if (acumulativa && real != null) {
+      const prev = MESES_2S26.slice(0, MESES_2S26.indexOf(comp)).reduce((s, c2) => s + (lancDe(i.id, c2)?.valor ?? 0), 0);
+      const acum = prev + real;
+      return { mes, dez: atingimento(acum, metaDez(i), i.sentido), nota: atingimento(acum, mm!.meta_acumulada, i.sentido) };
+    }
+    return { mes, dez: atingimento(real, metaDez(i), i.sentido), nota: mes };
   };
   const nota = useMemo(() => {
     let sp = 0, s = 0;
@@ -240,7 +247,7 @@ export default function MetasLancamento() {
                   <Label htmlFor={`s-${i.id}`} className="text-sm font-normal">Sem medição</Label>
                 </div>
                 {c.mes != null || c.dez != null ? (
-                  <p className="text-xs text-muted-foreground">Mês: {pct(c.mes)} · vs. Dez: {pct(c.dez)}</p>
+                  <p className="text-xs text-muted-foreground">Mês: {pct(c.mes)} · Acumulado vs. Dez: {pct(c.dez)}</p>
                 ) : null}
               </div>
               <div className="space-y-2">
