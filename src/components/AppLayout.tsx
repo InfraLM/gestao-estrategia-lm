@@ -33,8 +33,16 @@ const navGroups: NavGroup[] = [
       { to: "/cesta-metas", label: "Cesta de Metas", icon: UserCog },
       { to: "/metas/painel", label: "Metas 2S26 · Painel da Governança", icon: Settings2 },
       { to: "/metas/lancamento", label: "Metas 2S26 · Lançamento mensal", icon: Settings2 },
-      { to: "/metas/semanal", label: "Metas 2S26 · Check-in e Checkout", icon: Settings2 },
       { to: "/metas/cadastros", label: "Metas 2S26 · Cadastros", icon: Settings2 },
+    ],
+  },
+  {
+    id: "rotina",
+    label: "Rotina Semanal",
+    icon: Repeat,
+    children: [
+      { to: "/semanal/visao", label: "Visão semanal", icon: LayoutGrid },
+      { to: "/metas/semanal", label: "Check-in e Checkout", icon: ListChecks },
     ],
   },
   {
@@ -84,7 +92,8 @@ const titles: Record<string, string> = {
   "/metas/cadastros": "Sistema de Metas 2S26 · Cadastros",
   "/metas/painel": "Sistema de Metas 2S26 · Painel da Governança",
   "/metas/lancamento": "Sistema de Metas 2S26 · Lançamento mensal",
-  "/metas/semanal": "Sistema de Metas 2S26 · Check-in e Checkout semanal",
+  "/metas/semanal": "Rotina Semanal · Check-in e Checkout",
+  "/semanal/visao": "Rotina Semanal · Visão da semana",
   "/historico/estrategia": "Histórico de Estratégia",
   "/historico/okrs": "Histórico de OKRs",
   "/historico/cesta-metas": "Histórico de Cesta de Metas",

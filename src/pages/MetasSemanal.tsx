@@ -15,8 +15,10 @@ import { useMetasBase, statusEfetivo, STATUS_INI } from "@/hooks/useMetasBase";
 const db = supabase as any;
 export type Prioridade = { titulo: string; iniciativa_id: string; resultado: string };
 export type CheckinConteudo = { prioridades: Prioridade[]; riscos: string; apoio: string; confianca: number };
-export type Entrega = { titulo: string; status: "entregue" | "parcial" | "nao_entregue" | ""; motivo: string };
-export type CheckoutConteudo = { entregas: Entrega[]; extras: string; aprendizados: string; proxima: string; ritmo: number };
+export type Entrega = { titulo: string; status: "entregue" | "parcial" | "nao_entregue" | ""; motivo: string; iniciativa_id?: string; novo_status_ini?: string };
+export type KpiSituacao = { indicador_id: string; valor: string; situacao: "no_trilho" | "atencao" | "fora" | ""; comentario: string };
+export const SITUACAO_LBL: Record<string, string> = { no_trilho: "No trilho", atencao: "Atenção", fora: "Fora do trilho" };
+export type CheckoutConteudo = { entregas: Entrega[]; extras: string; aprendizados: string; proxima: string; ritmo: number; kpis?: KpiSituacao[] };
 export const ENTREGA_LBL: Record<string, string> = { entregue: "Entregue", parcial: "Parcial", nao_entregue: "Não entregue" };
 
 export function segunda(d = new Date()) {
@@ -49,8 +51,8 @@ export default function MetasSemanal() {
     const cin: CheckinConteudo = rIn?.conteudo?.prioridades ? rIn.conteudo : vazioIn();
     setCi(cin);
     setCo(rOut?.conteudo?.entregas ? rOut.conteudo : {
-      entregas: cin.prioridades.filter((p) => p.titulo).map((p) => ({ titulo: p.titulo, status: "", motivo: "" })),
-      extras: "", aprendizados: "", proxima: "", ritmo: 3,
+      entregas: cin.prioridades.filter((p) => p.titulo).map((p) => ({ titulo: p.titulo, status: "", motivo: "", iniciativa_id: p.iniciativa_id })),
+      extras: "", aprendizados: "", proxima: "", ritmo: 3, kpis: [],
     });
   };
   useEffect(() => { load(); }, [cad, sem]);
@@ -58,6 +60,14 @@ export default function MetasSemanal() {
   const podeEditar = b.isGov || (!!cad && b.minhaCadeira === cad);
   const semanas = useMemo(() => [0, 1, 2, 3, 4, 5].map((n) => segunda(new Date(Date.now() - n * 7 * 864e5))), []);
   const inis = b.iniciativas.filter((i) => i.cadeira_id === cad && !["concluida", "cancelada"].includes(i.status));
+  const inds = b.indicadores.filter((x) => x.cadeira_id === cad && x.status === "ativo");
+  const kpis = co.kpis ?? [];
+  const vinc = (id?: string) => {
+    const x = b.iniciativas.find((i) => i.id === id); if (!x) return null;
+    const okr = b.okrs.find((o) => o.id === x.okr_id); const obj = b.objetivos.find((o) => o.id === x.objetivo_id);
+    const ind = b.indicadores.find((o) => o.id === x.indicador_id);
+    return { x, txt: [okr?.codigo, ind?.codigo, obj?.codigo].filter(Boolean).join(" · ") };
+  };
   const row = (t: string) => rows.find((r) => r.tipo === t);
 
   const salvar = async (tipo: "checkin" | "checkout", enviar: boolean) => {
@@ -73,6 +83,12 @@ export default function MetasSemanal() {
     if (enviar) Object.assign(payload, { enviado_por: b.user?.id, enviado_por_nome: nome, enviado_em: new Date().toISOString() });
     const { error } = await db.from("mt_checkins").upsert(payload, { onConflict: "cadeira_id,semana,tipo" });
     if (error) return toast.error(error.message);
+    if (enviar && tipo === "checkout") {
+      for (const e of co.entregas) {
+        if (e.iniciativa_id && e.novo_status_ini) await db.from("mt_iniciativas").update({ status: e.novo_status_ini }).eq("id", e.iniciativa_id);
+      }
+      b.reload();
+    }
     toast.success(enviar ? "Enviado à Governança." : "Rascunho salvo."); load();
   };
 
@@ -150,7 +166,7 @@ export default function MetasSemanal() {
             <div className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">Resultado das prioridades</h2><Situacao tipo="checkout" /></div>
             {co.entregas.length === 0 && <p className="text-sm text-muted-foreground">Preencha e salve o check-in para trazer as prioridades da semana.</p>}
             {podeEditar && co.entregas.length === 0 && ci.prioridades.some((p) => p.titulo) && (
-              <Button variant="outline" size="sm" onClick={() => setCo({ ...co, entregas: ci.prioridades.filter((p) => p.titulo).map((p) => ({ titulo: p.titulo, status: "", motivo: "" })) })}>Trazer prioridades do check-in</Button>
+              <Button variant="outline" size="sm" onClick={() => setCo({ ...co, entregas: ci.prioridades.filter((p) => p.titulo).map((p) => ({ titulo: p.titulo, status: "", motivo: "", iniciativa_id: p.iniciativa_id })) })}>Trazer prioridades do check-in</Button>
             )}
             {co.entregas.map((e, i) => {
               const set = (x: Partial<Entrega>) => setCo({ ...co, entregas: co.entregas.map((q, j) => (j === i ? { ...q, ...x } : q)) });
@@ -161,10 +177,41 @@ export default function MetasSemanal() {
                     <SelectTrigger><SelectValue placeholder="Resultado" /></SelectTrigger>
                     <SelectContent>{Object.entries(ENTREGA_LBL).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent>
                   </Select>
+                  {(() => { const v = vinc(e.iniciativa_id); if (!v) return null; return (
+                    <div className="md:col-span-2 flex flex-wrap items-center gap-2 text-sm">
+                      <span className="text-muted-foreground">Iniciativa: <b className="text-foreground">{v.x.titulo}</b>{v.txt && ` (${v.txt})`} · atual {STATUS_INI[statusEfetivo(v.x)]}</span>
+                      <Select value={e.novo_status_ini || "manter"} onValueChange={(nv) => set({ novo_status_ini: nv === "manter" ? "" : nv })} disabled={!podeEditar}>
+                        <SelectTrigger className="w-56 h-8"><SelectValue /></SelectTrigger>
+                        <SelectContent><SelectItem value="manter">Manter status</SelectItem>{["a_iniciar","em_andamento","concluida","cancelada"].map((k) => <SelectItem key={k} value={k}>Atualizar para: {STATUS_INI[k]}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>); })()}
                   {e.status && e.status !== "entregue" && <Input className="md:col-span-2" placeholder="Por que não foi entregue e qual o novo prazo?" value={e.motivo} disabled={!podeEditar} onChange={(ev) => set({ motivo: ev.target.value })} />}
                 </div>
               );
             })}
+            <div className="space-y-2">
+              <h3 className="font-semibold">Situação atual de KPIs da cadeira</h3>
+              {kpis.map((k, i) => {
+                const setK = (x: Partial<KpiSituacao>) => setCo({ ...co, kpis: kpis.map((q, j) => (j === i ? { ...q, ...x } : q)) });
+                return (
+                  <div key={i} className="grid gap-2 rounded border p-3 md:grid-cols-[2fr_120px_160px_auto]">
+                    <Select value={k.indicador_id} onValueChange={(v) => setK({ indicador_id: v })} disabled={!podeEditar}>
+                      <SelectTrigger><SelectValue placeholder="Indicador" /></SelectTrigger>
+                      <SelectContent>{inds.map((x) => <SelectItem key={x.id} value={x.id}>{x.codigo} · {x.nome}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <Input placeholder="Valor atual" value={k.valor} disabled={!podeEditar} onChange={(e) => setK({ valor: e.target.value })} />
+                    <Select value={k.situacao} onValueChange={(v) => setK({ situacao: v as KpiSituacao["situacao"] })} disabled={!podeEditar}>
+                      <SelectTrigger><SelectValue placeholder="Situação" /></SelectTrigger>
+                      <SelectContent>{Object.entries(SITUACAO_LBL).map(([a, l]) => <SelectItem key={a} value={a}>{l}</SelectItem>)}</SelectContent>
+                    </Select>
+                    {podeEditar && <Button variant="ghost" size="icon" aria-label="Remover KPI" onClick={() => setCo({ ...co, kpis: kpis.filter((_, j) => j !== i) })}><Trash2 className="h-4 w-4" /></Button>}
+                    <Input className="md:col-span-3" placeholder="Comentário (opcional)" value={k.comentario} disabled={!podeEditar} onChange={(e) => setK({ comentario: e.target.value })} />
+                  </div>
+                );
+              })}
+              {podeEditar && <Button variant="outline" size="sm" onClick={() => setCo({ ...co, kpis: [...kpis, { indicador_id: "", valor: "", situacao: "", comentario: "" }] })}><Plus className="h-4 w-4 mr-1" /> Apontar KPI</Button>}
+              <p className="text-xs text-muted-foreground">Apontamento semanal de acompanhamento — não substitui o lançamento mensal oficial.</p>
+            </div>
             <div className="grid gap-3 md:grid-cols-3">
               <div className="space-y-1"><Label>Entregas fora do planejado</Label><Textarea rows={3} value={co.extras} disabled={!podeEditar} onChange={(e) => setCo({ ...co, extras: e.target.value })} /></div>
               <div className="space-y-1"><Label>Aprendizados</Label><Textarea rows={3} value={co.aprendizados} disabled={!podeEditar} onChange={(e) => setCo({ ...co, aprendizados: e.target.value })} /></div>
