@@ -11,6 +11,8 @@ import { AlertTriangle, CheckCircle2, Clock, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, MESES_2S26, statusEfetivo } from "@/hooks/useMetasBase";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { prazoDe, ENTREGA_LBL } from "@/pages/MetasSemanal";
 
 const db = supabase as any;
 const MES_LONGO: Record<string, string> = { "07": "Julho", "08": "Agosto", "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro" };
@@ -54,6 +56,7 @@ export default function MetasPainel() {
   const [checks, setChecks] = useState<any[]>([]);
   const [regua, setRegua] = useState<Regua | null>(null);
   const [edReg, setEdReg] = useState<Regua | null>(null);
+  const [ver, setVer] = useState<any>(null);
 
   const load = async () => {
     const [c, e, l, a, k, p] = await Promise.all([
@@ -110,8 +113,39 @@ export default function MetasPainel() {
     return f ? <span className={`rounded px-2 py-0.5 text-xs font-medium ${CORES[f.cor]?.cls ?? ""}`}>{f.nome}</span> : null;
   };
 
+  const Sem = ({ k, tipo, nome }: { k: any; tipo: string; nome: string }) => {
+    if (!k) return <Badge variant={new Date() > prazoDe(semanas[0], tipo) ? "destructive" : "outline"}>Pendente</Badge>;
+    const late = new Date(k.enviado_em) > prazoDe(k.semana, tipo);
+    return <button onClick={() => setVer({ ...k, nome })}><Badge className={late ? "bg-warning text-warning-foreground" : "bg-success text-success-foreground"}>Enviado{late ? " · atrasado" : ""}</Badge></button>;
+  };
+
   return (
     <div className="space-y-4">
+      <Dialog open={!!ver} onOpenChange={(o) => !o && setVer(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{ver?.tipo === "checkin" ? "Check-in" : "Checkout"} · {ver?.nome}</DialogTitle></DialogHeader>
+          {ver && <p className="text-xs text-muted-foreground">{ver.enviado_por_nome ?? "—"} · {ver.enviado_em ? dt(ver.enviado_em) : ""}</p>}
+          {ver?.tipo === "checkin" && (
+            <div className="space-y-3 text-sm">
+              <ol className="list-decimal pl-5 space-y-1">{(ver.conteudo.prioridades ?? []).map((p: any, i: number) => (
+                <li key={i}><b>{p.titulo}</b>{p.iniciativa_id && <span className="text-muted-foreground"> · {b.iniciativas.find((x) => x.id === p.iniciativa_id)?.titulo}</span>}{p.resultado && <p className="text-muted-foreground">Esperado: {p.resultado}</p>}</li>))}</ol>
+              <p><b>Riscos e bloqueios:</b> {ver.conteudo.riscos || "—"}</p>
+              <p><b>Apoio necessário:</b> {ver.conteudo.apoio || "—"}</p>
+              <p><b>Confiança:</b> {ver.conteudo.confianca}/5</p>
+            </div>
+          )}
+          {ver?.tipo === "checkout" && (
+            <div className="space-y-3 text-sm">
+              <ul className="space-y-1">{(ver.conteudo.entregas ?? []).map((e: any, i: number) => (
+                <li key={i}><Badge variant={e.status === "entregue" ? "default" : e.status === "parcial" ? "secondary" : "destructive"}>{ENTREGA_LBL[e.status] ?? "—"}</Badge> {e.titulo}{e.motivo && <p className="text-muted-foreground pl-2">{e.motivo}</p>}</li>))}</ul>
+              <p><b>Entregas fora do planejado:</b> {ver.conteudo.extras || "—"}</p>
+              <p><b>Aprendizados:</b> {ver.conteudo.aprendizados || "—"}</p>
+              <p><b>Foco da próxima semana:</b> {ver.conteudo.proxima || "—"}</p>
+              <p><b>Avaliação da semana:</b> {ver.conteudo.ritmo}/5</p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
       <Card className="p-4 sm:p-5">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -161,8 +195,8 @@ export default function MetasPainel() {
                         : e ? <span className="inline-flex items-center gap-1 text-warning"><Clock className="h-4 w-4" /> Rascunho</span>
                         : <span className="inline-flex items-center gap-1 text-destructive"><AlertTriangle className="h-4 w-4" /> Não atualizada</span>}
                     </td>
-                    <td className="pr-3">{ci ? <Badge className="bg-success text-success-foreground">Enviado</Badge> : <Badge variant="outline">Pendente</Badge>}</td>
-                    <td className="pr-3">{co ? <Badge className="bg-success text-success-foreground">Enviado</Badge> : <Badge variant="outline">Pendente</Badge>}</td>
+                    <td className="pr-3"><Sem k={ci} tipo="checkin" nome={c.nome} /></td>
+                    <td className="pr-3"><Sem k={co} tipo="checkout" nome={c.nome} /></td>
                     <td className="pr-3">{atrasadas ? <Badge variant="destructive">{atrasadas}</Badge> : "0"}</td>
                   </tr>
                 );
@@ -170,7 +204,8 @@ export default function MetasPainel() {
             </tbody>
           </table>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">Check-in e checkout referem-se à semana de {new Date(semanas[0] + "T12:00").toLocaleDateString("pt-BR")}. O formulário semanal ainda será construído; até lá estas colunas ficam pendentes.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Check-in e checkout referem-se à semana de {new Date(semanas[0] + "T12:00").toLocaleDateString("pt-BR")}. Clique em "Enviado" para ver o conteúdo. Prazos: check-in segunda 12h, checkout sexta 18h.</p>
+        <p className="text-xs"><Link className="underline" to="/metas/semanal">Abrir formulário semanal</Link></p>
         <Button asChild variant="link" className="px-0"><Link to="/metas/lancamento">Abrir formulário mensal</Link></Button>
       </Card>
 
