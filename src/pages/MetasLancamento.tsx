@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   useMetasBase, MESES_2S26, STATUS_INI, statusEfetivo, fmtNum, type Indicador,
 } from "@/hooks/useMetasBase";
+import { faixaDaNota, type Regua } from "@/pages/MetasPainel";
 
 const db = supabase as any;
 const MES_LONGO: Record<string, string> = { "07": "Julho", "08": "Agosto", "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro" };
@@ -56,6 +57,8 @@ export default function MetasLancamento() {
   const [ini, setIni] = useState<Record<string, { status: string; prazo: string; comentario: string }>>({});
   const [erros, setErros] = useState<Record<string, string>>({});
   const [salvando, setSalvando] = useState(false);
+  const [regua, setRegua] = useState<Regua | null>(null);
+  useEffect(() => { db.from("mt_parametros").select("valor").eq("chave", "regua").maybeSingle().then(({ data }: any) => setRegua(data?.valor ?? null)); }, []);
   const [confirmar, setConfirmar] = useState<null | "fechar" | "reabrir">(null);
 
   const carregar = async () => {
@@ -292,6 +295,7 @@ export default function MetasLancamento() {
           <div className="text-right">
             <p className="text-xs text-muted-foreground">Nota da cadeira</p>
             <p className="text-3xl font-bold tabular-nums">{pct(nota)}</p>
+            {faixaDaNota(nota, regua) && <Badge variant="outline">{faixaDaNota(nota, regua)!.nome}</Badge>}
             <p className="text-[11px] text-muted-foreground max-w-[220px]">Média ponderada pelos pesos; exclui peso zero e “Sem medição”.</p>
           </div>
         </div>
