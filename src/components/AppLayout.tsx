@@ -31,6 +31,7 @@ const navGroups: NavGroup[] = [
     children: [
       { to: "/okrs", label: "OKRs do Semestre", icon: Target },
       { to: "/cesta-metas", label: "Cesta de Metas", icon: UserCog },
+      { to: "/metas/painel", label: "Metas 2S26 · Painel da Governança", icon: Settings2 },
       { to: "/metas/lancamento", label: "Metas 2S26 · Lançamento mensal", icon: Settings2 },
       { to: "/metas/cadastros", label: "Metas 2S26 · Cadastros", icon: Settings2 },
     ],
@@ -80,6 +81,7 @@ const titles: Record<string, string> = {
   "/gestao-processos": "Gestão de Processos · Mapeamento e Análise",
   "/matriz-riscos": "Matriz de Riscos Institucionais",
   "/metas/cadastros": "Sistema de Metas 2S26 · Cadastros",
+  "/metas/painel": "Sistema de Metas 2S26 · Painel da Governança",
   "/metas/lancamento": "Sistema de Metas 2S26 · Lançamento mensal",
   "/historico/estrategia": "Histórico de Estratégia",
   "/historico/okrs": "Histórico de OKRs",
