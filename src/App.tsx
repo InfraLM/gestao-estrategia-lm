@@ -19,6 +19,7 @@ import MetasCadastros from "./pages/MetasCadastros";
 import MetasLancamento from "./pages/MetasLancamento";
 import MetasPainel from "./pages/MetasPainel";
 import MetasSemanal from "./pages/MetasSemanal";
+import SemanalVisao from "./pages/SemanalVisao";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
 import Okrs from "./pages/Okrs";
@@ -72,6 +73,7 @@ const App = () => (
               <Route path="/metas/lancamento" element={<MetasLancamento />} />
               <Route path="/metas/painel" element={<MetasPainel />} />
               <Route path="/metas/semanal" element={<MetasSemanal />} />
+              <Route path="/semanal/visao" element={<SemanalVisao />} />
               <Route path="/backlog-estrategico" element={<BacklogEstrategico />} />
               <Route path="/impacto-estrategico" element={<ImpactoEstrategico />} />
               <Route path="/matriz-processos" element={<MatrizProcessos />} />
