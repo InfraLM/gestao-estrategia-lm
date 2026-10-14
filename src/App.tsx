@@ -17,6 +17,7 @@ import PlaceholderDoc from "./pages/PlaceholderDoc";
 import HistoricoModulo from "./pages/HistoricoModulo";
 import MetasCadastros from "./pages/MetasCadastros";
 import MetasLancamento from "./pages/MetasLancamento";
+import MetasPainel from "./pages/MetasPainel";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
 import Okrs from "./pages/Okrs";
@@ -68,6 +69,7 @@ const App = () => (
               <Route path="/cesta-metas" element={<CestaMetas />} />
               <Route path="/metas/cadastros" element={<MetasCadastros />} />
               <Route path="/metas/lancamento" element={<MetasLancamento />} />
+              <Route path="/metas/painel" element={<MetasPainel />} />
               <Route path="/backlog-estrategico" element={<BacklogEstrategico />} />
               <Route path="/impacto-estrategico" element={<ImpactoEstrategico />} />
               <Route path="/matriz-processos" element={<MatrizProcessos />} />

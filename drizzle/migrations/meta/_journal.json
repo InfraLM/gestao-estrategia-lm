@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791987657745,
+      "tag": "0000_metas_painel_governanca",
+      "breakpoints": true
+    }
+  ]
+}

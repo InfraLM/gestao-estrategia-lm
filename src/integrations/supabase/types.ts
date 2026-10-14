@@ -913,6 +913,56 @@ export type Database = {
         }
         Relationships: []
       }
+      mt_checkins: {
+        Row: {
+          cadeira_id: string
+          conteudo: Json
+          created_at: string
+          enviado_em: string | null
+          enviado_por: string | null
+          enviado_por_nome: string | null
+          id: string
+          semana: string
+          status: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          cadeira_id: string
+          conteudo?: Json
+          created_at?: string
+          enviado_em?: string | null
+          enviado_por?: string | null
+          enviado_por_nome?: string | null
+          id?: string
+          semana: string
+          status?: string
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          cadeira_id?: string
+          conteudo?: Json
+          created_at?: string
+          enviado_em?: string | null
+          enviado_por?: string | null
+          enviado_por_nome?: string | null
+          id?: string
+          semana?: string
+          status?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_checkins_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mt_competencias: {
         Row: {
           competencia: string
@@ -981,6 +1031,8 @@ export type Database = {
           enviado_por: string | null
           enviado_por_nome: string | null
           nota: number | null
+          nota_original: number | null
+          primeiro_envio_em: string | null
           revisao: number
           status: string
           updated_at: string
@@ -993,6 +1045,8 @@ export type Database = {
           enviado_por?: string | null
           enviado_por_nome?: string | null
           nota?: number | null
+          nota_original?: number | null
+          primeiro_envio_em?: string | null
           revisao?: number
           status?: string
           updated_at?: string
@@ -1005,6 +1059,8 @@ export type Database = {
           enviado_por?: string | null
           enviado_por_nome?: string | null
           nota?: number | null
+          nota_original?: number | null
+          primeiro_envio_em?: string | null
           revisao?: number
           status?: string
           updated_at?: string
@@ -1360,6 +1416,27 @@ export type Database = {
           nome?: string
           semestre?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      mt_parametros: {
+        Row: {
+          chave: string
+          updated_at: string
+          updated_by: string | null
+          valor: Json
+        }
+        Insert: {
+          chave: string
+          updated_at?: string
+          updated_by?: string | null
+          valor: Json
+        }
+        Update: {
+          chave?: string
+          updated_at?: string
+          updated_by?: string | null
+          valor?: Json
         }
         Relationships: []
       }
