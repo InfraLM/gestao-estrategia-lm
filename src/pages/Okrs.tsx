@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Target, History } from "lucide-react";
 import data from "@/data/okrs20262.json";
@@ -31,6 +32,7 @@ function ObjBadges({ cods, destaque = [] as string[] }: { cods: string[]; destaq
 export default function Okrs() {
   const hist = OKRS.find((s) => s.id === "2026-1");
   const { aplicar } = useBaseOverrides("okrs");
+  const [sem, setSem] = useState("todos");
   const { data: okrsBase } = useConteudo<any[]>("okrs.2026-2", data.okrs as any[]);
   const okrs = okrsBase.map((o) => ({ ...o, krs: o.krs.map((k: any) => aplicar("kr", k.codigo, k)) }));
   return (
@@ -45,17 +47,20 @@ export default function Okrs() {
 
         <BaseSubmissaoIA modulo="okrs" titulo="Atualizar OKRs e Cesta de Metas com IA" contexto={() => ({ okrs, diretores: data.diretores })} />
 
-        <Tabs defaultValue="atual">
-          <TabsList>
-            <TabsTrigger value="atual">2026/2 · vigente</TabsTrigger>
-            <TabsTrigger value="historico">Histórico · 2026/1</TabsTrigger>
-          </TabsList>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-muted-foreground">Semestre:</span>
+          {[["todos", "Todos (lista consolidada)"], ["2026-2", "2026/2 · vigente"], ["2026-1", "2026/1 · histórico"]].map(([v, l]) => (
+            <Button key={v} size="sm" variant={sem === v ? "default" : "outline"} onClick={() => setSem(v)}>{l}</Button>
+          ))}
+          <Badge variant="outline" className="ml-auto">{(sem !== "2026-1" ? okrs.length : 0) + (sem !== "2026-2" ? (hist?.okrs.length ?? 0) : 0)} OKRs</Badge>
+        </div>
 
-          <TabsContent value="atual" className="grid md:grid-cols-2 gap-4 mt-4">
+        <div className="space-y-4">
+          {sem !== "2026-1" && (<>
             {okrs.map((o) => (
               <Card key={o.codigo}>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm flex items-center gap-2"><Target className="h-4 w-4 text-primary" />{o.titulo}</CardTitle>
+                  <CardTitle className="text-sm flex items-center gap-2"><Target className="h-4 w-4 text-primary" />{o.titulo}<Badge variant="outline" className="ml-auto text-[10px]">2026/2 · vigente</Badge></CardTitle>
                   <div className="text-[11px] text-muted-foreground space-y-1 mt-1">
                     <div className="flex items-center gap-2"><span>Primários:</span><ObjBadges cods={o.primarios} destaque={o.primarios} /></div>
                     {o.secundarios.length > 0 && <div className="flex items-center gap-2"><span>Secundários:</span><ObjBadges cods={o.secundarios} /></div>}
@@ -86,15 +91,13 @@ export default function Okrs() {
                 </CardContent>
               </Card>
             ))}
-          </TabsContent>
-
-          <TabsContent value="historico" className="space-y-3 mt-4">
+          </>)}
+          {sem !== "2026-2" && (<>
             <p className="text-xs text-muted-foreground flex items-center gap-1.5"><History className="h-3.5 w-3.5" /> OKRs 2026/1 — mantidos como histórico (somente leitura).</p>
-            <div className="grid md:grid-cols-2 gap-4">
               {hist?.okrs.map((o) => (
                 <Card key={o.id} className="opacity-90">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">{o.tema} <span className="text-muted-foreground font-normal">· {o.responsavel}</span></CardTitle>
+                    <CardTitle className="text-sm flex items-center gap-2">{o.tema} <span className="text-muted-foreground font-normal">· {o.responsavel}</span><Badge variant="outline" className="ml-auto text-[10px]">2026/1 · histórico</Badge></CardTitle>
                     <p className="text-[11px] text-muted-foreground">{o.objetivo}</p>
                   </CardHeader>
                   <CardContent className="space-y-1 text-xs">
@@ -102,9 +105,8 @@ export default function Okrs() {
                   </CardContent>
                 </Card>
               ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+          </>)}
+        </div>
       </div>
     </TooltipProvider>
   );
