@@ -1440,6 +1440,77 @@ export type Database = {
         }
         Relationships: []
       }
+      mt_status_projetos: {
+        Row: {
+          arquivo_nome: string | null
+          arquivo_path: string | null
+          avancos: string | null
+          cadeira_id: string | null
+          competencia: string
+          created_at: string
+          custo_realizado: number | null
+          desvios: string | null
+          entregas: string | null
+          enviado_por: string | null
+          enviado_por_nome: string | null
+          equipe: string | null
+          id: string
+          pct_cronograma: number | null
+          projeto_codigo: string
+          recursos: string | null
+          saude: string | null
+          updated_at: string
+        }
+        Insert: {
+          arquivo_nome?: string | null
+          arquivo_path?: string | null
+          avancos?: string | null
+          cadeira_id?: string | null
+          competencia: string
+          created_at?: string
+          custo_realizado?: number | null
+          desvios?: string | null
+          entregas?: string | null
+          enviado_por?: string | null
+          enviado_por_nome?: string | null
+          equipe?: string | null
+          id?: string
+          pct_cronograma?: number | null
+          projeto_codigo: string
+          recursos?: string | null
+          saude?: string | null
+          updated_at?: string
+        }
+        Update: {
+          arquivo_nome?: string | null
+          arquivo_path?: string | null
+          avancos?: string | null
+          cadeira_id?: string | null
+          competencia?: string
+          created_at?: string
+          custo_realizado?: number | null
+          desvios?: string | null
+          entregas?: string | null
+          enviado_por?: string | null
+          enviado_por_nome?: string | null
+          equipe?: string | null
+          id?: string
+          pct_cronograma?: number | null
+          projeto_codigo?: string
+          recursos?: string | null
+          saude?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_status_projetos_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mt_usuarios: {
         Row: {
           cadeira_id: string | null

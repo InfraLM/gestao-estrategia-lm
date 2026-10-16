@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   useMetasBase, MESES_2S26, STATUS_INI, statusEfetivo, fmtNum, type Indicador,
 } from "@/hooks/useMetasBase";
+import { StatusReportsDaCadeira } from "@/components/StatusReportProjeto";
 import { faixaDaNota, type Regua } from "@/pages/MetasPainel";
 
 const db = supabase as any;
@@ -352,6 +353,8 @@ export default function MetasLancamento() {
           );
         })}
       </> })}
+
+      {cadeira && Secao({ t: "6. Status report dos projetos", n: 0, children: <StatusReportsDaCadeira cadeiraId={cadeira} diretorNome={b.cadeiras.find((c) => c.id === cadeira)?.diretor_nome ?? null} comp={comp} podeEditar={podeEditar} userId={b.user?.id} userNome={b.perfis.find((p) => p.user_id === b.user?.id)?.display_name ?? b.user?.email ?? null} /> })}
 
       {podeEditar && (
         <div className="fixed bottom-0 inset-x-0 z-30 border-t bg-background/95 backdrop-blur p-3">

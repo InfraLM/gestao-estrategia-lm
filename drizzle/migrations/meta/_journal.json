@@ -8,6 +8,13 @@
       "when": 1791987657745,
       "tag": "0000_metas_painel_governanca",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792169750251,
+      "tag": "0001_mt_status_projetos",
+      "breakpoints": true
     }
   ]
 }
