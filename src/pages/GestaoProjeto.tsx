@@ -15,7 +15,8 @@ import {
   Bar, BarChart, CartesianGrid, LabelList, Legend, Line, LineChart as RLineChart,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
-import { projetos, type Projeto } from "@/data/mockData";
+import { type Projeto } from "@/data/mockData";
+import { useProjetosDB } from "@/hooks/useProjetosDB";
 import { SaudeBadge } from "@/components/badges";
 import { cn } from "@/lib/utils";
 import { useProjectEditableData, type CronogramaItem, type EntregaItem, type SubmissaoDocumento } from "@/hooks/useProjectEditableData";
@@ -35,7 +36,15 @@ const tooltipStyle = {
 
 export default function GestaoProjeto() {
   const { id } = useParams<{ id: string }>();
-  const projeto = useMemo(() => projetos.find(p => p.id === id), [id]);
+  const { data, loading } = useProjetosDB();
+  const projeto = data.find(p => p.id === id);
+  if (!projeto && loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
+  return <GestaoProjetoInner key={id} projeto={projeto} />;
+}
+
+function GestaoProjetoInner({ projeto: pj }: { projeto?: Projeto }) {
+  const { id } = useParams<{ id: string }>();
+  const projeto = pj;
   const statusReports = useStatusProjeto(id ?? "");
   const ultSR = statusReports[0];
 

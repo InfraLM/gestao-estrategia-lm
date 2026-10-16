@@ -1,0 +1,1 @@
+ALTER TABLE public.bc_scorecard_submissoes ADD COLUMN projeto_codigo text;

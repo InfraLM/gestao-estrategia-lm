@@ -15,6 +15,13 @@
       "when": 1792169750251,
       "tag": "0001_mt_status_projetos",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792169939355,
+      "tag": "0002_bc_projeto_codigo",
+      "breakpoints": true
     }
   ]
 }

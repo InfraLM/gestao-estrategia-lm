@@ -285,6 +285,7 @@ export type Database = {
           pct_base_demanda: number | null
           peso_tecnico: string | null
           problema: string | null
+          projeto_codigo: string | null
           proponente: string | null
           publico_alvo: string | null
           qualidade_fonte: string | null
@@ -321,6 +322,7 @@ export type Database = {
           pct_base_demanda?: number | null
           peso_tecnico?: string | null
           problema?: string | null
+          projeto_codigo?: string | null
           proponente?: string | null
           publico_alvo?: string | null
           qualidade_fonte?: string | null
@@ -357,6 +359,7 @@ export type Database = {
           pct_base_demanda?: number | null
           peso_tecnico?: string | null
           problema?: string | null
+          projeto_codigo?: string | null
           proponente?: string | null
           publico_alvo?: string | null
           qualidade_fonte?: string | null
