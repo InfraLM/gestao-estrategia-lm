@@ -280,22 +280,17 @@ export default function Melhorias() {
         <TabsContent value="plano" className="space-y-6 mt-6">
           {/* KPIs */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="p-5 shadow-card">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Total de melhorias</div>
-              <div className="mt-2 text-3xl font-semibold tabular-nums">{total}</div>
-            </Card>
-            <Card className="p-5 shadow-card">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Melhoria Contínua</div>
-              <div className="mt-2 text-3xl font-semibold tabular-nums text-blue-700">{local}</div>
-            </Card>
-            <Card className="p-5 shadow-card">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Com Impacto (EPP)</div>
-              <div className="mt-2 text-3xl font-semibold tabular-nums text-purple-700">{epp}</div>
-            </Card>
-            <Card className="p-5 shadow-card">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Concluídas</div>
-              <div className="mt-2 text-3xl font-semibold tabular-nums text-emerald-700">{concluidas}</div>
-            </Card>
+            {([
+              ["Total de melhorias", total, "", () => { setClassifFilter("Todas"); setStatusFilter("Todos"); }, classifFilter === "Todas" && statusFilter === "Todos"],
+              ["Melhoria Contínua", local, "text-blue-700", () => { setClassifFilter("Melhoria Contínua"); setStatusFilter("Todos"); }, classifFilter === "Melhoria Contínua"],
+              ["Com Impacto (EPP)", epp, "text-purple-700", () => { setClassifFilter("Melhoria Contínua com EPP"); setStatusFilter("Todos"); }, classifFilter === "Melhoria Contínua com EPP"],
+              ["Concluídas", concluidas, "text-emerald-700", () => { setClassifFilter("Todas"); setStatusFilter("Concluído"); }, statusFilter === "Concluído"],
+            ] as [string, number, string, () => void, boolean][]).map(([l, v, c, fn, on]) => (
+              <Card key={l} role="button" tabIndex={0} onClick={fn} onKeyDown={(e) => e.key === "Enter" && fn()} className={`p-5 shadow-card cursor-pointer hover:shadow-elevated transition-shadow ${on ? "ring-2 ring-primary" : ""}`}>
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">{l}</div>
+                <div className={`mt-2 text-3xl font-semibold tabular-nums ${c}`}>{v}</div>
+              </Card>
+            ))}
           </div>
 
           {!areaSel ? (
