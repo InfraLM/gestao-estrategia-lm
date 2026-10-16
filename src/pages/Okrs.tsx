@@ -8,6 +8,8 @@ import bsc from "@/data/bscRev02.json";
 import { OKRS } from "@/data/okrs";
 import BaseSubmissaoIA from "@/components/BaseSubmissaoIA";
 import { useBaseOverrides } from "@/hooks/useBaseOverrides";
+import { useConteudo } from "@/hooks/useConteudo";
+import { EditarConteudo } from "@/components/EditarConteudo";
 
 const nomeObj = (c: string) => (bsc as { codigo: string; nome: string }[]).find((o) => o.codigo === c)?.nome ?? c;
 
@@ -29,7 +31,8 @@ function ObjBadges({ cods, destaque = [] as string[] }: { cods: string[]; destaq
 export default function Okrs() {
   const hist = OKRS.find((s) => s.id === "2026-1");
   const { aplicar } = useBaseOverrides("okrs");
-  const okrs = data.okrs.map((o) => ({ ...o, krs: o.krs.map((k: any) => aplicar("kr", k.codigo, k)) }));
+  const { data: okrsBase } = useConteudo<any[]>("okrs.2026-2", data.okrs as any[]);
+  const okrs = okrsBase.map((o) => ({ ...o, krs: o.krs.map((k: any) => aplicar("kr", k.codigo, k)) }));
   return (
     <TooltipProvider>
       <div className="space-y-4">
@@ -37,6 +40,8 @@ export default function Okrs() {
           <h2 className="text-lg font-semibold tracking-tight">OKRs</h2>
           <p className="text-sm text-muted-foreground">Objetivos priorizados do semestre (OKR 2026/2 consolidado 20.08.26), vinculados aos objetivos estratégicos do BSC (Rev.02).</p>
         </div>
+
+        <div className="flex justify-end"><EditarConteudo chave="okrs.2026-2" padrao={data.okrs as any[]} titulo="OKRs 2026/2 · KRs e vínculo com objetivos do BSC (primários/secundários: códigos F.01, C.01...)" /></div>
 
         <BaseSubmissaoIA modulo="okrs" titulo="Atualizar OKRs e Cesta de Metas com IA" contexto={() => ({ okrs, diretores: data.diretores })} />
 
