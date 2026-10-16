@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Search, FolderKanban, TrendingUp, AlertTriangle, Clock, Download } from "lucide-react";
-import { projetos } from "@/data/mockData";
+import { useProjetosDB } from "@/hooks/useProjetosDB";
+import { BcAprovadosGestao } from "@/components/BcAprovadosGestao";
 import { SaudeBadge } from "@/components/badges";
 import { SubmissaoProjetoDialog } from "@/components/SubmissaoProjetoDialog";
 import { Upload } from "lucide-react";
@@ -14,13 +15,14 @@ import { exportToCSV } from "@/lib/exportCsv";
 
 export default function Gestao() {
   const [q, setQ] = useState("");
+  const { data: projetos, refetch } = useProjetosDB();
 
   const iniciados = useMemo(
     () => projetos.filter(p =>
       p.classificacao === "Institucional" &&
       (p.status === "Em Andamento" || p.status === "Em Avaliação" || p.status === "Atrasado")
     ),
-    []
+    [projetos]
   );
 
   const [saudeSel, setSaudeSel] = useState<string | null>(null);
@@ -116,6 +118,8 @@ export default function Gestao() {
           </div>
         </Card>
       </div>
+
+      <BcAprovadosGestao projetos={projetos} onCriado={refetch} />
 
       {/* Lista de projetos iniciados */}
       <div>
