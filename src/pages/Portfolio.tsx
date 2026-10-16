@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,6 +48,8 @@ export default function Portfolio() {
   const [data, setData] = useState<Projeto[]>([]);
   useEffect(() => { setData(initial); }, [initial]);
   const [search, setSearch] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filterObjetivo = searchParams.get("objetivo");
   const [filterWave, setFilterWave] = useState<string[]>([]);
   const [filterClass, setFilterClass] = useState<string[]>([]);
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
@@ -128,14 +130,15 @@ export default function Portfolio() {
       (!filterStatus.length || filterStatus.includes(p.status)) &&
       (!filterDir.length || filterDir.includes(p.diretor)) &&
       (!filterCategoria.length || (p.categoria && filterCategoria.includes(p.categoria))) &&
-      (!filterPeriodo.length || filterPeriodo.some(per => isInPeriodo(p, per)))
+      (!filterPeriodo.length || filterPeriodo.some(per => isInPeriodo(p, per))) &&
+      (!filterObjetivo || (p.objetivos ?? []).includes(filterObjetivo))
     );
     // Rank: when periodo filter is active, sort by ICE desc (priority within period)
     if (filterPeriodo.length) {
       return [...list].sort((a, b) => b.ice - a.ice);
     }
     return list;
-  }, [data, search, filterWave, filterClass, filterStatus, filterDir, filterCategoria, filterPeriodo]);
+  }, [data, search, filterWave, filterClass, filterStatus, filterDir, filterCategoria, filterPeriodo, filterObjetivo]);
 
   const grouped = useMemo<{ key: string; items: Projeto[] }[]>(() => {
     if (groupBy === "none") return [{ key: "", items: filtered }];
@@ -176,6 +179,12 @@ export default function Portfolio() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs text-muted-foreground mt-1">
+            {filterObjetivo && (
+              <span className="inline-flex items-center gap-1 mr-2 px-2 py-0.5 rounded border border-primary/40 bg-primary/10 text-primary text-xs">
+                Objetivo {filterObjetivo} · {objetivosBSC.find(o => o.id === filterObjetivo)?.nome}
+                <button type="button" aria-label="Remover filtro de objetivo" onClick={() => { searchParams.delete("objetivo"); setSearchParams(searchParams); }}><X className="h-3 w-3" /></button>
+              </span>
+            )}
             Exibindo <span className="font-semibold text-foreground">{filtered.length}</span> de <span className="font-semibold text-foreground">{data.length}</span> projetos
             {filterPeriodo.length > 0 && <span className="ml-2">· ranqueado por ICE em {filterPeriodo.join(", ")}</span>}
           </p>
