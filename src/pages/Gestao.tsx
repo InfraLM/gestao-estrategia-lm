@@ -23,10 +23,16 @@ export default function Gestao() {
     []
   );
 
+  const [saudeSel, setSaudeSel] = useState<string | null>(null);
   const filtrados = useMemo(
-    () => iniciados.filter(p => !q || p.nome.toLowerCase().includes(q.toLowerCase()) || p.id.toLowerCase().includes(q.toLowerCase())),
-    [iniciados, q]
+    () => iniciados.filter(p => (!saudeSel || p.saude === saudeSel) && (!q || p.nome.toLowerCase().includes(q.toLowerCase()) || p.id.toLowerCase().includes(q.toLowerCase()))),
+    [iniciados, q, saudeSel]
   );
+  const kpiProps = (s: string | null) => ({
+    role: "button", tabIndex: 0,
+    onClick: () => { setSaudeSel(s); document.getElementById("lista-projetos")?.scrollIntoView({ behavior: "smooth" }); },
+    className: cn("p-5 shadow-card cursor-pointer hover:shadow-elevated transition-shadow", saudeSel === s && "ring-2 ring-primary"),
+  });
 
   const onTrack = iniciados.filter(p => p.saude === "On-Track").length;
   const alerta = iniciados.filter(p => p.saude === "Alerta").length;
