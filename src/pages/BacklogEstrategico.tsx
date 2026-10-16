@@ -102,6 +102,23 @@ const statusMeta: Record<Status, string> = {
   "Concluído": "bg-success/10 text-success border-success/30",
 };
 
+// ===== Ferramenta aplicada que originou cada ação =====
+const FERRAMENTAS = ["SWOT", "PESTEL", "Porter (5 Forças)", "RBV / VRIN", "Ansoff", "Oceano Azul", "BSC", "Matriz de Riscos"];
+const FERRAMENTAS_POR_ACAO: Record<string, string[]> = {
+  "BL-001": ["SWOT", "RBV / VRIN"],
+  "BL-002": ["SWOT", "Oceano Azul"],
+  "BL-003": ["SWOT", "BSC"],
+  "BL-004": ["SWOT", "BSC"],
+  "BL-005": ["SWOT"],
+  "BL-006": ["SWOT", "Oceano Azul", "Ansoff"],
+  "BL-007": ["SWOT", "Ansoff"],
+  "BL-008": ["SWOT", "Ansoff"],
+  "BL-009": ["SWOT", "Porter (5 Forças)"],
+  "BL-010": ["SWOT", "Porter (5 Forças)"],
+  "BL-011": ["PESTEL", "Matriz de Riscos"],
+  "BL-012": ["Matriz de Riscos"],
+};
+
 // ===== Dataset (síntese a partir do Diagnóstico + Estratégia) =====
 const iniciativas: Iniciativa[] = [
   // FORÇAS
@@ -285,6 +302,7 @@ export default function BacklogEstrategico() {
   const [busca, setBusca] = useState("");
   const [tipoFiltro, setTipoFiltro] = useState<Tipo | "Todos">("Todos");
   const [origemFiltro, setOrigemFiltro] = useState<Origem | "Todas">("Todas");
+  const [ferrFiltro, setFerrFiltro] = useState<string>("Todas");
   const [lista, setLista] = useState<Iniciativa[]>(iniciativas);
 
   // Status derivado dos vínculos (agregação das iniciativas ligadas)
@@ -343,10 +361,11 @@ export default function BacklogEstrategico() {
         const o = origemFiltro === "Todas" || i.origem.includes(origemFiltro);
         const q = busca.trim().toLowerCase();
         const matchQ = !q || [i.titulo, i.acao, i.responsavel, i.vinculo].some(s => s.toLowerCase().includes(q));
-        return t && o && matchQ;
+        const f = ferrFiltro === "Todas" || (FERRAMENTAS_POR_ACAO[i.id] ?? []).includes(ferrFiltro);
+        return t && o && f && matchQ;
       })
       .sort((a, b) => (waveOrder[a.wave] - waveOrder[b.wave]) || (b.ice - a.ice));
-  }, [busca, tipoFiltro, origemFiltro, lista]);
+  }, [busca, tipoFiltro, origemFiltro, ferrFiltro, lista]);
 
   const counts = useMemo(() => {
     const c: Record<Tipo, number> = {
@@ -473,6 +492,15 @@ export default function BacklogEstrategico() {
             >
               <option value="Todas">Todas as origens</option>
               {(Object.keys(origemMeta) as Origem[]).map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
+            <select
+              value={ferrFiltro}
+              onChange={(e) => setFerrFiltro(e.target.value)}
+              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+              aria-label="Ferramenta aplicada"
+            >
+              <option value="Todas">Todas as ferramentas</option>
+              {FERRAMENTAS.map(f => <option key={f} value={f}>{f}</option>)}
             </select>
             <Badge variant="outline" className="ml-auto">{filtradas.length} iniciativas</Badge>
           </div>
