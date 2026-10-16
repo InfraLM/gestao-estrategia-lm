@@ -364,6 +364,32 @@ export default function BusinessCaseScorecard() {
                       </Button>
                     </div>
                   </div>
+                  {Array.isArray(s.ai_resultado?.dimensoes) && s.ai_resultado.dimensoes.length > 0 && (
+                    <div className="mt-2 pt-2 border-t space-y-1.5">
+                      <div className="text-[11px] font-semibold text-muted-foreground uppercase">Análise por critério</div>
+                      {s.ai_resultado.dimensoes.map((d: any, j: number) => {
+                        const dot = (c: string) => c === "verde" ? "bg-success" : c === "amarelo" ? "bg-warning" : c === "vermelho" ? "bg-destructive" : "bg-muted";
+                        const txt = (c: string) => c === "verde" ? "Atende" : c === "amarelo" ? "Parcial" : c === "vermelho" ? "Não atende" : "—";
+                        return (
+                          <div key={j} className="text-xs">
+                            <div className="flex items-center gap-1.5 font-medium">
+                              <span className={`h-2 w-2 rounded-full ${dot(d.cor)}`} />{d.nome} <span className="text-muted-foreground font-normal">· {txt(d.cor)}</span>
+                            </div>
+                            {Array.isArray(d.criterios) && (
+                              <div className="flex flex-wrap gap-1 mt-1 pl-3.5">
+                                {d.criterios.map((c: any, k: number) => (
+                                  <span key={k} title={c.comentario} className="inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[11px]">
+                                    <span className={`h-1.5 w-1.5 rounded-full ${dot(c.cor)}`} />{c.nome}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      {s.ai_resultado?.janela?.pontos != null && <div className="text-xs text-muted-foreground">Janela de oportunidade: {s.ai_resultado.janela.pontos}/9</div>}
+                    </div>
+                  )}
                 </button>
               );
             })}
