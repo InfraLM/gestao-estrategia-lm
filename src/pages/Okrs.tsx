@@ -95,13 +95,26 @@ export default function Okrs() {
           {sem !== "2026-2" && (<>
             <p className="text-xs text-muted-foreground flex items-center gap-1.5"><History className="h-3.5 w-3.5" /> OKRs 2026/1 — mantidos como histórico (somente leitura).</p>
               {hist?.okrs.map((o) => (
-                <Card key={o.id} className="opacity-90">
+                <Card key={o.id}>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">{o.tema} <span className="text-muted-foreground font-normal">· {o.responsavel}</span><Badge variant="outline" className="ml-auto text-[10px]">2026/1 · histórico</Badge></CardTitle>
-                    <p className="text-[11px] text-muted-foreground">{o.objetivo}</p>
+                    <CardTitle className="text-sm flex items-center gap-2"><Target className="h-4 w-4 text-primary" />{o.tema}<Badge variant="outline" className="ml-auto text-[10px]">2026/1 · histórico</Badge></CardTitle>
+                    <div className="text-[11px] text-muted-foreground space-y-1 mt-1">
+                      <div>Responsável: {o.responsavel}</div>
+                      <p className="italic">{o.objetivo}</p>
+                    </div>
                   </CardHeader>
-                  <CardContent className="space-y-1 text-xs">
-                    {o.krs.map((k) => <div key={k.id}>▸ {k.titulo}</div>)}
+                  <CardContent className="space-y-1.5">
+                    {o.krs.map((k) => {
+                      const m = k.titulo.match(/^(KR[\d.]+)\s*·\s*(.*)$/);
+                      return (
+                        <div key={k.id} className="text-xs p-2 rounded border border-border">
+                          <div className="flex items-start gap-2">
+                            <Badge variant="outline" className="font-mono text-[10px] shrink-0">{m ? m[1] : k.id}</Badge>
+                            <span className="flex-1 font-medium">{m ? m[2] : k.titulo}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </CardContent>
                 </Card>
               ))}
