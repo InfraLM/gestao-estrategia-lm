@@ -23,6 +23,7 @@ import { SubmeterEntregaDialog } from "@/components/SubmeterEntregaDialog";
 import { SubmissaoProjetoDialog } from "@/components/SubmissaoProjetoDialog";
 import { Upload } from "lucide-react";
 import { useColumnWidths, ResizeHandle } from "@/hooks/useColumnWidths";
+import { StatusReportTab, useStatusProjeto, compLabel } from "@/components/StatusReportProjeto";
 import { PredecessoraDialog, PredecessorBadge, isEntregaBloqueada } from "@/components/PredecessoraDialog";
 
 const tooltipStyle = {
@@ -35,6 +36,8 @@ const tooltipStyle = {
 export default function GestaoProjeto() {
   const { id } = useParams<{ id: string }>();
   const projeto = useMemo(() => projetos.find(p => p.id === id), [id]);
+  const statusReports = useStatusProjeto(id ?? "");
+  const ultSR = statusReports[0];
 
   if (!projeto) {
     return (
@@ -122,7 +125,8 @@ export default function GestaoProjeto() {
             </div>
             <h2 className="text-2xl font-semibold tracking-tight mt-0.5">{projeto.nome}</h2>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
-              <SaudeBadge saude={projeto.saude} />
+              <SaudeBadge saude={(ultSR?.saude as any) ?? projeto.saude} />
+              {ultSR && <Badge variant="outline" className="text-[10px]">Status report {compLabel(ultSR.competencia)}{ultSR.pct_cronograma != null ? ` · cronograma ${ultSR.pct_cronograma}%` : ""}{ultSR.custo_realizado != null ? ` · realizado R$ ${ultSR.custo_realizado.toLocaleString("pt-BR")}` : ""}</Badge>}
               <Badge variant="outline" className="text-[10px]">BC: {projeto.statusBC}</Badge>
               <Badge variant="outline" className="text-[10px]">{projeto.status}</Badge>
               <Badge variant="outline" className="text-[10px]">Diretor: {projeto.diretor}</Badge>
@@ -258,7 +262,7 @@ export default function GestaoProjeto() {
 
       {/* Tabs operacionais */}
       <Tabs defaultValue="cronograma">
-        <TabsList className="grid grid-cols-4 lg:grid-cols-8 w-full">
+        <TabsList className="grid grid-cols-5 lg:grid-cols-9 w-full">
           <TabsTrigger value="cronograma" className="gap-1.5"><GanttChart className="h-3.5 w-3.5" /> Cronograma</TabsTrigger>
           <TabsTrigger value="eap" className="gap-1.5"><ListChecks className="h-3.5 w-3.5" /> EAP</TabsTrigger>
           <TabsTrigger value="riscos" className="gap-1.5"><ShieldAlert className="h-3.5 w-3.5" /> Riscos</TabsTrigger>
@@ -266,6 +270,7 @@ export default function GestaoProjeto() {
           <TabsTrigger value="custos" className="gap-1.5"><DollarSign className="h-3.5 w-3.5" /> Custos</TabsTrigger>
           <TabsTrigger value="stakeholders" className="gap-1.5"><Users className="h-3.5 w-3.5" /> Stakeholders</TabsTrigger>
           <TabsTrigger value="submissoes" className="gap-1.5"><Upload className="h-3.5 w-3.5" /> Submissões</TabsTrigger>
+          <TabsTrigger value="statusreport" className="gap-1.5"><FileText className="h-3.5 w-3.5" /> Status Report</TabsTrigger>
           <TabsTrigger value="historico" className="gap-1.5"><History className="h-3.5 w-3.5" /> Histórico</TabsTrigger>
         </TabsList>
 
@@ -277,6 +282,10 @@ export default function GestaoProjeto() {
         {/* EAP — editável + submissão por entregável */}
         <TabsContent value="eap" className="mt-5">
           <EapEditavel editable={editable} projetoId={projeto.id} />
+        </TabsContent>
+
+        <TabsContent value="statusreport" className="mt-5">
+          <StatusReportTab lista={statusReports} />
         </TabsContent>
 
         {/* SUBMISSÕES — visão consolidada */}
