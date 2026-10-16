@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -58,10 +58,30 @@ const SelectScrollDownButton = React.forwardRef<
 ));
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
 
+const SearchCtx = React.createContext("");
+
+const textOf = (n: React.ReactNode): string => {
+  if (n == null || typeof n === "boolean") return "";
+  if (typeof n === "string" || typeof n === "number") return String(n);
+  if (Array.isArray(n)) return n.map(textOf).join(" ");
+  if (React.isValidElement(n)) return textOf((n.props as any).children);
+  return "";
+};
+const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const countItems = (n: React.ReactNode): number =>
+  React.Children.toArray(n).reduce<number>((acc, c) => {
+    if (!React.isValidElement(c)) return acc;
+    const p = c.props as any;
+    return acc + (p.value !== undefined ? 1 : countItems(p.children));
+  }, 0);
+
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
+>(({ className, children, position = "popper", ...props }, ref) => {
+  const [q, setQ] = React.useState("");
+  const showSearch = countItems(children) > 5;
+  return (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
@@ -74,6 +94,18 @@ const SelectContent = React.forwardRef<
       position={position}
       {...props}
     >
+      {showSearch && (
+        <div className="flex items-center gap-2 border-b px-2 py-1.5">
+          <Search className="h-4 w-4 shrink-0 opacity-50" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => { if (e.key !== "Escape") e.stopPropagation(); }}
+            placeholder="Buscar..."
+            className="h-7 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+          />
+        </div>
+      )}
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
         className={cn(
@@ -82,12 +114,13 @@ const SelectContent = React.forwardRef<
             "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
         )}
       >
-        {children}
+        <SearchCtx.Provider value={norm(q.trim())}>{children}</SearchCtx.Provider>
       </SelectPrimitive.Viewport>
       <SelectScrollDownButton />
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>
-));
+  );
+});
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectLabel = React.forwardRef<
@@ -101,10 +134,13 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName;
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => {
+  const q = React.useContext(SearchCtx);
+  const hidden = !!q && !norm(textOf(children)).includes(q);
+  return (
   <SelectPrimitive.Item
     ref={ref}
-    className={cn(
+    className={cn(hidden && "hidden",
       "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 focus:bg-accent focus:text-accent-foreground",
       className,
     )}
@@ -118,7 +154,8 @@ const SelectItem = React.forwardRef<
 
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
-));
+  );
+});
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
 const SelectSeparator = React.forwardRef<
