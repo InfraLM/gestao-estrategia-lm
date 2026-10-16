@@ -1,4 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -92,6 +94,8 @@ export default function ImpactoEstrategico() {
   }, [projetos, processos, riscos]);
 
   const perspectivas = ["Financeira", "Cliente", "Processos", "Aprendizado"];
+  const [aba, setAba] = useState("consolidado");
+  const navigate = useNavigate();
 
   return (
     <TooltipProvider>
@@ -103,7 +107,7 @@ export default function ImpactoEstrategico() {
           </p>
         </div>
 
-        <Tabs defaultValue="consolidado" className="space-y-4">
+        <Tabs value={aba} onValueChange={setAba} className="space-y-4">
           <TabsList className="flex flex-wrap h-auto justify-start">
             <TabsTrigger value="consolidado">Consolidado</TabsTrigger>
             {objetivosBSC.map(o => (
@@ -141,7 +145,7 @@ export default function ImpactoEstrategico() {
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {grupo.map(o => (
-                      <ObjetivoRow key={o.id} o={o} />
+                      <ObjetivoRow key={o.id} o={o} onClick={() => { setAba(o.id); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
                     ))}
                   </CardContent>
                 </Card>
@@ -226,27 +230,40 @@ export default function ImpactoEstrategico() {
               )}
 
               <Card>
-                <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><FolderKanban className="h-4 w-4 text-primary" /> Iniciativas vinculadas ({o.total})</CardTitle></CardHeader>
-                <CardContent>
+                <CardHeader className="pb-2 flex-row items-center justify-between gap-2 space-y-0">
+                  <CardTitle className="text-sm flex items-center gap-2"><FolderKanban className="h-4 w-4 text-primary" /> Iniciativas, planos de ação, projetos e parcerias vinculados ({o.total})</CardTitle>
+                  <Button size="sm" variant="outline" onClick={() => navigate(`/portfolio?objetivo=${encodeURIComponent(o.id)}`)}>
+                    Ver no Portfólio Estratégico <ArrowUpRight className="h-3.5 w-3.5 ml-1" />
+                  </Button>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   {o.total === 0 ? (
                     <p className="text-xs text-muted-foreground">Nenhuma iniciativa vinculada a este objetivo ainda.</p>
                   ) : (
-                    <div className="grid gap-1.5">
-                      {o.projsLigados.slice(0, 30).map(p => (
-                        <div key={p.id} className="flex items-center justify-between gap-2 text-xs px-2 py-1.5 rounded border border-border/60 hover:bg-muted/50">
-                          <div className="flex-1 min-w-0 truncate">
-                            <span className="font-medium">{p.id}</span>
-                            <span className="text-muted-foreground"> · {p.nome}</span>
-                          </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <Badge variant="outline" className="text-[10px]">{p.wave}</Badge>
-                            <Badge variant="outline" className="text-[10px]">{p.status}</Badge>
-                            {p.budget > 0 && <span className="text-muted-foreground">{brl(p.budget)}</span>}
-                          </div>
+                    ["Institucional", "Novo Produto", "Melhoria Contínua com EPP", "Melhoria Contínua"].map(cls => {
+                      const itens = o.projsLigados.filter((p: any) => p.classificacao === cls);
+                      if (!itens.length) return null;
+                      const rotulo: Record<string, string> = { "Institucional": "Projetos institucionais e parcerias", "Novo Produto": "Novos produtos", "Melhoria Contínua com EPP": "Planos de ação · Melhoria com EPP", "Melhoria Contínua": "Planos de ação · Melhoria contínua" };
+                      return (
+                        <div key={cls} className="space-y-1.5">
+                          <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{rotulo[cls]} ({itens.length})</div>
+                          {itens.map((p: any) => (
+                            <Link key={p.id} to={`/gestao/${p.id}`} className="flex items-center justify-between gap-2 text-xs px-2 py-1.5 rounded border border-border/60 hover:bg-muted/50">
+                              <div className="flex-1 min-w-0 truncate">
+                                <span className="font-medium">{p.id}</span>
+                                <span className="text-muted-foreground"> · {p.nome}</span>
+                              </div>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className="text-muted-foreground hidden md:inline">{p.diretor}</span>
+                                <Badge variant="outline" className="text-[10px]">{p.wave}</Badge>
+                                <Badge variant="outline" className="text-[10px]">{p.status}</Badge>
+                                {p.budget > 0 && <span className="text-muted-foreground">{brl(p.budget)}</span>}
+                              </div>
+                            </Link>
+                          ))}
                         </div>
-                      ))}
-                      {o.total > 30 && <p className="text-[11px] text-muted-foreground italic">… e mais {o.total - 30} iniciativas.</p>}
-                    </div>
+                      );
+                    })
                   )}
                 </CardContent>
               </Card>
@@ -285,11 +302,11 @@ function Row({ label, value, tone }: { label: string; value: number; tone?: "suc
   );
 }
 
-function ObjetivoRow({ o }: { o: any }) {
+function ObjetivoRow({ o, onClick }: { o: any; onClick: () => void }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className="flex items-center gap-3 p-2 rounded border border-border/60 hover:bg-muted/40 cursor-help">
+        <div role="button" tabIndex={0} onClick={onClick} onKeyDown={(e) => e.key === "Enter" && onClick()} className="flex items-center gap-3 p-2 rounded border border-border/60 hover:bg-muted/40 cursor-pointer">
           <Badge className="bg-primary text-primary-foreground shrink-0 text-[10px]">{o.id}</Badge>
           <div className="flex-1 min-w-0">
             <div className="text-xs font-medium truncate">{o.nome}</div>
