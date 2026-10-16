@@ -1,3 +1,5 @@
+import { useConteudo } from "@/hooks/useConteudo";
+import { EditarConteudo } from "@/components/EditarConteudo";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -755,58 +757,8 @@ export default function Melhorias() {
 
         {/* Governança */}
         <TabsContent value="governanca" className="space-y-6 mt-6">
-          <Card className="p-6 shadow-card">
-            <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><GitBranch className="h-5 w-5 text-primary" /> Classificação das Iniciativas</h3>
-            <p className="text-sm text-muted-foreground mb-5">Cada iniciativa é classificada em uma de três categorias, determinando o nível de governança.</p>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="bg-muted/50">
-                    <th className="p-3 text-left font-medium border">Critério</th>
-                    <th className="p-3 text-left font-medium border text-blue-700">Melhoria Contínua</th>
-                    <th className="p-3 text-left font-medium border text-purple-700">Com Impacto em Processos</th>
-                    <th className="p-3 text-left font-medium border text-emerald-700">Projeto Institucional</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    ["Origem", "Operação local, problema pontual", "Sugestão local com reflexo em outras áreas", "Planejamento Estratégico / OKRs"],
-                    ["Escopo", "Interno ao departamento", "Transversal (afeta múltiplos fluxos)", "Transformacional e complexo"],
-                    ["Governança", "Gestor da área (autonomia total)", "Gestor + validação do Escritório de Processos", "Estrutura formal (PMO, Gates, Comitês)"],
-                    ["Recursos", "Orçamento operacional (OPEX) local", "Recursos locais com apoio técnico do EPP", "Investimentos substanciais (CAPEX/OPEX)"],
-                    ["Risco", "Gerenciável e local", "Risco de desalinhamento de processos", "Significativo (reputacional/legal)"],
-                  ].map(row => (
-                    <tr key={row[0]}>
-                      <td className="p-3 border font-medium bg-muted/30">{row[0]}</td>
-                      <td className="p-3 border">{row[1]}</td>
-                      <td className="p-3 border">{row[2]}</td>
-                      <td className="p-3 border">{row[3]}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-
-          <Card className="p-6 shadow-card">
-            <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><ClipboardList className="h-5 w-5 text-primary" /> Tabela de Amplitude</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Qualquer resposta <strong>SIM</strong> classifica automaticamente a iniciativa como <strong>Melhoria com Impacto em Processos (EPP)</strong>.
-            </p>
-            <ul className="space-y-2 text-sm">
-              {[
-                "Envolve outra área, altera entregas ou SLA entre departamentos?",
-                "A melhoria altera processo corporativo mapeado?",
-                "A melhoria exige mudança em sistema ou automação relevante?",
-                "A melhoria pode gerar impacto financeiro relevante ou mudança operacional significativa?",
-              ].map((q) => (
-                <li key={q} className="flex items-start gap-3 p-3 rounded-md bg-muted/40 border">
-                  <Target className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                  <span>{q}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
+          <MatrizClassificacao />
+          <MatrizAmplitude />
 
           <Card className="p-6 shadow-card">
             <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><Users className="h-5 w-5 text-primary" /> Papéis e Responsabilidades</h3>
@@ -877,5 +829,70 @@ export default function Melhorias() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+const CLASSIF_DEF = {
+  colunas: ["Melhoria Contínua", "Com Impacto em Processos", "Projeto Institucional"],
+  linhas: [
+    { criterio: "Origem", valores: ["Operação local, problema pontual", "Sugestão local com reflexo em outras áreas", "Planejamento Estratégico / OKRs"] },
+    { criterio: "Escopo", valores: ["Interno ao departamento", "Transversal (afeta múltiplos fluxos)", "Transformacional e complexo"] },
+    { criterio: "Governança", valores: ["Gestor da área (autonomia total)", "Gestor + validação do Escritório de Processos", "Estrutura formal (PMO, Gates, Comitês)"] },
+    { criterio: "Recursos", valores: ["Orçamento operacional (OPEX) local", "Recursos locais com apoio técnico do EPP", "Investimentos substanciais (CAPEX/OPEX)"] },
+    { criterio: "Risco", valores: ["Gerenciável e local", "Risco de desalinhamento de processos", "Significativo (reputacional/legal)"] },
+  ],
+};
+const AMPLITUDE_DEF = [
+  "Envolve outra área, altera entregas ou SLA entre departamentos?",
+  "A melhoria altera processo corporativo mapeado?",
+  "A melhoria exige mudança em sistema ou automação relevante?",
+  "A melhoria pode gerar impacto financeiro relevante ou mudança operacional significativa?",
+];
+
+function MatrizClassificacao() {
+  const { data } = useConteudo("melh.classificacao", CLASSIF_DEF);
+  return (
+    <Card className="p-6 shadow-card">
+      <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><GitBranch className="h-5 w-5 text-primary" /> Classificação das Iniciativas <span className="ml-auto"><EditarConteudo chave="melh.classificacao" padrao={CLASSIF_DEF} titulo="Classificação das Iniciativas" /></span></h3>
+      <p className="text-sm text-muted-foreground mb-5">Cada iniciativa é classificada em uma de três categorias, determinando o nível de governança.</p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm border-collapse">
+          <thead>
+            <tr className="bg-muted/50">
+              <th className="p-3 text-left font-medium border">Critério</th>
+              {data.colunas.map((c) => <th key={c} className="p-3 text-left font-medium border">{c}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {data.linhas.map((row, i) => (
+              <tr key={i}>
+                <td className="p-3 border font-medium bg-muted/30">{row.criterio}</td>
+                {row.valores.map((v, j) => <td key={j} className="p-3 border">{v}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
+
+function MatrizAmplitude() {
+  const { data } = useConteudo("melh.amplitude", AMPLITUDE_DEF);
+  return (
+    <Card className="p-6 shadow-card">
+      <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><ClipboardList className="h-5 w-5 text-primary" /> Tabela de Amplitude <span className="ml-auto"><EditarConteudo chave="melh.amplitude" padrao={AMPLITUDE_DEF} titulo="Tabela de Amplitude" /></span></h3>
+      <p className="text-sm text-muted-foreground mb-4">
+        Qualquer resposta <strong>SIM</strong> classifica automaticamente a iniciativa como <strong>Melhoria com Impacto em Processos (EPP)</strong>.
+      </p>
+      <ul className="space-y-2 text-sm">
+        {data.map((q, i) => (
+          <li key={i} className="flex items-start gap-3 p-3 rounded-md bg-muted/40 border">
+            <Target className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+            <span>{q}</span>
+          </li>
+        ))}
+      </ul>
+    </Card>
   );
 }
