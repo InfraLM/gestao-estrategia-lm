@@ -106,7 +106,7 @@ const statusMeta: Record<Status, string> = {
 const iniciativas: Iniciativa[] = [
   // FORÇAS
   {
-    id: "BL-001", titulo: "Padronização do Método LM em todos os polos hospitalares",
+    id: "BL-001", titulo: "Padronização do Método LM em todos os polos hospitalares", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P102", titulo: "Padronização do Método LM em todos os polos hospitalares", href: "/gestao/P102" }],
     tipo: "Potencializar Força", origem: ["Planejamento Estratégico", "CES"], perspectiva: "Processos",
     wave: "W1", prioridade: "Crítica", status: "Em Execução", responsavel: "Dir. Acadêmica", ice: 9.2,
     vinculo: "P.02 · Excelência Operacional",
@@ -114,7 +114,7 @@ const iniciativas: Iniciativa[] = [
     resultadoEsperado: "Consistência da entrega prática · NPS Hospital > 75 · Padrão auditável.",
   },
   {
-    id: "BL-002", titulo: "Comunidade Longitudinal LM (Clube LM)",
+    id: "BL-002", titulo: "Comunidade Longitudinal LM (Clube LM)", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P094", titulo: "Comunidade Longitudinal LM (Clube LM)", href: "/gestao/P094" }],
     tipo: "Potencializar Força", origem: ["Planejamento Estratégico", "ExCom"], perspectiva: "Cliente",
     wave: "W2", prioridade: "Alta", status: "Priorizado", responsavel: "Dir. Comunidade", ice: 8.4,
     vinculo: "C.01 · Pertencimento, Identidade e Confiança na Marca",
@@ -123,7 +123,7 @@ const iniciativas: Iniciativa[] = [
   },
   // FRAQUEZAS
   {
-    id: "BL-003", titulo: "Maturidade de Dados & BI institucional",
+    id: "BL-003", titulo: "Maturidade de Dados & BI institucional", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P143", titulo: "Maturidade de Dados & BI institucional", href: "/gestao/P143" }],
     tipo: "Reforço de Fraqueza", origem: ["Diagnóstico Estratégico", "COT", "MBR"], perspectiva: "Aprendizagem",
     wave: "W1", prioridade: "Crítica", status: "Em Execução", responsavel: "CTO", ice: 9.0,
     vinculo: "A.02 · Decisão Orientada por Dados",
@@ -131,7 +131,7 @@ const iniciativas: Iniciativa[] = [
     resultadoEsperado: "Forecast DRE ±5% · 100% MBRs com dados auditados.",
   },
   {
-    id: "BL-004", titulo: "Previsibilidade financeira e disciplina de OPEX",
+    id: "BL-004", titulo: "Previsibilidade financeira e disciplina de OPEX", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P144", titulo: "Previsibilidade financeira e disciplina de OPEX", href: "/gestao/P144" }],
     tipo: "Reforço de Fraqueza", origem: ["CEA", "MBR"], perspectiva: "Financeira",
     wave: "W1", prioridade: "Alta", status: "Priorizado", responsavel: "CFO", ice: 8.6,
     vinculo: "F.01 · Previsibilidade de Caixa",
@@ -139,7 +139,7 @@ const iniciativas: Iniciativa[] = [
     resultadoEsperado: "OPEX ratio < 43% · DFC ±5% · Inadimplência ≤ 6%.",
   },
   {
-    id: "BL-005", titulo: "Estrutura de Pessoas & Cultura para escala",
+    id: "BL-005", titulo: "Estrutura de Pessoas & Cultura para escala", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P145", titulo: "Estrutura de Pessoas & Cultura para escala", href: "/gestao/P145" }],
     tipo: "Reforço de Fraqueza", origem: ["CPM", "Governança"], perspectiva: "Aprendizagem",
     wave: "W2", prioridade: "Alta", status: "Backlog", responsavel: "Dir. Gente", ice: 7.8,
     vinculo: "A.01 · Cultura de Alta Performance",
@@ -148,7 +148,7 @@ const iniciativas: Iniciativa[] = [
   },
   // OPORTUNIDADES
   {
-    id: "BL-006", titulo: "IA didática nativa para simulação clínica",
+    id: "BL-006", titulo: "IA didática nativa para simulação clínica", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P146", titulo: "IA didática nativa para simulação clínica", href: "/gestao/P146" }],
     tipo: "Explorar Oportunidade", origem: ["Diagnóstico Estratégico", "ExCom", "COT"], perspectiva: "Cliente",
     wave: "W2", prioridade: "Crítica", status: "Em Execução", responsavel: "CTO + Dir. Acadêmica", ice: 9.4,
     vinculo: "C.01 · Pertencimento, Identidade e Confiança na Marca",
@@ -156,7 +156,7 @@ const iniciativas: Iniciativa[] = [
     resultadoEsperado: "Diferenciação defensável · Lift de conversão +20% · Marca técnica reforçada.",
   },
   {
-    id: "BL-007", titulo: "Linha B2B Hospitalar (treinamento institucional)",
+    id: "BL-007", titulo: "Linha B2B Hospitalar (treinamento institucional)", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P147", titulo: "Linha B2B Hospitalar (treinamento institucional)", href: "/gestao/P147" }],
     tipo: "Explorar Oportunidade", origem: ["CEA", "Planejamento Estratégico"], perspectiva: "Financeira",
     wave: "W2", prioridade: "Alta", status: "Priorizado", responsavel: "Dir. Novos Negócios", ice: 8.2,
     vinculo: "F.02 · Crescimento com Rentabilidade",
@@ -164,7 +164,7 @@ const iniciativas: Iniciativa[] = [
     resultadoEsperado: "Nova receita recorrente · 8 contratos âncora em 18 meses.",
   },
   {
-    id: "BL-008", titulo: "Expansão geográfica disciplinada de polos",
+    id: "BL-008", titulo: "Expansão geográfica disciplinada de polos", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P148", titulo: "Expansão geográfica disciplinada de polos", href: "/gestao/P148" }],
     tipo: "Explorar Oportunidade", origem: ["Planejamento Estratégico", "ExCom"], perspectiva: "Cliente",
     wave: "W3", prioridade: "Média", status: "Backlog", responsavel: "Dir. Operações", ice: 7.5,
     vinculo: "C.04 · Cobertura Nacional",
@@ -173,7 +173,7 @@ const iniciativas: Iniciativa[] = [
   },
   // AMEAÇAS / DEFESAS
   {
-    id: "BL-009", titulo: "Defesa contra substitutos com IA generalista",
+    id: "BL-009", titulo: "Defesa contra substitutos com IA generalista", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P149", titulo: "Defesa contra substitutos com IA generalista", href: "/gestao/P149" }],
     tipo: "Defesa Identificada", origem: ["Matriz de Riscos", "Diagnóstico Estratégico"], perspectiva: "Cliente",
     wave: "W1", prioridade: "Crítica", status: "Em Execução", responsavel: "CMO + Dir. Acadêmica", ice: 8.9,
     vinculo: "C.01 · Posicionamento Premium",
@@ -181,7 +181,7 @@ const iniciativas: Iniciativa[] = [
     resultadoEsperado: "Brand lift +15% · Share of voice em 'prática real' · Resiliência a substitutos.",
   },
   {
-    id: "BL-010", titulo: "Defesa contra grandes players de escala",
+    id: "BL-010", titulo: "Defesa contra grandes players de escala", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P150", titulo: "Defesa contra grandes players de escala", href: "/gestao/P150" }],
     tipo: "Defesa Identificada", origem: ["Matriz de Riscos", "ExCom", "CEA"], perspectiva: "Cliente",
     wave: "W1", prioridade: "Alta", status: "Priorizado", responsavel: "CEO", ice: 8.3,
     vinculo: "C.05 · Moat Hospitalar",
@@ -189,7 +189,7 @@ const iniciativas: Iniciativa[] = [
     resultadoEsperado: "≥ 60% das praças-alvo com contrato preferencial · Faculty top retido.",
   },
   {
-    id: "BL-011", titulo: "Conformidade regulatória e LGPD em saúde",
+    id: "BL-011", titulo: "Conformidade regulatória e LGPD em saúde", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P151", titulo: "Conformidade regulatória e LGPD em saúde", href: "/gestao/P151" }],
     tipo: "Defesa Identificada", origem: ["Matriz de Riscos", "Governança", "COT"], perspectiva: "Processos",
     wave: "W1", prioridade: "Alta", status: "Em Execução", responsavel: "Jurídico + DPO", ice: 8.0,
     vinculo: "P.04 · Risco e Compliance",
@@ -197,7 +197,7 @@ const iniciativas: Iniciativa[] = [
     resultadoEsperado: "Zero não-conformidades materiais · Risco regulatório classificado como baixo.",
   },
   {
-    id: "BL-012", titulo: "Continuidade operacional dos polos críticos",
+    id: "BL-012", titulo: "Continuidade operacional dos polos críticos", vinculos: [{ fonte: "Portfólio Estratégico", refId: "P152", titulo: "Continuidade operacional dos polos críticos", href: "/gestao/P152" }],
     tipo: "Defesa Identificada", origem: ["Matriz de Riscos", "COT"], perspectiva: "Processos",
     wave: "W2", prioridade: "Média", status: "Backlog", responsavel: "Dir. Operações", ice: 7.2,
     vinculo: "P.05 · Continuidade de Negócio",
