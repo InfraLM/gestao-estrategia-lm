@@ -29,7 +29,7 @@ export default function Gestao() {
     [iniciados, q, saudeSel]
   );
   const kpiProps = (s: string | null) => ({
-    role: "button", tabIndex: 0,
+    role: "button" as const, tabIndex: 0,
     onClick: () => { setSaudeSel(s); document.getElementById("lista-projetos")?.scrollIntoView({ behavior: "smooth" }); },
     className: cn("p-5 shadow-card cursor-pointer hover:shadow-elevated transition-shadow", saudeSel === s && "ring-2 ring-primary"),
   });
@@ -119,7 +119,7 @@ export default function Gestao() {
 
       {/* Lista de projetos iniciados */}
       <div>
-        <h3 className="font-semibold mb-3 px-1">Projetos iniciados · {filtrados.length}</h3>
+        <h3 id="lista-projetos" className="font-semibold mb-3 px-1">Projetos iniciados · {filtrados.length}{saudeSel && <button onClick={() => setSaudeSel(null)} className="ml-2 text-xs text-primary underline">limpar filtro ({saudeSel})</button>}</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {filtrados.map(p => {
             const exec = p.budget > 0 ? Math.min(100, (p.realizado / p.budget) * 100) : 0;
