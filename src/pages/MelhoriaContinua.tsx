@@ -315,12 +315,14 @@ export default function MelhoriaContinua() {
     return m;
   }, [acoes]);
 
+  const [kpiStatus, setKpiStatus] = useState<string | null>(null);
   const lista = useMemo(() => acoes.filter(a => {
     if (areaSel && a.area !== areaSel) return false;
     if (origemFilter !== "Todas" && a.origem !== origemFilter) return false;
+    if (kpiStatus && a.status !== kpiStatus) return false;
     if (q && !`${a.oQueFazer} ${a.justificativa} ${a.responsavel} ${a.processoNome ?? ""}`.toLowerCase().includes(q.toLowerCase())) return false;
     return true;
-  }), [acoes, areaSel, origemFilter, q]);
+  }), [acoes, areaSel, origemFilter, kpiStatus, q]);
 
   function updateAcao(id: string, patch: Partial<Acao>) {
     setAcoes(prev => prev.map(a => {
@@ -471,22 +473,17 @@ export default function MelhoriaContinua() {
         <TabsContent value="acoes" className="space-y-6 mt-4">
           {/* KPIs */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="p-5 shadow-card">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Total de ações</div>
-              <div className="mt-2 text-3xl font-semibold tabular-nums">{acoes.length}</div>
-            </Card>
-            <Card className="p-5 shadow-card">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5"><Workflow className="h-3.5 w-3.5" /> Origem BPMO</div>
-              <div className="mt-2 text-3xl font-semibold tabular-nums text-purple-700">{acoes.filter(a => a.origem === "BPMO (Processos)").length}</div>
-            </Card>
-            <Card className="p-5 shadow-card">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5"><TargetIcon className="h-3.5 w-3.5" /> Origem OKRs</div>
-              <div className="mt-2 text-3xl font-semibold tabular-nums text-blue-700">{acoes.filter(a => a.origem === "OKRs da Área").length}</div>
-            </Card>
-            <Card className="p-5 shadow-card">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Concluídas</div>
-              <div className="mt-2 text-3xl font-semibold tabular-nums text-emerald-700">{acoes.filter(a => a.status === "Concluído").length}</div>
-            </Card>
+            {([
+              ["Total de ações", acoes.length, "", null, () => { setOrigemFilter("Todas"); setKpiStatus(null); }, origemFilter === "Todas" && !kpiStatus],
+              ["Origem BPMO", acoes.filter(a => a.origem === "BPMO (Processos)").length, "text-purple-700", <Workflow className="h-3.5 w-3.5" />, () => { setOrigemFilter("BPMO (Processos)" as any); setKpiStatus(null); }, origemFilter === "BPMO (Processos)"],
+              ["Origem OKRs", acoes.filter(a => a.origem === "OKRs da Área").length, "text-blue-700", <TargetIcon className="h-3.5 w-3.5" />, () => { setOrigemFilter("OKRs da Área" as any); setKpiStatus(null); }, origemFilter === "OKRs da Área"],
+              ["Concluídas", acoes.filter(a => a.status === "Concluído").length, "text-emerald-700", null, () => { setOrigemFilter("Todas"); setKpiStatus("Concluído"); }, kpiStatus === "Concluído"],
+            ] as [string, number, string, React.ReactNode, () => void, boolean][]).map(([l, v, c, ic, fn, on]) => (
+              <Card key={l} role="button" tabIndex={0} onClick={fn} onKeyDown={(e) => e.key === "Enter" && fn()} className={`p-5 shadow-card cursor-pointer hover:shadow-elevated transition-shadow ${on ? "ring-2 ring-primary" : ""}`}>
+                <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">{ic}{l}</div>
+                <div className={`mt-2 text-3xl font-semibold tabular-nums ${c}`}>{v}</div>
+              </Card>
+            ))}
           </div>
 
           {/* Import / Template */}
