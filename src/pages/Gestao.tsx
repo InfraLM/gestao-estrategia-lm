@@ -79,7 +79,7 @@ export default function Gestao() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-5 shadow-card">
+        <Card {...kpiProps(null)}>
           <div className="flex items-start justify-between">
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Projetos iniciados</div>
@@ -88,7 +88,7 @@ export default function Gestao() {
             <FolderKanban className="h-5 w-5 text-foreground" />
           </div>
         </Card>
-        <Card className="p-5 shadow-card">
+        <Card {...kpiProps("On-Track")}>
           <div className="flex items-start justify-between">
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium">On-Track</div>
@@ -97,7 +97,7 @@ export default function Gestao() {
             <TrendingUp className="h-5 w-5 text-success" />
           </div>
         </Card>
-        <Card className="p-5 shadow-card">
+        <Card {...kpiProps("Alerta")}>
           <div className="flex items-start justify-between">
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Alerta</div>
@@ -106,7 +106,7 @@ export default function Gestao() {
             <Clock className="h-5 w-5 text-warning-foreground" />
           </div>
         </Card>
-        <Card className="p-5 shadow-card">
+        <Card {...kpiProps("Off-Track")}>
           <div className="flex items-start justify-between">
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Off-Track</div>
