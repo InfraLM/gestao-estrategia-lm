@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Users, Scale } from "lucide-react";
 import data from "@/data/okrs20262.json";
 import bsc from "@/data/bscRev02.json";
+import CestaMatrizEditavel from "@/components/CestaMatrizEditavel";
 import BaseSubmissaoIA from "@/components/BaseSubmissaoIA";
 import { useBaseOverrides } from "@/hooks/useBaseOverrides";
 import { useConteudo } from "@/hooks/useConteudo";
@@ -71,38 +72,7 @@ export default function CestaMetas() {
               </CardContent>
             </Card>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              {diretores.map((d) => (
-                <Card key={d.titulo}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2"><Users className="h-4 w-4 text-primary" />{d.nome} <span className="text-muted-foreground font-normal">· {d.cargo}</span></CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-1.5">
-                    {d.metas.map((m) => (
-                      <div key={m.indicador} className="text-xs p-2 rounded border border-border space-y-1">
-                        <div className="flex items-start gap-2">
-                          <span className="flex-1 font-medium">{m.indicador}</span>
-                          {m.peso != null && <Badge variant="outline" className="text-[10px]">peso {pct(m.peso)}</Badge>}
-                          <Badge variant="secondary" className="text-[10px]">{m.tipo}</Badge>
-                        </div>
-                        <div className="flex items-center justify-between gap-2">
-                          <span><span className="text-muted-foreground">Meta 2026/2:</span> <strong>{m.meta}</strong></span>
-                          <div className="flex flex-wrap gap-1">
-                            {m.objetivos.map((c) => (
-                              <Tooltip key={c}>
-                                <TooltipTrigger asChild><Badge variant="outline" className="font-mono text-[10px] cursor-help">{c}</Badge></TooltipTrigger>
-                                <TooltipContent><span className="text-xs">{nomeObj(c)}</span></TooltipContent>
-                              </Tooltip>
-                            ))}
-                          </div>
-                        </div>
-                        {m.obs && <p className="text-[11px] text-muted-foreground italic">{m.obs}</p>}
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <CestaMatrizEditavel extras={(dir, ind) => diretores.find((d) => d.nome === dir)?.metas.find((m: any) => m.indicador === ind) as any} />
           </TabsContent>
         </Tabs>
       </div>
