@@ -89,7 +89,9 @@ function semestreToDate(s: string, offsetWeeks = 0): string {
       : ano ? new Date(parseInt(ano[1], 10), 0, 1)
       : new Date(new Date().getFullYear(), 0, 1);
   }
-  d.setDate(d.getDate() + offsetWeeks * 7);
+  if (isNaN(d.getTime())) d = new Date(new Date().getFullYear(), 0, 1);
+  d.setDate(d.getDate() + (Number.isFinite(offsetWeeks) ? offsetWeeks : 0) * 7);
+  if (isNaN(d.getTime())) return new Date().toISOString().slice(0, 10);
   return d.toISOString().slice(0, 10);
 }
 
