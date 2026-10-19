@@ -78,9 +78,17 @@ const STORAGE_KEY = (projectId: string) => `pmo-projeto-${projectId}-v1`;
 
 // Util: gera datas a partir do início do projeto (ex: "2026/1")
 function semestreToDate(s: string, offsetWeeks = 0): string {
-  const [ano, sem] = s.split("/");
-  const baseMonth = sem === "1" ? 0 : 6; // Jan ou Jul
-  const d = new Date(parseInt(ano, 10), baseMonth, 1);
+  const txt = String(s ?? "").trim();
+  let d: Date;
+  const sem = txt.match(/^(\d{4})\s*[/.-]\s*([12])$/);
+  if (sem) d = new Date(parseInt(sem[1], 10), sem[2] === "1" ? 0 : 6, 1);
+  else {
+    const ano = txt.match(/(\d{4})/);
+    const tentativa = new Date(txt);
+    d = !isNaN(tentativa.getTime()) ? tentativa
+      : ano ? new Date(parseInt(ano[1], 10), 0, 1)
+      : new Date(new Date().getFullYear(), 0, 1);
+  }
   d.setDate(d.getDate() + offsetWeeks * 7);
   return d.toISOString().slice(0, 10);
 }
