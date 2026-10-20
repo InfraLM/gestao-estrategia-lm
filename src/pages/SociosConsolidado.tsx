@@ -10,6 +10,7 @@ import { useConsolidado, reabrirSocio, gerarLinkSocio, revogarLinkSocio } from "
 import { useObjetivosKpis, kpiNome } from "@/hooks/useObjetivosKpis";
 import { Regua } from "@/components/socios/Campos";
 import { TradeOff } from "./SociosFormulario";
+import SubmissoesHistorico from "@/components/socios/SubmissoesHistorico";
 import {
   calcularEixos, compararSocios, posicionamento, statusExibido, pontosProjeto, LINHAS_VERMELHAS, CONSEQUENCIAS, PAPEIS, INVEST_ITENS,
   Diretriz, Projeto, Respostas,
@@ -103,6 +104,8 @@ export default function SociosConsolidado() {
         <p className="text-sm text-muted-foreground">Conteúdo confidencial — visível apenas para quem tem permissão de consolidado.</p>
         <Button variant="outline" onClick={exportar}><Download className="h-4 w-4 mr-1" />Exportar CSV</Button>
       </div>
+
+      <SubmissoesHistorico versoes={q.data!.versoes} nomes={Object.fromEntries(q.data!.participantes.filter(p => p.user_id).map(p => [p.user_id!, p.nome_exibicao]))} />
 
       <div className="grid gap-4 md:grid-cols-4">
         {socios.map(s => {
