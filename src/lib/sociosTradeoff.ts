@@ -1,7 +1,7 @@
 // Regras do módulo "Desejos dos Sócios 2027" — funções puras, sem acesso ao banco.
 
 export type Opcao = { v: string; label: string };
-export type Pergunta = { code: string; num: number; etapa: number; titulo: string; help?: string; citacao?: string; opcoes: Opcao[] };
+export type Pergunta = { code: string; num: number; etapa: number; titulo: string; enunciado?: string; help?: string; helps?: string[]; citacao?: string; opcoes: Opcao[] };
 
 export const PRAZO_TEXTO = "06/11/26";
 export const PRAZO_ISO = "2026-11-06T23:59:59-03:00";
@@ -19,19 +19,33 @@ export const PERGUNTAS: Pergunta[] = [
     citacao: "Só fazemos o que deixa o médico mais seguro diante do paciente grave, e se paga.",
     help: "Este princípio serviria de filtro para qualquer nova iniciativa em 2027.",
     opcoes: [{ v: "A", label: "Concordo" }, { v: "B", label: "Concordo com ajustes" }, { v: "C", label: "Discordo" }] },
-  { code: "ritmo", num: 3, etapa: 2, titulo: "Ritmo: crescimento contra caixa",
+  { code: "ritmo", num: 3, etapa: 2, titulo: "Ritmo, caixa e financiamento",
+    enunciado: "Quando crescer e gerar caixa entrarem em conflito em 2027, o que deve vencer? E vale financiar alguma aposta de crescimento?",
     help: "A janela de território vai até 2028 (fusão Afya–Yduqs). Crescer acima do caixa gerado exige dívida a ~2,45% a.m.",
+    helps: [
+      "Quando financiar faz sentido: só para algo com prazo para acontecer e que devolva mais do que o custo do dinheiro (~34% a.a.). No cenário atual, a candidata é a expansão da prática em SP dentro da janela da fusão Afya–Yduqs (conclusão prevista até mar/2028).",
+      "O risco no LTV/CAC: a expansão pode derrubar o LTV/CAC da PPG (já projetado de 4,1x para 3,4x) se só deslocar alunos que já comprariam, se o CAC subir num mercado mais caro ou se o custo da prática em SP comer a margem.",
+    ],
     opcoes: [
       { v: "A", label: "Crescer no máximo, mesmo com dívida" },
       { v: "B", label: "Crescer só o que o caixa gerado paga" },
       { v: "C", label: "Rentabilidade e distribuição primeiro" },
+      { v: "D", label: "Caixa + financiamento só com retorno e prazo: crescer no ritmo do caixa, financiando apenas iniciativas com prazo estabelecido para devolver o investimento e que devolvam mais do que o custo do dinheiro." },
     ] },
-  { code: "portfolio", num: 4, etapa: 2, titulo: "Portfólio",
-    help: "Quantos produtos sustentamos em 2027.",
+  { code: "portfolio", num: 4, etapa: 2, titulo: "Portfólio de produtos",
+    enunciado: "Qual postura de portfólio a LM deve ter em 2027? E o que fazer com cada produto?",
+    helps: [
+      "Core: PPG, FPG e ACLS.",
+      "Resultados: receita bruta realizada jan–ago/26 de R$ 27,1 mi, com a PPG em 90%. Margem e CAC por produto ainda não estão validados (falta o P&L por produto); os LTV/CAC são projeções da modelagem v1 para 2030.",
+      "Produtos que se pagam: POCUS e Paliativos têm LTV/CAC projetado de 4,4x e 4,0x.",
+      "Teste controlado: produto novo só entra com teto de investimento, prazo e critério de sucesso definidos antes de começar. Se não bater o critério, encerra.",
+      "Orçamento fantasma: reserva prevista no orçamento, mas não comprometida: só é liberada quando um teste ou produto novo passa nos critérios. Se não for usada, volta para o caixa.",
+    ],
     opcoes: [
-      { v: "A", label: "Só PPG, FPG e ACLS" },
-      { v: "B", label: "Core + POCUS e Paliativos" },
-      { v: "C", label: "Portfólio aberto, com testes de novos produtos" },
+      { v: "A", label: "Só o core: PPG, FPG e ACLS." },
+      { v: "B", label: "Core + produtos do portfólio atual que já se pagam (ex.: POCUS e Paliativos)." },
+      { v: "C", label: "Core + produtos mediante viabilidade: teto, prazo e critério de sucesso claros." },
+      { v: "D", label: "Core + produtos do portfólio atual que se pagam + orçamento fantasma para testes e novos produtos." },
     ] },
   { code: "trafego", num: 5, etapa: 2, titulo: "Tráfego e mídia",
     help: "Ascensão = o aluno entra por FPG ou ACLS e depois compra a PPG. Hoje a ascensão ainda é premissa, não dado.",
@@ -77,6 +91,67 @@ export const INVEST_ITENS: Opcao[] = [
   { v: "reserva", label: "Reserva de caixa" },
   { v: "distrib", label: "Distribuição aos sócios" },
 ];
+
+export const FIN_APOSTAS: Opcao[] = [
+  { v: "sp", label: "Expansão da prática em SP (hub and spoke)" },
+  { v: "praca", label: "Outra praça" },
+  { v: "motor2", label: "Aposta do Motor 2" },
+  { v: "outra", label: "Outra" },
+];
+
+export type CriterioFin = { id: string; grupo: string; label: string; unidade?: string };
+export const FIN_CRITERIOS: CriterioFin[] = [
+  { id: "medido", grupo: "Antes de liberar", label: "CAC, ramp-up e qualidade da praça medidos (no dicionário de indicadores) antes da 1ª parcela" },
+  { id: "parcelas", grupo: "Antes de liberar", label: "Liberação em parcelas, cada uma com gate e gatilho de reversão" },
+  { id: "incremental", grupo: "Mercado e unit economics", label: "Incrementalidade: a maior parte do crescimento vem de alunos novos, não de quem já compraria" },
+  { id: "cac", grupo: "Mercado e unit economics", label: "CAC da praça ≤ CAC médio da PPG" },
+  { id: "ltv", grupo: "Mercado e unit economics", label: "LTV calculado sobre a margem, depois do custo da prática, ≥ LTV de GO e sem desconto de entrada" },
+  { id: "ltv_cac", grupo: "Mercado e unit economics", label: "LTV/CAC da coorte de no mínimo __x", unidade: "x" },
+  { id: "payback", grupo: "Mercado e unit economics", label: "Payback de cada parcela de no máximo __ meses", unidade: "meses" },
+  { id: "ocupacao", grupo: "Qualidade e capacidade", label: "Ocupação ≥ 70% e CSAT ≥ 9,0 por 3 meses (régua da diretriz M2)" },
+  { id: "vagas", grupo: "Qualidade e capacidade", label: "Vagas de prática contratadas antes da venda" },
+  { id: "adimplencia", grupo: "Caixa e risco", label: "Adimplência da coorte ≥ média" },
+  { id: "piso", grupo: "Caixa e risco", label: "Caixa nunca abaixo do piso no pior cenário simulado" },
+  { id: "custo", grupo: "Caixa e risco", label: "Custo do financiamento de no máximo __% ao mês", unidade: "% a.m." },
+];
+
+export const ACOES_PRODUTO: Opcao[] = [{ v: "crescer", label: "Crescer" }, { v: "manter", label: "Manter" }, { v: "reduzir", label: "Reduzir" }, { v: "encerrar", label: "Encerrar" }];
+export type ProdutoInfo = { id: string; nome: string; resultados: string[] };
+/** Padrão dos resultados por produto — editável pela Naira via useConteudo("socios.produtos2027"). */
+export const PRODUTOS_2027: ProdutoInfo[] = [
+  { id: "ppg", nome: "PPG", resultados: ["Realizado jan–ago/26: R$ 24,5 mi (90% da receita bruta) · 729 vendas", "Set/26 em Ads: CAC R$ 3,6 mil e ROAS 14x", "LTV/CAC 2030 (proj.): 4,1x → 3,4x"] },
+  { id: "fpg_online", nome: "FPG Online", resultados: ["Realizado jan–ago/26: R$ 0,76 mi (2,8%)", "LTV/CAC 2030 (proj.): 1,7x sozinho, 2,8x com ascensão · ascensão ainda não medida (sinal: R$ 0,65 mi migraram de FPG para PPG em jan–ago)"] },
+  { id: "fpg_presencial", nome: "FPG Presencial", resultados: ["Realizado jan–ago/26: R$ 0,64 mi (2,4%)", "LTV/CAC 2030 (proj.): 0,7x sozinho, 2,9x se 20% ascendem · ascensão ainda não medida"] },
+  { id: "acls", nome: "ACLS", resultados: ["Realizado jan–ago/26: ACLS + ATLS R$ 0,59 mi (2,2%) · ACLS SP: 50 de 144 vendas na meta", "LTV/CAC 2030 (proj.): 1,2x sozinho, 5,6x com ascensão"] },
+  { id: "pocus", nome: "POCUS", resultados: ["Realizado jan–ago/26: R$ 0,15 mi (0,6%) · set/26: 6 vendas da pós, ROAS 3,3x; Imersão e Online abaixo de 1x", "LTV/CAC 2030 (proj.): 4,4x · tráfego pago e novas vendas da pós pausados (D-075)"] },
+  { id: "paliativos", nome: "Paliativos", resultados: ["Realizado jan–ago/26: R$ 0,08 mi (0,3%) · set/26: 2 vendas, ROAS 1,5x", "LTV/CAC 2030 (proj.): 4,0x · tráfego pago e novas vendas pausados (D-075)"] },
+];
+
+/** Versão atual das opções da pergunta 4. Respostas sem essa marca vieram do modelo antigo. */
+export const PORTFOLIO_VERSAO = 2;
+
+/** Compatibilidade: no modelo antigo, portfolio C = "portfólio aberto com testes", que hoje é a opção D. */
+export function normalizar(r: Respostas | null | undefined): Respostas {
+  const x: Respostas = { ...(r ?? {}) };
+  if (x.portfolio && x.portfolio_v !== PORTFOLIO_VERSAO) {
+    if (x.portfolio === "C") x.portfolio = "D";
+    x.portfolio_v = PORTFOLIO_VERSAO;
+  }
+  return x;
+}
+
+export const financia = (r: Respostas) => r.ritmo === "A" || r.ritmo === "D";
+export const criteriosMarcados = (r: Respostas) => FIN_CRITERIOS.filter(c => r.fin_criterios?.[c.id]?.on);
+const fmtNum = (v: any) => String(v).replace(".", ",");
+export function criterioTexto(c: CriterioFin, valor: any): string {
+  if (!c.unidade) return c.label;
+  const v = valor === undefined || valor === null || valor === "" ? "__" : fmtNum(valor);
+  return c.label.replace("__", v);
+}
+export function criteriosResumo(r: Respostas): string {
+  return criteriosMarcados(r).map(c => criterioTexto(c, r.fin_criterios?.[c.id]?.valor)).join("; ");
+}
+const brl = (v: any) => { const n = num(v); return n === null ? String(v ?? "") : n.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }); };
 
 export const PAPEIS: Opcao[] = [
   { v: "ceo", label: "CEO / liderança geral" },
@@ -146,25 +221,26 @@ const media = (vals: (number | null | undefined)[]): number | null => {
 
 export type Eixos = { core: number | null; caixa: number | null; retorno: number | null };
 
-export function calcularEixos(r: Respostas): Eixos {
+export function calcularEixos(r0: Respostas): Eixos {
+  const r = normalizar(r0);
   const rk = r.invest_ok ? r.invest : undefined;
   const reserva = pontoRanking(rk, "reserva");
   return {
     core: media([
       ({ A: 0, B: 30, C: 70, D: 100 } as any)[r.motor],
-      ({ A: 0, B: 40, C: 100 } as any)[r.portfolio],
+      ({ A: 0, B: 35, C: 50, D: 70 } as any)[r.portfolio],
       ({ A: 0, B: 50, C: 100 } as any)[r.trafego],
       pontoRanking(rk, "novos"),
     ]),
     caixa: media([
-      ({ A: 100, B: 50, C: 10 } as any)[r.ritmo],
+      ({ A: 100, B: 50, C: 10, D: 70 } as any)[r.ritmo],
       ({ A: 100, C: 70, B: 30, D: 0 } as any)[r.divida],
       ({ "1": 100, "2": 65, "3": 35, "6": 0 } as any)[r.caixa_min],
       pontoRanking(rk, "sp"),
       reserva === null ? null : 100 - reserva,
     ]),
     retorno: media([
-      ({ A: 0, B: 35, C: 100 } as any)[r.ritmo],
+      ({ A: 0, B: 35, C: 100, D: 20 } as any)[r.ritmo],
       ({ B: 100, C: 70, A: 10, D: 30 } as any)[r.divida],
       pontoRanking(rk, "distrib"),
     ]),
@@ -193,11 +269,13 @@ const ESCOLHAS: Record<string, Record<string, [string, string]>> = {
     A: ["Velocidade para ocupar território", "Caixa e custo financeiro baixo"],
     B: ["Crescimento autofinanciado", "Parte da janela até 2028"],
     C: ["Rentabilidade e distribuição", "Ritmo de crescimento"],
+    D: ["Caixa como regra, financiando só iniciativas com prazo para devolver e retorno acima do custo do dinheiro", "Velocidade: iniciativas sem retorno comprovado no prazo esperam o caixa"],
   },
   portfolio: {
-    A: ["Portfólio enxuto", "Receitas de produtos menores"],
-    B: ["Core + produtos com LTV/CAC alto", "Simplicidade máxima"],
-    C: ["Experimentação de produtos", "Foco e margem"],
+    A: ["Simplicidade: só os três produtos do core", "Receita de POCUS e Paliativos, que se pagam sozinhos"],
+    B: ["Core mais produtos que se pagam sozinhos", "Testar produtos novos em 2027"],
+    C: ["Core protegido, com novos produtos só quando a viabilidade estiver comprovada (teto, prazo e critério de sucesso)", "Receita de POCUS e Paliativos fora do foco, e velocidade de lançamento"],
+    D: ["Core, portfólio atual que se paga e um orçamento fantasma: reserva liberada só para testes e novos produtos que passarem nos critérios", "Parte do caixa fica reservada e indisponível para outros usos enquanto houver teste em avaliação"],
   },
   trafego: {
     A: ["Mídia onde o retorno é provado (PPG)", "Aprender sobre ascensão"],
@@ -223,7 +301,8 @@ const ESCOLHAS: Record<string, Record<string, [string, string]>> = {
   },
 };
 
-export function escolhas(r: Respostas): { tema: string; escolhe: string; abre: string }[] {
+export function escolhas(r0: Respostas): { tema: string; escolhe: string; abre: string }[] {
+  const r = normalizar(r0);
   const temas: Record<string, string> = { motor: "Motor", ritmo: "Ritmo", portfolio: "Portfólio", trafego: "Mídia", caixa_min: "Caixa", divida: "Dívida", venda: "Horizonte" };
   return Object.keys(temas).flatMap(k => {
     const t = ESCOLHAS[k]?.[r[k]];
@@ -231,7 +310,8 @@ export function escolhas(r: Respostas): { tema: string; escolhe: string; abre: s
   });
 }
 
-export function tensoes(r: Respostas): string[] {
+export function tensoes(r0: Respostas): string[] {
+  const r = normalizar(r0);
   const out: string[] = [];
   const lv = r.lv ?? {};
   const on = (id: string) => !!lv[id]?.on;
@@ -241,12 +321,24 @@ export function tensoes(r: Respostas): string[] {
   const horiz = num(r.horizonte);
   const executivo = ["ceo", "executivo", "motor2"].includes(r.papel_tipo);
 
-  if (r.ritmo === "A" && r.divida === "D") out.push("Quer crescer no máximo, mas não aceita dívida: o crescimento ficará limitado ao caixa gerado.");
+  if (financia(r) && r.divida === "D") out.push(r.ritmo === "A" ? "Quer crescer no máximo, mas não aceita dívida: o crescimento ficará limitado ao caixa gerado." : "Aceita financiar iniciativas com retorno e prazo, mas não aceita nenhuma dívida em 2027.");
+  const crit = criteriosMarcados(r);
+  const cv = (id: string) => num(r.fin_criterios?.[id]?.on ? r.fin_criterios?.[id]?.valor : null);
+  if (r.ritmo === "D" && !crit.length) out.push("Escolheu financiar só com retorno e prazo, mas não marcou nenhum critério para liberar o financiamento.");
+  if (r.ritmo === "A" && crit.length < 3) out.push("Quer crescer no máximo com dívida, mas exige menos de 3 critérios para liberar o financiamento.");
+  if (financia(r) && !r.fin_criterios?.incremental?.on) out.push("Aceita financiar crescimento sem exigir incrementalidade: a expansão pode só deslocar alunos que já comprariam e derrubar o LTV/CAC.");
+  if (cv("ltv_cac") !== null && cv("ltv_cac")! < 3.5) out.push(`LTV/CAC mínimo de ${fmtNum(cv("ltv_cac"))}x está abaixo do critério do conselheiro (3,5x) e perto da PPG 2030 (3,4x).`);
+  if (cv("custo") !== null && num(r.divida_custo) !== null && cv("custo")! > num(r.divida_custo)!) out.push(`O custo máximo do financiamento (${fmtNum(cv("custo"))}% a.m.) é maior que o custo máximo de dívida da pergunta 9 (${fmtNum(r.divida_custo)}% a.m.).`);
+  const pr = (r.produtos ?? {}) as Record<string, string>;
+  if ((r.portfolio === "A" || r.portfolio === "C") && ["pocus", "paliativos"].some(p => pr[p] === "manter" || pr[p] === "crescer")) out.push("A postura de portfólio deixa POCUS e Paliativos fora do foco, mas você marcou Manter/Crescer para eles.");
+  if (pr.fpg_presencial === "crescer" && r.trafego === "A") out.push("Quer crescer a FPG Presencial com a mídia focada na PPG: sozinha ela tem LTV/CAC projetado de 0,7x, e a ascensão não seria medida.");
+  if (pr.ppg === "reduzir" || pr.ppg === "encerrar") out.push("Reduzir ou encerrar a PPG afeta ~79% da receita projetada.");
+  if ((r.portfolio === "C" || r.portfolio === "D") && !String(r.produto_novo ?? "").trim()) out.push("Escolheu abrir espaço para produtos novos, mas não indicou qual testaria primeiro, com teto, prazo e critério de sucesso.");
   if (r.ritmo === "A" && num(r.caixa_min) !== null && num(r.caixa_min)! >= 3) out.push("Quer acelerar e também manter 3 meses ou mais de caixa: hoje o caixa é de ~1,3 mês.");
   if (r.divida === "B" || r.divida === "C") out.push("Dívida para distribuir lucros custa ~34% a.a. sem gerar retorno operacional.");
   if (motor2 && r.ritmo === "C") out.push("Motor 2 relevante exige investimento, o que conflita com priorizar rentabilidade e distribuição.");
   if (motor2 && r.novo === "A") out.push("Motor 2 relevante dentro das diretorias atuais tende a disputar atenção com o core.");
-  if (r.motor === "A" && (r.portfolio === "C" || r.trafego === "C")) out.push("Escolheu só Motor 1, mas abriu portfólio ou mídia para além do core.");
+  if (r.motor === "A" && (r.portfolio === "D" || r.trafego === "C")) out.push("Escolheu só Motor 1, mas abriu portfólio ou mídia para além do core.");
   if (r.invest_ok && r.invest?.[0] === "distrib" && r.ritmo === "A") out.push("Distribuição em 1º no ranking não combina com crescimento máximo.");
   if (r.caixa_min === "1" && (r.divida === "A" || r.divida === "C")) out.push("Caixa mínimo de 1 mês com dívida para crescer deixa pouca margem de segurança.");
   if (r.venda === "A" && horiz !== null && horiz >= 9) out.push("Tem intenção de vender, mas prevê 5 anos ou mais ativo na LM.");
@@ -265,13 +357,16 @@ export function tensoes(r: Respostas): string[] {
 }
 
 /** Objetivos do BSC sugeridos (top 4) a partir das escolhas. */
-export function objetivosSugeridos(r: Respostas): string[] {
+export function objetivosSugeridos(r0: Respostas): string[] {
+  const r = normalizar(r0);
   const pts: Record<string, number> = {};
   const add = (cods: string[], p = 1) => cods.forEach(c => (pts[c] = (pts[c] ?? 0) + p));
   if (r.motor === "A" || r.motor === "B") add(["P.01", "F.02"], 2);
   if (r.motor === "C" || r.motor === "D") add(["F.01", "AC.03"], 2);
   if (r.ritmo === "A") add(["P.02", "P.03"]);
   if (r.ritmo === "B" || r.ritmo === "C") add(["F.02"]);
+  if (r.ritmo === "D") { add(["P.03"], 2); add(["F.02"]); }
+  if (["B", "C", "D"].includes(r.portfolio)) add(["F.01"]);
   if (r.trafego === "B" || r.trafego === "C") add(["F.01"]);
   if (r.invest_ok && r.invest) {
     const map: Record<string, string[]> = { sp: ["P.03", "P.02"], tech: ["AC.03"], pessoas: ["AC.02"], reserva: ["F.02"], distrib: ["F.02"], novos: ["F.01"] };
@@ -281,7 +376,8 @@ export function objetivosSugeridos(r: Respostas): string[] {
 }
 
 /** Pontos de partida: diretrizes sugeridas a partir das respostas. */
-export function diretrizesSugeridas(r: Respostas): Diretriz[] {
+export function diretrizesSugeridas(r0: Respostas): Diretriz[] {
+  const r = normalizar(r0);
   const out: Diretriz[] = [];
   const m: Record<string, Diretriz> = {
     A: { texto: "Concentrar 2027 no Motor 1 (PPG, FPG e ACLS) até atingir 3 meses de caixa e dados confiáveis.", objetivos: ["P.01", "F.02"] },
@@ -295,6 +391,14 @@ export function diretrizesSugeridas(r: Respostas): Diretriz[] {
   if (r.ritmo === "A") out.push({ texto: `Crescer no máximo da janela até 2028${metas ? `, com ${metas}` : ""}.`, objetivos: ["P.02", "P.03"] });
   if (r.ritmo === "B") out.push({ texto: `Crescer apenas o que o caixa gerado paga${metas ? `, com ${metas}` : ""}.`, objetivos: ["F.02"] });
   if (r.ritmo === "C") out.push({ texto: `Priorizar rentabilidade e distribuição${metas ? `, com ${metas}` : ""}.`, objetivos: ["F.02"] });
+  if (r.ritmo === "D") {
+    const aposta = FIN_APOSTAS.find(o => o.v === r.fin_aposta)?.label ?? "a definir";
+    const teto = num(r.fin_teto) !== null ? brl(r.fin_teto) : "a definir";
+    const crits = criteriosMarcados(r).slice(0, 3).map(c => criterioTexto(c, r.fin_criterios?.[c.id]?.valor).replace(/^./, s => s.toLowerCase()));
+    out.push({ texto: `Crescer no ritmo do caixa, financiando apenas iniciativas com prazo estabelecido para devolver o investimento e retorno acima do custo do dinheiro, tendo como primeira candidata: ${aposta}, com teto total de ${teto}, em parcelas liberadas só com ${crits.length ? crits.join("; ") : "critérios a definir"}.`, objetivos: ["P.03", "F.02"] });
+  }
+  if (r.portfolio === "C") out.push({ texto: "Manter o core e só lançar novos produtos mediante viabilidade comprovada: teto de investimento, prazo e critério de sucesso claros antes de começar.", objetivos: ["F.01", "P.01"] });
+  if (r.portfolio === "D") out.push({ texto: "Manter o core e os produtos do portfólio atual que se pagam, com um orçamento fantasma para testes e novos produtos: reserva liberada só para iniciativas com teto, prazo e critério de sucesso aprovados; o que não for usado volta ao caixa.", objetivos: ["F.01", "P.01"] });
   if (r.caixa_min) out.push({ texto: `Manter caixa mínimo de ${r.caixa_min === "6" ? "6 meses ou mais" : `${r.caixa_min} ${r.caixa_min === "1" ? "mês" : "meses"}`}.`, objetivos: ["F.02"] });
   if (r.principio === "A" || r.principio === "B") out.push({ texto: "Toda nova iniciativa precisa deixar o médico mais seguro diante do paciente grave e se pagar.", objetivos: ["P.01"] });
   if (r.trafego === "B") out.push({ texto: "Testar parte da mídia em FPG/ACLS medindo a ascensão real para a PPG antes de ampliar.", objetivos: ["F.01"] });
@@ -335,8 +439,14 @@ export function pontosProjeto(posicao: number): number {
 }
 
 /** Linhas da comparação entre sócios; `diverge` quando há respostas diferentes. */
-export const CAMPOS_COMPARACAO: { key: string; label: string; fmt?: (v: any) => string }[] = [
+export type CampoComparacao = { key: string; label: string; fmt?: (v: any) => string; get?: (r: Respostas) => any };
+const acaoLabel = (v: any) => ACOES_PRODUTO.find(o => o.v === v)?.label ?? "";
+export const CAMPOS_COMPARACAO: CampoComparacao[] = [
   ...PERGUNTAS.map(p => ({ key: p.code, label: `${p.num}. ${p.titulo}`, fmt: (v: any) => p.opcoes.find(o => o.v === v)?.label ?? "" })),
+  { key: "fin_aposta", label: "Primeira candidata a financiamento", fmt: v => FIN_APOSTAS.find(o => o.v === v)?.label ?? "" },
+  { key: "fin_teto", label: "Teto do financiamento", fmt: v => brl(v) },
+  { key: "fin_criterios", label: "Critérios para liberar o financiamento", get: r => criteriosResumo(r) },
+  ...PRODUTOS_2027.map(p => ({ key: `produto.${p.id}`, label: `Produto · ${p.nome}`, fmt: acaoLabel, get: (r: Respostas) => r.produtos?.[p.id] })),
   { key: "cresc_min", label: "Crescimento mínimo de receita (%)" },
   { key: "margem_min", label: "Margem líquida mínima (%)" },
   { key: "divida_custo", label: "Custo máximo da dívida (% a.m.)" },
@@ -350,10 +460,20 @@ export const CAMPOS_COMPARACAO: { key: string; label: string; fmt?: (v: any) => 
   { key: "lv_consequencia", label: "Se uma linha vermelha for cruzada", fmt: v => CONSEQUENCIAS.find(o => o.v === v)?.label ?? "" },
 ];
 
+export function valorBruto(c: CampoComparacao, r: Respostas | null | undefined): any {
+  const x = normalizar(r);
+  return c.get ? c.get(x) : x[c.key];
+}
+/** Valor formatado de um campo de comparação ("" quando vazio). */
+export function valorCampo(c: CampoComparacao, r: Respostas | null | undefined): string {
+  const v = valorBruto(c, r);
+  if (v === undefined || v === null || v === "") return "";
+  return c.fmt ? c.fmt(v) || String(v) : String(v);
+}
+
 export function compararSocios(lista: Respostas[]) {
   return CAMPOS_COMPARACAO.map(c => {
-    const vals = lista.map(r => (r?.[c.key] === undefined || r?.[c.key] === null ? "" : String(r[c.key])));
-    const preenchidos = vals.filter(Boolean);
-    return { ...c, valores: lista.map(r => (r?.[c.key] ? (c.fmt ? c.fmt(r[c.key]) || String(r[c.key]) : String(r[c.key])) : "—")), diverge: new Set(preenchidos).size > 1 };
+    const preenchidos = lista.map(r => valorBruto(c, r)).filter(v => v !== undefined && v !== null && v !== "").map(String);
+    return { ...c, valores: lista.map(r => valorCampo(c, r) || "—"), diverge: new Set(preenchidos).size > 1 };
   });
 }
