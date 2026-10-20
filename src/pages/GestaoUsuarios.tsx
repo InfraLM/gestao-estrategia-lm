@@ -12,6 +12,7 @@ import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { toast } from "sonner";
 import { Loader2, ShieldCheck, Users, Building2, FolderKanban, Plus, Trash2, Settings2 } from "lucide-react";
 import UserModuleMatrix from "@/components/UserModuleMatrix";
+import UserInvitationDialog from "@/components/UserInvitationDialog";
 
 type Profile = { user_id: string; display_name: string | null; email: string | null; cargo: string | null; departamento_id: string | null };
 type Departamento = { id: string; nome: string; origem: string };
@@ -159,7 +160,10 @@ export default function GestaoUsuarios() {
       <Card className="p-4">
         <div className="flex flex-wrap gap-3 items-center justify-between mb-4">
           <h3 className="font-semibold flex items-center gap-2"><Users className="h-4 w-4" /> Usuários e permissões</h3>
-          <Input placeholder="Buscar por nome ou e-mail" value={filtro} onChange={(e) => setFiltro(e.target.value)} className="w-64" />
+          <div className="flex flex-wrap items-center gap-2">
+            <Input placeholder="Buscar por nome ou e-mail" value={filtro} onChange={(e) => setFiltro(e.target.value)} className="w-64" />
+            {me.isSuperAdmin && <UserInvitationDialog departamentos={departamentos} onSaved={() => { void load(true); }} />}
+          </div>
         </div>
         {loading ? <div className="grid place-items-center p-8"><Loader2 className="h-5 w-5 animate-spin" /></div> : (
           <div className="space-y-2">
