@@ -1,6 +1,7 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
 # Fase 1 · Novos espaços seguros
+- [ ] Fase 4 · Estrutura Organizacional: árvore, tabela/filtros, ficha e testes; somente leitura, sem alterar dados ou acessos.
 - [x] Fase 3 · Insights Sócios: leitura dos 55 registros, filtros, ficha/referências e testes; 104 testes aprovados, verificação autenticada no computador/celular sem erros e assinatura dos dados inalterada.
 - [x] Fase 2 · Contexto e decisões: leitura, busca/filtros, ficha e referências; 76 testes aprovados, lista/ficha verificadas com login em computador e celular, assinatura dos 110 registros inalterada.
 - [x] Acrescentar seis tabelas vazias e políticas restritas; somente as duas ampliações de filtros autorizadas em estruturas existentes.
