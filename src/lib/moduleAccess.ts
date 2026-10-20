@@ -45,6 +45,7 @@ export type SocioParticipante = { respondente: boolean; pode_ver_consolidado: bo
 export function canAccessSocios(p: SocioParticipante, path = "/socios/formulario"): boolean {
   if (!p || !p.ativo) return false;
   if (path.startsWith("/socios/consolidado")) return p.pode_ver_consolidado;
-  if (path.startsWith("/socios/formulario")) return p.respondente;
+  // Quem vê o consolidado pode abrir o formulário em modo prévia (nada é salvo).
+  if (path.startsWith("/socios/formulario")) return p.respondente || p.pode_ver_consolidado;
   return p.respondente || p.pode_ver_consolidado;
 }

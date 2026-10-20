@@ -85,9 +85,10 @@ export default function SociosFormulario() {
   };
 
   if (q.isPending || !carregado) return <div className="grid place-items-center p-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
-  if (!q.data?.participante?.respondente) return <div className="py-16 text-center text-muted-foreground">Este formulário é exclusivo dos sócios respondentes.</div>;
+  const previa = !q.data?.participante?.respondente && !!q.data?.participante?.pode_ver_consolidado;
+  if (!q.data?.participante?.respondente && !previa) return <div className="py-16 text-center text-muted-foreground">Este formulário é exclusivo dos sócios respondentes.</div>;
 
-  const dis = !aberto;
+  const dis = !aberto || previa;
   const status = statusExibido(row);
   const alteradoAposEnvio = row?.enviado_em && row.updated_at && new Date(row.updated_at).getTime() - new Date(row.enviado_em).getTime() > 2000;
   const lv = r.lv ?? {};
