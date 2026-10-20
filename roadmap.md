@@ -1,7 +1,7 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
 # Fase 1 · Novos espaços seguros
-- [ ] Fase 2 · Contexto e decisões: leitura, busca/filtros, ficha, referências, testes e conferência sem alterar registros ou outras páginas.
+- [x] Fase 2 · Contexto e decisões: leitura, busca/filtros, ficha e referências; 76 testes aprovados, lista/ficha verificadas com login em computador e celular, assinatura dos 110 registros inalterada.
 - [x] Acrescentar seis tabelas vazias e políticas restritas; somente as duas ampliações de filtros autorizadas em estruturas existentes.
 - [x] Acrescentar três módulos fechados, cinco páginas vazias e itens de menu.
 - [x] Verificar testes antigos/novos, cinco páginas com login, matriz, visitantes bloqueados e seis tabelas com zero registros.
