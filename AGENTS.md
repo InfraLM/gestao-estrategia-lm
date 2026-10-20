@@ -1,6 +1,7 @@
 # AGENTS.md
 
 - Phase 1 spaces use six isolated tables and additive `fase1_*` auth helpers; new modules default closed, with owner/director read exceptions enforced server-side without changing legacy module access.
+- Strategic reference URLs use linksEstrategicos; Contexto and Insights select sheets from the codigo query parameter using replace navigation and only RLS-visible records, preserving filters and existing access gates.
 - Strategic spaces read through the existing RLS-filtered client with page-local pure helpers; Contexto, Insights Sócios, Estrutura and Incentivos are read-only. Incentivos reads active indicators live for shared-goals systems and incentivo_metas for other systems; CestaInsights only updates adherence, observation, evaluation date and authenticated evaluator, gated by existing incentivos edit grants or admin roles and RLS. Text renderers reuse unchanged Contexto normalization/status parsing; Estrutura gates DS links with canAccessPath("socios", "/socios/insights"). Never connect these tables to AI functions or general export pipelines.
 
 - Sistema de Metas 2S26 lives in `mt_*` tables read through `src/hooks/useMetasBase.ts`; the weekly check-in module must reuse them — the spec requires one shared base.
