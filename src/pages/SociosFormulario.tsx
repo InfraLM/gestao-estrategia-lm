@@ -33,7 +33,8 @@ export default function SociosFormulario() {
 export function FormularioSocio({ q }: { q: any }) {
   const { grupos, objetivos, nomeObjetivo } = useObjetivosKpis();
   const contexto = useConteudo<CardContexto[]>("socios.contexto2027", CONTEXTO_2027).data;
-  const produtosInfo = useConteudo<ProdutoInfo[]>("socios.produtos2027", PRODUTOS_2027).data ?? PRODUTOS_2027;
+  const produtosEditaveis = useConteudo<ProdutoInfo[]>("socios.produtos2027", PRODUTOS_2027).data;
+  const produtosInfo: ProdutoInfo[] = q.data?.produtos_info ?? produtosEditaveis;
   const [etapa, setEtapa] = useState(1);
   const [d, setD] = useState<FormDados>(VAZIO);
   const [carregado, setCarregado] = useState(false);
@@ -191,7 +192,7 @@ export function FormularioSocio({ q }: { q: any }) {
                 <div key={p.id} className="grid gap-2 rounded-md border p-3 sm:grid-cols-[1fr_10rem] sm:items-start">
                   <div><div className="font-medium text-sm">{p.nome}</div>
                     <ul className="text-xs text-muted-foreground space-y-0.5">{p.resultados.map((t, i) => <li key={i}>{t}</li>)}</ul></div>
-                  <SelectSimples opcoes={ACOES_PRODUTO} value={r.produtos?.[p.id]} onChange={v => setR("produtos", { ...(r.produtos ?? {}), [p.id]: v })} disabled={dis} />
+                  <div role="group" aria-label={`Decisão para ${p.nome}`}><SelectSimples opcoes={ACOES_PRODUTO} value={r.produtos?.[p.id]} onChange={v => setR("produtos", { ...(r.produtos ?? {}), [p.id]: v })} disabled={dis} /></div>
                 </div>
               ))}
             </div>

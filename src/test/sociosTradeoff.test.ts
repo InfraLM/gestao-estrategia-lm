@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calcularEixos, posicionamento, tensoes, validarEnvio, objetivosSugeridos, prazoAberto, pontosProjeto, statusExibido, compararSocios, normalizar, diretrizesSugeridas, escolhas } from "@/lib/sociosTradeoff";
+import { calcularEixos, posicionamento, tensoes, validarEnvio, objetivosSugeridos, prazoAberto, pontosProjeto, statusExibido, compararSocios, normalizar, diretrizesSugeridas, escolhas, respostasAbertas } from "@/lib/sociosTradeoff";
 
 const rank = (...it: string[]) => ({ invest: it, invest_ok: true });
 
@@ -84,11 +84,11 @@ describe("Desejos dos Sócios · trade-off", () => {
   });
   it("P3 diretriz D usa candidata, teto e até 3 critérios", () => {
     const d = diretrizesSugeridas({ ritmo: "D", fin_aposta: "sp", fin_teto: "2000000", fin_criterios: { incremental: { on: true }, cac: { on: true }, ltv_cac: { on: true, valor: "4" }, piso: { on: true } } });
-    const x = d.find(z => z.texto.startsWith("Crescer no ritmo do caixa"))!;
-    expect(x.texto).toContain("Expansão da prática em SP");
-    expect(x.texto).toContain("2.000.000");
-    expect(x.texto).toContain("no mínimo 4x");
-    expect(x.texto).not.toContain("piso");
+    const x = d.find(z => z.texto.startsWith("Crescer no ritmo do caixa"));
+    expect(x?.texto).toContain("Expansão da prática em SP");
+    expect(x?.texto).toContain("2.000.000");
+    expect(x?.texto).toContain("no mínimo 4x");
+    expect(x?.texto).not.toContain("piso");
   });
   it("P4 eixo core: A 0, B 35, C 50, D 70", () => {
     expect(["A", "B", "C", "D"].map(v => calcularEixos({ portfolio: v, portfolio_v: 2 }).core)).toEqual([0, 35, 50, 70]);
@@ -121,5 +121,44 @@ describe("Desejos dos Sócios · trade-off", () => {
     expect(l.find(x => x.key === "produto.ppg")?.diverge).toBe(true);
     expect(l.find(x => x.key === "produto.ppg")?.valores).toEqual(["Crescer", "Manter"]);
     expect(l.some(x => x.label === "Teto do financiamento")).toBe(true);
+  });
+
+  it("a linha vermelha de 3 a 5 prioridades conflita com dois motores apenas no portfólio D", () => {
+    const base = { motor: "C", portfolio_v: 2, lv: { prioridades: { on: true, valor: "5" } } };
+    expect(tensoes({ ...base, portfolio: "D" }).some(t => t.includes("3 a 5 prioridades"))).toBe(true);
+    expect(tensoes({ ...base, portfolio: "C" }).some(t => t.includes("3 a 5 prioridades"))).toBe(false);
+  });
+  it("limites de financiamento não criam tensão depois de optar por não financiar", () => {
+    const fin_criterios = { custo: { on: true, valor: "3" }, ltv_cac: { on: true, valor: "3.4" } };
+    expect(tensoes({ ritmo: "B", divida_custo: "2.5", fin_criterios })).toEqual([]);
+    expect(tensoes({ ritmo: "A", divida_custo: "2.5", fin_criterios }).some(t => t.includes("maior que o custo máximo"))).toBe(true);
+  });
+  it("legado C torna-se D sem modificar o original nem os demais campos", () => {
+    const antigo = { portfolio: "C", produto_novo: "Teste", produtos: { ppg: "manter" } };
+    const atualizado = normalizar(antigo);
+    expect(antigo.portfolio).toBe("C");
+    expect(atualizado).toEqual({ ...antigo, portfolio: "D", portfolio_v: 2 });
+    expect(normalizar(atualizado)).toEqual(atualizado);
+  });
+  it.each(["B", "C", "D"])("portfólio %s acrescenta F.01", portfolio => {
+    expect(objetivosSugeridos({ portfolio, portfolio_v: 2 })).toEqual(["F.01"]);
+  });
+  it.each(["C", "D"])("produto novo é opcional em %s e sua ausência produz alerta", portfolio => {
+    const respostas = { motor: "A", principio: "A", ritmo: "B", portfolio, portfolio_v: 2, trafego: "A", caixa_min: "2", divida: "D", ddl: "A", venda: "C", sucessao: "A", ...rank("sp", "tech", "pessoas", "reserva", "distrib", "novos") };
+    expect(validarEnvio({ respostas, diretrizes: [{ texto: "Plano", objetivos: [] }], projetos: [], extras: {} })).toEqual([]);
+    expect(tensoes(respostas).some(t => t.includes("não indicou qual testaria"))).toBe(true);
+    expect(tensoes({ ...respostas, produto_novo: "Teste com teto e prazo" }).some(t => t.includes("não indicou qual testaria"))).toBe(false);
+  });
+  it("exportação e histórico preservam produto novo e comentário antigo", () => {
+    const abertas = respostasAbertas({ produto_novo: "POCUS: R$ 50 mil, 3 meses, payback 6 meses", portfolio_obs: "Não encerrar ACLS" });
+    expect(abertas.find(([label]) => label === "Produto novo a testar/lançar")?.[1]).toBe("POCUS: R$ 50 mil, 3 meses, payback 6 meses");
+    expect(abertas.find(([label]) => label === "Portfólio · comentário")?.[1]).toBe("Não encerrar ACLS");
+  });
+  it("comparação mantém todos os critérios e limites financeiros", () => {
+    const linhas = compararSocios([{ fin_criterios: { ltv_cac: { on: true, valor: "3.5" }, payback: { on: true, valor: "12" }, custo: { on: true, valor: "2.45" } } }]);
+    const criterios = linhas.find(l => l.key === "fin_criterios")?.valores[0];
+    expect(criterios).toContain("3,5x");
+    expect(criterios).toContain("12 meses");
+    expect(criterios).toContain("2,45% ao mês");
   });
 });
