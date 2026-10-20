@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Users, Plus, Archive, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useMetasBase, MESES_2S26, type Indicador } from "@/hooks/useMetasBase";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
 
 type Draft = { nome: string; meta_texto: string; meta_semestre: string; peso: string };
 const toDraft = (i: Indicador): Draft => ({
@@ -18,7 +19,9 @@ const num = (s: string) => (s.trim() === "" ? null : Number(s.replace(",", "."))
 
 /** Matriz editável da Cesta de Metas — grava direto nos indicadores (origem "cesta") usados pelo Lançamento mensal e pelo Painel da Governança. */
 export default function CestaMatrizEditavel({ extras }: { extras: (diretor: string, indicador: string) => { tipo?: string; objetivos?: string[] } | undefined }) {
-  const { cadeiras, indicadores, metas, isGov, reload, loading } = useMetasBase();
+  const { cadeiras, indicadores, metas, isGovernanca, reload, loading } = useMetasBase();
+  const access = useModuleAccess();
+  const isGov = isGovernanca && access.canWrite("cesta");
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [salvando, setSalvando] = useState<string | null>(null);
 

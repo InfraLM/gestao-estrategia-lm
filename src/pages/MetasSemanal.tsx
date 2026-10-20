@@ -11,6 +11,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI } from "@/hooks/useMetasBase";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
 
 const db = supabase as any;
 export type Prioridade = { titulo: string; iniciativa_id: string; resultado: string };
@@ -36,6 +37,7 @@ const vazioIn = (): CheckinConteudo => ({ prioridades: [{ titulo: "", iniciativa
 
 export default function MetasSemanal() {
   const b = useMetasBase();
+  const access = useModuleAccess();
   const [cad, setCad] = useState<string>("");
   const [sem, setSem] = useState(segunda());
   const [rows, setRows] = useState<any[]>([]);
@@ -57,7 +59,7 @@ export default function MetasSemanal() {
   };
   useEffect(() => { load(); }, [cad, sem]);
 
-  const podeEditar = b.isGov || (!!cad && b.minhaCadeira === cad);
+  const podeEditar = access.canWrite("rotina") && (b.isGovernanca || (!!cad && b.minhaCadeira === cad));
   const semanas = useMemo(() => [0, 1, 2, 3, 4, 5].map((n) => segunda(new Date(Date.now() - n * 7 * 864e5))), []);
   const inis = b.iniciativas.filter((i) => i.cadeira_id === cad && !["concluida", "cancelada"].includes(i.status));
   const inds = b.indicadores.filter((x) => x.cadeira_id === cad && x.status === "ativo");

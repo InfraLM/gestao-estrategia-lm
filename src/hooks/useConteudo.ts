@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useModuleAccess } from "./useModuleAccess";
+import { moduleForContent } from "@/lib/moduleAccess";
 
 let cache: Record<string, any> | null = null;
 let loading: Promise<void> | null = null;
@@ -15,6 +17,7 @@ async function loadAll() {
 /** Conteúdo editável (Diagnóstico/Estratégia/BSC/OKRs): base estática + versão salva no banco. */
 export function useConteudo<T>(chave: string, padrao: T) {
   const { user } = useAuth();
+  const access = useModuleAccess();
   const [, force] = useState(0);
   const [canEdit, setCanEdit] = useState(false);
 
@@ -46,5 +49,5 @@ export function useConteudo<T>(chave: string, padrao: T) {
 
   const restaurar = useCallback(() => save(padrao), [save, padrao]);
 
-  return { data, save, restaurar, canEdit, editado: !!cache && chave in cache };
+  return { data, save, restaurar, canEdit: access.canWrite(moduleForContent(chave)) && (canEdit || access.explicitEditor(moduleForContent(chave))), editado: !!cache && chave in cache };
 }

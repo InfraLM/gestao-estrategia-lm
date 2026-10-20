@@ -22,6 +22,20 @@
       "when": 1792169939355,
       "tag": "0002_bc_projeto_codigo",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792501575781,
+      "tag": "0003_controle_acessos_modulos",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792501675498,
+      "tag": "0004_acessos_bases_compartilhadas_e_competencias",
+      "breakpoints": true
     }
   ]
 }

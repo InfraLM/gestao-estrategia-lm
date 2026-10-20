@@ -4,6 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { ShieldCheck, Building2, FolderKanban, Loader2, KeyRound } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
+import { ACCESS_MODULES } from "@/lib/moduleAccess";
 
 const MODULO_LABELS: Record<string, string> = {
   pmo: "PMO · Projetos, Status Report, Gestão",
@@ -15,6 +17,7 @@ const MODULO_LABELS: Record<string, string> = {
 export default function MinhasPermissoes() {
   const { user } = useAuth();
   const p = useUserPermissions();
+  const access = useModuleAccess();
 
   if (!user) return (
     <Card className="p-8 text-center">
@@ -32,6 +35,14 @@ export default function MinhasPermissoes() {
 
   return (
     <div className="space-y-6 max-w-5xl">
+      <section className="space-y-3">
+        <h3 className="font-semibold">Acesso por módulo</h3>
+        <div className="divide-y border rounded-md">{ACCESS_MODULES.map(m => {
+          const grant = access.grants.find(g => g.modulo === m.id);
+          const label = access.isSuperAdmin ? "Acesso total" : grant?.nivel === "nenhum" ? "Sem acesso" : grant?.nivel === "leitura" ? "Somente consulta" : grant?.nivel === "edicao" ? "Consulta e edição" : "Acesso atual mantido";
+          return <div key={m.id} className="p-3 flex flex-wrap gap-2 justify-between text-sm"><span>{m.label}</span><Badge variant="outline">{label}</Badge></div>;
+        })}</div>
+      </section>
       <Card className="p-6">
         <div className="flex items-start gap-4">
           <div className="h-12 w-12 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center font-semibold">

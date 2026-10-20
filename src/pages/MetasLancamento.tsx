@@ -19,6 +19,7 @@ import {
 } from "@/hooks/useMetasBase";
 import { StatusReportsDaCadeira } from "@/components/StatusReportProjeto";
 import { faixaDaNota, type Regua } from "@/pages/MetasPainel";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
 
 const db = supabase as any;
 const MES_LONGO: Record<string, string> = { "07": "Julho", "08": "Agosto", "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro" };
@@ -49,6 +50,7 @@ function mesAtual() {
 
 export default function MetasLancamento() {
   const b = useMetasBase();
+  const access = useModuleAccess();
   const [comp, setComp] = useState(mesAtual());
   const [cadeira, setCadeira] = useState<string | null>(null);
   const [comps, setComps] = useState<Comp[]>([]);
@@ -76,7 +78,7 @@ export default function MetasLancamento() {
   const compRow = comps.find((c) => c.competencia === comp);
   const rev = compRow?.revisao ?? 0;
   const fechado = compRow?.estado === "fechado";
-  const podeEditar = !fechado && !!cadeira && (b.isGov || cadeira === b.minhaCadeira);
+  const podeEditar = access.canWrite("metas") && !fechado && !!cadeira && (b.isGov || cadeira === b.minhaCadeira);
 
   // valor vigente de um indicador numa competência = maior revisão daquela competência
   const lancDe = (indId: string, c: string) => {

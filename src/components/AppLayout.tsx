@@ -7,6 +7,8 @@ import ScrollNav from "./ScrollNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
+import { moduleForPath } from "@/lib/moduleAccess";
 
 type NavChild = { to: string; label: string; icon: any };
 type NavGroup = { id: string; label: string; icon: any; children: NavChild[] };
@@ -108,7 +110,12 @@ export default function AppLayout() {
   const title = titles[loc.pathname] ?? "NextLevel LM";
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<{ display_name?: string | null; cargo?: string | null; email?: string | null } | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const access = useModuleAccess();
+  const isAdmin = access.isSuperAdmin || access.roles.includes("admin");
+  const visibleGroups = navGroups.map(group => ({ ...group, children: group.children.filter(child => {
+    const module = moduleForPath(child.to);
+    return !module || access.canRead(module);
+  }) })).filter(group => group.children.length > 0);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
@@ -122,11 +129,9 @@ export default function AppLayout() {
   }, [collapsed]);
 
   useEffect(() => {
-    if (!user) { setProfile(null); setIsAdmin(false); return; }
+    if (!user) { setProfile(null); return; }
     supabase.from("profiles").select("display_name,cargo,email").eq("user_id", user.id).maybeSingle()
       .then(({ data }) => setProfile(data ?? { email: user.email }));
-    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle()
-      .then(({ data }) => setIsAdmin(!!data));
   }, [user]);
 
   const displayName = profile?.display_name || user?.email || "Convidado";
@@ -153,7 +158,7 @@ export default function AppLayout() {
         </div>
         <TooltipProvider delayDuration={200}>
         <nav className={cn("flex-1 py-5 space-y-1 overflow-y-auto overflow-x-hidden", collapsed ? "px-2" : "px-3")}>
-          {navGroups.map((group) => {
+          {visibleGroups.map((group) => {
             const isGroupActive = group.children.some((c) =>
               c.to === "/" ? loc.pathname === "/" : loc.pathname.startsWith(c.to)
             );

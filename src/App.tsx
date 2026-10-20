@@ -36,6 +36,7 @@ import BusinessCaseScorecard from "./pages/BusinessCaseScorecard";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
+import ModuleAccessGate from "./components/ModuleAccessGate";
 
 const queryClient = new QueryClient();
 
@@ -48,7 +49,9 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route element={<AppLayout />}>
+            <Route element={<ModuleAccessGate><AppLayout /></ModuleAccessGate>}>
+              <Route path="/gestao-usuarios" element={<GestaoUsuarios />} />
+              <Route path="/minhas-permissoes" element={<MinhasPermissoes />} />
               <Route path="/" element={<Dashboard />} />
               <Route path="/submissao" element={<Submissao />} />
               <Route path="/portfolio" element={<Portfolio />} />

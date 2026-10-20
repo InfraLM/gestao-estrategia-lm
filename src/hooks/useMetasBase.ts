@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useModuleAccess } from "./useModuleAccess";
 
 /** Base compartilhada do Sistema de Metas 2S26 (lançamento mensal e, depois, check-in semanal). */
 export type Cadeira = { id: string; nome: string; diretor_user_id: string | null; diretor_nome: string | null; ativo: boolean };
@@ -37,6 +38,7 @@ export const EMAIL_CORP = "@liberdademedicaedu.com.br";
 
 export function useMetasBase() {
   const { user } = useAuth();
+  const access = useModuleAccess();
   const [s, setS] = useState({
     cadeiras: [] as Cadeira[], objetivos: [] as Objetivo[], okrs: [] as Okr[], okrObj: [] as { okr_id: string; objetivo_id: string }[],
     indicadores: [] as Indicador[], metas: [] as MetaMensal[], iniciativas: [] as Iniciativa[], usuarios: [] as UsuarioMt[], perfis: [] as Perfil[],
@@ -64,5 +66,5 @@ export function useMetasBase() {
 
   const corporativo = !!user?.email?.toLowerCase().endsWith(EMAIL_CORP);
   const meu = s.usuarios.find((x) => x.user_id === user?.id);
-  return { ...s, loading, reload: load, isGov, corporativo, minhaCadeira: meu?.cadeira_id ?? null, user };
+  return { ...s, loading: loading || access.loading, reload: load, isGov: isGov && access.canWrite("metas"), isGovernanca: isGov, corporativo, minhaCadeira: meu?.cadeira_id ?? null, user };
 }
