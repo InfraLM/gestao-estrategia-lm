@@ -7,20 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { kpiNome } from "@/hooks/useObjetivosKpis";
-import { CAMPOS_COMPARACAO, valorCampo, normalizar, INVEST_ITENS, LINHAS_VERMELHAS, PAPEIS, Diretriz, Projeto } from "@/lib/sociosTradeoff";
+import { CAMPOS_COMPARACAO, valorCampo, normalizar, INVEST_ITENS, LINHAS_VERMELHAS, PAPEIS, Diretriz, Projeto, RESPOSTAS_ABERTAS, respostasAbertas } from "@/lib/sociosTradeoff";
 
 type Versao = { id: string; user_id: string; versao: number; enviado_em: string };
 type Doc = { versao: number; enviado_em: string; respostas: any; diretrizes: Diretriz[]; projetos: Projeto[]; extras: any };
 
 const fmt = (s: string) => new Date(s).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
-const ABERTAS: [string, string][] = [
-  ["motor_porque", "Motor · por quê"], ["principio_obs", "Princípio · observações"], ["portfolio_obs", "Portfólio · comentário"], ["produto_novo", "Produto novo a testar/lançar"],
-  ["trafego_obs", "Mídia · observações"], ["novo_aposta", "Primeira aposta Motor 2"], ["novo_lider", "Liderança do novo"],
-  ["ddl_obs", "DDL · observações"], ["venda_cond", "Condições de venda"], ["sucessao_val", "Valuation"],
-  ["papel_escopo", "Escopo do papel"], ["lv_inegociavel", "Linha mais inegociável"], ["lv_preocupacao", "Preocupações"],
-];
-const CONHECIDAS = new Set([...CAMPOS_COMPARACAO.map(c => c.key), ...ABERTAS.map(a => a[0]), "invest", "invest_ok", "lv", "resultados", "produtos", "portfolio_v"]);
+const CONHECIDAS = new Set([...CAMPOS_COMPARACAO.map(c => c.key), ...RESPOSTAS_ABERTAS.map(a => a[0]), "invest", "invest_ok", "lv", "resultados", "produtos", "portfolio_v"]);
 
 const valorTexto = (v: any): string => Array.isArray(v) ? v.filter(Boolean).join(" · ") : typeof v === "object" && v ? JSON.stringify(v) : String(v ?? "");
 
@@ -47,8 +41,7 @@ function Documento({ d, nome }: { d: Doc; nome: string }) {
         {(r.invest ?? []).length ? <ol className="list-decimal pl-5 text-sm">{r.invest.map((v: string) => <li key={v}>{INVEST_ITENS.find(i => i.v === v)?.label ?? v}</li>)}</ol> : <div className="text-sm text-muted-foreground">—</div>}
       </Secao>
       <Secao titulo="Respostas abertas">
-        {ABERTAS.map(([k, l]) => <Linha key={k} k={l} v={r[k]} />)}
-        <Linha k="Resultados não financeiros" v={r.resultados} />
+        {respostasAbertas(r).map(([label, value]) => <Linha key={label} k={label} v={value} />)}
         <Linha k="Papel em 2027" v={PAPEIS.find(p => p.v === r.papel_tipo)?.label} />
       </Secao>
       <Secao titulo="Linhas vermelhas">
@@ -79,9 +72,10 @@ export default function SubmissoesHistorico({ versoes, nomes }: { versoes: Versa
     if (!error) setAberto({ v, d: data });
   };
   const imprimir = () => {
+    if (!aberto) return;
     const el = document.getElementById("doc-socio"); if (!el) return;
     const w = window.open("", "_blank"); if (!w) return;
-    w.document.write(`<html><head><title>Desejos dos Sócios 2027 · ${nomes[aberto!.v.user_id] ?? ""} v${aberto!.v.versao}</title><style>body{font-family:sans-serif;padding:24px;font-size:13px}h3{margin-top:18px}</style></head><body><h2>Desejos dos Sócios 2027</h2>${el.innerHTML}</body></html>`);
+    w.document.write(`<html><head><title>Desejos dos Sócios 2027 · versão ${aberto.v.versao}</title><style>body{font-family:sans-serif;padding:24px;font-size:13px}h3{margin-top:18px}</style></head><body><h2>Desejos dos Sócios 2027</h2>${el.innerHTML}</body></html>`);
     w.document.close(); w.print();
   };
 

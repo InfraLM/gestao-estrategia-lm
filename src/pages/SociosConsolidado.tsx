@@ -13,7 +13,7 @@ import { TradeOff } from "./SociosFormulario";
 import SubmissoesHistorico from "@/components/socios/SubmissoesHistorico";
 import {
   calcularEixos, compararSocios, posicionamento, statusExibido, pontosProjeto, LINHAS_VERMELHAS, CONSEQUENCIAS, PAPEIS, INVEST_ITENS,
-  Diretriz, Projeto, Respostas, normalizar,
+  Diretriz, Projeto, Respostas, normalizar, respostasAbertas,
 } from "@/lib/sociosTradeoff";
 
 const fmtData = (s?: string | null) => (s ? new Date(s).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : "—");
@@ -44,7 +44,7 @@ export default function SociosConsolidado() {
   const socios = useMemo(() => {
     if (!q.data) return [];
     return q.data.participantes.filter(p => p.respondente).map(p => {
-      const row = q.data!.respostas.find(r => r.user_id === p.user_id) ?? null;
+      const row = q.data.respostas.find(r => r.user_id === p.user_id) ?? null;
       const r: Respostas = normalizar(row?.respostas);
       return { p, row, r, eixos: calcularEixos(r), diretrizes: (row?.diretrizes ?? []) as Diretriz[], projetos: (row?.projetos ?? []) as Projeto[] };
     });
@@ -52,6 +52,8 @@ export default function SociosConsolidado() {
 
   if (q.isPending) return <div className="grid place-items-center p-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
   if (q.isError) return <div className="py-16 text-center text-muted-foreground">Não foi possível carregar a visão consolidada.</div>;
+  if (!q.data) return null;
+  const data = q.data;
 
   const comparacao = compararSocios(socios.map(s => s.r));
   const divergencias = comparacao.filter(c => c.diverge).length;
@@ -89,6 +91,11 @@ export default function SociosConsolidado() {
     socios.forEach(s => s.diretrizes.forEach(d => linhas.push([s.p.nome_exibicao, d.texto, d.objetivos.join(", "), d.porque ?? ""])));
     linhas.push([], ["Projeto", "Pontos", "Objetivos", "KPIs", "Quem priorizou"]);
     ranking.forEach(p => linhas.push([p.nome, p.pontos, [...p.objetivos].join(", "), [...p.kpis].join(", "), p.quem.join(", ")]));
+    linhas.push([], ["Sócio", "Resposta aberta", "Conteúdo"]);
+    socios.forEach(s => {
+      respostasAbertas(s.r).forEach(([label, valor]) => linhas.push([s.p.nome_exibicao, label, valor]));
+      linhas.push([s.p.nome_exibicao, "Parar / reduzir", s.row?.extras?.parar ?? ""], [s.p.nome_exibicao, "Comentários", s.row?.extras?.comentarios ?? ""]);
+    });
     baixarCsv("desejos_socios_2027", linhas);
   };
 
@@ -105,12 +112,12 @@ export default function SociosConsolidado() {
         <Button variant="outline" onClick={exportar}><Download className="h-4 w-4 mr-1" />Exportar CSV</Button>
       </div>
 
-      <SubmissoesHistorico versoes={q.data!.versoes} nomes={Object.fromEntries(q.data!.participantes.filter(p => p.user_id).map(p => [p.user_id!, p.nome_exibicao]))} />
+      <SubmissoesHistorico versoes={data.versoes} nomes={Object.fromEntries(data.participantes.flatMap(p => p.user_id ? [[p.user_id, p.nome_exibicao]] : []))} />
 
       <div className="grid gap-4 md:grid-cols-4">
         {socios.map(s => {
           const st = statusExibido(s.row);
-          const versoes = q.data!.versoes.filter(v => v.user_id === s.p.user_id);
+          const versoes = data.versoes.filter(v => v.user_id === s.p.user_id);
           return (
             <Card key={s.p.id}>
               <CardContent className="pt-5 space-y-2 text-sm">
@@ -135,12 +142,12 @@ export default function SociosConsolidado() {
         <Card><CardContent className="pt-5"><div className="text-xs text-muted-foreground">Divergências</div><div className="text-3xl font-bold text-primary">{divergencias}</div><div className="text-xs text-muted-foreground">perguntas com respostas diferentes</div></CardContent></Card>
       </div>
 
-      {detalhe && (() => { const s = socios.find(x => x.p.id === detalhe)!; return <div><h3 className="font-semibold mb-2">Trade-off · {s.p.nome_exibicao}</h3><TradeOff r={s.r} eixos={s.eixos} nomeObjetivo={nomeObjetivo} /></div>; })()}
+      {detalhe && (() => { const s = socios.find(x => x.p.id === detalhe); return s ? <div><h3 className="font-semibold mb-2">Trade-off · {s.p.nome_exibicao}</h3><TradeOff r={s.r} eixos={s.eixos} nomeObjetivo={nomeObjetivo} /></div> : null; })()}
 
       <Card>
         <CardHeader className="pb-3"><CardTitle className="text-base">Eixos · os sócios na mesma régua</CardTitle></CardHeader>
         <CardContent className="space-y-5">
-          <div className="flex flex-wrap gap-3 text-xs">{socios.map(s => <span key={s.p.id}><b>{s.p.nome_exibicao.slice(0, 1)}</b> = {s.p.nome_exibicao} {posicionamento(s.r, s.eixos) ? `· ${posicionamento(s.r, s.eixos)!.titulo}` : ""}</span>)}</div>
+          <div className="flex flex-wrap gap-3 text-xs">{socios.map(s => <span key={s.p.id}><b>{s.p.nome_exibicao.slice(0, 1)}</b> = {s.p.nome_exibicao} {posicionamento(s.r, s.eixos)?.titulo ?? ""}</span>)}</div>
           <Regua esquerda="Foco no core" direita="Abrir Motor 2" marcadores={socios.map(s => ({ nome: s.p.nome_exibicao, valor: s.eixos.core }))} />
           <Regua esquerda="Preservar caixa" direita="Acelerar" marcadores={socios.map(s => ({ nome: s.p.nome_exibicao, valor: s.eixos.caixa }))} />
           <Regua esquerda="Reinvestir" direita="Retorno aos sócios" marcadores={socios.map(s => ({ nome: s.p.nome_exibicao, valor: s.eixos.retorno }))} />
@@ -159,7 +166,7 @@ export default function SociosConsolidado() {
                 </tr>
               ))}
               <tr className="border-b align-top"><td className="py-2 pr-3 font-medium">7. Ranking de investimento</td>
-                {socios.map(s => <td key={s.p.id} className="py-2 pr-3">{s.r.invest_ok ? s.r.invest!.map((v, i) => `${i + 1}º ${INVEST_ITENS.find(x => x.v === v)?.label}`).join(" · ") : "—"}</td>)}</tr>
+                {socios.map(s => <td key={s.p.id} className="py-2 pr-3">{s.r.invest_ok ? s.r.invest?.map((v, i) => `${i + 1}º ${INVEST_ITENS.find(x => x.v === v)?.label}`).join(" · ") : "—"}</td>)}</tr>
             </tbody>
           </table>
         </CardContent>
@@ -213,9 +220,7 @@ export default function SociosConsolidado() {
             <div key={s.p.id} className="space-y-2 text-sm">
               <div className="font-semibold">{s.p.nome_exibicao}</div>
               {[
-                ["Motor · por quê", s.r.motor_porque], ["Princípio", s.r.principio_obs], ["Portfólio · comentário", s.r.portfolio_obs], ["Produto novo", s.r.produto_novo], ["Mídia", s.r.trafego_obs],
-                ["Primeira aposta Motor 2", s.r.novo_aposta], ["Liderança do novo", s.r.novo_lider], ["DDL · observações", s.r.ddl_obs], ["Condições de venda", s.r.venda_cond],
-                ["Valuation", s.r.sucessao_val], ["Resultados não financeiros", (s.r.resultados ?? []).filter(Boolean).join(" · ")],
+                ...respostasAbertas(s.r),
                 ["Papel", [PAPEIS.find(p => p.v === s.r.papel_tipo)?.label, s.r.papel_escopo].filter(Boolean).join(" — ")],
                 ["Linha mais inegociável", s.r.lv_inegociavel], ["Preocupações", s.r.lv_preocupacao],
                 ["Parar / reduzir", s.row?.extras?.parar], ["Comentários", s.row?.extras?.comentarios],

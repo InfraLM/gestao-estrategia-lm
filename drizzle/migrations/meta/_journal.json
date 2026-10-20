@@ -85,6 +85,13 @@
       "when": 1792532515224,
       "tag": "0011_fase1_espacos_seguros_vazios",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792532943140,
+      "tag": "0012_socios_link_resultados_produtos",
+      "breakpoints": true
     }
   ]
 }

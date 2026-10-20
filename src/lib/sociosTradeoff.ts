@@ -327,18 +327,22 @@ export function tensoes(r0: Respostas): string[] {
   if (r.ritmo === "D" && !crit.length) out.push("Escolheu financiar só com retorno e prazo, mas não marcou nenhum critério para liberar o financiamento.");
   if (r.ritmo === "A" && crit.length < 3) out.push("Quer crescer no máximo com dívida, mas exige menos de 3 critérios para liberar o financiamento.");
   if (financia(r) && !r.fin_criterios?.incremental?.on) out.push("Aceita financiar crescimento sem exigir incrementalidade: a expansão pode só deslocar alunos que já comprariam e derrubar o LTV/CAC.");
-  if (cv("ltv_cac") !== null && cv("ltv_cac")! < 3.5) out.push(`LTV/CAC mínimo de ${fmtNum(cv("ltv_cac"))}x está abaixo do critério do conselheiro (3,5x) e perto da PPG 2030 (3,4x).`);
-  if (cv("custo") !== null && num(r.divida_custo) !== null && cv("custo")! > num(r.divida_custo)!) out.push(`O custo máximo do financiamento (${fmtNum(cv("custo"))}% a.m.) é maior que o custo máximo de dívida da pergunta 9 (${fmtNum(r.divida_custo)}% a.m.).`);
+  const ltvCac = cv("ltv_cac"), custoFin = cv("custo"), custoDivida = num(r.divida_custo);
+  if (financia(r) && ltvCac !== null && ltvCac < 3.5) out.push(`LTV/CAC mínimo de ${fmtNum(ltvCac)}x está abaixo do critério do conselheiro (3,5x) e perto da PPG 2030 (3,4x).`);
+  if (financia(r) && custoFin !== null && custoDivida !== null && custoFin > custoDivida) out.push(`O custo máximo do financiamento (${fmtNum(custoFin)}% a.m.) é maior que o custo máximo de dívida da pergunta 9 (${fmtNum(custoDivida)}% a.m.).`);
   const pr = (r.produtos ?? {}) as Record<string, string>;
   if ((r.portfolio === "A" || r.portfolio === "C") && ["pocus", "paliativos"].some(p => pr[p] === "manter" || pr[p] === "crescer")) out.push("A postura de portfólio deixa POCUS e Paliativos fora do foco, mas você marcou Manter/Crescer para eles.");
   if (pr.fpg_presencial === "crescer" && r.trafego === "A") out.push("Quer crescer a FPG Presencial com a mídia focada na PPG: sozinha ela tem LTV/CAC projetado de 0,7x, e a ascensão não seria medida.");
   if (pr.ppg === "reduzir" || pr.ppg === "encerrar") out.push("Reduzir ou encerrar a PPG afeta ~79% da receita projetada.");
   if ((r.portfolio === "C" || r.portfolio === "D") && !String(r.produto_novo ?? "").trim()) out.push("Escolheu abrir espaço para produtos novos, mas não indicou qual testaria primeiro, com teto, prazo e critério de sucesso.");
-  if (r.ritmo === "A" && num(r.caixa_min) !== null && num(r.caixa_min)! >= 3) out.push("Quer acelerar e também manter 3 meses ou mais de caixa: hoje o caixa é de ~1,3 mês.");
+  const caixaMin = num(r.caixa_min), caixaLinha = val("caixa_abaixo");
+  if (r.ritmo === "A" && caixaMin !== null && caixaMin >= 3) out.push("Quer acelerar e também manter 3 meses ou mais de caixa: hoje o caixa é de ~1,3 mês.");
   if (r.divida === "B" || r.divida === "C") out.push("Dívida para distribuir lucros custa ~34% a.a. sem gerar retorno operacional.");
   if (motor2 && r.ritmo === "C") out.push("Motor 2 relevante exige investimento, o que conflita com priorizar rentabilidade e distribuição.");
   if (motor2 && r.novo === "A") out.push("Motor 2 relevante dentro das diretorias atuais tende a disputar atenção com o core.");
   if (r.motor === "A" && (r.portfolio === "D" || r.trafego === "C")) out.push("Escolheu só Motor 1, mas abriu portfólio ou mídia para além do core.");
+  const prioridades = val("prioridades");
+  if (on("prioridades") && prioridades !== null && prioridades >= 3 && prioridades <= 5 && motor2 && r.portfolio === "D") out.push("Limita o ano a 3 a 5 prioridades, mas escolheu dois motores e portfólio aberto: as frentes disputam o mesmo foco.");
   if (r.invest_ok && r.invest?.[0] === "distrib" && r.ritmo === "A") out.push("Distribuição em 1º no ranking não combina com crescimento máximo.");
   if (r.caixa_min === "1" && (r.divida === "A" || r.divida === "C")) out.push("Caixa mínimo de 1 mês com dívida para crescer deixa pouca margem de segurança.");
   if (r.venda === "A" && horiz !== null && horiz >= 9) out.push("Tem intenção de vender, mas prevê 5 anos ou mais ativo na LM.");
@@ -347,7 +351,7 @@ export function tensoes(r0: Respostas): string[] {
   if (executivo && tempo !== null && tempo <= 50) out.push("Função executiva com 50% ou menos do tempo dedicado.");
   if (r.papel_tipo === "motor2" && r.motor === "A") out.push("Quer liderar o Motor 2, mas escolheu só Motor 1 em 2027.");
   if (on("divida_distrib") && (r.divida === "B" || r.divida === "C")) out.push("Marcou dívida para distribuir como linha vermelha, mas aceitou dívida para isso.");
-  if (val("caixa_abaixo") !== null && num(r.caixa_min) !== null && val("caixa_abaixo")! > num(r.caixa_min)!) out.push("Sua linha vermelha de caixa é maior que o caixa mínimo que você escolheu.");
+  if (caixaLinha !== null && caixaMin !== null && caixaLinha > caixaMin) out.push("Sua linha vermelha de caixa é maior que o caixa mínimo que você escolheu.");
   const teto = num(r.divida_custo) ?? (on("divida_custo") ? val("divida_custo") : null);
   if (teto !== null && teto < CUSTO_DIVIDA_AM && r.divida !== "D") out.push(`Seu teto de custo (${teto}% a.m.) está abaixo do custo atual da dívida (${CUSTO_DIVIDA_AM.toString().replace(".", ",")}% a.m.).`);
   if (on("motor2_antes") && motor2) out.push("Marcou abrir Motor 2 antes dos gatilhos como linha vermelha, mas escolheu Motor 2 relevante.");
@@ -476,4 +480,20 @@ export function compararSocios(lista: Respostas[]) {
     const preenchidos = lista.map(r => valorBruto(c, r)).filter(v => v !== undefined && v !== null && v !== "").map(String);
     return { ...c, valores: lista.map(r => valorCampo(c, r) || "—"), diverge: new Set(preenchidos).size > 1 };
   });
+}
+
+export const RESPOSTAS_ABERTAS: [string, string][] = [
+  ["motor_porque", "Motor · por quê"], ["principio_obs", "Princípio · observações"],
+  ["portfolio_obs", "Portfólio · comentário"], ["produto_novo", "Produto novo a testar/lançar"],
+  ["trafego_obs", "Mídia · observações"], ["novo_aposta", "Primeira aposta Motor 2"],
+  ["novo_lider", "Liderança do novo"], ["ddl_obs", "DDL · observações"],
+  ["venda_cond", "Condições de venda"], ["sucessao_val", "Valuation"],
+  ["papel_escopo", "Escopo do papel"], ["lv_inegociavel", "Linha mais inegociável"],
+  ["lv_preocupacao", "Preocupações"],
+];
+
+/** Shared open-answer rows for the consolidated view, full submission and CSV. */
+export function respostasAbertas(r: Respostas): [string, string][] {
+  return RESPOSTAS_ABERTAS.map(([key, label]): [string, string] => [label, String(r[key] ?? "")])
+    .concat([["Resultados não financeiros", (r.resultados ?? []).filter(Boolean).join(" · ")]]);
 }
