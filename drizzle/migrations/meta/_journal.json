@@ -71,6 +71,13 @@
       "when": 1792522018665,
       "tag": "0009_socios_links_individuais",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792532478990,
+      "tag": "0010_fase1_ampliar_modulos_e_convites",
+      "breakpoints": true
     }
   ]
 }
