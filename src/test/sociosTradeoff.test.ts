@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calcularEixos, posicionamento, tensoes, validarEnvio, objetivosSugeridos, prazoAberto, pontosProjeto, statusExibido, compararSocios } from "@/lib/sociosTradeoff";
+import { calcularEixos, posicionamento, tensoes, validarEnvio, objetivosSugeridos, prazoAberto, pontosProjeto, statusExibido, compararSocios, normalizar, diretrizesSugeridas, escolhas } from "@/lib/sociosTradeoff";
 
 const rank = (...it: string[]) => ({ invest: it, invest_ok: true });
 
@@ -8,8 +8,8 @@ describe("Desejos dos Sócios · trade-off", () => {
     const e = calcularEixos({ motor: "A", portfolio: "A", trafego: "A", ...rank("sp", "tech", "pessoas", "reserva", "distrib", "novos") });
     expect(e.core).toBe(0);
   });
-  it("eixo core = 100 com Motor 2 e 'novos' em 1º", () => {
-    expect(calcularEixos({ motor: "D", portfolio: "C", trafego: "C", ...rank("novos", "sp", "tech", "pessoas", "reserva", "distrib") }).core).toBe(100);
+  it("eixo core = 93 com Motor 2, portfólio D e novos em 1º (portfólio máx. 70)", () => {
+    expect(calcularEixos({ motor: "D", portfolio: "C", trafego: "C", ...rank("novos", "sp", "tech", "pessoas", "reserva", "distrib") }).core).toBe(93);
   });
   it("eixo caixa é a média dos itens respondidos", () => {
     // ritmo A=100, divida D=0 → 50
@@ -62,5 +62,64 @@ describe("Desejos dos Sócios · trade-off", () => {
     const linhas = compararSocios([{ motor: "A" }, { motor: "B" }, { motor: "A" }]);
     expect(linhas.find(l => l.key === "motor")?.diverge).toBe(true);
     expect(linhas.find(l => l.key === "ritmo")?.diverge).toBe(false);
+  });
+
+  it("P3 ritmo D: eixo caixa 70 e retorno 20", () => {
+    const e = calcularEixos({ ritmo: "D" });
+    expect(e.caixa).toBe(70);
+    expect(e.retorno).toBe(20);
+  });
+  it("P3 ritmo D sugere P.03 e F.02", () => {
+    expect(objetivosSugeridos({ ritmo: "D" })).toEqual(["P.03", "F.02"]);
+  });
+  it("P3 tensões de financiamento", () => {
+    const t = (r: any) => tensoes(r).join(" | ");
+    expect(t({ ritmo: "D", divida: "D" })).toContain("não aceita nenhuma dívida");
+    expect(t({ ritmo: "D" })).toContain("não marcou nenhum critério");
+    expect(t({ ritmo: "A", fin_criterios: { incremental: { on: true }, cac: { on: true } } })).toContain("menos de 3 critérios");
+    expect(t({ ritmo: "D", fin_criterios: { cac: { on: true } } })).toContain("incrementalidade");
+    expect(t({ ritmo: "D", fin_criterios: { incremental: { on: true }, ltv_cac: { on: true, valor: "3" } } })).toContain("abaixo do critério do conselheiro (3,5x)");
+    expect(t({ ritmo: "D", fin_criterios: { incremental: { on: true }, ltv_cac: { on: true, valor: "3.5" } } })).not.toContain("3,5x)");
+    expect(t({ ritmo: "D", divida_custo: "2.5", fin_criterios: { incremental: { on: true }, custo: { on: true, valor: "3" } } })).toContain("maior que o custo máximo de dívida");
+  });
+  it("P3 diretriz D usa candidata, teto e até 3 critérios", () => {
+    const d = diretrizesSugeridas({ ritmo: "D", fin_aposta: "sp", fin_teto: "2000000", fin_criterios: { incremental: { on: true }, cac: { on: true }, ltv_cac: { on: true, valor: "4" }, piso: { on: true } } });
+    const x = d.find(z => z.texto.startsWith("Crescer no ritmo do caixa"))!;
+    expect(x.texto).toContain("Expansão da prática em SP");
+    expect(x.texto).toContain("2.000.000");
+    expect(x.texto).toContain("no mínimo 4x");
+    expect(x.texto).not.toContain("piso");
+  });
+  it("P4 eixo core: A 0, B 35, C 50, D 70", () => {
+    expect(["A", "B", "C", "D"].map(v => calcularEixos({ portfolio: v, portfolio_v: 2 }).core)).toEqual([0, 35, 50, 70]);
+  });
+  it("P4 respostas antigas com portfolio C viram D", () => {
+    expect(normalizar({ portfolio: "C" }).portfolio).toBe("D");
+    expect(normalizar({ portfolio: "C", portfolio_v: 2 }).portfolio).toBe("C");
+    expect(calcularEixos({ portfolio: "C" }).core).toBe(70);
+  });
+  it("P4 B/C/D sugere F.01", () => {
+    expect(objetivosSugeridos({ portfolio: "B", portfolio_v: 2 })).toContain("F.01");
+    expect(objetivosSugeridos({ portfolio: "A", portfolio_v: 2 })).not.toContain("F.01");
+  });
+  it("P4 tensões de produtos", () => {
+    const t = (r: any) => tensoes({ portfolio_v: 2, ...r }).join(" | ");
+    expect(t({ portfolio: "A", produtos: { pocus: "manter" } })).toContain("POCUS e Paliativos");
+    expect(t({ portfolio: "B", produtos: { pocus: "manter" } })).not.toContain("POCUS e Paliativos");
+    expect(t({ produtos: { fpg_presencial: "crescer" }, trafego: "A" })).toContain("0,7x");
+    expect(t({ produtos: { ppg: "encerrar" } })).toContain("~79%");
+    expect(t({ portfolio: "D" })).toContain("não indicou qual testaria");
+    expect(t({ motor: "A", portfolio: "D" })).toContain("só Motor 1");
+    expect(t({ motor: "A", portfolio: "C" })).not.toContain("só Motor 1");
+  });
+  it("P4 escolhe/abre mão e diretriz da opção D", () => {
+    expect(escolhas({ portfolio: "D", portfolio_v: 2 })[0].escolhe).toContain("orçamento fantasma");
+    expect(diretrizesSugeridas({ portfolio: "D", portfolio_v: 2 }).some(d => d.texto.includes("orçamento fantasma") && d.objetivos.join() === "F.01,P.01")).toBe(true);
+  });
+  it("consolidado: uma linha por produto e teto do financiamento", () => {
+    const l = compararSocios([{ produtos: { ppg: "crescer" } }, { produtos: { ppg: "manter" } }]);
+    expect(l.find(x => x.key === "produto.ppg")?.diverge).toBe(true);
+    expect(l.find(x => x.key === "produto.ppg")?.valores).toEqual(["Crescer", "Manter"]);
+    expect(l.some(x => x.label === "Teto do financiamento")).toBe(true);
   });
 });

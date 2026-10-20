@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { kpiNome } from "@/hooks/useObjetivosKpis";
-import { CAMPOS_COMPARACAO, INVEST_ITENS, LINHAS_VERMELHAS, PAPEIS, Diretriz, Projeto } from "@/lib/sociosTradeoff";
+import { CAMPOS_COMPARACAO, valorCampo, normalizar, INVEST_ITENS, LINHAS_VERMELHAS, PAPEIS, Diretriz, Projeto } from "@/lib/sociosTradeoff";
 
 type Versao = { id: string; user_id: string; versao: number; enviado_em: string };
 type Doc = { versao: number; enviado_em: string; respostas: any; diretrizes: Diretriz[]; projetos: Projeto[]; extras: any };
@@ -15,12 +15,12 @@ type Doc = { versao: number; enviado_em: string; respostas: any; diretrizes: Dir
 const fmt = (s: string) => new Date(s).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
 const ABERTAS: [string, string][] = [
-  ["motor_porque", "Motor · por quê"], ["principio_obs", "Princípio · observações"], ["portfolio_obs", "Portfólio · observações"],
+  ["motor_porque", "Motor · por quê"], ["principio_obs", "Princípio · observações"], ["portfolio_obs", "Portfólio · comentário"], ["produto_novo", "Produto novo a testar/lançar"],
   ["trafego_obs", "Mídia · observações"], ["novo_aposta", "Primeira aposta Motor 2"], ["novo_lider", "Liderança do novo"],
   ["ddl_obs", "DDL · observações"], ["venda_cond", "Condições de venda"], ["sucessao_val", "Valuation"],
   ["papel_escopo", "Escopo do papel"], ["lv_inegociavel", "Linha mais inegociável"], ["lv_preocupacao", "Preocupações"],
 ];
-const CONHECIDAS = new Set([...CAMPOS_COMPARACAO.map(c => c.key), ...ABERTAS.map(a => a[0]), "invest", "invest_ok", "lv", "resultados"]);
+const CONHECIDAS = new Set([...CAMPOS_COMPARACAO.map(c => c.key), ...ABERTAS.map(a => a[0]), "invest", "invest_ok", "lv", "resultados", "produtos", "portfolio_v"]);
 
 const valorTexto = (v: any): string => Array.isArray(v) ? v.filter(Boolean).join(" · ") : typeof v === "object" && v ? JSON.stringify(v) : String(v ?? "");
 
@@ -34,14 +34,14 @@ function Secao({ titulo, children }: { titulo: string; children: React.ReactNode
 }
 
 function Documento({ d, nome }: { d: Doc; nome: string }) {
-  const r = d.respostas ?? {};
+  const r = normalizar(d.respostas);
   const outros = Object.keys(r).filter(k => !CONHECIDAS.has(k));
   const linhas = LINHAS_VERMELHAS.filter(l => r.lv?.[l.id]?.on);
   return (
     <div id="doc-socio" className="space-y-2">
       <div className="text-sm text-muted-foreground">{nome} · versão {d.versao} · enviado em {fmt(d.enviado_em)}</div>
       <Secao titulo="Escolhas">
-        {CAMPOS_COMPARACAO.map(c => <Linha key={c.key} k={c.label} v={r[c.key] ? (c.fmt?.(r[c.key]) || r[c.key]) : ""} />)}
+        {CAMPOS_COMPARACAO.map(c => <Linha key={c.key} k={c.label} v={valorCampo(c, r)} />)}
       </Secao>
       <Secao titulo="Onde investir R$ 1 mi (ordem)">
         {(r.invest ?? []).length ? <ol className="list-decimal pl-5 text-sm">{r.invest.map((v: string) => <li key={v}>{INVEST_ITENS.find(i => i.v === v)?.label ?? v}</li>)}</ol> : <div className="text-sm text-muted-foreground">—</div>}
