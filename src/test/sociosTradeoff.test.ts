@@ -8,8 +8,8 @@ describe("Desejos dos Sócios · trade-off", () => {
     const e = calcularEixos({ motor: "A", portfolio: "A", trafego: "A", ...rank("sp", "tech", "pessoas", "reserva", "distrib", "novos") });
     expect(e.core).toBe(0);
   });
-  it("eixo core = 100 com Motor 2 e 'novos' em 1º", () => {
-    expect(calcularEixos({ motor: "D", portfolio: "C", trafego: "C", ...rank("novos", "sp", "tech", "pessoas", "reserva", "distrib") }).core).toBe(100);
+  it("eixo core = 93 com Motor 2, portfólio D e novos em 1º (portfólio máx. 70)", () => {
+    expect(calcularEixos({ motor: "D", portfolio: "C", trafego: "C", ...rank("novos", "sp", "tech", "pessoas", "reserva", "distrib") }).core).toBe(93);
   });
   it("eixo caixa é a média dos itens respondidos", () => {
     // ritmo A=100, divida D=0 → 50
