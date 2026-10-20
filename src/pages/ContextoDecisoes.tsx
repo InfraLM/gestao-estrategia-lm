@@ -1,5 +1,7 @@
 import { Fragment, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import { lerFichaEstrategica, parametrosFicha } from "@/lib/linksEstrategicos";
 import { ArrowLeft, ArrowRight, Loader2, Search, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -55,7 +57,10 @@ export default function ContextoDecisoes() {
   });
   const decisoes = query.data ?? [];
   const [filtros, setFiltros] = useState<FiltrosDecisoes>({ busca: "", tipo: "todos", forum: "todos", impacto: "todos", de: "", ate: "", confirmar: false });
-  const [codigo, setCodigo] = useState<string | null>(null);
+  const [parametros, setParametros] = useSearchParams();
+  const ficha = lerFichaEstrategica(parametros, "D", new Set(decisoes.map(d => d.codigo)), query.isSuccess);
+  const codigo = ficha.codigo;
+  const setCodigo = (valor: string | null) => setParametros(p => parametrosFicha(p, valor), { replace: true });
   const filtradas = useMemo(() => filtrarDecisoes(decisoes, filtros), [decisoes, filtros]);
   const porCodigo = useMemo(() => new Map(decisoes.map(d => [d.codigo, d])), [decisoes]);
   const referencias = useMemo(() => calcularReferencias(decisoes), [decisoes]);
@@ -74,6 +79,7 @@ export default function ContextoDecisoes() {
   }
   return <div className="min-w-0 space-y-6">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">Contexto e decisões</h2><span className="text-sm text-muted-foreground" role="status">{filtradas.length} decisões</span></div>
+    {ficha.indisponivel && <p role="status" className="text-sm text-muted-foreground">Decisão não encontrada ou sem acesso</p>}
     <div className="space-y-4 border-b pb-6">
       <div className="relative"><Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input aria-label="Buscar decisões" placeholder="Buscar decisões" className="pl-9" value={filtros.busca} onChange={e => mudar("busca", e.target.value)} /></div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">

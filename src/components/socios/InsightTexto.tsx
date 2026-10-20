@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { parseStatus } from "@/pages/contextoDecisoes";
+import { linkEstrategico } from "@/lib/linksEstrategicos";
 
 const CORES_STATUS = {
   premissa: "bg-warning-soft text-warning-foreground border-warning/40",
@@ -13,7 +14,8 @@ const CORES_STATUS = {
 export default function InsightTexto({ texto, codigos, abrir }: { texto: string | null; codigos: Set<string>; abrir: (codigo: string) => void }) {
   function links(conteudo: string) {
     return conteudo.split(/(\bD-\d{3}\b|\bDS-\d{2}\b)/g).map((parte, i) => {
-      if (/^D-\d{3}$/.test(parte)) return <Button asChild key={i} variant="link" className="inline h-auto whitespace-normal p-0 align-baseline font-semibold"><Link to="/contexto-decisoes" aria-label={`Ver decisão ${parte} em Contexto e decisões`}>{parte}</Link></Button>;
+      const destino = linkEstrategico(parte);
+      if (destino && parte.startsWith("D-")) return <Button asChild key={i} variant="link" className="inline h-auto whitespace-normal p-0 align-baseline font-semibold"><Link to={destino} aria-label={`Ver decisão ${parte} em Contexto e decisões`}>{parte}</Link></Button>;
       if (codigos.has(parte)) return <Button key={i} variant="link" className="inline h-auto whitespace-normal p-0 align-baseline font-semibold" aria-label={`Abrir desejo ${parte}`} onClick={() => abrir(parte)}>{parte}</Button>;
       return <Fragment key={i}>{parte}</Fragment>;
     });
