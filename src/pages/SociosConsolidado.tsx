@@ -32,7 +32,7 @@ export default function SociosConsolidado() {
   const copiarLink = async (id: string, nome: string) => {
     try {
       const link = await gerarLinkSocio(id);
-      const msg = `Olá, ${nome}!\n\nEstamos iniciando o planejamento estratégico de 2027 e gostaria de contar com a sua contribuição no formulário *Desejos dos Sócios 2027*.\n\nNele, você poderá registrar suas prioridades, expectativas, visão de futuro e direcionamentos para a empresa. Suas respostas serão tratadas de forma confidencial e usadas para consolidar as diretrizes do planejamento.\n\nAcesse pelo link abaixo (não precisa de senha) e preencha até *06/11/2026*:\n${link}\n\nO link é pessoal e não deve ser compartilhado. Se tiver qualquer dificuldade, fale comigo.\n\nObrigada!`;
+      const msg = `Olá, ${nome}!\n\nEstamos iniciando o planejamento estratégico de 2027 e gostaria de contar com a sua contribuição no formulário *Desejos dos Sócios 2027*.\n\nNele, você poderá registrar suas prioridades, expectativas, visão de futuro e direcionamentos para a empresa. Suas respostas serão tratadas de forma confidencial e usadas para consolidar as diretrizes do planejamento.\n\nAcesse pelo link abaixo (não precisa de senha) e preencha até *22/10/2026*:\n${link}\n\nO link é pessoal e não deve ser compartilhado. Se tiver qualquer dificuldade, fale comigo.\n\nObrigada!`;
       setUltimaMsg(msg);
       await navigator.clipboard.writeText(msg).catch(() => {});
       toast.success("Link gerado e mensagem copiada");
