@@ -186,7 +186,7 @@ export function FormularioSocio({ q }: { q: any }) {
           </BlocoPergunta>
           <BlocoPergunta p={PERGUNTA.portfolio} value={r.portfolio} onChange={v => mudar(x => ({ ...x, respostas: { ...x.respostas, portfolio: v, portfolio_v: PORTFOLIO_VERSAO } }))} disabled={dis} pendente={pend.has("portfolio") && !r.portfolio}>
             <div className="space-y-2">
-              <div className="text-sm font-medium">O que fazer com cada produto em 2027:</div>
+              <div className="flex items-center justify-between gap-2"><div className="text-sm font-medium">O que fazer com cada produto em 2027:</div><EditarConteudo chave="socios.produtos2027" padrao={PRODUTOS_2027} titulo="Resultados por produto" /></div>
               {produtosInfo.map(p => (
                 <div key={p.id} className="grid gap-2 rounded-md border p-3 sm:grid-cols-[1fr_10rem] sm:items-start">
                   <div><div className="font-medium text-sm">{p.nome}</div>
