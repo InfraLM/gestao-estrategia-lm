@@ -36,6 +36,13 @@
       "when": 1792501675498,
       "tag": "0004_acessos_bases_compartilhadas_e_competencias",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792514526080,
+      "tag": "0005_convites_usuarios_google",
+      "breakpoints": true
     }
   ]
 }
