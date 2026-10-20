@@ -64,6 +64,13 @@
       "when": 1792519908530,
       "tag": "0008_socios_desejos_2027",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792522018665,
+      "tag": "0009_socios_links_individuais",
+      "breakpoints": true
     }
   ]
 }
