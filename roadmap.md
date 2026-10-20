@@ -1,5 +1,7 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
+- [ ] Cadastro completo por convite do administrador e cadastro próprio, com acesso Google e aplicação segura dos acessos convidados.
+
 - [x] Controle de acessos por usuário e módulo: matriz de consulta/edição, proteção das páginas e dos dados; seis testes de regras e gravação/leitura pela tela autenticada verificados.
 
 - [x] Etapa 1 — Perfis de acesso e cadastros compartilhados
