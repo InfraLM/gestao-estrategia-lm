@@ -157,6 +157,8 @@ export default function GestaoUsuarios() {
         </div>
       </Card>
 
+      {me.isSuperAdmin && <PendingInvitesCard refreshKey={inviteKey} />}
+
       <Card className="p-4">
         <div className="flex flex-wrap gap-3 items-center justify-between mb-4">
           <h3 className="font-semibold flex items-center gap-2"><Users className="h-4 w-4" /> Usuários e permissões</h3>
