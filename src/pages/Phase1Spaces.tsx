@@ -1,8 +1,5 @@
 import Phase1EmptyTable from "@/components/Phase1EmptyTable";
-
-export function ContextoDecisoes() {
-  return <Phase1EmptyTable columns={["Código", "Título", "Reunião de origem", "Tipo de fórum", "Data", "Responsável", "Impacto", "Trade-off"]} />;
-}
+export { default as ContextoDecisoes } from "./ContextoDecisoes";
 export function SociosInsights() {
   return <Phase1EmptyTable columns={["Código", "Desejo", "Origem", "Dono proposto", "Prazo / custo", "Leitura / filtro", "Status"]} />;
 }
