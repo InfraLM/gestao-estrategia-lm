@@ -10,3 +10,7 @@
 - Per-user module overrides live in `usuario_acessos`; restrictive RLS caps existing row-scoped permissions, while moduleAccess/useModuleAccess mirror those caps in navigation and editing. Missing overrides preserve legacy access; only super_admin manages overrides and retains full access.
 - Administrator invitations are stored in `usuario_convites` and applied by an Auth lifecycle trigger only after email verification; email sending validates the caller server-side, and Google uses the managed Lovable helper to avoid impersonation and preserve preview support.
 - Shared invitation links use the public auth page; acceptance validates the signed-in verified email server-side and is idempotent for the same user, so existing accounts can accept without granting access to link holders.
+
+- Desejos dos Sócios lives in `socios_*` tables; access is closed by default and comes from `socios_participantes` (respondente / pode_ver_consolidado), not `usuario_acessos` nor super_admin — answers include confidential profit-distribution data.
+- Sócio submission status, versions, and reopening only change through `socios_enviar` / `socios_reabrir`; a trigger enforces the deadline and protects those fields — clients cannot fake a submission.
+- Trade-off scoring lives in pure functions in `src/lib/sociosTradeoff.ts`, recomputed on read and never stored, so form and consolidated view always agree.

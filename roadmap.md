@@ -14,3 +14,12 @@
 - [ ] Consulta de formulários enviados por competência/revisão
 - [ ] Etapa 4 — Notificações (WhatsApp depende de escolher um provedor) e relatório mensal à Governança com PDF
 - Pendente com o usuário: e-mails de Cleto e Felipe; curvas mensais numéricas de metas; pesos dos KPIs do BSC
+
+# Desejos dos Sócios 2027
+- [x] Tabelas, segurança, acesso fechado, menu e endereços
+- [x] Regras do trade-off com testes
+- [x] Formulário etapas 1–4 com salvamento automático
+- [x] Etapas 5–6, diretrizes, projetos e envio (prazo 06/11/26 23:59 Brasília, reabertura)
+- [x] Consolidado (só Naira e Ian), histórico de envios e exportação
+- [ ] Confirmar os sócios no formulário real — depende de Ian, Yuri e Cleto aceitarem o convite
+- Depois: promoção de projetos ao Backlog Estratégico

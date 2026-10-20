@@ -28,3 +28,19 @@ describe("Acessos por usuário e módulo", () => {
     expect(moduleForPath("/historico/okrs")).toBe("historico");
   });
 });
+import { canAccessSocios } from "@/lib/moduleAccess";
+describe("Desejos dos Sócios · acesso fechado por padrão", () => {
+  it("quem não é participante não entra, mesmo sem exceções", () => {
+    expect(canAccessSocios(null)).toBe(false);
+    expect(moduleForPath("/socios/formulario")).toBe("socios");
+  });
+  it("consolidado só com permissão explícita", () => {
+    expect(canAccessSocios({ respondente: true, pode_ver_consolidado: false, ativo: true }, "/socios/consolidado")).toBe(false);
+    expect(canAccessSocios({ respondente: true, pode_ver_consolidado: true, ativo: true }, "/socios/consolidado")).toBe(true);
+  });
+  it("Naira (não respondente) vê consolidado mas não tem formulário", () => {
+    const naira = { respondente: false, pode_ver_consolidado: true, ativo: true };
+    expect(canAccessSocios(naira, "/socios/formulario")).toBe(false);
+    expect(canAccessSocios(naira, "/socios/consolidado")).toBe(true);
+  });
+});
