@@ -91,17 +91,6 @@ const navGroups: NavGroup[] = [
       { to: "/incentivos", label: "Sistemas de incentivo", icon: Target },
     ],
   },
-/*
-    label: "Histórico de Documentações",
-    icon: History,
-    children: [
-      { to: "/historico/projetos", label: "Histórico de Projetos", icon: FolderKanban },
-      { to: "/historico/estrategia", label: "Histórico de Estratégia", icon: Compass },
-      { to: "/historico/okrs", label: "Histórico de OKRs", icon: Target },
-      { to: "/historico/cesta-metas", label: "Histórico de Cesta de Metas", icon: ListChecks },
-    ],
-  },
-*/
 ];
 
 const titles: Record<string, string> = {
