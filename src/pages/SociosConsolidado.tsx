@@ -100,7 +100,7 @@ export default function SociosConsolidado() {
                 <div className="text-xs text-muted-foreground">{s.p.user_id ? `Último envio: ${fmtData(s.row?.enviado_em)}` : "Convite ainda não aceito"}</div>
                 {versoes.length > 0 && <div className="text-xs text-muted-foreground">{versoes.length} envio(s){versoes.length > 1 ? ` · reenviado em ${fmtData(versoes[0].enviado_em)}` : ""}</div>}
                 {s.row?.reaberto_ate && <div className="text-xs text-muted-foreground">Reaberto até {fmtData(s.row.reaberto_ate)}</div>}
-                <div className="flex gap-1">
+                <div className="flex flex-col gap-1">
                   <Input type="date" className="h-8 text-xs" aria-label={`Reabrir ${s.p.nome_exibicao} até`} value={reabrirAte[s.p.user_id ?? ""] ?? ""} onChange={e => setReabrirAte(x => ({ ...x, [s.p.user_id ?? ""]: e.target.value }))} />
                   <Button size="sm" variant="outline" className="h-8" onClick={() => reabrir(s.p.user_id)}><Unlock className="h-3.5 w-3.5 mr-1" />Reabrir</Button>
                 </div>
