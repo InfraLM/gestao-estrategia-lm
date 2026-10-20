@@ -41,7 +41,7 @@ export default function Auth() {
 
 
   if (!loading && user && (!convite || accepted)) return <Navigate to="/" replace />;
-  if (!loading && user && convite) return <div className="min-h-screen grid place-items-center p-6"><Card className="w-full max-w-md p-8 space-y-4 text-center"><h1 className="text-xl font-semibold">Convite NextLevel LM</h1>{inviteError ? <><p className="text-destructive">{inviteError}</p><Button variant="outline" onClick={async () => { await signOut(); setInviteError(""); }}>Entrar com outra conta</Button></> : <><Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" /><p>Confirmando seu convite…</p></>}</Card></div>;
+  if (!loading && user && convite) return <div className="min-h-screen grid place-items-center p-6"><Card className="w-full max-w-md p-8 space-y-4 text-center"><h1 className="text-xl font-semibold">Convite Gestão e Estratégia</h1>{inviteError ? <><p className="text-destructive">{inviteError}</p><Button variant="outline" onClick={async () => { await signOut(); setInviteError(""); }}>Entrar com outra conta</Button></> : <><Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" /><p>Confirmando seu convite…</p></>}</Card></div>;
 
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +81,7 @@ export default function Auth() {
     <div className="min-h-screen grid place-items-center p-6 bg-gradient-to-br from-background to-muted/30">
       <Card className="w-full max-w-md p-8 shadow-elevated">
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">NextLevel LM</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Gestão e Estratégia</h1>
           <p className="text-sm text-muted-foreground mt-1">{convite ? "Convite recebido · entre com o e-mail convidado" : "Entre para acessar o portfólio"}</p>
         </div>
         <Tabs defaultValue="signin">
