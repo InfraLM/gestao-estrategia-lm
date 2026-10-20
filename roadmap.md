@@ -1,5 +1,10 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
+# Fase 1 · Novos espaços seguros
+- [ ] Acrescentar seis tabelas vazias e políticas restritas, sem modificar tabelas existentes.
+- [ ] Acrescentar três módulos fechados, cinco páginas vazias e itens de menu.
+- [ ] Verificar testes antigos/novos, acesso autenticado, isolamento e ausência de dados.
+
 - [x] Link compartilhável de convite; aceitação pela tela com conta verificada, perfil e permissões conferidos, onze testes aprovados. Autorização Google interativa permanece pendente abaixo.
 
 - [x] Cadastro completo por convite do Admin Principal e cadastro próprio; Google habilitado, cadastro/leitura de usuário e aplicação de oito acessos após confirmação verificados, nove testes aprovados.
