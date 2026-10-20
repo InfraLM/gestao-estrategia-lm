@@ -57,6 +57,13 @@
       "when": 1792515807046,
       "tag": "0007_aceitar_convite_por_link",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792519908530,
+      "tag": "0008_socios_desejos_2027",
+      "breakpoints": true
     }
   ]
 }

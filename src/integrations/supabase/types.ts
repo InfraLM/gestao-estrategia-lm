@@ -1959,6 +1959,134 @@ export type Database = {
         }
         Relationships: []
       }
+      socios_participantes: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          email: string
+          id: string
+          nome_exibicao: string
+          pode_ver_consolidado: boolean
+          respondente: boolean
+          user_id: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          nome_exibicao: string
+          pode_ver_consolidado?: boolean
+          respondente?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          nome_exibicao?: string
+          pode_ver_consolidado?: boolean
+          respondente?: boolean
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      socios_respostas_2027: {
+        Row: {
+          ciclo: string
+          created_at: string
+          diretrizes: Json
+          enviado_em: string | null
+          extras: Json
+          id: string
+          primeiro_envio_em: string | null
+          projetos: Json
+          reaberto_ate: string | null
+          respostas: Json
+          status: string
+          updated_at: string
+          user_id: string
+          versao: number
+        }
+        Insert: {
+          ciclo?: string
+          created_at?: string
+          diretrizes?: Json
+          enviado_em?: string | null
+          extras?: Json
+          id?: string
+          primeiro_envio_em?: string | null
+          projetos?: Json
+          reaberto_ate?: string | null
+          respostas?: Json
+          status?: string
+          updated_at?: string
+          user_id: string
+          versao?: number
+        }
+        Update: {
+          ciclo?: string
+          created_at?: string
+          diretrizes?: Json
+          enviado_em?: string | null
+          extras?: Json
+          id?: string
+          primeiro_envio_em?: string | null
+          projetos?: Json
+          reaberto_ate?: string | null
+          respostas?: Json
+          status?: string
+          updated_at?: string
+          user_id?: string
+          versao?: number
+        }
+        Relationships: []
+      }
+      socios_respostas_versoes: {
+        Row: {
+          diretrizes: Json
+          enviado_em: string
+          extras: Json
+          id: string
+          projetos: Json
+          resposta_id: string
+          respostas: Json
+          user_id: string
+          versao: number
+        }
+        Insert: {
+          diretrizes: Json
+          enviado_em?: string
+          extras: Json
+          id?: string
+          projetos: Json
+          resposta_id: string
+          respostas: Json
+          user_id: string
+          versao: number
+        }
+        Update: {
+          diretrizes?: Json
+          enviado_em?: string
+          extras?: Json
+          id?: string
+          projetos?: Json
+          resposta_id?: string
+          respostas?: Json
+          user_id?: string
+          versao?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "socios_respostas_versoes_resposta_id_fkey"
+            columns: ["resposta_id"]
+            isOneToOne: false
+            referencedRelation: "socios_respostas_2027"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       status_report_drafts: {
         Row: {
           anexos: Json
@@ -2218,6 +2346,15 @@ export type Database = {
         Returns: boolean
       }
       mt_reabrir: { Args: { _comp: string }; Returns: undefined }
+      socios_eh_respondente: { Args: { _uid: string }; Returns: boolean }
+      socios_enviar: { Args: never; Returns: undefined }
+      socios_pode_consolidar: { Args: { _uid: string }; Returns: boolean }
+      socios_prazo_aberto: { Args: { _reaberto: string }; Returns: boolean }
+      socios_reabrir: {
+        Args: { _ate: string; _user_id: string }
+        Returns: undefined
+      }
+      socios_vincular: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "pmo" | "viewer" | "super_admin"
