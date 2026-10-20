@@ -118,7 +118,7 @@ const titles: Record<string, string> = {
 
 export default function AppLayout() {
   const loc = useLocation();
-  const title = titles[loc.pathname] ?? "NextLevel LM";
+  const title = titles[loc.pathname] ?? "Gestão e Estratégia";
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<{ display_name?: string | null; cargo?: string | null; email?: string | null } | null>(null);
   const access = useModuleAccess();
@@ -162,7 +162,7 @@ export default function AppLayout() {
           </div>
           {!collapsed && (
             <div className="leading-tight">
-              <div className="font-semibold text-sm">NextLevel LM</div>
+              <div className="font-semibold text-sm">Gestão e Estratégia</div>
               <div className="text-xs text-sidebar-foreground/60">Liberdade Médica</div>
             </div>
           )}
