@@ -2172,6 +2172,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      aceitar_convite_usuario: {
+        Args: { _convite_id: string }
+        Returns: undefined
+      }
       acesso_modulo: {
         Args: { _editar?: boolean; _modulo: string; _uid: string }
         Returns: boolean
