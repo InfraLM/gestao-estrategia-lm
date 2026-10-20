@@ -9,7 +9,7 @@ export const CORES_ADERENCIA: Record<Aderencia, string> = {
   nao_atende: "bg-destructive/10 text-destructive border-destructive/30", nao_avaliado: "bg-neutral-soft text-neutral border-border",
 };
 export function aderenciaValida(valor: string | null): Aderencia {
-  return valor && Object.hasOwn(ADERENCIAS, valor) ? valor as Aderencia : "nao_avaliado";
+  return valor && Object.prototype.hasOwnProperty.call(ADERENCIAS, valor) ? valor as Aderencia : "nao_avaliado";
 }
 export function contarAderencias(itens: Pick<CombinadoCesta, "aderencia">[]) {
   const contagem = { atende: 0, parcial: 0, nao_atende: 0, nao_avaliado: 0 };
