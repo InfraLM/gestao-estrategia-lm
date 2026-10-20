@@ -26,6 +26,10 @@ const VAZIO: FormDados = { respostas: {}, diretrizes: [], projetos: [], extras: 
 
 export default function SociosFormulario() {
   const q = useMinhaResposta();
+  return <FormularioSocio q={q} />;
+}
+
+export function FormularioSocio({ q }: { q: any }) {
   const { grupos, objetivos, nomeObjetivo } = useObjetivosKpis();
   const contexto = useConteudo<CardContexto[]>("socios.contexto2027", CONTEXTO_2027).data;
   const [etapa, setEtapa] = useState(1);

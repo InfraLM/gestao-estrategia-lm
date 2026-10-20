@@ -62,3 +62,39 @@ export async function reabrirSocio(userId: string, ate: string) {
   const { error } = await db.rpc("socios_reabrir", { _user_id: userId, _ate: ate });
   if (error) throw error;
 }
+
+export function useRespostaPorLink(token: string) {
+  const qc = useQueryClient();
+  const key = ["socios-link", token];
+  const q = useQuery({
+    queryKey: key, retry: false,
+    queryFn: async () => {
+      const { data, error } = await db.rpc("socios_link_carregar", { _token: token });
+      if (error) throw error;
+      return data as { participante: Participante | null; resposta: SocioRow | null };
+    },
+  });
+  const salvar = async (d: FormDados) => {
+    const { data, error } = await db.rpc("socios_link_salvar", { _token: token, _respostas: d.respostas, _diretrizes: d.diretrizes, _projetos: d.projetos, _extras: d.extras });
+    if (error) throw error;
+    qc.setQueryData(key, (old: any) => ({ ...old, resposta: data }));
+    return data as SocioRow;
+  };
+  const enviar = async (d: FormDados) => {
+    await salvar(d);
+    const { error } = await db.rpc("socios_link_enviar", { _token: token });
+    if (error) throw error;
+    await qc.invalidateQueries({ queryKey: key });
+  };
+  return { ...q, salvar, enviar };
+}
+
+export async function gerarLinkSocio(participanteId: string) {
+  const { data, error } = await db.rpc("socios_link_gerar", { _participante_id: participanteId });
+  if (error) throw error;
+  return `${window.location.origin.includes("localhost") ? "https://nextlevel-lm.lovable.app" : window.location.origin}/responder/${data}`;
+}
+export async function revogarLinkSocio(participanteId: string) {
+  const { error } = await db.rpc("socios_link_revogar", { _participante_id: participanteId });
+  if (error) throw error;
+}
