@@ -1,6 +1,7 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
 # Fase 1 · Novos espaços seguros
+- [ ] Fase 5 · Incentivos e Insights da Cesta: leitura, metas ao vivo, avaliação limitada, testes e conferência autenticada.
 - [x] Fase 4 · Estrutura Organizacional: árvore dos 11 registros, tabela/filtros e ficha; 111 testes aprovados, computador/celular conferidos com login sem erros, assinatura dos dados inalterada e acessos preservados.
 - [x] Fase 3 · Insights Sócios: leitura dos 55 registros, filtros, ficha/referências e testes; 104 testes aprovados, verificação autenticada no computador/celular sem erros e assinatura dos dados inalterada.
 - [x] Fase 2 · Contexto e decisões: leitura, busca/filtros, ficha e referências; 76 testes aprovados, lista/ficha verificadas com login em computador e celular, assinatura dos 110 registros inalterada.
