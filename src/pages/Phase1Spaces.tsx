@@ -1,8 +1,6 @@
 import Phase1EmptyTable from "@/components/Phase1EmptyTable";
 export { default as ContextoDecisoes } from "./ContextoDecisoes";
-export function SociosInsights() {
-  return <Phase1EmptyTable columns={["Código", "Desejo", "Origem", "Dono proposto", "Prazo / custo", "Leitura / filtro", "Status"]} />;
-}
+export { default as SociosInsights } from "./SociosInsights";
 export function EstruturaOrganizacional() {
   return <Phase1EmptyTable columns={["Cadeira", "Nível", "Cadeira superior", "Ocupante", "Missão", "Entregas", "Ativo"]} />;
 }
