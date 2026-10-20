@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,10 @@ import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Loader2, Eye, EyeOff } from "lucide-react";
+import { invitationId, invitationLink } from "@/lib/userInvitation";
 
 export default function Auth() {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,9 +22,26 @@ export default function Auth() {
   const [busy, setBusy] = useState(false);
   const [showSignInPwd, setShowSignInPwd] = useState(false);
   const [showSignUpPwd, setShowSignUpPwd] = useState(false);
+  const [convite] = useState(() => invitationId(new URLSearchParams(window.location.search).get("convite")) ?? invitationId(sessionStorage.getItem("convite-pendente")));
+  const [inviteError, setInviteError] = useState("");
+  const [accepted, setAccepted] = useState(false);
+
+  useEffect(() => {
+    if (!convite || !user) return;
+    let active = true;
+    void supabase.auth.getUser().then(async ({ data, error }) => {
+      if (error || !data.user) { if (active) setInviteError("Entre novamente para aceitar o convite"); return; }
+      const result = await supabase.rpc("aceitar_convite_usuario", { _convite_id: convite });
+      if (!active) return;
+      if (result.error) setInviteError(result.error.message);
+      else { sessionStorage.removeItem("convite-pendente"); setAccepted(true); }
+    });
+    return () => { active = false; };
+  }, [convite, user]);
 
 
-  if (!loading && user) return <Navigate to="/" replace />;
+  if (!loading && user && (!convite || accepted)) return <Navigate to="/" replace />;
+  if (!loading && user && convite) return <div className="min-h-screen grid place-items-center p-6"><Card className="w-full max-w-md p-8 space-y-4 text-center"><h1 className="text-xl font-semibold">Convite NextLevel LM</h1>{inviteError ? <><p className="text-destructive">{inviteError}</p><Button variant="outline" onClick={async () => { await signOut(); setInviteError(""); }}>Entrar com outra conta</Button></> : <><Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" /><p>Confirmando seu convite…</p></>}</Card></div>;
 
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +50,7 @@ export default function Auth() {
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Bem-vindo!");
-    nav("/");
+    if (!convite) nav("/");
   };
 
   const signUp = async (e: React.FormEvent) => {
@@ -40,7 +58,7 @@ export default function Auth() {
     setBusy(true);
     const { error } = await supabase.auth.signUp({
       email, password,
-      options: { emailRedirectTo: `${window.location.origin}/`, data: { display_name: name, cargo } },
+      options: { emailRedirectTo: convite ? invitationLink(convite) : `${window.location.origin}/`, data: { display_name: name, cargo } },
     });
     setBusy(false);
     if (error) return toast.error(error.message);
@@ -50,8 +68,9 @@ export default function Auth() {
   const google = async () => {
     setBusy(true);
     try {
+      if (convite) sessionStorage.setItem("convite-pendente", convite);
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: convite ? invitationLink(convite) : window.location.origin,
       });
       if (result.error) toast.error(result.error.message);
     } catch { toast.error("Não foi possível entrar com Google. Tente novamente."); }
@@ -63,7 +82,7 @@ export default function Auth() {
       <Card className="w-full max-w-md p-8 shadow-elevated">
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">NextLevel LM</h1>
-          <p className="text-sm text-muted-foreground mt-1">Entre para acessar o portfólio</p>
+          <p className="text-sm text-muted-foreground mt-1">{convite ? "Convite recebido · entre com o e-mail convidado" : "Entre para acessar o portfólio"}</p>
         </div>
         <Tabs defaultValue="signin">
           <TabsList className="grid grid-cols-2 w-full mb-4">

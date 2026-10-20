@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ACCESS_MODULES, AccessLevel } from "@/lib/moduleAccess";
-import { invitationSchema } from "@/lib/userInvitation";
+import { invitationLink, invitationSchema } from "@/lib/userInvitation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Mail, UserPlus } from "lucide-react";
+import { Link, Loader2, Mail, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
 type Invite = { id: string; email: string; display_name: string; aceito_em: string | null; email_enviado_em: string | null };
@@ -30,6 +30,12 @@ export default function UserInvitationDialog({ departamentos, onSaved }: { depar
     const { data, error } = await supabase.functions.invoke("convidar-usuario", { body: { convite_id: id } });
     if (error || data?.error) toast.error(data?.error ?? "Cadastro salvo; o e-mail não foi enviado. Você pode tentar novamente.");
     else toast.success("Convite enviado por e-mail");
+  };
+  const copyLink = async (id: string) => {
+    try {
+      await navigator.clipboard.writeText(invitationLink(id));
+      toast.success("Link do convite copiado");
+    } catch { toast.error("Não foi possível copiar. Copie o endereço do convite abaixo."); }
   };
   const save = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -70,7 +76,7 @@ export default function UserInvitationDialog({ departamentos, onSaved }: { depar
       </form>
       {invites.length > 0 && <div className="space-y-2 border-t pt-4"><h3 className="font-semibold">Convites cadastrados</h3>{invites.map(invite => <div key={invite.id} className="flex flex-wrap items-center justify-between gap-2 border-b py-2">
         <div className="min-w-0"><p className="text-sm font-medium break-words">{invite.display_name}</p><p className="text-xs text-muted-foreground break-all">{invite.email}</p><p className="text-xs text-muted-foreground">{invite.aceito_em ? "Aceito" : invite.email_enviado_em ? "E-mail enviado · aguardando acesso" : "Aguardando envio"}</p></div>
-        {!invite.aceito_em && <Button variant="outline" size="sm" disabled={busy} onClick={async () => { setBusy(true); try { await send(invite.id); await load(); } finally { setBusy(false); } }}><Mail className="h-3 w-3" />Reenviar</Button>}
+        {!invite.aceito_em && <div className="flex flex-wrap gap-2"><Button variant="outline" size="sm" onClick={() => void copyLink(invite.id)}><Link className="h-3 w-3" />Copiar link</Button><Button variant="outline" size="sm" disabled={busy} onClick={async () => { setBusy(true); try { await send(invite.id); await load(); } finally { setBusy(false); } }}><Mail className="h-3 w-3" />Reenviar</Button><Input aria-label={`Link do convite de ${invite.display_name}`} readOnly value={invitationLink(invite.id)} onFocus={event => event.target.select()} /></div>}
       </div>)}</div>}
     </DialogContent>
   </Dialog>;
