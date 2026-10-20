@@ -39,7 +39,11 @@ export default function UserInvitationDialog({ departamentos, onSaved }: { depar
     try {
       const { data: auth, error: authError } = await supabase.auth.getUser();
       if (authError || !auth.user) throw new Error("Entre novamente na sua conta");
-      const result = await supabase.from("usuario_convites").insert({ ...parsed.data, criado_por: auth.user.id }).select("id").single();
+      const result = await supabase.from("usuario_convites").insert({
+        email: parsed.data.email ?? "", display_name: parsed.data.display_name ?? "",
+        cargo: parsed.data.cargo, departamento_id: parsed.data.departamento_id,
+        acessos: parsed.data.acessos, criado_por: auth.user.id,
+      }).select("id").single();
       if (result.error) throw new Error(result.error.code === "23505" ? "Já existe um convite para este e-mail" : result.error.message);
       if (!result.data) throw new Error("Não foi possível cadastrar o convite");
       await send(result.data.id);
