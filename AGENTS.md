@@ -1,7 +1,7 @@
 # AGENTS.md
 
 - Phase 1 spaces use six isolated tables and additive `fase1_*` auth helpers; new modules default closed, with owner/director read exceptions enforced server-side without changing legacy module access.
-- Phase 1 pages remain empty presentation shells except Contexto e decisões and Insights Sócios, which read only through the existing RLS-filtered client; page-local pure helpers compute search, status, groups and references without database writes. Insights uses its own text renderer and reuses the unchanged Contexto normalization/status parser. Never connect these tables to AI functions or general export pipelines.
+- Phase 1 pages remain empty presentation shells except Contexto e decisões, Insights Sócios and Estrutura Organizacional, which read only through the existing RLS-filtered client; page-local pure helpers compute search, status, groups, trees and references without database writes. Insights and Estrutura use their own text renderers and reuse the unchanged Contexto normalization/status parser. Estrutura resolves only linked mt_cadeiras names and gates DS links with canAccessPath("socios", "/socios/insights"), so reference navigation mirrors existing access. Never connect these tables to AI functions or general export pipelines.
 
 - Sistema de Metas 2S26 lives in `mt_*` tables read through `src/hooks/useMetasBase.ts`; the weekly check-in module must reuse them — the spec requires one shared base.
 - KPIs, KRs and Cesta metas share one `mt_indicadores` table distinguished by `origem` — the monthly form and scoring treat all three the same way.
