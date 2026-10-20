@@ -15,15 +15,6 @@ type NavGroup = { id: string; label: string; icon: any; children: NavChild[] };
 
 const navGroups: NavGroup[] = [
   {
-    id: "socios",
-    label: "Desejos dos Sócios 2027",
-    icon: Briefcase,
-    children: [
-      { to: "/socios/formulario", label: "Meu formulário", icon: ListChecks },
-      { to: "/socios/consolidado", label: "Visão consolidada", icon: LayoutGrid },
-    ],
-  },
-  {
     id: "estrategia",
     label: "Estratégia",
     icon: Target,
@@ -33,6 +24,27 @@ const navGroups: NavGroup[] = [
       { to: "/estrategia", label: "Estratégia LM", icon: Target },
       { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
       { to: "/impacto-estrategico", label: "Impacto Estratégico", icon: TrendingUp },
+    ],
+  },
+  {
+    id: "socios",
+    label: "Desejos dos Sócios 2027",
+    icon: Briefcase,
+    children: [
+      { to: "/socios/formulario", label: "Meu formulário", icon: ListChecks },
+      { to: "/socios/consolidado", label: "Visão consolidada", icon: LayoutGrid },
+    ],
+  },
+  {
+    id: "pmo",
+    label: "PMO",
+    icon: Briefcase,
+    children: [
+      { to: "/portfolio", label: "Portfólio Estratégico", icon: LayoutGrid },
+      { to: "/pmo/business-case", label: "Business Case · ScoreCard LM", icon: FileCheck2 },
+      { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
+      { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
+      { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
     ],
   },
   {
@@ -54,18 +66,6 @@ const navGroups: NavGroup[] = [
     children: [
       { to: "/semanal/visao", label: "Visão semanal", icon: LayoutGrid },
       { to: "/metas/semanal", label: "Check-in e Checkout", icon: ListChecks },
-    ],
-  },
-  {
-    id: "pmo",
-    label: "PMO",
-    icon: Briefcase,
-    children: [
-      { to: "/portfolio", label: "Portfólio Estratégico", icon: LayoutGrid },
-      { to: "/pmo/business-case", label: "Business Case · ScoreCard LM", icon: FileCheck2 },
-      { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
-      { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
-      { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
     ],
   },
   {
