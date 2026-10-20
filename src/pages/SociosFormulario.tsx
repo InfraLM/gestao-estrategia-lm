@@ -39,6 +39,7 @@ export default function SociosFormulario() {
 
   const row = q.data?.resposta;
   const aberto = prazoAberto(new Date(), row?.reaberto_ate);
+  const previa = !q.data?.participante?.respondente && !!q.data?.participante?.pode_ver_consolidado;
 
   useEffect(() => {
     if (carregado || !q.data) return;
@@ -47,12 +48,12 @@ export default function SociosFormulario() {
   }, [q.data, row, carregado]);
 
   const salvar = useCallback(async (silencioso = true) => {
-    if (!aberto) return;
+    if (!aberto || previa) return;
     setSalvando(true);
     try { await q.salvar(dRef.current); sujo.current = false; setSalvoEm(new Date()); if (!silencioso) toast.success("Rascunho salvo"); }
     catch (e: any) { toast.error(e.message ?? "Erro ao salvar"); }
     finally { setSalvando(false); }
-  }, [aberto, q]);
+  }, [aberto, previa, q]);
   const dRef = useRef(d); dRef.current = d;
 
   const mudar = (fn: (x: FormDados) => FormDados) => {
@@ -72,6 +73,7 @@ export default function SociosFormulario() {
   const kpiOpcoes = (objs: string[]) => objetivos.filter(o => objs.includes(o.codigo)).map(o => ({ grupo: `${o.codigo} ${o.nome}`, opcoes: o.kpis.map(k => ({ value: kpiId(o.codigo, k.kpi), label: k.kpi, tag: k.nivel })) }));
 
   const enviar = async () => {
+    if (previa) { toast.info("Modo prévia: o envio é feito pelos sócios."); return; }
     const p = validarEnvio(d);
     setPend(new Set(p.map(x => x.campo)));
     if (p.length) {
@@ -85,10 +87,9 @@ export default function SociosFormulario() {
   };
 
   if (q.isPending || !carregado) return <div className="grid place-items-center p-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
-  const previa = !q.data?.participante?.respondente && !!q.data?.participante?.pode_ver_consolidado;
   if (!q.data?.participante?.respondente && !previa) return <div className="py-16 text-center text-muted-foreground">Este formulário é exclusivo dos sócios respondentes.</div>;
 
-  const dis = !aberto || previa;
+  const dis = !aberto;
   const status = statusExibido(row);
   const alteradoAposEnvio = row?.enviado_em && row.updated_at && new Date(row.updated_at).getTime() - new Date(row.enviado_em).getTime() > 2000;
   const lv = r.lv ?? {};
@@ -107,7 +108,7 @@ export default function SociosFormulario() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="text-xs text-muted-foreground">Quem está respondendo</div>
-              <div className="text-lg font-semibold">{q.data.participante.nome_exibicao}</div>
+              <div className="text-lg font-semibold">{previa ? "Prévia — visão do sócio" : q.data.participante.nome_exibicao}</div>
             </div>
             <div className="flex items-center gap-2 text-xs">
               <Badge variant={status === "Enviado" ? "default" : "outline"}>{status}{row?.versao ? ` · v${row.versao}` : ""}</Badge>
@@ -120,6 +121,7 @@ export default function SociosFormulario() {
               <button key={e} type="button" onClick={() => irPara(i + 1)} className={cn("rounded-full px-3 py-1 text-xs border", etapa === i + 1 ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted")}>{i + 1} {e}</button>
             ))}
           </nav>
+          {previa && <div className="rounded-md border border-primary/40 bg-primary/5 px-3 py-2 text-sm">Modo prévia: você vê o formulário exatamente como os sócios. Pode clicar e preencher para testar, mas nada é salvo nem enviado.</div>}
           {dis && <div className="flex items-center gap-2 text-sm text-destructive"><Lock className="h-4 w-4" /> Prazo encerrado. O formulário está em modo leitura; peça reabertura à Naira ou ao Ian.</div>}
           {alteradoAposEnvio && !dis && <div className="text-xs text-warning">Há alterações salvas depois do último envio. Envie de novo para registrar.</div>}
         </CardContent>
