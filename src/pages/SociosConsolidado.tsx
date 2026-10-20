@@ -13,7 +13,7 @@ import { TradeOff } from "./SociosFormulario";
 import SubmissoesHistorico from "@/components/socios/SubmissoesHistorico";
 import {
   calcularEixos, compararSocios, posicionamento, statusExibido, pontosProjeto, LINHAS_VERMELHAS, CONSEQUENCIAS, PAPEIS, INVEST_ITENS,
-  Diretriz, Projeto, Respostas,
+  Diretriz, Projeto, Respostas, normalizar,
 } from "@/lib/sociosTradeoff";
 
 const fmtData = (s?: string | null) => (s ? new Date(s).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : "—");
@@ -45,7 +45,7 @@ export default function SociosConsolidado() {
     if (!q.data) return [];
     return q.data.participantes.filter(p => p.respondente).map(p => {
       const row = q.data!.respostas.find(r => r.user_id === p.user_id) ?? null;
-      const r: Respostas = row?.respostas ?? {};
+      const r: Respostas = normalizar(row?.respostas);
       return { p, row, r, eixos: calcularEixos(r), diretrizes: (row?.diretrizes ?? []) as Diretriz[], projetos: (row?.projetos ?? []) as Projeto[] };
     });
   }, [q.data]);
@@ -213,7 +213,7 @@ export default function SociosConsolidado() {
             <div key={s.p.id} className="space-y-2 text-sm">
               <div className="font-semibold">{s.p.nome_exibicao}</div>
               {[
-                ["Motor · por quê", s.r.motor_porque], ["Princípio", s.r.principio_obs], ["Portfólio", s.r.portfolio_obs], ["Mídia", s.r.trafego_obs],
+                ["Motor · por quê", s.r.motor_porque], ["Princípio", s.r.principio_obs], ["Portfólio · comentário", s.r.portfolio_obs], ["Produto novo", s.r.produto_novo], ["Mídia", s.r.trafego_obs],
                 ["Primeira aposta Motor 2", s.r.novo_aposta], ["Liderança do novo", s.r.novo_lider], ["DDL · observações", s.r.ddl_obs], ["Condições de venda", s.r.venda_cond],
                 ["Valuation", s.r.sucessao_val], ["Resultados não financeiros", (s.r.resultados ?? []).filter(Boolean).join(" · ")],
                 ["Papel", [PAPEIS.find(p => p.v === s.r.papel_tipo)?.label, s.r.papel_escopo].filter(Boolean).join(" — ")],

@@ -31,7 +31,9 @@ export function BlocoPergunta({ p, value, onChange, disabled, pendente, children
       <CardHeader className="pb-3"><CardTitle className="text-base">{p.num}. {p.titulo}</CardTitle></CardHeader>
       <CardContent className="space-y-3">
         {p.citacao && <blockquote className="border-l-4 border-primary pl-3 italic">"{p.citacao}"</blockquote>}
+        {p.enunciado && <p className="text-sm font-medium">{p.enunciado}</p>}
         {p.help && <Help>{p.help}</Help>}
+        {p.helps?.map((h, i) => <Help key={i}>{h}</Help>)}
         {nota}
         <Opcoes name={p.titulo} opcoes={p.opcoes} value={value} onChange={onChange} disabled={disabled} />
         {children}

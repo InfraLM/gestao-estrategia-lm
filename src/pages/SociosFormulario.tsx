@@ -19,6 +19,7 @@ import {
   PERGUNTA, INVEST_ITENS, PAPEIS, TEMPOS, JANELAS_VENDA, HORIZONTES, PAPEL_FIM, CADENCIAS, CONSEQUENCIAS, LINHAS_VERMELHAS,
   PRAZO_TEXTO, FormDados, Respostas, Diretriz, Projeto, calcularEixos, posicionamento, escolhas, tensoes, objetivosSugeridos,
   diretrizesSugeridas, validarEnvio, prazoAberto, statusExibido,
+  normalizar, financia, FIN_APOSTAS, FIN_CRITERIOS, ACOES_PRODUTO, PRODUTOS_2027, PORTFOLIO_VERSAO, ProdutoInfo,
 } from "@/lib/sociosTradeoff";
 
 const ETAPAS = ["Contexto", "Estratégia", "Caixa e sociedade", "Prioridade 2027", "Seu trade-off", "Diretrizes e projetos"];
@@ -32,6 +33,7 @@ export default function SociosFormulario() {
 export function FormularioSocio({ q }: { q: any }) {
   const { grupos, objetivos, nomeObjetivo } = useObjetivosKpis();
   const contexto = useConteudo<CardContexto[]>("socios.contexto2027", CONTEXTO_2027).data;
+  const produtosInfo = useConteudo<ProdutoInfo[]>("socios.produtos2027", PRODUTOS_2027).data ?? PRODUTOS_2027;
   const [etapa, setEtapa] = useState(1);
   const [d, setD] = useState<FormDados>(VAZIO);
   const [carregado, setCarregado] = useState(false);
@@ -47,7 +49,7 @@ export function FormularioSocio({ q }: { q: any }) {
 
   useEffect(() => {
     if (carregado || !q.data) return;
-    if (row) setD({ respostas: row.respostas ?? {}, diretrizes: row.diretrizes ?? [], projetos: row.projetos ?? [], extras: row.extras ?? {} });
+    if (row) setD({ respostas: normalizar(row.respostas), diretrizes: row.diretrizes ?? [], projetos: row.projetos ?? [], extras: row.extras ?? {} });
     setCarregado(true);
   }, [q.data, row, carregado]);
 
@@ -156,9 +158,47 @@ export function FormularioSocio({ q }: { q: any }) {
               <Campo label="Crescimento mínimo de receita (%)"><Input type="number" value={r.cresc_min ?? ""} onChange={e => setR("cresc_min", e.target.value)} disabled={dis} /></Campo>
               <Campo label="Margem líquida mínima (%)"><Input type="number" value={r.margem_min ?? ""} onChange={e => setR("margem_min", e.target.value)} disabled={dis} /></Campo>
             </div>
+            {financia(r) && (
+              <div className="space-y-3 rounded-md border p-3">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Campo label="Qual iniciativa seria a primeira candidata a financiamento?"><SelectSimples opcoes={FIN_APOSTAS} value={r.fin_aposta} onChange={v => setR("fin_aposta", v)} disabled={dis} /></Campo>
+                  <Campo label="Teto total do financiamento (R$)"><Input type="number" value={r.fin_teto ?? ""} onChange={e => setR("fin_teto", e.target.value)} disabled={dis} /></Campo>
+                </div>
+                <div className="text-sm font-medium">Para liberar o financiamento, eu exijo:</div>
+                {[...new Set(FIN_CRITERIOS.map(c => c.grupo))].map(g => (
+                  <div key={g} className="space-y-1.5">
+                    <div className="text-xs font-semibold text-muted-foreground">{g}</div>
+                    {FIN_CRITERIOS.filter(c => c.grupo === g).map(c => {
+                      const v = r.fin_criterios?.[c.id] ?? {};
+                      const set = (patch: any) => setR("fin_criterios", { ...(r.fin_criterios ?? {}), [c.id]: { ...v, ...patch } });
+                      return (
+                        <label key={c.id} className="flex flex-wrap items-center gap-2 text-sm">
+                          <Checkbox checked={!!v.on} onCheckedChange={x => set({ on: !!x })} disabled={dis} />
+                          <span className="flex-1 min-w-[12rem]">{c.label}</span>
+                          {c.unidade && <Input type="number" step="0.1" className="h-8 w-24" aria-label={c.label} value={v.valor ?? ""} onChange={e => set({ valor: e.target.value, on: true })} disabled={dis} />}
+                        </label>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            )}
           </BlocoPergunta>
-          <BlocoPergunta p={PERGUNTA.portfolio} value={r.portfolio} onChange={v => setR("portfolio", v)} disabled={dis} pendente={pend.has("portfolio") && !r.portfolio}>
-            <Campo label="Produto que encerraria ou nunca encerraria"><Input value={r.portfolio_obs ?? ""} onChange={e => setR("portfolio_obs", e.target.value)} disabled={dis} /></Campo>
+          <BlocoPergunta p={PERGUNTA.portfolio} value={r.portfolio} onChange={v => mudar(x => ({ ...x, respostas: { ...x.respostas, portfolio: v, portfolio_v: PORTFOLIO_VERSAO } }))} disabled={dis} pendente={pend.has("portfolio") && !r.portfolio}>
+            <div className="space-y-2">
+              <div className="text-sm font-medium">O que fazer com cada produto em 2027:</div>
+              {produtosInfo.map(p => (
+                <div key={p.id} className="grid gap-2 rounded-md border p-3 sm:grid-cols-[1fr_10rem] sm:items-start">
+                  <div><div className="font-medium text-sm">{p.nome}</div>
+                    <ul className="text-xs text-muted-foreground space-y-0.5">{p.resultados.map((t, i) => <li key={i}>{t}</li>)}</ul></div>
+                  <SelectSimples opcoes={ACOES_PRODUTO} value={r.produtos?.[p.id]} onChange={v => setR("produtos", { ...(r.produtos ?? {}), [p.id]: v })} disabled={dis} />
+                </div>
+              ))}
+            </div>
+            {(r.portfolio === "C" || r.portfolio === "D") && (
+              <Campo label="Qual produto você testaria ou lançaria primeiro, com qual teto, prazo e critério de sucesso? (na opção D, indique também o tamanho do orçamento fantasma) — opcional"><Textarea value={r.produto_novo ?? ""} onChange={e => setR("produto_novo", e.target.value)} disabled={dis} /></Campo>
+            )}
+            <Campo label="Comentário sobre o portfólio (algum produto que você nunca encerraria?)"><Input value={r.portfolio_obs ?? ""} onChange={e => setR("portfolio_obs", e.target.value)} disabled={dis} /></Campo>
           </BlocoPergunta>
           <BlocoPergunta p={PERGUNTA.trafego} value={r.trafego} onChange={v => setR("trafego", v)} disabled={dis} pendente={pend.has("trafego") && !r.trafego}>
             <Campo label="Comentário (opcional)"><Input value={r.trafego_obs ?? ""} onChange={e => setR("trafego_obs", e.target.value)} disabled={dis} /></Campo>
