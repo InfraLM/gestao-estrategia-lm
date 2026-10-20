@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { Loader2, ShieldCheck, Users, Building2, FolderKanban, Plus, Trash2, Settings2 } from "lucide-react";
 import UserModuleMatrix from "@/components/UserModuleMatrix";
 import UserInvitationDialog from "@/components/UserInvitationDialog";
+import PendingInvitesCard from "@/components/PendingInvitesCard";
 
 type Profile = { user_id: string; display_name: string | null; email: string | null; cargo: string | null; departamento_id: string | null };
 type Departamento = { id: string; nome: string; origem: string };
@@ -38,6 +39,7 @@ export default function GestaoUsuarios() {
   const [filtro, setFiltro] = useState("");
   const [acessosByUser, setAcessosByUser] = useState<Record<string, Record<string, string>>>({});
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [inviteKey, setInviteKey] = useState(0);
 
   const load = async (background = false) => {
     if (!background) setLoading(true);
@@ -164,7 +166,7 @@ export default function GestaoUsuarios() {
           <h3 className="font-semibold flex items-center gap-2"><Users className="h-4 w-4" /> Usuários e permissões</h3>
           <div className="flex flex-wrap items-center gap-2">
             <Input placeholder="Buscar por nome ou e-mail" value={filtro} onChange={(e) => setFiltro(e.target.value)} className="w-64" />
-            {me.isSuperAdmin && <UserInvitationDialog departamentos={departamentos} onSaved={() => { void load(true); }} />}
+            {me.isSuperAdmin && <UserInvitationDialog departamentos={departamentos} onSaved={() => { setInviteKey(k => k + 1); void load(true); }} />}
           </div>
         </div>
         {loading ? <div className="grid place-items-center p-8"><Loader2 className="h-5 w-5 animate-spin" /></div> : (
