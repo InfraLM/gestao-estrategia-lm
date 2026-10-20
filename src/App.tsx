@@ -34,6 +34,8 @@ import MinhasPermissoes from "./pages/MinhasPermissoes";
 import GestaoUsuarios from "./pages/GestaoUsuarios";
 import BusinessCaseScorecard from "./pages/BusinessCaseScorecard";
 import Auth from "./pages/Auth";
+import SociosFormulario from "./pages/SociosFormulario";
+import SociosConsolidado from "./pages/SociosConsolidado";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
 import ModuleAccessGate from "./components/ModuleAccessGate";
@@ -83,6 +85,8 @@ const App = () => (
               <Route path="/gestao-processos" element={<GestaoProcessos />} />
               <Route path="/dashboard-processos" element={<DashboardProcessos />} />
               <Route path="/status-report-processos" element={<StatusReportProcessos />} />
+              <Route path="/socios/formulario" element={<SociosFormulario />} />
+              <Route path="/socios/consolidado" element={<SociosConsolidado />} />
               <Route path="/pmo/business-case" element={<BusinessCaseScorecard />} />
             </Route>
             <Route path="*" element={<NotFound />} />

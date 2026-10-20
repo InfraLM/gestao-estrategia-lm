@@ -11,6 +11,6 @@ export default function ModuleAccessGate({ children }: { children: React.ReactNo
   if (loading || access.loading) return <div className="grid place-items-center p-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
   if (!user) return <Navigate to="/auth" replace />;
   const module = moduleForPath(pathname);
-  if (access.error || (module && !access.canRead(module))) return <div className="py-16 text-center space-y-3"><ShieldAlert className="mx-auto h-8 w-8 text-muted-foreground" /><h2 className="text-lg font-semibold">Acesso não autorizado</h2><p className="text-muted-foreground">Solicite a liberação desta área ao Admin Principal.</p></div>;
+  if (access.error || (module && !access.canAccessPath(module, pathname))) return <div className="py-16 text-center space-y-3"><ShieldAlert className="mx-auto h-8 w-8 text-muted-foreground" /><h2 className="text-lg font-semibold">Acesso não autorizado</h2><p className="text-muted-foreground">Solicite a liberação desta área ao Admin Principal.</p></div>;
   return <>{children}</>;
 }

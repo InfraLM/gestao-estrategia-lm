@@ -15,6 +15,15 @@ type NavGroup = { id: string; label: string; icon: any; children: NavChild[] };
 
 const navGroups: NavGroup[] = [
   {
+    id: "socios",
+    label: "Desejos dos Sócios 2027",
+    icon: Briefcase,
+    children: [
+      { to: "/socios/formulario", label: "Meu formulário", icon: ListChecks },
+      { to: "/socios/consolidado", label: "Visão consolidada", icon: LayoutGrid },
+    ],
+  },
+  {
     id: "estrategia",
     label: "Estratégia",
     icon: Target,
@@ -100,6 +109,8 @@ const titles: Record<string, string> = {
   "/historico/okrs": "Histórico de OKRs",
   "/historico/cesta-metas": "Histórico de Cesta de Metas",
   "/historico/projetos": "Histórico de Projetos · Versões de Documentos",
+  "/socios/formulario": "Desejos dos Sócios 2027 · Meu formulário",
+  "/socios/consolidado": "Desejos dos Sócios 2027 · Visão consolidada",
   "/minhas-permissoes": "Minhas Permissões",
   "/gestao-usuarios": "Gestão de Usuários e Permissões",
   "/pmo/business-case": "PMO · Submissão de Business Case (ScoreCard LM)",
@@ -114,7 +125,7 @@ export default function AppLayout() {
   const isAdmin = access.isSuperAdmin || access.roles.includes("admin");
   const visibleGroups = navGroups.map(group => ({ ...group, children: group.children.filter(child => {
     const module = moduleForPath(child.to);
-    return !module || access.canRead(module);
+    return !module || access.canAccessPath(module, child.to);
   }) })).filter(group => group.children.length > 0);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [collapsed, setCollapsed] = useState<boolean>(() => {

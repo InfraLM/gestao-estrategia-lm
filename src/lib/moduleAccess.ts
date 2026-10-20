@@ -9,11 +9,12 @@ export const ACCESS_MODULES = [
   { id: "historico", label: "Histórico de Documentações" },
 ] as const;
 
-export type AccessModule = typeof ACCESS_MODULES[number]["id"] | "repositorios";
+export type AccessModule = typeof ACCESS_MODULES[number]["id"] | "repositorios" | "socios";
 export type AccessLevel = "nenhum" | "leitura" | "edicao";
 export type ModuleGrant = { modulo: string; nivel: AccessLevel };
 
 export function moduleForPath(path: string): AccessModule | null {
+  if (path.startsWith("/socios")) return "socios";
   if (path.startsWith("/historico")) return "historico";
   if (path === "/metas/semanal" || path.startsWith("/semanal")) return "rotina";
   if (path.startsWith("/metas")) return "metas";
@@ -37,4 +38,13 @@ export function canAccessModule(grants: ModuleGrant[], module: string, edit = fa
   const grant = grants.find(g => g.modulo === module);
   if (!grant) return true; // Existing scoped permissions remain authoritative without an override.
   return edit ? grant.nivel === "edicao" : grant.nivel !== "nenhum";
+}
+export type SocioParticipante = { respondente: boolean; pode_ver_consolidado: boolean; ativo: boolean } | null;
+
+/** Desejos dos Sócios: fechado por padrão — só participantes cadastrados; consolidado só com permissão explícita (nem super_admin entra sem ela). */
+export function canAccessSocios(p: SocioParticipante, path = "/socios/formulario"): boolean {
+  if (!p || !p.ativo) return false;
+  if (path.startsWith("/socios/consolidado")) return p.pode_ver_consolidado;
+  if (path.startsWith("/socios/formulario")) return p.respondente;
+  return p.respondente || p.pode_ver_consolidado;
 }
