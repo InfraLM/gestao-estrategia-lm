@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useProcessosDB, type Processo } from "@/hooks/useProcessosDB";
+import { useProcessosDB, assinarFluxo, type Processo } from "@/hooks/useProcessosDB";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -198,7 +198,8 @@ function DetalheCadeia({
     const { error } = await supabase.from("processos").update({ imagem_fluxo_url: pub.publicUrl }).eq("id", edit.id);
     setBusy(false);
     if (error) { toast({ title: "Erro ao salvar URL", variant: "destructive" }); return; }
-    setEdit(e => ({ ...e, imagemFluxoUrl: pub.publicUrl }));
+    const assinada = await assinarFluxo(pub.publicUrl);
+    setEdit(e => ({ ...e, imagemFluxoUrl: assinada }));
     toast({ title: "Imagem do fluxo atualizada" });
     onChanged();
   };
