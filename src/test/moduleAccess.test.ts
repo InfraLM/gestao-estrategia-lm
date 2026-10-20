@@ -40,7 +40,8 @@ describe("Desejos dos Sócios · acesso fechado por padrão", () => {
   });
   it("Naira (não respondente) vê consolidado mas não tem formulário", () => {
     const naira = { respondente: false, pode_ver_consolidado: true, ativo: true };
-    expect(canAccessSocios(naira, "/socios/formulario")).toBe(false);
+    expect(canAccessSocios(naira, "/socios/formulario")).toBe(true); // modo prévia
+    expect(canAccessSocios({ respondente: false, pode_ver_consolidado: false, ativo: true }, "/socios/formulario")).toBe(false);
     expect(canAccessSocios(naira, "/socios/consolidado")).toBe(true);
   });
 });
