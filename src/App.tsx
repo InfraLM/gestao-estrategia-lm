@@ -36,6 +36,7 @@ import BusinessCaseScorecard from "./pages/BusinessCaseScorecard";
 import Auth from "./pages/Auth";
 import SociosFormulario from "./pages/SociosFormulario";
 import SociosConsolidado from "./pages/SociosConsolidado";
+import SociosResponder from "./pages/SociosResponder";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
 import ModuleAccessGate from "./components/ModuleAccessGate";
@@ -51,6 +52,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/responder/:token" element={<SociosResponder />} />
             <Route element={<ModuleAccessGate><AppLayout /></ModuleAccessGate>}>
               <Route path="/gestao-usuarios" element={<GestaoUsuarios />} />
               <Route path="/minhas-permissoes" element={<MinhasPermissoes />} />

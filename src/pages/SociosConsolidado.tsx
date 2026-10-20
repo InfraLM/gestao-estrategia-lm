@@ -28,6 +28,16 @@ export default function SociosConsolidado() {
   const q = useConsolidado();
   const { nomeObjetivo } = useObjetivosKpis();
   const [reabrirAte, setReabrirAte] = useState<Record<string, string>>({});
+  const [ultimaMsg, setUltimaMsg] = useState("");
+  const copiarLink = async (id: string, nome: string) => {
+    try {
+      const link = await gerarLinkSocio(id);
+      const msg = `Olá, ${nome}!\n\nEstamos iniciando o planejamento estratégico de 2027 e gostaria de contar com a sua contribuição no formulário *Desejos dos Sócios 2027*.\n\nNele, você poderá registrar suas prioridades, expectativas, visão de futuro e direcionamentos para a empresa. Suas respostas serão tratadas de forma confidencial e usadas para consolidar as diretrizes do planejamento.\n\nAcesse pelo link abaixo (não precisa de senha) e preencha até *06/11/2026*:\n${link}\n\nO link é pessoal e não deve ser compartilhado. Se tiver qualquer dificuldade, fale comigo.\n\nObrigada!`;
+      setUltimaMsg(msg);
+      await navigator.clipboard.writeText(msg).catch(() => {});
+      toast.success("Link gerado e mensagem copiada");
+    } catch (e: any) { toast.error(e.message ?? "Erro ao gerar link"); }
+  };
   const [detalhe, setDetalhe] = useState<string | null>(null);
 
   const socios = useMemo(() => {
@@ -83,6 +93,12 @@ export default function SociosConsolidado() {
 
   return (
     <div className="space-y-6">
+      {ultimaMsg && (
+        <Card><CardContent className="pt-5 space-y-2">
+          <div className="text-sm font-medium">Mensagem copiada — cole no WhatsApp. Um novo link invalida o anterior.</div>
+          <textarea readOnly className="w-full h-48 rounded-md border bg-muted/30 p-2 text-xs" value={ultimaMsg} />
+        </CardContent></Card>
+      )}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">Conteúdo confidencial — visível apenas para quem tem permissão de consolidado.</p>
         <Button variant="outline" onClick={exportar}><Download className="h-4 w-4 mr-1" />Exportar CSV</Button>
@@ -97,7 +113,11 @@ export default function SociosConsolidado() {
               <CardContent className="pt-5 space-y-2 text-sm">
                 <div className="flex items-center justify-between"><span className="font-semibold">{s.p.nome_exibicao}</span>
                   <Badge variant={st === "Enviado" ? "default" : "outline"} className={cn(st === "Pendente" && "text-muted-foreground")}>{st}</Badge></div>
-                <div className="text-xs text-muted-foreground">{s.p.user_id ? `Último envio: ${fmtData(s.row?.enviado_em)}` : "Convite ainda não aceito"}</div>
+                <div className="text-xs text-muted-foreground">{s.p.user_id ? `Último envio: ${fmtData(s.row?.enviado_em)}` : "Ainda não acessou"}</div>
+                <div className="flex gap-1">
+                  <Button size="sm" className="h-8 flex-1" onClick={() => copiarLink(s.p.id, s.p.nome_exibicao)}><Link2 className="h-3.5 w-3.5 mr-1" />Gerar link + mensagem</Button>
+                  <Button size="sm" variant="ghost" className="h-8" title="Revogar link" onClick={() => revogarLinkSocio(s.p.id).then(() => toast.success("Link revogado"), e => toast.error(e.message))}>Revogar</Button>
+                </div>
                 {versoes.length > 0 && <div className="text-xs text-muted-foreground">{versoes.length} envio(s){versoes.length > 1 ? ` · reenviado em ${fmtData(versoes[0].enviado_em)}` : ""}</div>}
                 {s.row?.reaberto_ate && <div className="text-xs text-muted-foreground">Reaberto até {fmtData(s.row.reaberto_ate)}</div>}
                 <div className="flex flex-col gap-1">
