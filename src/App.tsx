@@ -40,6 +40,7 @@ import SociosResponder from "./pages/SociosResponder";
 import NotFound from "./pages/NotFound.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
 import ModuleAccessGate from "./components/ModuleAccessGate";
+import { ContextoDecisoes, SociosInsights, EstruturaOrganizacional, Incentivos, CestaInsights } from "./pages/Phase1Spaces";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,11 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/responder/:token" element={<SociosResponder />} />
             <Route element={<ModuleAccessGate><AppLayout /></ModuleAccessGate>}>
+              <Route path="/contexto-decisoes" element={<ContextoDecisoes />} />
+              <Route path="/socios/insights" element={<SociosInsights />} />
+              <Route path="/estrutura-organizacional" element={<EstruturaOrganizacional />} />
+              <Route path="/incentivos" element={<Incentivos />} />
+              <Route path="/cesta-metas/insights" element={<CestaInsights />} />
               <Route path="/gestao-usuarios" element={<GestaoUsuarios />} />
               <Route path="/minhas-permissoes" element={<MinhasPermissoes />} />
               <Route path="/" element={<Dashboard />} />

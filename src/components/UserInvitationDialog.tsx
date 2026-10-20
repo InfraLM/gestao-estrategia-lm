@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ACCESS_MODULES, AccessLevel } from "@/lib/moduleAccess";
+import { ACCESS_MODULES, AccessLevel, CLOSED_MODULES } from "@/lib/moduleAccess";
 import { invitationLink, invitationSchema } from "@/lib/userInvitation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ export default function UserInvitationDialog({ departamentos, onSaved }: { depar
   const [email, setEmail] = useState("");
   const [cargo, setCargo] = useState("");
   const [dep, setDep] = useState("__none__");
-  const [grants, setGrants] = useState<Record<string, AccessLevel>>(() => Object.fromEntries(ACCESS_MODULES.map(m => [m.id, "leitura"])));
+  const [grants, setGrants] = useState<Record<string, AccessLevel>>(() => Object.fromEntries(ACCESS_MODULES.map(m => [m.id, CLOSED_MODULES.includes(m.id) ? "nenhum" : "leitura"])));
   const [busy, setBusy] = useState(false);
   const [invites, setInvites] = useState<Invite[]>([]);
   const load = async () => {
