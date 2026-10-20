@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import { lerFichaEstrategica, parametrosFicha } from "@/lib/linksEstrategicos";
 import { ArrowLeft, ArrowRight, Loader2, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -42,7 +44,10 @@ export default function SociosInsights() {
   });
   const insights = query.data ?? [];
   const [filtros, setFiltros] = useState<FiltrosInsights>({ busca: "", origem: "todos", status: "todos" });
-  const [codigo, setCodigo] = useState<string | null>(null);
+  const [parametros, setParametros] = useSearchParams();
+  const ficha = lerFichaEstrategica(parametros, "DS", new Set(insights.flatMap(i => i.codigo ? [i.codigo] : [])), query.isSuccess);
+  const codigo = ficha.codigo;
+  const setCodigo = (valor: string | null) => setParametros(p => parametrosFicha(p, valor), { replace: true });
   const filtrados = useMemo(() => filtrarInsights(insights, filtros), [insights, filtros]);
   // Counts respond to search/origin but not their own status filter.
   const resumo = useMemo(() => {
@@ -56,6 +61,7 @@ export default function SociosInsights() {
   const mudar = (campo: keyof FiltrosInsights, valor: string) => setFiltros(f => ({ ...f, [campo]: valor }));
   return <div className="min-w-0 space-y-6">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">Insights Sócios</h2><span role="status" className="text-sm text-muted-foreground">{filtrados.length} desejos</span></div>
+    {ficha.indisponivel && <p role="status" className="text-sm text-muted-foreground">Desejo não encontrado ou sem acesso</p>}
     <div className="space-y-4 border-b pb-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5"><Label htmlFor="insights-busca">Busca</Label><div className="relative"><Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input id="insights-busca" aria-label="Buscar desejos" placeholder="Buscar desejos" className="pl-9" value={filtros.busca} onChange={e => mudar("busca", e.target.value)} /></div></div>
