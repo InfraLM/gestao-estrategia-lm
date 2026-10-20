@@ -1,6 +1,6 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
-- [ ] Link compartilhável de convite com entrada Google e aceitação segura pela conta convidada.
+- [x] Link compartilhável de convite; aceitação pela tela com conta verificada, perfil e permissões conferidos, onze testes aprovados. Autorização Google interativa permanece pendente abaixo.
 
 - [x] Cadastro completo por convite do Admin Principal e cadastro próprio; Google habilitado, cadastro/leitura de usuário e aplicação de oito acessos após confirmação verificados, nove testes aprovados.
 - [ ] Confirmar recebimento do convite e entrada Google ponta a ponta — depende de destinatário real e autorização interativa do Google; e-mail de teste não teve envio confirmado.
