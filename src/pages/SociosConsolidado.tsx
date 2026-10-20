@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
-import { Download, Loader2, Unlock } from "lucide-react";
+import { Download, Link2, Loader2, Unlock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useConsolidado, reabrirSocio } from "@/hooks/useSocios";
+import { useConsolidado, reabrirSocio, gerarLinkSocio, revogarLinkSocio } from "@/hooks/useSocios";
 import { useObjetivosKpis, kpiNome } from "@/hooks/useObjetivosKpis";
 import { Regua } from "@/components/socios/Campos";
 import { TradeOff } from "./SociosFormulario";
