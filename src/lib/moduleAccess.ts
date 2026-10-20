@@ -1,0 +1,40 @@
+export const ACCESS_MODULES = [
+  { id: "estrategia", label: "Estratégia" },
+  { id: "pmo", label: "PMO · Projetos e melhorias" },
+  { id: "bpmo", label: "BPMO · Processos" },
+  { id: "okrs", label: "OKRs" },
+  { id: "cesta", label: "Cesta de Metas" },
+  { id: "metas", label: "Metas · Cadastros e lançamento mensal" },
+  { id: "rotina", label: "Rotina Semanal" },
+  { id: "historico", label: "Histórico de Documentações" },
+] as const;
+
+export type AccessModule = typeof ACCESS_MODULES[number]["id"] | "repositorios";
+export type AccessLevel = "nenhum" | "leitura" | "edicao";
+export type ModuleGrant = { modulo: string; nivel: AccessLevel };
+
+export function moduleForPath(path: string): AccessModule | null {
+  if (path.startsWith("/historico")) return "historico";
+  if (path === "/metas/semanal" || path.startsWith("/semanal")) return "rotina";
+  if (path.startsWith("/metas")) return "metas";
+  if (path.startsWith("/cesta-metas")) return "cesta";
+  if (path.startsWith("/okrs")) return "okrs";
+  if (["/matriz-processos", "/gestao-processos", "/dashboard-processos", "/status-report-processos"].some(p => path.startsWith(p))) return "bpmo";
+  if (["/portfolio", "/pmo", "/gestao", "/status-report", "/submissao", "/melhorias", "/melhoria-continua"].some(p => path.startsWith(p))) return "pmo";
+  if (path === "/" || ["/diagnostico", "/estrategia", "/backlog-estrategico", "/impacto-estrategico"].some(p => path.startsWith(p))) return "estrategia";
+  return null;
+}
+
+export function moduleForContent(key: string): AccessModule {
+  if (key.startsWith("okrs.")) return "okrs";
+  if (key.startsWith("cesta.")) return "cesta";
+  if (key.startsWith("melh.")) return "pmo";
+  return "estrategia";
+}
+
+export function canAccessModule(grants: ModuleGrant[], module: string, edit = false, superAdmin = false): boolean {
+  if (superAdmin) return true;
+  const grant = grants.find(g => g.modulo === module);
+  if (!grant) return true; // Existing scoped permissions remain authoritative without an override.
+  return edit ? grant.nivel === "edicao" : grant.nivel !== "nenhum";
+}

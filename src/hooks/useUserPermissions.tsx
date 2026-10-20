@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { useModuleAccess } from "./useModuleAccess";
 
 export type AppRole = "super_admin" | "admin" | "pmo" | "viewer";
 export type ModuloAdmin = "pmo" | "bpmo" | "estrategia" | "repositorios";
@@ -19,6 +20,7 @@ export interface UserPermissions {
 
 export function useUserPermissions(): UserPermissions {
   const { user } = useAuth();
+  const access = useModuleAccess();
   const [loading, setLoading] = useState(true);
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [modulos, setModulos] = useState<ModuloAdmin[]>([]);
@@ -50,8 +52,8 @@ export function useUserPermissions(): UserPermissions {
   const isSuperAdmin = roles.includes("super_admin");
   const isAdmin = isSuperAdmin || roles.includes("admin");
   return {
-    loading, roles, isSuperAdmin, isAdmin, modulos, departamento, projetosLiberados: projetos,
-    canEditModulo: (m) => isSuperAdmin || modulos.includes(m),
-    canEditProjeto: (id) => isSuperAdmin || roles.includes("admin") || roles.includes("pmo") || projetos.some((p) => p.projeto_id === id),
+    loading: loading || access.loading, roles, isSuperAdmin, isAdmin, modulos, departamento, projetosLiberados: projetos,
+    canEditModulo: (m) => access.canWrite(m) && (isSuperAdmin || modulos.includes(m) || access.explicitEditor(m)),
+    canEditProjeto: (id) => access.canWrite("pmo") && (isSuperAdmin || roles.includes("admin") || roles.includes("pmo") || access.explicitEditor("pmo") || projetos.some((p) => p.projeto_id === id)),
   };
 }

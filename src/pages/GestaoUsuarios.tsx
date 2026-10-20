@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { toast } from "sonner";
 import { Loader2, ShieldCheck, Users, Building2, FolderKanban, Plus, Trash2, Settings2 } from "lucide-react";
+import UserModuleMatrix from "@/components/UserModuleMatrix";
 
 type Profile = { user_id: string; display_name: string | null; email: string | null; cargo: string | null; departamento_id: string | null };
 type Departamento = { id: string; nome: string; origem: string };
@@ -34,17 +35,24 @@ export default function GestaoUsuarios() {
   const [membrosByUser, setMembrosByUser] = useState<Record<string, string[]>>({});
   const [novoDep, setNovoDep] = useState("");
   const [filtro, setFiltro] = useState("");
+  const [acessosByUser, setAcessosByUser] = useState<Record<string, Record<string, string>>>({});
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  const load = async () => {
-    setLoading(true);
-    const [rp, rd, rpr, rr, rm, rmem] = await Promise.all([
+  const load = async (background = false) => {
+    if (!background) setLoading(true);
+    const [rp, rd, rpr, rr, rm, rmem, ra] = await Promise.all([
       supabase.from("profiles").select("user_id, display_name, email, cargo, departamento_id"),
       (supabase as any).from("departamentos").select("id, nome, origem").order("nome"),
       supabase.from("projetos").select("id, nome, codigo").order("codigo"),
       supabase.from("user_roles").select("user_id, role"),
       (supabase as any).from("admin_modulos").select("user_id, modulo"),
       (supabase as any).from("projeto_membros").select("user_id, projeto_id"),
+      supabase.from("usuario_acessos").select("user_id,modulo,nivel"),
     ]);
+    setLoadError([rp, rd, rpr, rr, rm, rmem, ra].find(r => r.error)?.error?.message ?? null);
+    const ab: Record<string, Record<string, string>> = {};
+    (ra.data ?? []).forEach(r => { (ab[r.user_id] ??= {})[r.modulo] = r.nivel; });
+    setAcessosByUser(ab);
     setProfiles((rp.data as Profile[]) ?? []);
     setDepartamentos((rd.data as Departamento[]) ?? []);
     setProjetos((rpr.data as Projeto[]) ?? []);
@@ -56,7 +64,7 @@ export default function GestaoUsuarios() {
     setMembrosByUser(me);
     setLoading(false);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { if (!me.loading && me.isAdmin) load(); }, [me.loading, me.isAdmin]);
 
   if (me.loading) return <div className="grid place-items-center p-12"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   if (!me.isAdmin) return <Card className="p-8 text-center"><p>Acesso restrito a administradores.</p></Card>;
@@ -126,6 +134,7 @@ export default function GestaoUsuarios() {
 
   return (
     <div className="space-y-6">
+      {loadError && <p role="alert" className="text-sm text-destructive">Não foi possível carregar todos os acessos: {loadError}</p>}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4 flex items-center gap-3"><Users className="h-5 w-5 text-primary" /><div><div className="text-2xl font-semibold">{profiles.length}</div><div className="text-xs text-muted-foreground">Usuários</div></div></Card>
         <Card className="p-4 flex items-center gap-3"><Building2 className="h-5 w-5 text-primary" /><div><div className="text-2xl font-semibold">{departamentos.length}</div><div className="text-xs text-muted-foreground">Departamentos</div></div></Card>
@@ -133,10 +142,10 @@ export default function GestaoUsuarios() {
       </div>
 
       <Card className="p-4">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-wrap gap-3 items-center justify-between mb-3">
           <h3 className="font-semibold flex items-center gap-2"><Building2 className="h-4 w-4" /> Departamentos</h3>
-          <div className="flex gap-2">
-            <Input placeholder="Novo departamento (ex: vinda do Zeev)" value={novoDep} onChange={(e) => setNovoDep(e.target.value)} className="w-64" />
+          <div className="flex gap-2 max-w-full">
+            <Input placeholder="Novo departamento (ex: vinda do Zeev)" value={novoDep} onChange={(e) => setNovoDep(e.target.value)} className="w-64 min-w-0" />
             <Button onClick={criarDep} size="sm"><Plus className="h-3 w-3" />Criar</Button>
           </div>
         </div>
@@ -148,20 +157,21 @@ export default function GestaoUsuarios() {
       </Card>
 
       <Card className="p-4">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-wrap gap-3 items-center justify-between mb-4">
           <h3 className="font-semibold flex items-center gap-2"><Users className="h-4 w-4" /> Usuários e permissões</h3>
           <Input placeholder="Buscar por nome ou e-mail" value={filtro} onChange={(e) => setFiltro(e.target.value)} className="w-64" />
         </div>
         {loading ? <div className="grid place-items-center p-8"><Loader2 className="h-5 w-5 animate-spin" /></div> : (
           <div className="space-y-2">
+            {filtered.length === 0 && <p className="py-6 text-center text-sm text-muted-foreground">Nenhum usuário encontrado.</p>}
             {filtered.map((p) => {
               const t = tipoLabel(p.user_id);
               const userRoles = rolesByUser[p.user_id] ?? [];
               const userMods = modulosByUser[p.user_id] ?? [];
               const userProjs = membrosByUser[p.user_id] ?? [];
               return (
-                <div key={p.user_id} className="flex items-center justify-between border rounded-md p-3 hover:bg-surface-muted/40">
-                  <div className="flex items-center gap-3 min-w-0">
+                <div key={p.user_id} className="flex flex-wrap gap-3 items-center justify-between border rounded-md p-3 hover:bg-surface-muted/40">
+                  <div className="flex flex-wrap items-center gap-3 min-w-0">
                     <div className="h-9 w-9 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center text-xs font-semibold">
                       {(p.display_name || p.email || "?").slice(0,2).toUpperCase()}
                     </div>
@@ -178,6 +188,7 @@ export default function GestaoUsuarios() {
                     <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
                       <DialogHeader><DialogTitle>{p.display_name || p.email}</DialogTitle></DialogHeader>
                       <div className="space-y-5 py-2">
+                        <UserModuleMatrix userId={p.user_id} grants={acessosByUser[p.user_id] ?? {}} isSuperAdmin={userRoles.includes("super_admin")} disabled={!me.isSuperAdmin} onSaved={() => { load(true); }} />
                         <div>
                           <Label className="text-xs uppercase text-muted-foreground">Departamento</Label>
                           <Select value={p.departamento_id ?? "__none__"} onValueChange={(v) => setDep(p.user_id, v === "__none__" ? null : v)}>

@@ -2093,13 +2093,45 @@ export type Database = {
         }
         Relationships: []
       }
+      usuario_acessos: {
+        Row: {
+          atualizado_por: string | null
+          modulo: string
+          nivel: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          atualizado_por?: string | null
+          modulo: string
+          nivel: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          atualizado_por?: string | null
+          modulo?: string
+          nivel?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      acesso_modulo: {
+        Args: { _editar?: boolean; _modulo: string; _uid: string }
+        Returns: boolean
+      }
       can_review_modulo: {
         Args: { _modulo: string; _user_id: string }
+        Returns: boolean
+      }
+      editor_modulo: {
+        Args: { _modulo: string; _uid: string }
         Returns: boolean
       }
       has_role: {
@@ -2122,6 +2154,7 @@ export type Database = {
         Returns: boolean
       }
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
+      modulo_conteudo: { Args: { _chave: string }; Returns: string }
       mt_cadeira_do_usuario: { Args: { _uid: string }; Returns: string }
       mt_email_corporativo: { Args: never; Returns: boolean }
       mt_fechar: { Args: { _comp: string }; Returns: undefined }
