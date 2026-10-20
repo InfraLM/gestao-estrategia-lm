@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Loader2, Eye, EyeOff } from "lucide-react";
@@ -16,6 +17,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [cargo, setCargo] = useState("");
   const [busy, setBusy] = useState(false);
   const [showSignInPwd, setShowSignInPwd] = useState(false);
   const [showSignUpPwd, setShowSignUpPwd] = useState(false);
@@ -38,7 +40,7 @@ export default function Auth() {
     setBusy(true);
     const { error } = await supabase.auth.signUp({
       email, password,
-      options: { emailRedirectTo: `${window.location.origin}/`, data: { display_name: name } },
+      options: { emailRedirectTo: `${window.location.origin}/`, data: { display_name: name, cargo } },
     });
     setBusy(false);
     if (error) return toast.error(error.message);
@@ -46,11 +48,14 @@ export default function Auth() {
   };
 
   const google = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/` },
-    });
-    if (error) toast.error(error.message);
+    setBusy(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) toast.error(result.error.message);
+    } catch { toast.error("Não foi possível entrar com Google. Tente novamente."); }
+    finally { setBusy(false); }
   };
 
   return (
@@ -75,6 +80,7 @@ export default function Auth() {
           <TabsContent value="signup">
             <form onSubmit={signUp} className="space-y-3">
               <div><Label>Nome</Label><Input required value={name} onChange={e => setName(e.target.value)} /></div>
+              <div><Label>Cargo</Label><Input value={cargo} onChange={e => setCargo(e.target.value)} /></div>
               <div><Label>E-mail</Label><Input type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
               <div><Label>Senha</Label><div className="relative"><Input type={showSignUpPwd ? "text" : "password"} required minLength={6} value={password} onChange={e => setPassword(e.target.value)} className="pr-10" /><button type="button" onClick={() => setShowSignUpPwd(s => !s)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label={showSignUpPwd ? "Ocultar senha" : "Mostrar senha"} tabIndex={-1}>{showSignUpPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></div></div>
               <Button type="submit" disabled={busy} className="w-full">{busy && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Criar conta</Button>
@@ -85,7 +91,7 @@ export default function Auth() {
           <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
           <span className="relative bg-card px-3 text-xs text-muted-foreground mx-auto block w-fit">ou</span>
         </div>
-        <Button variant="outline" onClick={google} className="w-full">Entrar com Google</Button>
+        <Button variant="outline" disabled={busy} onClick={google} className="w-full">Entrar ou criar conta com Google</Button>
       </Card>
     </div>
   );

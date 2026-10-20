@@ -2117,6 +2117,56 @@ export type Database = {
         }
         Relationships: []
       }
+      usuario_convites: {
+        Row: {
+          aceito_em: string | null
+          acessos: Json
+          cargo: string | null
+          created_at: string
+          criado_por: string
+          departamento_id: string | null
+          display_name: string
+          email: string
+          email_enviado_em: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          aceito_em?: string | null
+          acessos?: Json
+          cargo?: string | null
+          created_at?: string
+          criado_por: string
+          departamento_id?: string | null
+          display_name: string
+          email: string
+          email_enviado_em?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          aceito_em?: string | null
+          acessos?: Json
+          cargo?: string | null
+          created_at?: string
+          criado_por?: string
+          departamento_id?: string | null
+          display_name?: string
+          email?: string
+          email_enviado_em?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usuario_convites_departamento_id_fkey"
+            columns: ["departamento_id"]
+            isOneToOne: false
+            referencedRelation: "departamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

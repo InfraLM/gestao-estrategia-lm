@@ -8,3 +8,4 @@
 - Monthly launch: values in `mt_lancamentos` keyed by indicador+competência+revisão; reopening (`mt_reabrir`) copies into a new revisão — never overwrites a closed month.
 - Weekly check-in/checkout submissions live in `mt_checkins` (cadeira+semana+tipo); the Governança panel reads it — the weekly form must write there.
 - Per-user module overrides live in `usuario_acessos`; restrictive RLS caps existing row-scoped permissions, while moduleAccess/useModuleAccess mirror those caps in navigation and editing. Missing overrides preserve legacy access; only super_admin manages overrides and retains full access.
+- Administrator invitations are stored in `usuario_convites` and applied by an Auth lifecycle trigger only after email verification; email sending validates the caller server-side, and Google uses the managed Lovable helper to avoid impersonation and preserve preview support.
