@@ -21,6 +21,7 @@
 - Pendente com o usuário: e-mails de Cleto e Felipe; curvas mensais numéricas de metas; pesos dos KPIs do BSC
 
 # Desejos dos Sócios 2027
+- [ ] Concluir revisão das perguntas 3/4, compatibilidade, comparações, histórico, CSV e conferência do formulário.
 - [x] Tabelas, segurança, acesso fechado, menu e endereços
 - [x] Regras do trade-off com testes
 - [x] Formulário etapas 1–4 com salvamento automático
