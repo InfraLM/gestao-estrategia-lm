@@ -1959,6 +1959,47 @@ export type Database = {
         }
         Relationships: []
       }
+      socios_links: {
+        Row: {
+          criado_em: string
+          criado_por: string | null
+          expira_em: string
+          id: string
+          participante_id: string
+          revogado_em: string | null
+          token_hash: string
+          ultimo_acesso_em: string | null
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string | null
+          expira_em?: string
+          id?: string
+          participante_id: string
+          revogado_em?: string | null
+          token_hash: string
+          ultimo_acesso_em?: string | null
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string | null
+          expira_em?: string
+          id?: string
+          participante_id?: string
+          revogado_em?: string | null
+          token_hash?: string
+          ultimo_acesso_em?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "socios_links_participante_id_fkey"
+            columns: ["participante_id"]
+            isOneToOne: false
+            referencedRelation: "socios_participantes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       socios_participantes: {
         Row: {
           ativo: boolean
@@ -1969,6 +2010,7 @@ export type Database = {
           pode_ver_consolidado: boolean
           respondente: boolean
           user_id: string | null
+          user_id_provisorio: boolean
         }
         Insert: {
           ativo?: boolean
@@ -1979,6 +2021,7 @@ export type Database = {
           pode_ver_consolidado?: boolean
           respondente?: boolean
           user_id?: string | null
+          user_id_provisorio?: boolean
         }
         Update: {
           ativo?: boolean
@@ -1989,6 +2032,7 @@ export type Database = {
           pode_ver_consolidado?: boolean
           respondente?: boolean
           user_id?: string | null
+          user_id_provisorio?: boolean
         }
         Relationships: []
       }
@@ -2348,6 +2392,24 @@ export type Database = {
       mt_reabrir: { Args: { _comp: string }; Returns: undefined }
       socios_eh_respondente: { Args: { _uid: string }; Returns: boolean }
       socios_enviar: { Args: never; Returns: undefined }
+      socios_link_carregar: { Args: { _token: string }; Returns: Json }
+      socios_link_enviar: { Args: { _token: string }; Returns: undefined }
+      socios_link_gerar: { Args: { _participante_id: string }; Returns: string }
+      socios_link_revogar: {
+        Args: { _participante_id: string }
+        Returns: undefined
+      }
+      socios_link_salvar: {
+        Args: {
+          _diretrizes: Json
+          _extras: Json
+          _projetos: Json
+          _respostas: Json
+          _token: string
+        }
+        Returns: Json
+      }
+      socios_link_uid: { Args: { _token: string }; Returns: string }
       socios_pode_consolidar: { Args: { _uid: string }; Returns: boolean }
       socios_prazo_aberto: { Args: { _reaberto: string }; Returns: boolean }
       socios_reabrir: {
