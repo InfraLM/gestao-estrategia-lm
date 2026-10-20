@@ -375,6 +375,56 @@ export type Database = {
         }
         Relationships: []
       }
+      cesta_insights: {
+        Row: {
+          aderencia: string | null
+          avaliado_em: string | null
+          avaliado_por: string | null
+          combinado: string
+          created_at: string
+          decisao_codigo: string | null
+          id: string
+          indicador_ref: string | null
+          mt_cadeira_id: string
+          observacao: string | null
+          updated_at: string
+        }
+        Insert: {
+          aderencia?: string | null
+          avaliado_em?: string | null
+          avaliado_por?: string | null
+          combinado: string
+          created_at?: string
+          decisao_codigo?: string | null
+          id?: string
+          indicador_ref?: string | null
+          mt_cadeira_id: string
+          observacao?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aderencia?: string | null
+          avaliado_em?: string | null
+          avaliado_por?: string | null
+          combinado?: string
+          created_at?: string
+          decisao_codigo?: string | null
+          id?: string
+          indicador_ref?: string | null
+          mt_cadeira_id?: string
+          observacao?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cesta_insights_mt_cadeira_id_fkey"
+            columns: ["mt_cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conteudo_editavel: {
         Row: {
           atualizado_por: string | null
@@ -448,6 +498,96 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      decisoes_estrategicas: {
+        Row: {
+          acesso_reservado: boolean | null
+          atualizado_por: string | null
+          codigo: string
+          comite_codigo: string | null
+          created_at: string
+          data_decisao: string | null
+          decisao: string | null
+          decisor: string | null
+          fonte: string | null
+          foruns_citados: string[] | null
+          id: string
+          impacto_bsc: string | null
+          observacoes: string | null
+          opcoes_descartadas: string | null
+          papeis_rapid: string | null
+          pergunta: string | null
+          premissas: string | null
+          proxima_revisao: string | null
+          racional: string | null
+          responsavel: string | null
+          reuniao_origem: string | null
+          revisa_codigo: string | null
+          revisao: string | null
+          tipo_forum: string | null
+          titulo: string
+          tradeoff: string | null
+          updated_at: string
+        }
+        Insert: {
+          acesso_reservado?: boolean | null
+          atualizado_por?: string | null
+          codigo: string
+          comite_codigo?: string | null
+          created_at?: string
+          data_decisao?: string | null
+          decisao?: string | null
+          decisor?: string | null
+          fonte?: string | null
+          foruns_citados?: string[] | null
+          id?: string
+          impacto_bsc?: string | null
+          observacoes?: string | null
+          opcoes_descartadas?: string | null
+          papeis_rapid?: string | null
+          pergunta?: string | null
+          premissas?: string | null
+          proxima_revisao?: string | null
+          racional?: string | null
+          responsavel?: string | null
+          reuniao_origem?: string | null
+          revisa_codigo?: string | null
+          revisao?: string | null
+          tipo_forum?: string | null
+          titulo: string
+          tradeoff?: string | null
+          updated_at?: string
+        }
+        Update: {
+          acesso_reservado?: boolean | null
+          atualizado_por?: string | null
+          codigo?: string
+          comite_codigo?: string | null
+          created_at?: string
+          data_decisao?: string | null
+          decisao?: string | null
+          decisor?: string | null
+          fonte?: string | null
+          foruns_citados?: string[] | null
+          id?: string
+          impacto_bsc?: string | null
+          observacoes?: string | null
+          opcoes_descartadas?: string | null
+          papeis_rapid?: string | null
+          pergunta?: string | null
+          premissas?: string | null
+          proxima_revisao?: string | null
+          racional?: string | null
+          responsavel?: string | null
+          reuniao_origem?: string | null
+          revisa_codigo?: string | null
+          revisao?: string | null
+          tipo_forum?: string | null
+          titulo?: string
+          tradeoff?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       departamentos: {
         Row: {
@@ -705,6 +845,103 @@ export type Database = {
           thread_id?: string | null
         }
         Relationships: []
+      }
+      incentivo_metas: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          id: string
+          meta_texto: string | null
+          ordem: number | null
+          origem: string | null
+          periodo: string | null
+          peso: number | null
+          referencia_codigo: string | null
+          sistema_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          meta_texto?: string | null
+          ordem?: number | null
+          origem?: string | null
+          periodo?: string | null
+          peso?: number | null
+          referencia_codigo?: string | null
+          sistema_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          meta_texto?: string | null
+          ordem?: number | null
+          origem?: string | null
+          periodo?: string | null
+          peso?: number | null
+          referencia_codigo?: string | null
+          sistema_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incentivo_metas_sistema_id_fkey"
+            columns: ["sistema_id"]
+            isOneToOne: false
+            referencedRelation: "incentivo_sistemas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      incentivo_sistemas: {
+        Row: {
+          ativo: boolean | null
+          created_at: string
+          decisao_codigo: string | null
+          gatilho: string | null
+          id: string
+          nome: string | null
+          org_cadeira_id: string
+          periodo: string | null
+          regra_resumo: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean | null
+          created_at?: string
+          decisao_codigo?: string | null
+          gatilho?: string | null
+          id?: string
+          nome?: string | null
+          org_cadeira_id: string
+          periodo?: string | null
+          regra_resumo?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean | null
+          created_at?: string
+          decisao_codigo?: string | null
+          gatilho?: string | null
+          id?: string
+          nome?: string | null
+          org_cadeira_id?: string
+          periodo?: string | null
+          regra_resumo?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incentivo_sistemas_org_cadeira_id_fkey"
+            columns: ["org_cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "org_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       infra_tasks: {
         Row: {
@@ -1546,6 +1783,84 @@ export type Database = {
           },
         ]
       }
+      org_cadeiras: {
+        Row: {
+          ativo: boolean | null
+          cadeira_pai_id: string | null
+          created_at: string
+          e_o_d_de: string | null
+          entregas: string | null
+          id: string
+          indicadores_rotina: string | null
+          missao: string | null
+          mt_cadeira_id: string | null
+          nao_e_o_d_de: string | null
+          nivel: string | null
+          nome: string
+          notas: string | null
+          ocupante_nome: string | null
+          ocupante_user_id: string | null
+          ordem: number | null
+          processos: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean | null
+          cadeira_pai_id?: string | null
+          created_at?: string
+          e_o_d_de?: string | null
+          entregas?: string | null
+          id?: string
+          indicadores_rotina?: string | null
+          missao?: string | null
+          mt_cadeira_id?: string | null
+          nao_e_o_d_de?: string | null
+          nivel?: string | null
+          nome: string
+          notas?: string | null
+          ocupante_nome?: string | null
+          ocupante_user_id?: string | null
+          ordem?: number | null
+          processos?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean | null
+          cadeira_pai_id?: string | null
+          created_at?: string
+          e_o_d_de?: string | null
+          entregas?: string | null
+          id?: string
+          indicadores_rotina?: string | null
+          missao?: string | null
+          mt_cadeira_id?: string | null
+          nao_e_o_d_de?: string | null
+          nivel?: string | null
+          nome?: string
+          notas?: string | null
+          ocupante_nome?: string | null
+          ocupante_user_id?: string | null
+          ordem?: number | null
+          processos?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_cadeiras_cadeira_pai_id_fkey"
+            columns: ["cadeira_pai_id"]
+            isOneToOne: false
+            referencedRelation: "org_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_cadeiras_mt_cadeira_id_fkey"
+            columns: ["mt_cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       processos: {
         Row: {
           area: string | null
@@ -1959,6 +2274,51 @@ export type Database = {
         }
         Relationships: []
       }
+      socios_insights: {
+        Row: {
+          codigo: string | null
+          created_at: string
+          desejo: string
+          dono_proposto: string | null
+          fonte: string | null
+          id: string
+          leitura_filtro: string | null
+          observacoes: string | null
+          origem: string | null
+          prazo_custo: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          codigo?: string | null
+          created_at?: string
+          desejo: string
+          dono_proposto?: string | null
+          fonte?: string | null
+          id?: string
+          leitura_filtro?: string | null
+          observacoes?: string | null
+          origem?: string | null
+          prazo_custo?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          codigo?: string | null
+          created_at?: string
+          desejo?: string
+          dono_proposto?: string | null
+          fonte?: string | null
+          id?: string
+          leitura_filtro?: string | null
+          observacoes?: string | null
+          origem?: string | null
+          prazo_custo?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       socios_links: {
         Row: {
           criado_em: string
@@ -2360,6 +2720,14 @@ export type Database = {
         Args: { _modulo: string; _uid: string }
         Returns: boolean
       }
+      fase1_acesso: {
+        Args: { _editar?: boolean; _modulo: string }
+        Returns: boolean
+      }
+      fase1_acessos_cadeira: { Args: never; Returns: Json }
+      fase1_diretor: { Args: { _cadeira: string }; Returns: boolean }
+      fase1_ocupante: { Args: { _cadeira: string }; Returns: boolean }
+      fase1_sistema_proprio: { Args: { _sistema: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
