@@ -1,0 +1,11 @@
+DROP POLICY IF EXISTS fluxos_public_read ON storage.objects;
+CREATE POLICY fluxos_auth_read ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'processo-fluxos');
+DROP POLICY IF EXISTS fluxos_pmo_insert ON storage.objects;
+CREATE POLICY fluxos_pmo_insert ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'processo-fluxos' AND (public.has_role(auth.uid(),'admin') OR public.has_role(auth.uid(),'pmo') OR public.has_role(auth.uid(),'super_admin')));
+REVOKE EXECUTE ON FUNCTION public.has_role(uuid, public.app_role), public.is_especialista_of(uuid, uuid), public.is_super_admin(uuid), public.is_membro_projeto(uuid, uuid), public.is_admin_of_modulo(uuid, text), public.modulo_conteudo(text), public.acesso_modulo(uuid, text, boolean), public.editor_modulo(uuid, text), public.socios_pode_consolidar(uuid), public.socios_eh_respondente(uuid), public.socios_prazo_aberto(timestamptz), public.mt_email_corporativo() FROM anon, public;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role), public.is_especialista_of(uuid, uuid), public.is_super_admin(uuid), public.is_membro_projeto(uuid, uuid), public.is_admin_of_modulo(uuid, text), public.modulo_conteudo(text), public.acesso_modulo(uuid, text, boolean), public.editor_modulo(uuid, text), public.socios_pode_consolidar(uuid), public.socios_eh_respondente(uuid), public.socios_prazo_aberto(timestamptz), public.mt_email_corporativo() TO authenticated;
+ALTER POLICY profiles_select_own ON public.profiles TO authenticated;
+ALTER POLICY profiles_update_own ON public.profiles TO authenticated;
+ALTER POLICY profiles_insert_own ON public.profiles TO authenticated;
+ALTER POLICY roles_admin_manage ON public.user_roles TO authenticated;
+ALTER POLICY roles_select_own ON public.user_roles TO authenticated;
