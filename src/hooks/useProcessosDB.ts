@@ -45,6 +45,15 @@ function mapRow(r: any): Processo {
   };
 }
 
+/** Arquivos de fluxo são privados: troca o endereço salvo por um link temporário (só com login). */
+export async function assinarFluxo(url?: string): Promise<string | undefined> {
+  const m = url?.match(/\/processo-fluxos\/(.+)$/);
+  if (!m) return url;
+  const path = decodeURIComponent(m[1].split("?")[0]);
+  const { data } = await supabase.storage.from("processo-fluxos").createSignedUrl(path, 60 * 60 * 12);
+  return data?.signedUrl ?? url;
+}
+
 /** Carrega processos do banco; faz fallback para o seed JSON em caso de falha. */
 export function useProcessosDB() {
   const [data, setData] = useState<Processo[]>([]);
@@ -58,7 +67,9 @@ export function useProcessosDB() {
     if (error || !rows || rows.length === 0) {
       setData(applyLocalEdits(seedJson as Processo[]));
     } else {
-      setData(applyLocalEdits(rows.map(mapRow)));
+      const mapped = rows.map(mapRow);
+      await Promise.all(mapped.map(async p => { p.imagemFluxoUrl = await assinarFluxo(p.imagemFluxoUrl); }));
+      setData(applyLocalEdits(mapped));
     }
     setLoading(false);
   }, []);
