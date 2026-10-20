@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { canAccessModule, canAccessSocios, ModuleGrant, SocioParticipante } from "@/lib/moduleAccess";
+import { canAccessPhase1Path } from "@/lib/phase1Access";
 
 export function useModuleAccess() {
   const { user, loading: authLoading } = useAuth();
@@ -22,13 +23,27 @@ export function useModuleAccess() {
     refetchOnWindowFocus: true,
     refetchInterval: 30000,
   });
-  const allowed = (module: string, edit = false) => !!user && !!query.data && (module === "socios" ? canAccessSocios(query.data.socio) : canAccessModule(query.data.grants, module, edit, query.data.superAdmin));
+  const ownership = useQuery({
+    queryKey: ["phase1-ownership", user?.id], enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("fase1_acessos_cadeira");
+      if (error) throw error;
+      const own = data as { ocupante?: boolean; diretor?: boolean } | null;
+      return { ocupante: own?.ocupante === true, diretor: own?.diretor === true };
+    }, refetchOnWindowFocus: true, refetchInterval: 30000,
+  });
+  const allowed = (module: string, edit = false) => !!user && !!query.data && (module === "socios" ? canAccessSocios(query.data.socio) : canAccessModule(query.data.grants, module, edit, query.data.superAdmin, query.data.roles.includes("admin")));
   return {
     loading: authLoading || (!!user && query.isPending), error: query.isError,
     grants: query.data?.grants ?? [], roles: query.data?.roles ?? [],
     isSuperAdmin: query.data?.superAdmin ?? false,
     socio: query.data?.socio ?? null,
-    canAccessPath: (module: string, path: string) => module === "socios" ? !!user && !!query.data && canAccessSocios(query.data.socio, path) : allowed(module),
+    canAccessPath: (module: string, path: string) => {
+      if (module === "socios") return !!user && !!query.data && canAccessSocios(query.data.socio, path);
+      if (["decisoes", "estrutura", "incentivos"].includes(module)) return !!user && !!query.data && canAccessPhase1Path(path, query.data.grants, query.data.superAdmin, query.data.roles.includes("admin"), ownership.data ?? { ocupante: false, diretor: false });
+      return allowed(module);
+    },
+    phase1OwnershipLoading: !!user && ownership.isPending,
     canRead: (module: string) => allowed(module),
     canWrite: (module: string) => allowed(module, true),
     explicitEditor: (module: string) => allowed(module, true) && (query.data?.superAdmin || query.data?.grants.some(g => g.modulo === module && g.nivel === "edicao")) === true,

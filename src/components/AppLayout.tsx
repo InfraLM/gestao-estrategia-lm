@@ -24,6 +24,7 @@ const navGroups: NavGroup[] = [
       { to: "/estrategia", label: "Estratégia LM", icon: Target },
       { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
       { to: "/impacto-estrategico", label: "Impacto Estratégico", icon: TrendingUp },
+      { to: "/contexto-decisoes", label: "Contexto e decisões", icon: ScrollText },
     ],
   },
   {
@@ -33,6 +34,7 @@ const navGroups: NavGroup[] = [
     children: [
       { to: "/socios/formulario", label: "Meu formulário", icon: ListChecks },
       { to: "/socios/consolidado", label: "Visão consolidada", icon: LayoutGrid },
+      { to: "/socios/insights", label: "Insights sócios", icon: Sparkles },
     ],
   },
   {
@@ -54,6 +56,7 @@ const navGroups: NavGroup[] = [
     children: [
       { to: "/okrs", label: "OKRs do Semestre", icon: Target },
       { to: "/cesta-metas", label: "Cesta de Metas", icon: UserCog },
+      { to: "/cesta-metas/insights", label: "Insights da Cesta", icon: ListChecks },
       { to: "/metas/painel", label: "Metas 2S26 · Painel da Governança", icon: Settings2 },
       { to: "/metas/lancamento", label: "Metas 2S26 · Lançamento mensal", icon: Settings2 },
       { to: "/metas/cadastros", label: "Metas 2S26 · Cadastros", icon: Settings2 },
@@ -79,9 +82,23 @@ const navGroups: NavGroup[] = [
       { to: "/historico/cesta-metas", label: "Histórico de Cesta de Metas", icon: ListChecks },
     ],
   },
+  {
+    id: "estrutura-incentivos",
+    label: "Estrutura e Incentivos",
+    icon: Network,
+    children: [
+      { to: "/estrutura-organizacional", label: "Estrutura organizacional", icon: Network },
+      { to: "/incentivos", label: "Sistemas de incentivo", icon: Target },
+    ],
+  },
 ];
 
 const titles: Record<string, string> = {
+  "/contexto-decisoes": "Contexto e decisões",
+  "/socios/insights": "Desejos dos Sócios 2027 · Insights sócios",
+  "/estrutura-organizacional": "Estrutura organizacional",
+  "/incentivos": "Sistemas de incentivo",
+  "/cesta-metas/insights": "Insights da Cesta",
   "/": "Dashboard Estratégico",
   "/diagnostico": "Diagnóstico Estratégico LM",
   "/okrs": "OKRs · 2026/2",

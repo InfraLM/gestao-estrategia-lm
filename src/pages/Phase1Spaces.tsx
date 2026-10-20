@@ -1,0 +1,22 @@
+import Phase1EmptyTable from "@/components/Phase1EmptyTable";
+
+export function ContextoDecisoes() {
+  return <Phase1EmptyTable columns={["Código", "Título", "Reunião de origem", "Tipo de fórum", "Data", "Responsável", "Impacto", "Trade-off"]} />;
+}
+export function SociosInsights() {
+  return <Phase1EmptyTable columns={["Código", "Desejo", "Origem", "Dono proposto", "Prazo / custo", "Leitura / filtro", "Status"]} />;
+}
+export function EstruturaOrganizacional() {
+  return <Phase1EmptyTable columns={["Cadeira", "Nível", "Cadeira superior", "Ocupante", "Missão", "Entregas", "Ativo"]} />;
+}
+export function Incentivos() {
+  return <div className="space-y-8">
+    <Phase1EmptyTable columns={["Cadeira", "Sistema de incentivo", "Período", "Regra", "Gatilho"]} />
+    <section className="space-y-4"><h2 className="text-lg font-semibold">Metas por sistema</h2>
+      <Phase1EmptyTable columns={["Cadeira / sistema", "Origem · árvore de KPIs / OKRs / cesta de metas", "Referência", "Descrição", "Peso", "Meta", "Período"]} />
+    </section>
+  </div>;
+}
+export function CestaInsights() {
+  return <Phase1EmptyTable columns={["Diretor / cadeira", "Decisão", "Combinado", "Indicador", "Aderência", "Observação", "Avaliado em"]} />;
+}
