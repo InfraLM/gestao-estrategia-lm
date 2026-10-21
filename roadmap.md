@@ -1,5 +1,10 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
+# Integração Governança · Fase C
+- [ ] Acrescentar consulta autorizada das pendências e bloco recolhível no formulário, sem mudar o fluxo existente.
+- [ ] Configurar segredo interno e sincronização incremental horária no minuto 7; manual permanece completa.
+- [ ] Testar regras, autorização e navegador com CFO, sem salvar check-in real.
+
 # Fase 1 · Novos espaços seguros
 - [x] Fase 6 · Links diretos: fichas D-060/DS-43 e referência da Cesta verificadas com login em computador/celular; URL acompanha abrir/fechar/navegar por replace, avisos de ausentes conferidos; 149 testes aprovados e nenhuma gravação nas tabelas.
 - [x] Fase 5 · Incentivos e Insights da Cesta: leitura dos 11 sistemas, metas ao vivo, avaliação limitada; 132 testes aprovados, computador/celular conferidos com login e sem erros. Nenhum registro criado/excluído, sistemas e metas inalterados; avaliação de teste revertida (updated_at atualizado automaticamente).
