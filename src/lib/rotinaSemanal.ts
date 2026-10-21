@@ -188,10 +188,10 @@ export function addDias(iso: string, n: number) {
   const d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10);
 }
 const dm = (iso: string) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
-/** "Checkout dd/mm a dd/mm · Check-in dd/mm a dd/mm/aa" — checkout fecha a semana anterior, check-in abre a semana escolhida. */
+/** "Checkout dd/mm a dd/mm · Check-in dd/mm a dd/mm/aa" — ambos do registro da semana escolhida (segunda a sexta). */
 export function periodoSemana(sem: string) {
-  const co0 = addDias(sem, -7), co1 = addDias(sem, -3), ci1 = addDias(sem, 4);
-  return `Checkout ${dm(co0)} a ${dm(co1)} · Check-in ${dm(sem)} a ${dm(ci1)}/${ci1.slice(2, 4)}`;
+  const fim = addDias(sem, 4);
+  return `Checkout ${dm(sem)} a ${dm(fim)} · Check-in ${dm(sem)} a ${dm(fim)}/${fim.slice(2, 4)}`;
 }
 export function idadeSemanas(criada: string, sem: string) {
   const n = Math.round((new Date(sem + "T12:00").getTime() - new Date(criada + "T12:00").getTime()) / (7 * 864e5));
