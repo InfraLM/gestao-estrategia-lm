@@ -5,9 +5,9 @@ Deno.test("agrega contagens", () => {
   const r = agregar({
     gerado_em: "2026-10-21T00:00:00Z",
     acoes: [
-      { status: "aberta", comite: "ExCom", responsavel: "Ana", prazo: "2026-11-01" },
-      { status: "aberta", comite: "CEA", responsavel: "ana" },
-      { status: "concluida", comite: "ExCom" },
+      { status: "aberta", committee_code: "ExCom", owner_name: "Ana", due_date: "2026-11-01" },
+      { status: "aberta", committee_code: "CEA", owner_name: "ana" },
+      { status: "concluida", committee_code: "", committee_name: "ExCom" },
     ],
     deliberacoes: [{}, {}], deliberacoes_excluidas: 4,
   });
