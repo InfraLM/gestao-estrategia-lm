@@ -4,8 +4,8 @@
 - Strategic reference URLs use linksEstrategicos; Contexto and Insights select sheets from the codigo query parameter using replace navigation and only RLS-visible records, preserving filters and existing access gates.
 - Strategic spaces read through the existing RLS-filtered client with page-local pure helpers; Contexto, Insights Sócios, Estrutura and Incentivos are read-only. Incentivos reads active indicators live for shared-goals systems and incentivo_metas for other systems; CestaInsights only updates adherence, observation, evaluation date and authenticated evaluator, gated by existing incentivos edit grants or admin roles and RLS. Text renderers reuse unchanged Contexto normalization/status parsing; Estrutura gates DS links with canAccessPath("socios", "/socios/insights"). Never connect these tables to AI functions or general export pipelines.
 
-- Sistema de Metas 2S26 lives in `mt_*` tables read through `src/hooks/useMetasBase.ts`; the weekly check-in module must reuse them — the spec requires one shared base.
-- KPIs, KRs and Cesta metas share one `mt_indicadores` table distinguished by `origem` — the monthly form and scoring treat all three the same way.
+- Metas 2S26 and weekly check-ins share `mt_*` via `useMetasBase`.
+- KPIs, KRs and Cesta metas share `mt_indicadores`, distinguished by `origem`; monthly forms and scoring treat them equally.
 - Iniciativa "atrasada" is computed on read (`statusEfetivo`), never stored — it must flip automatically when the deadline passes.
 - Metas access: reads open to any signed-in user (`mt_email_corporativo` now just checks login, per user request); writes to cadastros need `mt_is_governanca` — enforced in RLS, UI only mirrors it.
 - Editable static content (Diagnóstico/Estratégia/BSC/OKRs) is stored as JSON per key in `conteudo_editavel` via `useConteudo` — keeps static defaults as fallback.
@@ -22,3 +22,5 @@
 - Sócios normalize versioned portfolio answers on read; shared open-answer helpers feed consolidation, submission documents and CSV to prevent omissions. The token-validated load RPC exposes only the product-results content key, so secret-link respondents see edited figures without opening general content access.
 - Governança integration (phase A) is a read-only edge function `governanca-teste-conexao` returning only aggregate counts from the external export; admin/super_admin only, token kept in secret GOV_EXPORT_TOKEN, never returned or logged.
 - Governance mirrors use service-role upserts, never deletes; normalized names map to multiple chairs through gov_responsaveis_map_cadeiras (map.mt_cadeira_id deprecated). Chair-authorized RPCs read weekly actions/last sync; optional gov_acao_id/badges travel in weekly JSON without permission changes or upstream writes. Hourly cron is incremental; manual/daily sync are full via x-sync-modo. Setup is service-only; secrets never enter responses. Successful syncs call service-only gov_publicar_deliberacoes: UTC GOV codes, origin-only updates, manual enrichment and D-NNN preserved, existing reserved RLS authoritative.
+
+- Desktop/mobile share AppLayout's permission-filtered sidebar; mobile uses a left Sheet that closes on navigation, keeping menus consistent.
