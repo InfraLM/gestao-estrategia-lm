@@ -1,9 +1,9 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
 # Integração Governança · Fase C
-- [ ] Acrescentar consulta autorizada das pendências e bloco recolhível no formulário, sem mudar o fluxo existente.
-- [ ] Configurar segredo interno e sincronização incremental horária no minuto 7; manual permanece completa.
-- [ ] Testar regras, autorização e navegador com CFO, sem salvar check-in real.
+- [x] Acrescentar consulta autorizada das pendências e bloco recolhível no formulário, sem mudar o fluxo existente.
+- [x] Configurar segredo interno e sincronização incremental horária no minuto 7; manual permanece completa. Cron ativo; chamada agendada de teste HTTP 200, zero mudanças desde a última sincronização.
+- [x] Testar regras, autorização SQL (fixtures revertidas) e navegador admin com CFO: 43 pendências, 12 vencidas, 31 sem prazo; vínculo chega ao Checkout sem salvar formulário. 154 testes frontend e 6 edge aprovados. Bloco novo cabe no celular; seletor antigo de semana tem transbordamento preexistente, preservado pelo escopo.
 
 # Fase 1 · Novos espaços seguros
 - [x] Fase 6 · Links diretos: fichas D-060/DS-43 e referência da Cesta verificadas com login em computador/celular; URL acompanha abrir/fechar/navegar por replace, avisos de ausentes conferidos; 149 testes aprovados e nenhuma gravação nas tabelas.

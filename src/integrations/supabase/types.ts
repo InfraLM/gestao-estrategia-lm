@@ -2961,11 +2961,34 @@ export type Database = {
       fase1_diretor: { Args: { _cadeira: string }; Returns: boolean }
       fase1_ocupante: { Args: { _cadeira: string }; Returns: boolean }
       fase1_sistema_proprio: { Args: { _sistema: string }; Returns: boolean }
+      gov_acoes_da_cadeira: {
+        Args: { _cadeira: string }
+        Returns: {
+          comite_codigo: string
+          descricao: string
+          id: string
+          origem_id: string
+          outros_responsaveis: string[]
+          prazo: string
+          precisa_escalar: boolean
+          prioridade: string
+          responsavel_origem: string
+          reuniao_data: string
+          reuniao_titulo: string
+          status: string
+          titulo: string
+        }[]
+      }
+      gov_configurar_cron: {
+        Args: { _token: string; _url: string }
+        Returns: undefined
+      }
       gov_diretor_da_acao: {
         Args: { _nome_norm: string; _uid: string }
         Returns: boolean
       }
       gov_is_admin: { Args: { _uid: string }; Returns: boolean }
+      gov_ultima_sincronizacao: { Args: { _cadeira: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

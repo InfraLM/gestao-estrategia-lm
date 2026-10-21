@@ -1,8 +1,23 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { contarUpsert, nomesNovos, normalizarNome, papelAutorizado, prepararPayload } from "./sync.ts";
+import { cronAutorizado, destinoSincronizacao } from "./auth.ts";
 
 const A1 = "11111111-1111-1111-1111-111111111111", A2 = "22222222-2222-2222-2222-222222222222";
 const M = "33333333-3333-3333-3333-333333333333";
+
+Deno.test("cron exige secret configurado e header exato", () => {
+  assertEquals(cronAutorizado(null, undefined), false);
+  assertEquals(cronAutorizado("", ""), false);
+  assertEquals(cronAutorizado("teste", undefined), false);
+  assertEquals(cronAutorizado("errado", "correto"), false);
+  assertEquals(cronAutorizado("correto", "correto"), true);
+});
+Deno.test("incremental só agendado, manual completo mesmo com desde na base", () => {
+  const base = "https://example.org/export?desde=antigo";
+  assertEquals(new URL(destinoSincronizacao(base, false, "2026-10-21T00:00:00Z")).searchParams.has("desde"), false);
+  assertEquals(new URL(destinoSincronizacao(base, true, "2026-10-21T00:00:00Z")).searchParams.get("desde"), "2026-10-21T00:00:00Z");
+  assertEquals(new URL(destinoSincronizacao(base, true, null)).searchParams.has("desde"), false);
+});
 
 Deno.test("normaliza nomes", () => {
   assertEquals(normalizarNome("  João   DA Silva "), "joao da silva");

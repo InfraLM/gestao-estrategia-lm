@@ -1,26 +1,37 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { contarUpsert, nomesNovos, papelAutorizado, prepararPayload } from "./sync.ts";
+import { cronAutorizado, destinoSincronizacao } from "./auth.ts";
 
 const URL_PADRAO = "https://zrbixzqorerfespucmni.supabase.co/functions/v1/exportar-estrategia";
-// Fase B: sincronização completa. Futuro: USAR_DESDE=true envia "desde" = último concluido_em com ok.
-const USAR_DESDE = false;
+// Incremental apenas para chamadas agendadas; manual sempre completa.
+const USAR_DESDE = true;
 
 const lotes = <T>(a: T[], n = 500) => Array.from({ length: Math.ceil(a.length / n) }, (_, i) => a.slice(i * n, i * n + n));
 
 Deno.serve(async (req) => {
   const out = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (!["POST", "GET"].includes(req.method)) return out({ error: "Método não permitido" }, 405);
+  const cronHeader = req.headers.get("x-cron-token");
+  const agendada = cronAutorizado(cronHeader, Deno.env.get("GOV_SYNC_CRON_TOKEN"));
+  if (cronHeader !== null && !agendada) return out({ error: "Não autenticado" }, 401);
   const auth = req.headers.get("Authorization");
-  if (!auth?.startsWith("Bearer ")) return out({ error: "Não autenticado" }, 401);
-  const url = Deno.env.get("SUPABASE_URL")!;
-  const anon = createClient(url, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: auth } } });
-  const { data: c, error } = await anon.auth.getClaims(auth.slice(7));
-  if (error || !c?.claims?.sub) return out({ error: "Não autenticado" }, 401);
-  const uid = c.claims.sub as string;
-  const db = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const { data: roles } = await db.from("user_roles").select("role").eq("user_id", uid);
-  if (!papelAutorizado((roles ?? []).map((r: { role: string }) => r.role))) return out({ error: "Sem permissão" }, 403);
+  const url = Deno.env.get("SUPABASE_URL");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !anonKey || !serviceKey) return out({ error: "Configuração ausente" }, 503);
+  const db = createClient(url, serviceKey);
+  let uid: string | null = null;
+  if (!agendada) {
+    if (!auth?.startsWith("Bearer ")) return out({ error: "Não autenticado" }, 401);
+    const anon = createClient(url, anonKey, { global: { headers: { Authorization: auth } } });
+    const { data: c, error } = await anon.auth.getClaims(auth.slice(7));
+    if (error || !c?.claims?.sub) return out({ error: "Não autenticado" }, 401);
+    uid = c.claims.sub as string;
+    const { data: roles } = await db.from("user_roles").select("role").eq("user_id", uid);
+    if (!papelAutorizado((roles ?? []).map((r: { role: string }) => r.role))) return out({ error: "Sem permissão" }, 403);
+  }
 
   const { data: log } = await db.from("gov_sync_log").insert({ iniciado_por: uid }).select("id").single();
   const fim = async (campos: Record<string, unknown>) => {
@@ -31,11 +42,13 @@ Deno.serve(async (req) => {
   const token = Deno.env.get("GOV_EXPORT_TOKEN");
   if (!token) return fim({ ok: false, status_http: null, erro: "secret_ausente" });
 
-  let destino = Deno.env.get("GOV_EXPORT_URL") || URL_PADRAO;
-  if (USAR_DESDE) {
+  const base = Deno.env.get("GOV_EXPORT_URL") || URL_PADRAO;
+  let ultimoOk: string | null = null;
+  if (USAR_DESDE && agendada) {
     const { data: ult } = await db.from("gov_sync_log").select("concluido_em").eq("ok", true).order("concluido_em", { ascending: false }).limit(1).maybeSingle();
-    if (ult?.concluido_em) destino += `?desde=${encodeURIComponent(ult.concluido_em)}`;
+    ultimoOk = ult?.concluido_em ?? null;
   }
+  const destino = destinoSincronizacao(base, USAR_DESDE && agendada, ultimoOk);
 
   let payload: Record<string, unknown>;
   let status = 0;
