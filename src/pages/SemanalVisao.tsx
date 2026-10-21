@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI } from "@/hooks/useMetasBase";
 import { segunda, prazoDe, SITUACAO_LBL, ENTREGA_LBL } from "./MetasSemanal";
+import { normalizarCheckout, riscoAberto, idadeSemanas } from "@/lib/rotinaSemanal";
 
 const db = supabase as any;
 const fmtSem = (s: string) => new Date(s + "T12:00").toLocaleDateString("pt-BR");
@@ -17,7 +18,9 @@ export default function SemanalVisao() {
   const [sem, setSem] = useState(segunda());
   const [rows, setRows] = useState<any[]>([]);
   const semanas = useMemo(() => [0, 1, 2, 3, 4, 5].map((n) => segunda(new Date(Date.now() - n * 7 * 864e5))), []);
+  const [riscos, setRiscos] = useState<any[]>([]);
   useEffect(() => { db.from("mt_checkins").select("*").eq("semana", sem).then(({ data }: any) => setRows(data ?? [])); }, [sem]);
+  useEffect(() => { db.from("mt_rotina_riscos").select("*").lte("semana_criada", sem).then(({ data }: any) => setRiscos((data ?? []).filter(riscoAberto))); }, [sem]);
 
   if (b.loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
   const cads = b.cadeiras.filter((c) => c.ativo);
@@ -25,7 +28,11 @@ export default function SemanalVisao() {
   const enviado = (r: any) => r?.status === "enviado";
   const totIn = cads.filter((c) => enviado(get(c.id, "checkin"))).length;
   const totOut = cads.filter((c) => enviado(get(c.id, "checkout"))).length;
-  const kpisFora = rows.flatMap((r) => (r.tipo === "checkout" ? r.conteudo?.kpis ?? [] : []).map((k: any) => ({ ...k, cadeira_id: r.cadeira_id }))).filter((k: any) => k.situacao && k.situacao !== "no_trilho");
+  const kpisNao = (r: any) => { const c = normalizarCheckout(r?.conteudo); return c.kpis_resposta.filter((k) => k.ok === false).map((k) => ({ ...k, ret: c.kpis_retrato?.find((x) => x.indicador_id === k.indicador_id) })); };
+  const kpisFora = [
+    ...rows.flatMap((r) => (r.tipo === "checkout" ? r.conteudo?.kpis ?? [] : [])).filter((k: any) => k.situacao && k.situacao !== "no_trilho"),
+    ...rows.filter((r) => r.tipo === "checkout").flatMap(kpisNao),
+  ];
 
   const Sit = ({ r, tipo }: { r: any; tipo: string }) => {
     if (enviado(r)) return <Badge className={new Date(r.enviado_em) > prazoDe(sem, tipo) ? "bg-warning text-warning-foreground" : "bg-success text-success-foreground"}>Enviado</Badge>;
@@ -78,12 +85,23 @@ export default function SemanalVisao() {
               )}
               {kp.length > 0 && (
                 <div className="space-y-1 text-sm">
-                  <p className="font-medium">KPIs apontados</p>
+                  <p className="font-medium">KPIs apontados (registro antigo)</p>
                   {kp.map((k: any, i: number) => {
                     const ind = b.indicadores.find((x) => x.id === k.indicador_id);
                     return <div key={i} className="flex justify-between gap-2"><span>{ind?.codigo} · {ind?.nome} {k.valor && `— ${k.valor}`}</span>
                       {k.situacao && <Badge variant={k.situacao === "fora" ? "destructive" : k.situacao === "atencao" ? "outline" : "default"}>{SITUACAO_LBL[k.situacao]}</Badge>}</div>;
                   })}
+                </div>
+              )}
+              {kpisNao(co).length > 0 && (
+                <div className="space-y-1 text-sm"><p className="font-medium">KPIs fora do esperado</p>
+                  {kpisNao(co).map((k: any) => <div key={k.indicador_id} className="flex justify-between gap-2"><span>{k.ret?.codigo} · {k.ret?.nome}</span>{k.iniciativa_criada_id && <Badge variant="outline">Virou iniciativa</Badge>}</div>)}
+                </div>
+              )}
+              {ent.filter((e: any) => e.herdada_de && e.status !== "entregue").length > 0 && <p className="text-xs text-muted-foreground">{ent.filter((e: any) => e.herdada_de && e.status !== "entregue").length} prioridade(s) de semanas anteriores ainda abertas</p>}
+              {riscos.filter((r) => r.cadeira_id === c.id).length > 0 && (
+                <div className="space-y-1 text-sm"><p className="font-medium">Riscos e impedimentos abertos</p>
+                  {riscos.filter((r) => r.cadeira_id === c.id).map((r) => <p key={r.id}>{r.descricao} <span className="text-muted-foreground">· {idadeSemanas(r.semana_criada, sem)}</span></p>)}
                 </div>
               )}
               {atrasadas > 0 && <p className="text-xs text-destructive">{atrasadas} iniciativa(s) atrasada(s)</p>}

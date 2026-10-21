@@ -1646,6 +1646,8 @@ export type Database = {
       mt_iniciativas: {
         Row: {
           cadeira_id: string | null
+          checkin_semana: string | null
+          checkin_token: string | null
           comentario: string | null
           created_at: string
           created_by: string | null
@@ -1662,6 +1664,8 @@ export type Database = {
         }
         Insert: {
           cadeira_id?: string | null
+          checkin_semana?: string | null
+          checkin_token?: string | null
           comentario?: string | null
           created_at?: string
           created_by?: string | null
@@ -1678,6 +1682,8 @@ export type Database = {
         }
         Update: {
           cadeira_id?: string | null
+          checkin_semana?: string | null
+          checkin_token?: string | null
           comentario?: string | null
           created_at?: string
           created_by?: string | null
@@ -1912,6 +1918,91 @@ export type Database = {
           valor?: Json
         }
         Relationships: []
+      }
+      mt_rotina_contatos: {
+        Row: {
+          cadeira_id: string
+          created_at: string
+          criado_por: string | null
+          email: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          cadeira_id: string
+          created_at?: string
+          criado_por?: string | null
+          email: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          cadeira_id?: string
+          created_at?: string
+          criado_por?: string | null
+          email?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_rotina_contatos_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_rotina_riscos: {
+        Row: {
+          cadeira_id: string
+          created_at: string
+          criado_por: string | null
+          descricao: string
+          id: string
+          reaberto_em: string | null
+          resolvido_em: string | null
+          resolvido_por: string | null
+          semana_criada: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          cadeira_id: string
+          created_at?: string
+          criado_por?: string | null
+          descricao: string
+          id?: string
+          reaberto_em?: string | null
+          resolvido_em?: string | null
+          resolvido_por?: string | null
+          semana_criada: string
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          cadeira_id?: string
+          created_at?: string
+          criado_por?: string | null
+          descricao?: string
+          id?: string
+          reaberto_em?: string | null
+          resolvido_em?: string | null
+          resolvido_por?: string | null
+          semana_criada?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_rotina_riscos_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mt_status_projetos: {
         Row: {
@@ -3085,6 +3176,25 @@ export type Database = {
         Returns: boolean
       }
       mt_reabrir: { Args: { _comp: string }; Returns: undefined }
+      rotina_criar_iniciativa: {
+        Args: {
+          _cadeira: string
+          _comentario: string
+          _indicador: string
+          _prazo: string
+          _reaproveitar: string
+          _resp_nome: string
+          _semana: string
+          _status: string
+          _titulo: string
+          _token: string
+        }
+        Returns: string
+      }
+      rotina_retrato: {
+        Args: { _cadeira: string; _comp: string }
+        Returns: Json
+      }
       socios_eh_respondente: { Args: { _uid: string }; Returns: boolean }
       socios_enviar: { Args: never; Returns: undefined }
       socios_link_carregar: { Args: { _token: string }; Returns: Json }

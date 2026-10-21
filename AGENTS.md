@@ -8,10 +8,10 @@
 - Metas 2S26 and weekly check-ins share `mt_*` via `useMetasBase`.
 - KPIs, KRs and Cesta metas share `mt_indicadores`, distinguished by `origem`; monthly forms and scoring treat them equally.
 - Iniciativa "atrasada" is computed on read (`statusEfetivo`), never stored — it must flip automatically when the deadline passes.
-- Metas access: reads open to any signed-in user (`mt_email_corporativo` now just checks login, per user request); writes to cadastros need `mt_is_governanca` — enforced in RLS, UI only mirrors it.
+- Metas: reads need login (`mt_email_corporativo`); cadastro writes need `mt_is_governanca`, enforced in RLS.
 - Editable static content (Diagnóstico/Estratégia/BSC/OKRs) is stored as JSON per key in `conteudo_editavel` via `useConteudo` — keeps static defaults as fallback.
 - Monthly launch: values in `mt_lancamentos` keyed by indicador+competência+revisão; reopening (`mt_reabrir`) copies into a new revisão — never overwrites a closed month.
-- Weekly check-in/checkout submissions live in `mt_checkins` (cadeira+semana+tipo); the Governança panel reads it — the weekly form must write there.
+- Weekly check-in/checkout live in `mt_checkins` (cadeira+semana+tipo), read by the Governança panel.
 - Per-user module overrides live in `usuario_acessos`; restrictive RLS caps existing row-scoped permissions, while moduleAccess/useModuleAccess mirror those caps in navigation and editing. Missing overrides preserve legacy access; only super_admin manages overrides and retains full access.
 - Administrator invitations are stored in `usuario_convites` and applied by an Auth lifecycle trigger only after email verification; email sending validates the caller server-side, and Google uses the managed Lovable helper to avoid impersonation and preserve preview support.
 - Shared invitation links use the public auth page; acceptance validates the signed-in verified email server-side and is idempotent for the same user, so existing accounts can accept without granting access to link holders.
@@ -25,3 +25,4 @@
 - Governance mirrors use service-role upserts, never deletes; normalized names map to multiple chairs through gov_responsaveis_map_cadeiras (map.mt_cadeira_id deprecated). Chair-authorized RPCs read weekly actions/last sync; optional gov_acao_id/badges travel in weekly JSON without permission changes or upstream writes. Hourly cron is incremental; manual/daily sync are full via x-sync-modo. Setup is service-only; secrets never enter responses. Successful syncs call service-only gov_publicar_deliberacoes: UTC GOV codes, origin-only updates, manual enrichment and D-NNN preserved, existing reserved RLS authoritative.
 
 - Desktop/mobile share AppLayout's permission-filtered sidebar; mobile uses a left Sheet that closes on navigation, keeping menus consistent.
+- Weekly checkout freezes KPI snapshot `kpis_retrato` (via `rotina_retrato`) on first open; `src/lib/rotinaSemanal.ts` normalizes old/new JSON. Plans become initiatives only via idempotent `rotina_criar_iniciativa`; risks in `mt_rotina_riscos` (immutable text); outside e-mails only in `mt_rotina_contatos`, never in weekly JSON.
