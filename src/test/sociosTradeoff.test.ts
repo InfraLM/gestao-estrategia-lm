@@ -116,6 +116,27 @@ describe("Desejos dos Sócios · trade-off", () => {
     expect(escolhas({ portfolio: "D", portfolio_v: 2 })[0].escolhe).toContain("orçamento fantasma");
     expect(diretrizesSugeridas({ portfolio: "D", portfolio_v: 2 }).some(d => d.texto.includes("orçamento fantasma") && d.objetivos.join() === "F.01,P.01")).toBe(true);
   });
+  it.each([
+    ["B", "pocus"], ["B", "paliativos"], ["D", "pocus"], ["D", "paliativos"],
+  ])("P4 %s alerta sobre projeção 2030 ao crescer %s", (portfolio, produto) => {
+    const alertas = tensoes({ portfolio, portfolio_v: 2, produtos: { [produto]: "crescer" } });
+    expect(alertas.filter(t => t.includes("D-075"))).toHaveLength(1);
+  });
+  it.each(["A", "C"])("P4 %s não emite o novo alerta reservado às opções B/D", portfolio => {
+    expect(tensoes({ portfolio, portfolio_v: 2, produtos: { pocus: "crescer", paliativos: "crescer" } }).filter(t => t.includes("D-075"))).toHaveLength(0);
+  });
+  it.each(["manter", "reduzir", "encerrar"])("P4 não alerta projeção 2030 ao %s POCUS/Paliativos", acao => {
+    for (const portfolio of ["B", "D"]) {
+      expect(tensoes({ portfolio, portfolio_v: 2, produtos: { pocus: acao, paliativos: acao } }).filter(t => t.includes("D-075"))).toHaveLength(0);
+    }
+  });
+  it("P4 novo alerta não duplica com ambos os produtos e mantém compatibilidade legada", () => {
+    const produtos = { pocus: "crescer", paliativos: "crescer" };
+    expect(tensoes({ portfolio: "D", portfolio_v: 2, produtos }).filter(t => t.includes("D-075"))).toHaveLength(1);
+    expect(tensoes({ portfolio: "C", produtos }).filter(t => t.includes("D-075"))).toHaveLength(1);
+    expect(tensoes({ portfolio: "B", portfolio_v: 2, produtos: { ppg: "crescer" } }).filter(t => t.includes("D-075"))).toHaveLength(0);
+    expect(tensoes({ portfolio: "D", portfolio_v: 2 }).filter(t => t.includes("D-075"))).toHaveLength(0);
+  });
   it("consolidado: uma linha por produto e teto do financiamento", () => {
     const l = compararSocios([{ produtos: { ppg: "crescer" } }, { produtos: { ppg: "manter" } }]);
     expect(l.find(x => x.key === "produto.ppg")?.diverge).toBe(true);

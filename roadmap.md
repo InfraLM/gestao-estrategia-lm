@@ -36,6 +36,7 @@
 - Pendente com o usuário: e-mails de Cleto e Felipe; curvas mensais numéricas de metas; pesos dos KPIs do BSC
 
 # Desejos dos Sócios 2027
+- [x] Ajustar opção B, rótulo curto, help e escolha de Portfólio para projeção 2030/P&L; 44 testes de trade-off aprovados, tensão B/D e compatibilidade legada verificadas; pergunta 4 conferida com login sem alterar respostas.
 - [x] Concluir revisão das perguntas 3/4, compatibilidade, comparações, histórico, CSV e conferência do formulário; 70 testes aprovados, salvamento/leitura real conferidos e valor original restaurado.
 - [x] Tabelas, segurança, acesso fechado, menu e endereços
 - [x] Regras do trade-off com testes
