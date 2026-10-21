@@ -7,7 +7,7 @@
 
 - Metas 2S26 and weekly check-ins share `mt_*` via `useMetasBase`.
 - KPIs, KRs and Cesta share `mt_indicadores` by `origem`; monthly score = KRs + cesta with peso vigente (`mt_pesos_vigencia`, never recomputing closed months); BSC is outside the score, evaluated on/off track on read (`src/lib/avaliacaoBsc.ts`).
-- Iniciativa "atrasada" is computed on read (`statusEfetivo`), never stored — it must flip automatically when the deadline passes.
+- Iniciativa "atrasada" is computed on read (`statusEfetivo`), never stored.
 - Metas: reads need login (`mt_email_corporativo`); cadastro writes need `mt_is_governanca`, enforced in RLS.
 - Editable static content (Diagnóstico/Estratégia/BSC/OKRs) is stored as JSON per key in `conteudo_editavel` via `useConteudo` — keeps static defaults as fallback.
 - Monthly launch: values in `mt_lancamentos` keyed by indicador+competência+revisão; reopening (`mt_reabrir`) copies into a new revisão — never overwrites a closed month.
@@ -25,4 +25,4 @@
 - Governance mirrors use service-role upserts, never deletes; normalized names map to multiple chairs through gov_responsaveis_map_cadeiras (map.mt_cadeira_id deprecated). Chair-authorized RPCs read weekly actions/last sync; optional gov_acao_id/badges travel in weekly JSON without permission changes or upstream writes. Hourly cron is incremental; manual/daily sync are full via x-sync-modo. Setup is service-only; secrets never enter responses. Successful syncs call service-only gov_publicar_deliberacoes: UTC GOV codes, origin-only updates, manual enrichment and D-NNN preserved, existing reserved RLS authoritative.
 
 - Desktop/mobile share AppLayout's permission-filtered sidebar; mobile uses a left Sheet that closes on navigation, keeping menus consistent.
-- Checkout KPI numbers are live until first send, then stored in `kpis_retrato`; `src/lib/rotinaSemanal.ts` normalizes old/new JSON. Plans become initiatives only via idempotent `rotina_criar_iniciativa`; risks in `mt_rotina_riscos` (immutable text); outside e-mails only in `mt_rotina_contatos`, never in weekly JSON.
+- Checkout KPI numbers are live until first send, then stored in `kpis_retrato`; `src/lib/rotinaSemanal.ts` normalizes old/new JSON. Plans → initiatives only via idempotent `rotina_criar_iniciativa`; risks in `mt_rotina_riscos` (immutable text); outside e-mails only in `mt_rotina_contatos`, never in weekly JSON.
