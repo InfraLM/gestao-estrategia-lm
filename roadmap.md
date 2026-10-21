@@ -1,5 +1,10 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
+# Organograma atualizado
+- [ ] Extrair a hierarquia da planilha enviada e incorporar sem perder fichas e vínculos existentes.
+- [ ] Exibir organograma visual e edição autorizada das cadeiras, ocupantes e hierarquia.
+- [ ] Testar validação, segurança e salvamento/leitura pela tela.
+
 # Integração Governança · Fase D
 - [x] Publicar 12 deliberações (1 reservada) por função service-only; 110 D-NNN inalterados, md5 67ac670d16b573732889b113b74febaf; total 110 → 122.
 - [x] Acrescentar filtro de origem e ficha GOV; jobs ativos horário minuto 7 e diária completa 03:17 UTC.
