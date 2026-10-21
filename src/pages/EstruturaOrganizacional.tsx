@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
@@ -14,6 +14,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import ArvoreCadeiras from "@/components/estrutura/ArvoreCadeiras";
 import EstruturaTexto from "@/components/estrutura/EstruturaTexto";
 import { type Cadeira, NIVEIS, filtrarCadeiras, montarArvore, rotuloNivel } from "./estruturaOrganizacional";
+import OrganogramaAtual from "@/components/estrutura/OrganogramaAtual";
+import EditarCargo, { type CargoEdicao } from "@/components/estrutura/EditarCargo";
+import { podeEditarEstrutura } from "@/lib/organograma";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const BLOCOS: { titulo: string; campo: keyof Cadeira }[] = [
   { titulo: "Missão", campo: "missao" }, { titulo: "É o D de", campo: "e_o_d_de" },
@@ -23,6 +27,8 @@ const BLOCOS: { titulo: string; campo: keyof Cadeira }[] = [
 export default function EstruturaOrganizacional() {
   const { user } = useAuth();
   const acesso = useModuleAccess();
+  const canEdit = podeEditarEstrutura(acesso.grants, acesso.roles);
+  const [editando, setEditando] = useState<Cadeira | null>(null);
   const acessoSocios = acesso.canAccessPath("socios", "/socios/insights");
   const query = useQuery({
     queryKey: ["estrutura-organizacional", user?.id], enabled: !!user,
@@ -48,6 +54,7 @@ export default function EstruturaOrganizacional() {
   const texto = (valor: string | null) => <EstruturaTexto texto={valor} acessoSocios={acessoSocios} />;
   return <div className="min-w-0 space-y-6">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">Estrutura Organizacional</h2><span role="status" className="text-sm text-muted-foreground">{filtradas.length} cadeiras</span></div>
+    <Tabs defaultValue="organograma" className="min-w-0"><TabsList className="mb-4"><TabsTrigger value="organograma">Organograma atualizado</TabsTrigger><TabsTrigger value="fichas">Fichas estratégicas</TabsTrigger></TabsList><TabsContent value="organograma"><OrganogramaAtual canEdit={canEdit} /></TabsContent><TabsContent value="fichas">
     {query.isPending ? <div role="status" className="flex items-center justify-center gap-2 py-16"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />Carregando estrutura…</div>
       : query.isError ? <div role="alert" className="space-y-3 py-12 text-center"><p className="text-destructive">Não foi possível carregar a estrutura organizacional.</p><Button variant="outline" onClick={() => query.refetch()}>Tentar novamente</Button></div>
       : <>
@@ -64,10 +71,17 @@ export default function EstruturaOrganizacional() {
           </TableRow>)}
         </TableBody></Table>
       </>}
+    </TabsContent></Tabs>
     <Sheet open={!!atual} onOpenChange={aberto => { if (!aberto) setId(null); }}><SheetContent className="h-full w-full overflow-y-auto sm:max-w-2xl">
       {atual && <><SheetHeader className="space-y-3 border-b pb-6 pr-5 text-left"><Badge variant="secondary" className="w-fit">{rotuloNivel(atual.nivel)}</Badge><SheetTitle className="break-words">{texto(atual.nome)}</SheetTitle><SheetDescription className="whitespace-pre-wrap break-words">{texto(atual.ocupante_nome)}</SheetDescription>
         <div className="space-y-2 text-sm"><p><span className="text-muted-foreground">Cadeira superior: </span>{texto(atual.cadeira_pai_id ? porId.get(atual.cadeira_pai_id)?.nome ?? null : null)}</p><p><span className="text-muted-foreground">Cadeira do sistema de metas: </span>{texto(atual.mt_cadeira_id ? nomesMetas.get(atual.mt_cadeira_id) ?? null : null)}</p></div>
-      </SheetHeader><div className="divide-y">{BLOCOS.map(({ titulo, campo }) => <section key={campo} className="py-5"><h3 className="mb-2 text-sm font-semibold text-muted-foreground">{titulo}</h3><div className="whitespace-pre-wrap break-words text-sm leading-relaxed">{texto(typeof atual[campo] === "string" ? atual[campo] as string : null)}</div>{campo === "processos" && <p className="mt-3 text-xs text-muted-foreground">Numeração do Registro do Ian; pode divergir da matriz de processos do app</p>}</section>)}</div></>}
+       </SheetHeader>{canEdit && <Button className="mt-4" onClick={() => { setEditando(atual); setId(null); }}><Pencil className="mr-2 h-4 w-4" />Editar ficha</Button>}<div className="divide-y">{BLOCOS.map(({ titulo, campo }) => <section key={campo} className="py-5"><h3 className="mb-2 text-sm font-semibold text-muted-foreground">{titulo}</h3><div className="whitespace-pre-wrap break-words text-sm leading-relaxed">{texto(typeof atual[campo] === "string" ? atual[campo] as string : null)}</div>{campo === "processos" && <p className="mt-3 text-xs text-muted-foreground">Numeração do Registro do Ian; pode divergir da matriz de processos do app</p>}</section>)}</div></>}
     </SheetContent></Sheet>
+    {editando && <EditarCargo cargo={{ ...editando, parent_id: editando.cadeira_pai_id }} cargos={cadeiras.map(c => ({ ...c, parent_id: c.cadeira_pai_id }))} campos={BLOCOS.map(b => ({ campo: b.campo, titulo: b.titulo, valor: typeof editando[b.campo] === "string" ? String(editando[b.campo]) : null }))} fechar={() => setEditando(null)} salvar={async (v: CargoEdicao & Record<string, unknown>) => {
+      if (!canEdit || !v.id) throw new Error("Sem permissão");
+      const campos = Object.fromEntries(BLOCOS.map(b => [b.campo, v[b.campo]]));
+      const { error } = await supabase.from("org_cadeiras").update({ ...campos, nome: v.nome, ocupante_nome: v.ocupante_nome, nivel: v.nivel, cadeira_pai_id: v.parent_id, ordem: v.ordem, ativo: v.ativo }).eq("id", v.id).select("id").single();
+      if (error) throw error; await query.refetch();
+    }} />}
   </div>;
 }
