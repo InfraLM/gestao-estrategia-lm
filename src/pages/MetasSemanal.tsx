@@ -69,7 +69,7 @@ export default function MetasSemanal() {
   const [contatos, setContatos] = useState<any[]>([]);
   const [salvo, setSalvo] = useState<Salvo>({ estado: "ocioso" });
   const [enviando, setEnviando] = useState(false);
-  const [aba, setAba] = useState<Tipo>("checkin");
+  const [aba, setAba] = useState<Tipo>("checkout");
   const ciRef = useRef(ci); const coRef = useRef(co);
   const sujo = useRef<Record<Tipo, boolean>>({ checkin: false, checkout: false });
   const gravando = useRef(false); const repetir = useRef(false);

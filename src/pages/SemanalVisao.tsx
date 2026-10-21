@@ -8,23 +8,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI } from "@/hooks/useMetasBase";
 import { segunda, prazoDe, SITUACAO_LBL, ENTREGA_LBL } from "./MetasSemanal";
-import { normalizarCheckout, riscoAberto, idadeSemanas } from "@/lib/rotinaSemanal";
+import { normalizarCheckout, riscoAberto, idadeSemanas, cicloPadrao, ciclosDisponiveis, semanaCheckout, periodoSemana, competenciaDaSemana } from "@/lib/rotinaSemanal";
+import { useAvaliacoesBsc } from "@/hooks/useAvaliacoesBsc";
 
 const db = supabase as any;
 const fmtSem = (s: string) => new Date(s + "T12:00").toLocaleDateString("pt-BR");
 
 export default function SemanalVisao() {
   const b = useMetasBase();
-  const [sem, setSem] = useState(segunda());
+  const [sem, setSem] = useState(cicloPadrao());
+  const semOut = semanaCheckout(sem);
+  const aval = useAvaliacoesBsc(competenciaDaSemana(semOut));
   const [rows, setRows] = useState<any[]>([]);
-  const semanas = useMemo(() => [0, 1, 2, 3, 4, 5].map((n) => segunda(new Date(Date.now() - n * 7 * 864e5))), []);
+  const semanas = useMemo(() => ciclosDisponiveis(), []);
   const [riscos, setRiscos] = useState<any[]>([]);
-  useEffect(() => { db.from("mt_checkins").select("*").eq("semana", sem).then(({ data }: any) => setRows(data ?? [])); }, [sem]);
+  useEffect(() => { db.from("mt_checkins").select("*").in("semana", [sem, semOut]).then(({ data }: any) => setRows(data ?? [])); }, [sem]);
   useEffect(() => { db.from("mt_rotina_riscos").select("*").lte("semana_criada", sem).then(({ data }: any) => setRiscos((data ?? []).filter(riscoAberto))); }, [sem]);
 
   if (b.loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
   const cads = b.cadeiras.filter((c) => c.ativo);
-  const get = (c: string, t: string) => rows.find((r) => r.cadeira_id === c && r.tipo === t);
+  const get = (c: string, t: string) => rows.find((r) => r.cadeira_id === c && r.tipo === t && r.semana === (t === "checkin" ? sem : semOut));
   const enviado = (r: any) => r?.status === "enviado";
   const totIn = cads.filter((c) => enviado(get(c.id, "checkin"))).length;
   const totOut = cads.filter((c) => enviado(get(c.id, "checkout"))).length;
@@ -35,8 +38,9 @@ export default function SemanalVisao() {
   ];
 
   const Sit = ({ r, tipo }: { r: any; tipo: string }) => {
-    if (enviado(r)) return <Badge className={new Date(r.enviado_em) > prazoDe(sem, tipo) ? "bg-warning text-warning-foreground" : "bg-success text-success-foreground"}>Enviado</Badge>;
-    return <Badge variant={new Date() > prazoDe(sem, tipo) ? "destructive" : "outline"}>{r ? "Rascunho" : "Pendente"}</Badge>;
+    const semReg = tipo === "checkin" ? sem : semOut;
+    if (enviado(r)) return <Badge className={new Date(r.conteudo?.primeiro_envio_em ?? r.enviado_em) > prazoDe(semReg, tipo) ? "bg-warning text-warning-foreground" : "bg-success text-success-foreground"}>Enviado</Badge>;
+    return <Badge variant={new Date() > prazoDe(semReg, tipo) ? "destructive" : "outline"}>{r ? "Rascunho" : "Pendente"}</Badge>;
   };
 
   return (
@@ -44,13 +48,13 @@ export default function SemanalVisao() {
       <Card className="p-4 sm:p-5 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Rotina semanal dos diretores</p>
-          <h1 className="text-2xl font-bold">Visão da semana de {fmtSem(sem)}</h1>
+          <h1 className="text-2xl font-bold">{periodoSemana(sem)}</h1>
           <p className="text-sm text-muted-foreground">Check-in {totIn}/{cads.length} · Checkout {totOut}/{cads.length} · {kpisFora.length} KPI(s) em atenção ou fora do trilho</p>
         </div>
         <div className="flex items-end gap-2">
-          <div className="w-40 space-y-1"><Label>Semana</Label>
+          <div className="w-64 space-y-1"><Label>Ciclo</Label>
             <Select value={sem} onValueChange={setSem}><SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{semanas.map((s) => <SelectItem key={s} value={s}>{fmtSem(s)}</SelectItem>)}</SelectContent></Select>
+              <SelectContent>{semanas.map((s) => <SelectItem key={s} value={s}>{fmtSem(s)} (checkout {fmtSem(semanaCheckout(s))})</SelectItem>)}</SelectContent></Select>
           </div>
           <Button asChild><Link to="/metas/semanal">Preencher formulário</Link></Button>
         </div>
@@ -104,6 +108,10 @@ export default function SemanalVisao() {
                   {riscos.filter((r) => r.cadeira_id === c.id).map((r) => <p key={r.id}>{r.descricao} <span className="text-muted-foreground">· {idadeSemanas(r.semana_criada, sem)}</span></p>)}
                 </div>
               )}
+              {(() => { const a = aval.porCadeira[c.id]; if (!a) return null; return (
+                <div className="space-y-1 text-sm"><p className="font-medium">BSC · {a.cont.on} on track · {a.cont.off} off track · {a.cont.acomp} em acompanhamento{a.cont.sem_meta ? ` · ${a.cont.sem_meta} sem meta` : ""}</p>
+                  {a.off.map((i) => <p key={i.id} className="text-destructive text-xs">Off track: {i.nome}</p>)}
+                </div>); })()}
               {atrasadas > 0 && <p className="text-xs text-destructive">{atrasadas} iniciativa(s) atrasada(s)</p>}
             </Card>
           );
