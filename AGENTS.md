@@ -9,7 +9,7 @@
 - KPIs, KRs and Cesta share `mt_indicadores` by `origem`; monthly score = KRs + cesta with peso vigente (`mt_pesos_vigencia`, never recomputing closed months); BSC is outside the score, evaluated on/off track on read (`src/lib/avaliacaoBsc.ts`).
 - Iniciativa "atrasada" is computed on read (`statusEfetivo`), never stored.
 - Metas: reads need login (`mt_email_corporativo`); cadastro writes need `mt_is_governanca`, enforced in RLS.
-- Editable static content (Diagnóstico/Estratégia/BSC/OKRs) is stored as JSON per key in `conteudo_editavel` via `useConteudo` — keeps static defaults as fallback.
+- Editable static content is JSON per key in `conteudo_editavel` via `useConteudo`, static defaults as fallback.
 - Monthly launch: values in `mt_lancamentos` keyed by indicador+competência+revisão; reopening (`mt_reabrir`) copies into a new revisão — never overwrites a closed month.
 - Weekly cycle S = checkin of S + checkout of S−7 in `mt_checkins` (cadeira+semana+tipo); cycle opens Friday 00h São Paulo.
 - Per-user module overrides live in `usuario_acessos`; restrictive RLS caps existing row-scoped permissions, while moduleAccess/useModuleAccess mirror those caps in navigation and editing. Missing overrides preserve legacy access; only super_admin manages overrides and retains full access.
