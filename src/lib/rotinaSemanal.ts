@@ -11,6 +11,7 @@ export type Entrega = {
 export type KpiRetrato = {
   indicador_id: string; codigo: string; nome: string; origem: "bsc" | "okr" | "cesta"; peso: number; unidade: string | null;
   competencia: string | null; meta_mes: number | null; realizado: number | null; atingimento: number | null; faixa: string | null; congelado_em: string;
+  sentido?: "maior" | "menor"; nivel?: string | null; meta_semestre?: number | null; meta_texto?: string | null;
 };
 export type KpiResposta = {
   indicador_id: string; ok: boolean | null; impacto: string; plano: string; vira_iniciativa: boolean; prazo: string;
@@ -101,7 +102,8 @@ export function montarRetrato(base: any[], competencia: string | null, faixas: F
     return {
       indicador_id: b.indicador_id, codigo: b.codigo, nome: b.nome, origem: b.origem, peso: Number(b.peso ?? 0), unidade: b.unidade ?? null,
       competencia, meta_mes: competencia ? b.meta_mes ?? null : null, realizado: competencia ? b.realizado ?? null : null,
-      atingimento: at, faixa: faixaDe(at, faixas), congelado_em: agora,
+      atingimento: b.origem === "bsc" ? null : at, faixa: b.origem === "bsc" ? null : faixaDe(at, faixas), congelado_em: agora,
+      sentido: b.sentido, nivel: b.nivel ?? null, meta_semestre: b.meta_semestre ?? null, meta_texto: b.meta_texto ?? null,
     };
   });
 }

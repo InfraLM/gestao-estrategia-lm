@@ -19,8 +19,10 @@ import {
   CheckinV2, CheckoutV2, Entrega as EntregaV2, KpiResposta, KpiRetrato, Pendencia, Prioridade as PrioridadeV2, Responsavel,
   LIMITE_TEXTO, addDias, alternar, confirmarNoAlvo, entregasDePrioridades, idadeSemanas, mesclarHerdadas, montarRetrato, NO_ALVO,
   normalizarCheckin, normalizarCheckout, novoId, pendenciasCheckin, pendenciasCheckout, periodoSemana, prioridadesHerdadas,
-  respostaVazia, riscoAberto, semEmail,
+  respostaVazia, riscoAberto, semEmail, cicloPadrao, ciclosDisponiveis, semanaCheckout, competenciaDaSemana, ultimaSituacao,
 } from "@/lib/rotinaSemanal";
+import { avaliarBsc, AVALIACAO_LBL } from "@/lib/avaliacaoBsc";
+import rev02 from "@/data/bscRev02.json";
 
 const db = supabase as any;
 export type Prioridade = PrioridadeV2;
@@ -54,7 +56,11 @@ export default function MetasSemanal() {
   const b = useMetasBase();
   const access = useModuleAccess();
   const [cad, setCad] = useState<string>("");
-  const [sem, setSem] = useState(segunda());
+  const [sem, setSem] = useState(cicloPadrao());
+  const semOut = semanaCheckout(sem);
+  const semDe = (t: Tipo) => (t === "checkin" ? sem : semOut);
+  const [cinOut, setCinOut] = useState<CheckinV2>(normalizarCheckin(null));
+  const [arvore, setArvore] = useState<{ mapa: Record<string, string>; data: string | null }>({ mapa: {}, data: null });
   const [rows, setRows] = useState<any[]>([]);
   const [hist, setHist] = useState<any[]>([]);
   const [ci, setCiRaw] = useState<CheckinV2>(normalizarCheckin(null));
@@ -68,11 +74,11 @@ export default function MetasSemanal() {
   const sujo = useRef<Record<Tipo, boolean>>({ checkin: false, checkout: false });
   const gravando = useRef(false); const repetir = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout>>();
-  const chaveLocal = (t: Tipo) => `rotina:${cad}:${sem}:${t}`;
+  const chaveLocal = (t: Tipo) => `rotina:${cad}:${semDe(t)}:${t}`;
 
   useEffect(() => { if (!cad && !b.loading) setCad(b.minhaCadeira ?? b.cadeiras.find((c) => c.ativo)?.id ?? ""); }, [b.loading]);
   const podeEditar = access.canWrite("rotina") && (b.isGovernanca || (!!cad && b.minhaCadeira === cad));
-  const comp = sem.slice(0, 7);
+  const comp = competenciaDaSemana(semOut);
   const competencia = MESES_2S26.includes(comp) ? comp : null;
 
   const flushRef = useRef<() => void>(() => {});
@@ -84,32 +90,37 @@ export default function MetasSemanal() {
   const load = async () => {
     if (!cad) return;
     clearTimeout(timer.current); sujo.current = { checkin: false, checkout: false };
-    const [{ data }, { data: rs }, { data: cts }, { data: reg }] = await Promise.all([
+    const [{ data }, { data: rs }, { data: cts }, { data: reg }, { data: arv }] = await Promise.all([
       db.from("mt_checkins").select("*").eq("cadeira_id", cad).gte("semana", addDias(sem, -56)).lte("semana", sem),
       db.from("mt_rotina_riscos").select("*").eq("cadeira_id", cad).order("created_at"),
       db.from("mt_rotina_contatos").select("*").eq("cadeira_id", cad),
       db.from("mt_parametros").select("valor").eq("chave", "regua").maybeSingle(),
+      db.from("conteudo_editavel").select("valor,updated_at").eq("chave", "bsc.rev02").maybeSingle(),
     ]);
-    const atual = (data ?? []).filter((r: any) => r.semana === sem);
+    const mapa: Record<string, string> = {};
+    for (const o of ((arv?.valor ?? rev02) as any[])) for (const k of o.kpis ?? []) if (k.situacaoAtual) mapa[String(k.kpi).trim()] = k.situacaoAtual;
+    setArvore({ mapa, data: arv?.updated_at ?? null });
+    const atual = (data ?? []).filter((r: any) => (r.semana === sem && r.tipo === "checkin") || (r.semana === semOut && r.tipo === "checkout"));
     setRows(atual); setHist(data ?? []); setRiscos(rs ?? []); setContatos(cts ?? []);
     const comEmail = (x: any) => JSON.parse(JSON.stringify(x), (_k, v) => (v && v.tipo === "externo" && v.contato_id ? { ...v, email: (cts ?? []).find((c: any) => c.id === v.contato_id)?.email ?? "" } : v));
-    const local = (t: Tipo) => { try { const s = localStorage.getItem(`rotina:${cad}:${sem}:${t}`); return s ? JSON.parse(s) : null; } catch { return null; } };
+    const local = (t: Tipo) => { try { const s = localStorage.getItem(`rotina:${cad}:${t === "checkin" ? sem : semOut}:${t}`); return s ? JSON.parse(s) : null; } catch { return null; } };
     const rIn = atual.find((r: any) => r.tipo === "checkin"); const rOut = atual.find((r: any) => r.tipo === "checkout");
     const lin = local("checkin"), lout = local("checkout");
     const cin = normalizarCheckin(comEmail(lin ?? rIn?.conteudo));
     let cout = normalizarCheckout(comEmail(lout ?? rOut?.conteudo));
-    if (!cout.entregas.length) cout.entregas = entregasDePrioridades(cin.prioridades);
-    cout.entregas = mesclarHerdadas(cout.entregas, prioridadesHerdadas(data ?? [], sem));
+    const rInOut = (data ?? []).find((r: any) => r.semana === semOut && r.tipo === "checkin");
+    const cOut = normalizarCheckin(rInOut?.conteudo); setCinOut(cOut);
+    if (!cout.entregas.length) cout.entregas = entregasDePrioridades(cOut.prioridades);
+    cout.entregas = mesclarHerdadas(cout.entregas, prioridadesHerdadas(data ?? [], semOut));
     if (!cout.envio_token) cout.envio_token = novoId();
-    let congelar = false;
-    if (!cout.kpis_retrato) {
+    // Números ao vivo até o primeiro envio; depois ficam os gravados no envio.
+    if (!cout.primeiro_envio_em) {
       const { data: base } = await db.rpc("rotina_retrato", { _cadeira: cad, _comp: competencia ?? comp });
       cout.kpis_retrato = montarRetrato(base ?? [], competencia, reg?.valor?.faixas);
-      congelar = true;
     }
     setCiRaw(cin); ciRef.current = cin; setCoRaw(cout); coRef.current = cout;
     if (lin) sujo.current.checkin = true;
-    if (lout || (congelar && podeEditar)) sujo.current.checkout = true;
+    if (lout) sujo.current.checkout = true;
     if (sujo.current.checkin || sujo.current.checkout) agendar();
     setSalvo({ estado: "ocioso" });
   };
@@ -137,7 +148,7 @@ export default function MetasSemanal() {
   const gravar = async (tipo: Tipo, extra: any = {}, conteudoOverride?: any) => {
     const conteudo = await prepararContatos(conteudoOverride ?? (tipo === "checkin" ? ciRef.current : coRef.current));
     const atual = rowsRef.current.find((r) => r.tipo === tipo);
-    const payload: any = { cadeira_id: cad, semana: sem, tipo, conteudo, status: atual?.status ?? "rascunho", ...extra };
+    const payload: any = { cadeira_id: cad, semana: semDe(tipo), tipo, conteudo, status: atual?.status ?? "rascunho", ...extra };
     const { data, error } = await db.from("mt_checkins").upsert(payload, { onConflict: "cadeira_id,semana,tipo" }).select().single();
     if (error) throw error;
     rowsRef.current = [...rowsRef.current.filter((r) => r.tipo !== tipo), data]; setRows(rowsRef.current);
@@ -185,6 +196,7 @@ export default function MetasSemanal() {
       const nome = b.perfis.find((p) => p.user_id === b.user?.id)?.display_name ?? b.user?.email ?? null;
       const agora = new Date().toISOString();
       let conteudo: any = tipo === "checkin" ? { ...ciRef.current } : { ...coRef.current };
+      if (tipo === "checkout" && !conteudo.primeiro_envio_em) conteudo.kpis_retrato = (conteudo.kpis_retrato ?? []).map((k: KpiRetrato) => ({ ...k, congelado_em: agora }));
       conteudo.primeiro_envio_em ??= agora;
       if (tipo === "checkout") {
         const resp: KpiResposta[] = [];
@@ -193,7 +205,7 @@ export default function MetasSemanal() {
             const ret = conteudo.kpis_retrato?.find((r: KpiRetrato) => r.indicador_id === k.indicador_id);
             const alvo = k.reaproveitar === "sim" ? (k.iniciativa_alvo_id || reaproveitaveis[k.indicador_id]?.[0]?.id) : null;
             const { data, error } = await db.rpc("rotina_criar_iniciativa", {
-              _cadeira: cad, _semana: sem, _token: conteudo.envio_token, _indicador: k.indicador_id,
+              _cadeira: cad, _semana: semOut, _token: conteudo.envio_token, _indicador: k.indicador_id,
               _titulo: `${ret?.codigo ?? "KPI"} · ${k.plano.trim().slice(0, 80)}`,
               _comentario: [k.impacto.trim() && `Impacto: ${k.impacto.trim()}`, `Plano: ${k.plano.trim()}`].filter(Boolean).join("\n\n"),
               _prazo: k.prazo || null, _resp_nome: nomeResp(k.responsavel), _status: k.status_ini || "em_andamento", _reaproveitar: alvo,
@@ -258,7 +270,7 @@ export default function MetasSemanal() {
   };
 
   const Situacao = ({ tipo }: { tipo: Tipo }) => {
-    const r = rows.find((x) => x.tipo === tipo); const prazo = prazoDe(sem, tipo);
+    const r = rows.find((x) => x.tipo === tipo); const prazo = prazoDe(semDe(tipo), tipo);
     if (r?.status === "enviado") {
       const primeiro = r.conteudo?.primeiro_envio_em ?? r.enviado_em;
       const atrasou = new Date(primeiro) > prazo;
@@ -324,15 +336,15 @@ export default function MetasSemanal() {
             <Select value={cad} onValueChange={(v) => { flush(); setCad(v); }}><SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>{b.cadeiras.filter((c) => c.ativo).map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent></Select>
           </div>
-          <div className="w-40 space-y-1"><Label>Semana</Label>
+          <div className="w-64 space-y-1"><Label>Ciclo</Label>
             <Select value={sem} onValueChange={(v) => { flush(); setSem(v); }}><SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{[0, 1, 2, 3, 4, 5].map((n) => segunda(new Date(Date.now() - n * 7 * 864e5))).map((s) => <SelectItem key={s} value={s}>{fmtSem(s)}</SelectItem>)}</SelectContent></Select>
+              <SelectContent>{ciclosDisponiveis().map((s) => <SelectItem key={s} value={s}>{fmtSem(s)} (checkout {fmtSem(semanaCheckout(s))})</SelectItem>)}</SelectContent></Select>
           </div>
         </div>
       </Card>
 
       <Tabs value={aba} onValueChange={(v) => setAba(v as Tipo)}>
-        <TabsList><TabsTrigger value="checkin">Check-in (segunda)</TabsTrigger><TabsTrigger value="checkout">Checkout (sexta)</TabsTrigger></TabsList>
+        <TabsList><TabsTrigger value="checkout">Checkout da semana anterior</TabsTrigger><TabsTrigger value="checkin">Check-in da semana</TabsTrigger></TabsList>
 
         <TabsContent value="checkin" className="space-y-4">
           <PendenciasComites cadeira={cad} usuario={b.user?.id} podeEditar={podeEditar} admin={access.roles.some((r) => r === "admin" || r === "super_admin")}
@@ -410,9 +422,9 @@ export default function MetasSemanal() {
         <TabsContent value="checkout" className="space-y-4">
           <Card className="p-4 space-y-4" id="bloco-entregas">
             <div className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">Resultado das prioridades</h2><Situacao tipo="checkout" /></div>
-            {co.entregas.length === 0 && <p className="text-sm text-muted-foreground">Preencha o check-in para trazer as prioridades da semana.</p>}
-            {podeEditar && entregasAtuais.length === 0 && ci.prioridades.some((p) => p.titulo) && (
-              <Button variant="outline" size="sm" onClick={() => setCo({ ...co, entregas: mesclarHerdadas(entregasDePrioridades(ci.prioridades), co.entregas.filter((e) => e.herdada_de)) })}>Trazer prioridades do check-in</Button>
+            {co.entregas.length === 0 && <p className="text-sm text-muted-foreground">Sem prioridades declaradas no check-in de {fmtSem(semOut)}.</p>}
+            {podeEditar && entregasAtuais.length === 0 && cinOut.prioridades.some((p) => p.titulo) && (
+              <Button variant="outline" size="sm" onClick={() => setCo({ ...co, entregas: mesclarHerdadas(entregasDePrioridades(cinOut.prioridades), co.entregas.filter((e) => e.herdada_de)) })}>Trazer prioridades do check-in de {fmtSem(semOut)}</Button>
             )}
             {co.entregas.map((e, i) => {
               const set = (x: Partial<EntregaV2>) => setCo({ ...co, entregas: co.entregas.map((q, j) => (j === i ? { ...q, ...x } : q)) });
@@ -451,19 +463,24 @@ export default function MetasSemanal() {
               <h2 className="font-semibold">Seus KPIs estão performando dentro do esperado?</h2>
               {podeEditar && noAlvo.length > 0 && <Button size="sm" variant="outline" onClick={() => setCo({ ...co, kpis_resposta: confirmarNoAlvo(retrato, co.kpis_resposta, sem) })}>Confirmar Sim nos {noAlvo.length} no alvo</Button>}
             </div>
-            <p className="text-xs text-muted-foreground">Resposta opcional. Valores congelados {retrato[0] ? `em ${new Date(retrato[0].congelado_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}` : "na primeira abertura"}{competencia ? ` · competência ${competencia.slice(5)}/${competencia.slice(0, 4)}` : " · semana sem competência mensal"}. Não altera a nota nem o lançamento mensal.</p>
-            {retrato.some((k) => k.origem === "bsc") && <p className="text-sm rounded bg-muted p-2">Os KPIs de BSC são acompanhamento qualitativo — não entram na sua nota.</p>}
+            <p className="text-xs text-muted-foreground">Resposta opcional. {co.primeiro_envio_em ? `Números gravados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}` : "Números ao vivo até o envio"}{competencia ? ` · competência ${competencia.slice(5)}/${competencia.slice(0, 4)}` : " · semana sem competência mensal"}. Não altera a nota nem o lançamento mensal.</p>
+            {retrato.some((k) => k.origem === "bsc") && <p className="text-sm rounded bg-muted p-2">KPIs de BSC não entram na nota; são avaliados como on track / off track ao fim do mês ou do período da meta.</p>}
             {retrato.length === 0 && <p className="text-sm text-muted-foreground">Nenhum KPI sob responsabilidade desta cadeira.</p>}
             <div className="grid gap-3 lg:grid-cols-2">
               {retrato.map((k) => {
                 const r = resp(k.indicador_id); const cand = reaproveitaveis[k.indicador_id] ?? [];
+                const ult = ultimaSituacao(k.indicador_id, arvore.mapa[k.nome.trim()] ? { valor: arvore.mapa[k.nome.trim()], data: arvore.data } : null, hist.filter((h) => h.tipo === "checkout"), semOut);
+                const semMeta = k.meta_mes == null && (k.origem !== "bsc" || (k.meta_semestre == null && !k.meta_texto));
+                const aval = k.origem === "bsc" ? avaliarBsc({ sentido: k.sentido ?? "maior", competencia: k.competencia, meta_mes: k.meta_mes, meta_semestre: k.meta_semestre ?? null, meta_texto: k.meta_texto ?? null, realizado: k.realizado, situacao: r.situacao_atual || ult?.valor }) : null;
                 return (
                   <div key={k.indicador_id} className="rounded border p-3 space-y-2">
                     <div className="flex flex-wrap items-start justify-between gap-2">
-                      <p className="font-medium text-sm">{k.codigo} · {k.nome}</p>
-                      <div className="flex gap-1"><Badge variant="outline">{ORIGEM_LBL[k.origem]}{k.origem === "cesta" ? ` · peso ${fmtNum(k.peso)}` : ""}</Badge>{k.faixa && <Badge variant="secondary">{k.faixa}</Badge>}</div>
+                      <div><p className="font-medium text-sm">{k.codigo} · {k.nome}</p>
+                        <p className="text-xs text-muted-foreground">Última situação atual apontada: {ult ? <><b className="text-foreground">{ult.valor}</b> · {ult.fonte}{ult.data && ult.fonte === "Árvore de KPIs" ? ` · ${new Date(ult.data).toLocaleDateString("pt-BR")}` : ult.fonte === "Árvore de KPIs" ? " · Rev.02" : ""}</> : "—"}</p></div>
+                      <div className="flex gap-1"><Badge variant="outline">{ORIGEM_LBL[k.origem]}{k.origem === "cesta" ? ` · peso ${fmtNum(k.peso)}` : ""}</Badge>{k.faixa && <Badge variant="secondary">{k.faixa}</Badge>}{aval && <Badge variant={aval === "off" ? "destructive" : aval === "on" ? "default" : "outline"}>{AVALIACAO_LBL[aval]}</Badge>}</div>
                     </div>
-                    <div className="grid grid-cols-3 gap-2 text-xs"><div><p className="text-muted-foreground">Meta do mês</p><p>{fmtNum(k.meta_mes)}</p></div><div><p className="text-muted-foreground">Realizado</p><p>{fmtNum(k.realizado)}</p></div><div><p className="text-muted-foreground">Atingimento</p><p>{pct(k.atingimento)}</p></div></div>
+                    <div className="grid grid-cols-3 gap-2 text-xs"><div><p className="text-muted-foreground">Meta do mês</p><p>{k.meta_mes != null ? fmtNum(k.meta_mes) : k.origem === "bsc" && (k.meta_semestre != null || k.meta_texto) ? `Período: ${k.meta_texto || fmtNum(k.meta_semestre)}` : "Sem meta registrada"}</p></div><div><p className="text-muted-foreground">Realizado</p><p>{fmtNum(k.realizado)}</p></div><div><p className="text-muted-foreground">{k.origem === "bsc" ? "Avaliação" : "Atingimento"}</p><p>{k.origem === "bsc" ? (aval ? AVALIACAO_LBL[aval] : "—") : semMeta ? "Sem meta registrada" : pct(k.atingimento)}</p></div></div>
+                    <Input placeholder="Situação atual (opcional)" maxLength={200} value={r.situacao_atual ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { situacao_atual: e.target.value })} />
                     <div className="flex gap-2">
                       <Button size="sm" variant={r.ok === true ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, true) })}>Sim</Button>
                       <Button size="sm" variant={r.ok === false ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, false) })}>Não</Button>
