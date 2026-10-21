@@ -2979,15 +2979,28 @@ export type Database = {
           titulo: string
         }[]
       }
+      gov_codigo_deliberacao: {
+        Args: { _comite: string; _data: string; _indice: number }
+        Returns: string
+      }
       gov_configurar_cron: {
         Args: { _token: string; _url: string }
         Returns: undefined
+      }
+      gov_configurar_cron_diario: {
+        Args: { _token: string; _url: string }
+        Returns: undefined
+      }
+      gov_deliberacao_reservada: {
+        Args: { _pauta: string; _titulo: string }
+        Returns: boolean
       }
       gov_diretor_da_acao: {
         Args: { _nome_norm: string; _uid: string }
         Returns: boolean
       }
       gov_is_admin: { Args: { _uid: string }; Returns: boolean }
+      gov_publicar_deliberacoes: { Args: never; Returns: number }
       gov_ultima_sincronizacao: { Args: { _cadeira: string }; Returns: string }
       has_role: {
         Args: {

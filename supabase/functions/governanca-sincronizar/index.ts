@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
     const { data: ult } = await db.from("gov_sync_log").select("concluido_em").eq("ok", true).order("concluido_em", { ascending: false }).limit(1).maybeSingle();
     ultimoOk = ult?.concluido_em ?? null;
   }
-  const destino = destinoSincronizacao(base, USAR_DESDE && agendada, ultimoOk);
+  const destino = destinoSincronizacao(base, USAR_DESDE && agendada, ultimoOk, req.headers.get("x-sync-modo"));
 
   let payload: Record<string, unknown>;
   let status = 0;
@@ -89,11 +89,14 @@ Deno.serve(async (req) => {
       if (e) throw e;
     }
 
+    const { data: publicadas, error: ep } = await db.rpc("gov_publicar_deliberacoes");
+    if (ep) throw ep;
     return fim({
       ok: true, status_http: status,
       acoes_recebidas: p.acoes_recebidas, acoes_inseridas: cont.inseridas, acoes_atualizadas: cont.atualizadas,
       deliberacoes_recebidas: p.deliberacoes_recebidas, deliberacoes_excluidas: p.deliberacoes_excluidas,
       nomes_novos: novos.length,
+      deliberacoes_publicadas: publicadas,
     });
   } catch {
     return fim({ ok: false, status_http: status, erro: "falha_gravacao" });

@@ -11,6 +11,13 @@ const decisao = (codigo: string, campos: Partial<Decisao> = {}): Decisao => ({
 });
 const filtros: FiltrosDecisoes = { busca: "", tipo: "todos", forum: "todos", impacto: "todos", de: "", ate: "", confirmar: false };
 describe("Contexto e decisões · somente leitura", () => {
+  it("separa registros D-NNN do Ian e GOV dos comitês sem alterar demais filtros", () => {
+    const ian = decisao("D-001"), gov = decisao("GOV-CES-20260618-03");
+    expect(filtrarDecisoes([ian, gov], { ...filtros, origem: "ian" })).toEqual([ian]);
+    expect(filtrarDecisoes([ian, gov], { ...filtros, origem: "comites" })).toEqual([gov]);
+    expect(filtrarDecisoes([ian, gov], { ...filtros, origem: "todos" })).toEqual([ian, gov]);
+    expect(filtrarDecisoes([ian, gov], { ...filtros, origem: "comites", busca: "D-001" })).toEqual([]);
+  });
   it("busca sem acento e sem distinguir maiúsculas nos nove campos pedidos", () => {
     for (const campo of ["codigo", "titulo", "decisao", "racional", "tradeoff", "premissas", "papeis_rapid", "responsavel", "reuniao_origem"] as const) {
       expect(buscarDecisao(decisao("D-001", { [campo]: "Reunião Ágil" }), " REUNIAO agil ")).toBe(true);
