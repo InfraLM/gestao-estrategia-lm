@@ -4,13 +4,13 @@
 .org-raizes, .org-filhos { display: flex; justify-content: center; width: max-content; margin: 0 auto; list-style: none; padding: 0; }
 .org-ramo { position: relative; flex: 0 0 auto; padding: 0 10px; text-align: center; }
 .org-cadeira { position: relative; display: flex; align-items: center; flex-direction: column; width: 172px; margin: 0 auto; }
-.org-no { width: 172px; height: 84px; border-radius: 42px; border: 1.5px solid hsl(var(--org-cor)); background: hsl(var(--org-cor) / 0.1); color: hsl(var(--foreground)); display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 12px 18px; white-space: normal; letter-spacing: 0; }
-.org-no:hover { background: hsl(var(--org-cor) / 0.18); border-color: hsl(var(--org-cor)); }
-.org-no-direcao { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-color: hsl(var(--primary)); }
-.org-no-direcao:hover { background: hsl(var(--primary) / 0.9); }
+.org-visual .org-no { width: 172px; height: 84px; border-radius: 42px; border: 1.5px solid hsl(var(--org-cor)); background: hsl(var(--org-cor) / 0.1); color: hsl(var(--foreground)); display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 12px 18px; white-space: normal; letter-spacing: 0; }
+.org-visual .org-no:hover { background: hsl(var(--org-cor) / 0.18); border-color: hsl(var(--org-cor)); }
+.org-visual .org-no-direcao { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-color: hsl(var(--primary)); }
+.org-visual .org-no-direcao:hover { background: hsl(var(--primary) / 0.9); }
 .org-nome { font-size: 12px; line-height: 15px; font-weight: 700; overflow-wrap: anywhere; }
 .org-ocupante { font-size: 11px; line-height: 13px; font-weight: 400; overflow-wrap: anywhere; }
-.org-expandir { position: absolute; z-index: 1; bottom: -12px; height: 24px; min-width: 40px; padding: 0 7px; gap: 3px; font-size: 10px; border-radius: 12px; background: hsl(var(--card)); border-color: hsl(var(--org-cor) / 0.5); color: hsl(var(--foreground)); }
+.org-visual .org-expandir { position: absolute; z-index: 1; bottom: -12px; height: 24px; min-width: 40px; padding: 0 7px; gap: 3px; font-size: 10px; border-radius: 12px; background: hsl(var(--card)); border-color: hsl(var(--org-cor) / 0.5); color: hsl(var(--foreground)); }
 .org-filhos { position: relative; padding-top: 52px; }
 .org-filhos::before { content: ''; position: absolute; top: 0; left: 50%; height: 26px; border-left: 1.5px solid hsl(var(--org-cor) / 0.7); }
 .org-filhos > .org-ramo::before, .org-filhos > .org-ramo::after { content: ''; position: absolute; top: -26px; width: 50%; height: 26px; border-top: 1.5px solid hsl(var(--org-cor) / 0.7); }
