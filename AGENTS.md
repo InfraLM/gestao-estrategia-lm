@@ -4,8 +4,8 @@
 - Strategic reference URLs use linksEstrategicos; Contexto and Insights select sheets from the codigo query parameter using replace navigation and only RLS-visible records, preserving filters and existing access gates.
 - Strategic spaces read through the existing RLS-filtered client with page-local pure helpers; Contexto, Insights Sócios, Estrutura and Incentivos are read-only. Incentivos reads active indicators live for shared-goals systems and incentivo_metas for other systems; CestaInsights only updates adherence, observation, evaluation date and authenticated evaluator, gated by existing incentivos edit grants or admin roles and RLS. Text renderers reuse unchanged Contexto normalization/status parsing; Estrutura gates DS links with canAccessPath("socios", "/socios/insights"). Never connect these tables to AI functions or general export pipelines.
 
-- Sistema de Metas 2S26 lives in `mt_*` tables read through `src/hooks/useMetasBase.ts`; the weekly check-in module must reuse them — the spec requires one shared base.
-- KPIs, KRs and Cesta metas share one `mt_indicadores` table distinguished by `origem` — the monthly form and scoring treat all three the same way.
+- Metas 2S26 and weekly check-ins share `mt_*` via `useMetasBase`.
+- KPIs, KRs and Cesta metas share `mt_indicadores`, distinguished by `origem`; monthly forms and scoring treat them equally.
 - Iniciativa "atrasada" is computed on read (`statusEfetivo`), never stored — it must flip automatically when the deadline passes.
 - Metas access: reads open to any signed-in user (`mt_email_corporativo` now just checks login, per user request); writes to cadastros need `mt_is_governanca` — enforced in RLS, UI only mirrors it.
 - Editable static content (Diagnóstico/Estratégia/BSC/OKRs) is stored as JSON per key in `conteudo_editavel` via `useConteudo` — keeps static defaults as fallback.
