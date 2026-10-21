@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation, Link } from "react-router-dom";
-import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp, Settings2, LogIn, KeyRound, UserCog, User as UserIcon, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp, Settings2, LogIn, KeyRound, UserCog, User as UserIcon, PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,8 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { moduleForPath } from "@/lib/moduleAccess";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 type NavChild = { to: string; label: string; icon: any };
 type NavGroup = { id: string; label: string; icon: any; children: NavChild[] };
@@ -148,6 +150,10 @@ export default function AppLayout() {
     const module = moduleForPath(child.to);
     return !module || access.canAccessPath(module, child.to);
   }) })).filter(group => group.children.length > 0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => { setMobileMenuOpen(false); }, [loc.pathname, loc.search]);
+
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
@@ -170,18 +176,13 @@ export default function AppLayout() {
   const cargo = profile?.cargo || (isAdmin ? "Administrador" : (user ? "Usuário" : ""));
   const initials = displayName.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase();
 
-  return (
-    <div className="min-h-screen flex bg-surface">
-      {/* Sidebar */}
-      <aside className={cn(
-        "hidden md:flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border sticky top-0 h-screen transition-[width] duration-300",
-        collapsed ? "w-16" : "w-64"
-      )}>
-        <div className={cn("py-6 flex items-center gap-3 border-b border-sidebar-border", collapsed ? "px-3 justify-center" : "px-6")}>
+  const renderSidebar = (compact: boolean, mobile = false) => (
+    <>
+        <div className={cn("py-6 flex items-center gap-3 border-b border-sidebar-border", compact ? "px-3 justify-center" : "px-6")}>
           <div className="h-10 w-10 rounded-lg bg-gradient-primary grid place-items-center font-bold text-primary-foreground shadow-primary shrink-0">
             LM
           </div>
-          {!collapsed && (
+          {!compact && (
             <div className="leading-tight">
               <div className="font-semibold text-sm">Gestão e Estratégia</div>
               <div className="text-xs text-sidebar-foreground/60">Liberdade Médica</div>
@@ -189,14 +190,14 @@ export default function AppLayout() {
           )}
         </div>
         <TooltipProvider delayDuration={200}>
-        <nav className={cn("flex-1 py-5 space-y-1 overflow-y-auto overflow-x-hidden", collapsed ? "px-2" : "px-3")}>
+        <nav aria-label="Menu principal" className={cn("flex-1 min-h-0 py-5 space-y-1 overflow-y-auto overflow-x-hidden", compact ? "px-2" : "px-3")}>
           {visibleGroups.map((group) => {
             const isGroupActive = group.children.some((c) =>
               c.to === "/" ? loc.pathname === "/" : loc.pathname.startsWith(c.to)
             );
             const isOpen = openGroups[group.id] ?? isGroupActive;
             const GroupIcon = group.icon;
-            if (collapsed) {
+            if (compact) {
               return (
                 <div key={group.id} className="space-y-0.5">
                   {group.children.map(({ to, label, icon: Icon }) => {
@@ -207,6 +208,7 @@ export default function AppLayout() {
                           <NavLink
                             to={to}
                             end={to === "/"}
+                            onClick={() => { if (mobile) setMobileMenuOpen(false); }}
                             className={cn(
                               "flex items-center justify-center h-10 w-10 mx-auto rounded-md transition-colors",
                               active
@@ -214,7 +216,7 @@ export default function AppLayout() {
                                 : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
                             )}
                           >
-                            <Icon className="h-4 w-4" />
+                            <Icon className="h-4 w-4 shrink-0" />
                           </NavLink>
                         </TooltipTrigger>
                         <TooltipContent side="right">{label}</TooltipContent>
@@ -227,11 +229,13 @@ export default function AppLayout() {
             }
             return (
               <div key={group.id} className="space-y-0.5">
-                <button
+                <Button
+                  variant="ghost"
                   type="button"
+                  aria-expanded={isOpen}
                   onClick={() => setOpenGroups((s) => ({ ...s, [group.id]: !isOpen }))}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-colors",
+                    "w-full h-auto whitespace-normal flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-colors",
                     isGroupActive
                       ? "text-sidebar-foreground"
                       : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60"
@@ -240,7 +244,7 @@ export default function AppLayout() {
                   <GroupIcon className="h-4 w-4" />
                   <span className="flex-1 text-left">{group.label}</span>
                   <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-0" : "-rotate-90")} />
-                </button>
+                </Button>
                 {isOpen && (
                   <div className="ml-3 pl-3 border-l border-sidebar-border/60 space-y-0.5">
                     {group.children.map(({ to, label, icon: Icon }) => (
@@ -248,6 +252,7 @@ export default function AppLayout() {
                         key={to}
                         to={to}
                         end={to === "/"}
+                            onClick={() => { if (mobile) setMobileMenuOpen(false); }}
                         className={({ isActive }) =>
                           cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
@@ -257,7 +262,7 @@ export default function AppLayout() {
                           )
                         }
                       >
-                        <Icon className="h-4 w-4" />
+                        <Icon className="h-4 w-4 shrink-0" />
                         <span>{label}</span>
                       </NavLink>
                     ))}
@@ -268,29 +273,53 @@ export default function AppLayout() {
           })}
         </nav>
         </TooltipProvider>
-        <div className={cn("py-3 border-t border-sidebar-border flex", collapsed ? "px-2 justify-center" : "px-4 items-center justify-between")}>
-          {!collapsed && <span className="text-xs text-sidebar-foreground/50">v1.0 · Wave 1 · 2026</span>}
-          <button
+        <div className={cn("py-3 border-t border-sidebar-border flex", compact ? "px-2 justify-center" : "px-4 items-center justify-between")}>
+          {!compact && <span className="text-xs text-sidebar-foreground/50">v1.0 · Wave 1 · 2026</span>}
+          {!mobile && <Button
+            variant="ghost"
+            size="icon"
             type="button"
             onClick={() => setCollapsed((v) => !v)}
             className="h-8 w-8 grid place-items-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
-            aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
-            title={collapsed ? "Expandir menu" : "Recolher menu"}
+            aria-label={compact ? "Expandir menu" : "Recolher menu"}
+            title={compact ? "Expandir menu" : "Recolher menu"}
           >
-            {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-          </button>
+            {compact ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </Button>}
         </div>
+    </>
+  );
+
+  return (
+    <div className="min-h-screen flex bg-surface">
+      {/* Sidebar */}
+      <aside className={cn(
+        "hidden md:flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border sticky top-0 h-screen transition-[width] duration-300",
+        collapsed ? "w-16" : "w-64"
+      )}>
+        {renderSidebar(collapsed)}
       </aside>
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="sticky top-0 z-30 bg-background/80 backdrop-blur border-b border-border">
-          <div className="flex items-center justify-between px-6 py-4 gap-6">
-            <div>
-              <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+          <div className="flex items-center justify-between px-3 sm:px-6 py-4 gap-2 sm:gap-6">
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden shrink-0" aria-label="Abrir menu lateral">
+                  <Menu />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="flex flex-col gap-0 w-80 max-w-[calc(100vw-2rem)] p-0 bg-sidebar text-sidebar-foreground" aria-describedby={undefined}>
+                <SheetTitle className="sr-only">Menu lateral</SheetTitle>
+                {renderSidebar(false, true)}
+              </SheetContent>
+            </Sheet>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-base sm:text-xl font-semibold break-words">{title}</h1>
               <p className="text-xs text-muted-foreground mt-0.5">Governança · Portfólio · Execução</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <div className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-md bg-surface-muted text-sm text-muted-foreground w-72">
                 <Search className="h-4 w-4" />
                 <input className="bg-transparent outline-none flex-1 placeholder:text-muted-foreground" placeholder="Buscar projeto, KR, diretor..." />
