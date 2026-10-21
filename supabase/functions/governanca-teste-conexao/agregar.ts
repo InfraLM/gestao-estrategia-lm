@@ -3,8 +3,8 @@ const texto = (r: Reg, chaves: string[]) => {
   for (const k of chaves) { const v = r[k]; if (typeof v === "string" && v.trim()) return v.trim(); }
   return null;
 };
-const RESP = ["responsavel", "responsavel_nome", "responsavel_email", "responsavel_id"];
-const PRAZO = ["prazo", "data_prazo", "prazo_em", "vencimento"];
+const RESP = ["owner_name"];
+const PRAZO = ["due_date"];
 
 export function agregar(payload: Reg) {
   const acoes = Array.isArray(payload?.acoes) ? (payload.acoes as Reg[]) : [];
@@ -14,7 +14,7 @@ export function agregar(payload: Reg) {
   let semResp = 0, semPrazo = 0;
   for (const a of acoes) {
     const s = texto(a, ["status"]) ?? "sem_status"; porStatus[s] = (porStatus[s] ?? 0) + 1;
-    const c = texto(a, ["comite", "comite_nome", "forum"]) ?? "sem_comite"; porComite[c] = (porComite[c] ?? 0) + 1;
+    const c = texto(a, ["committee_code", "committee_name"]) ?? "sem_comite"; porComite[c] = (porComite[c] ?? 0) + 1;
     const r = texto(a, RESP); if (r) resp.add(r.toLowerCase()); else semResp++;
     if (!texto(a, PRAZO)) semPrazo++;
   }
