@@ -26,6 +26,12 @@ Deno.test("normaliza nomes", () => {
   assertEquals(normalizarNome(null), null);
 });
 
+Deno.test("header completa força exportação sem desde; horário continua incremental", () => {
+  const base = "https://example.org/export?desde=antigo";
+  assertEquals(new URL(destinoSincronizacao(base, true, "2026-10-21T00:00:00Z", "completa")).searchParams.has("desde"), false);
+  assertEquals(new URL(destinoSincronizacao(base, true, "2026-10-21T00:00:00Z", null)).searchParams.get("desde"), "2026-10-21T00:00:00Z");
+});
+
 Deno.test("upsert idempotente: segunda rodada não insere nada", () => {
   const payload = { acoes: [{ id: A1, title: "x", owner_name: "Ana" }, { id: A2, title: "y" }, { id: A1, title: "x2" }], deliberacoes: [{ meeting_id: M, indice: 1 }, { meeting_id: M, indice: 1 }] };
   const p = prepararPayload(payload);

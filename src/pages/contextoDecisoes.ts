@@ -18,9 +18,10 @@ export function buscarDecisao(decisao: Decisao, busca: string) {
   const termo = semAcentos(busca.trim());
   return !termo || CAMPOS_BUSCA.some(campo => semAcentos(decisao[campo] ?? "").includes(termo));
 }
-export type FiltrosDecisoes = { busca: string; tipo: string; forum: string; impacto: string; de: string; ate: string; confirmar: boolean };
+export type FiltrosDecisoes = { busca: string; tipo: string; forum: string; impacto: string; de: string; ate: string; confirmar: boolean; origem?: "todos" | "ian" | "comites" };
 export function filtrarDecisoes(decisoes: Decisao[], filtros: FiltrosDecisoes) {
   return decisoes.filter(d => buscarDecisao(d, filtros.busca)
+    && (!filtros.origem || filtros.origem === "todos" || (filtros.origem === "ian" ? /^D-\d{3}$/.test(d.codigo) : /^GOV-/.test(d.codigo)))
     && (filtros.tipo === "todos" || d.tipo_forum === filtros.tipo)
     && (filtros.forum === "todos" || d.foruns_citados?.includes(filtros.forum))
     && (filtros.impacto === "todos" || semAcentos(d.impacto_bsc ?? "").includes(semAcentos(filtros.impacto)))

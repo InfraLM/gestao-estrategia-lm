@@ -5,9 +5,9 @@ export function cronAutorizado(recebido: string | null, esperado: string | undef
   for (let i = 0; i < esperado.length; i++) diferenca |= recebido.charCodeAt(i) ^ esperado.charCodeAt(i);
   return diferenca === 0;
 }
-export function destinoSincronizacao(base: string, agendada: boolean, ultimoOk: string | null) {
+export function destinoSincronizacao(base: string, agendada: boolean, ultimoOk: string | null, modo: string | null = null) {
   const url = new URL(base);
-  if (agendada && ultimoOk) url.searchParams.set("desde", ultimoOk);
+  if (agendada && ultimoOk && modo !== "completa") url.searchParams.set("desde", ultimoOk);
   else url.searchParams.delete("desde");
   return url.toString();
 }

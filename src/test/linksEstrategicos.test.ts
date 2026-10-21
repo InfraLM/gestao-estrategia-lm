@@ -2,6 +2,14 @@ import { describe, expect, it } from "vitest";
 import { codigoEstrategicoValido, lerFichaEstrategica, linkEstrategico, parametrosFicha } from "@/lib/linksEstrategicos";
 
 describe("Links diretos dos espaços estratégicos", () => {
+  it("aceita GOV somente na página de decisões e respeita visibilidade", () => {
+    const codigo = "GOV-CES-20260618-03";
+    expect(linkEstrategico(codigo)).toBe(`/contexto-decisoes?codigo=${codigo}`);
+    expect(codigoEstrategicoValido(codigo, "DS")).toBe(false);
+    expect(lerFichaEstrategica(new URLSearchParams(`codigo=${codigo}`), "D", new Set([codigo]), true)).toEqual({ codigo, indisponivel: false });
+    expect(lerFichaEstrategica(new URLSearchParams(`codigo=${codigo}`), "D", new Set(), true)).toEqual({ codigo: null, indisponivel: true });
+    for (const invalido of ["GOV-CES-20260618-3", "GOV-CES1-20260618-03", "GOV-CES-20260618-03x"]) expect(linkEstrategico(invalido)).toBeNull();
+  });
   it("gera URLs para decisão e desejo", () => {
     expect(linkEstrategico("D-060")).toBe("/contexto-decisoes?codigo=D-060");
     expect(linkEstrategico("DS-43")).toBe("/socios/insights?codigo=DS-43");

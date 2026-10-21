@@ -56,7 +56,7 @@ export default function ContextoDecisoes() {
     },
   });
   const decisoes = query.data ?? [];
-  const [filtros, setFiltros] = useState<FiltrosDecisoes>({ busca: "", tipo: "todos", forum: "todos", impacto: "todos", de: "", ate: "", confirmar: false });
+  const [filtros, setFiltros] = useState<FiltrosDecisoes>({ busca: "", tipo: "todos", forum: "todos", impacto: "todos", de: "", ate: "", confirmar: false, origem: "todos" });
   const [parametros, setParametros] = useSearchParams();
   const ficha = lerFichaEstrategica(parametros, "D", new Set(decisoes.map(d => d.codigo)), query.isSuccess);
   const codigo = ficha.codigo;
@@ -82,6 +82,7 @@ export default function ContextoDecisoes() {
     {ficha.indisponivel && <p role="status" className="text-sm text-muted-foreground">Decisão não encontrada ou sem acesso</p>}
     <div className="space-y-4 border-b pb-6">
       <div className="relative"><Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input aria-label="Buscar decisões" placeholder="Buscar decisões" className="pl-9" value={filtros.busca} onChange={e => mudar("busca", e.target.value)} /></div>
+      <div className="max-w-xs"><Label>Origem</Label><Select value={filtros.origem} onValueChange={v => { if (v === "todos" || v === "ian" || v === "comites") mudar("origem", v); }}><SelectTrigger aria-label="Origem"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="todos">Todas</SelectItem><SelectItem value="ian">Registro do Ian</SelectItem><SelectItem value="comites">Comitês</SelectItem></SelectContent></Select></div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <FiltroSelect nome="Tipo de fórum" valor={filtros.tipo} mudar={v => mudar("tipo", v)} opcoes={Object.entries(TIPOS_FORUM).map(([valor, rotulo]) => ({ valor, rotulo }))} />
         <FiltroSelect nome="Fóruns citados" valor={filtros.forum} mudar={v => mudar("forum", v)} opcoes={FORUNS.map(valor => ({ valor, rotulo: valor }))} />

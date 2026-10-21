@@ -21,5 +21,7 @@ Deno.serve(async req => {
   if (!admin) return out({ error: "Sem permissão" }, 403);
   const { error: setupError } = await db.rpc("gov_configurar_cron", { _token: token, _url: `${url}/functions/v1/governanca-sincronizar` });
   if (setupError) return out({ ok: false, error: "Não foi possível agendar" }, 500);
-  return out({ ok: true, schedule: "7 * * * *" });
+  const { error: dailyError } = await db.rpc("gov_configurar_cron_diario", { _token: token, _url: `${url}/functions/v1/governanca-sincronizar` });
+  if (dailyError) return out({ ok: false, error: "Não foi possível agendar sincronização diária" }, 500);
+  return out({ ok: true, schedule: "7 * * * *", daily_schedule: "17 3 * * *" });
 });

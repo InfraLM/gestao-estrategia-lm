@@ -2,7 +2,7 @@ export type TipoCodigoEstrategico = "D" | "DS";
 
 export function codigoEstrategicoValido(codigo: string | null, tipo?: TipoCodigoEstrategico): codigo is string {
   if (!codigo) return false;
-  return tipo === "D" ? /^D-\d{3}$/.test(codigo) : tipo === "DS" ? /^DS-\d{2}$/.test(codigo) : /^(D-\d{3}|DS-\d{2})$/.test(codigo);
+  return tipo === "D" ? /^(D-\d{3}|GOV-[A-Za-z]+-\d{8}-\d{2})$/.test(codigo) : tipo === "DS" ? /^DS-\d{2}$/.test(codigo) : /^(D-\d{3}|DS-\d{2}|GOV-[A-Za-z]+-\d{8}-\d{2})$/.test(codigo);
 }
 
 export function linkEstrategico(codigo: string | null): string | null {
