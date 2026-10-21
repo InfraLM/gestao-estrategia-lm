@@ -52,6 +52,7 @@ export default function MetasPainel() {
   const b = useMetasBase();
   const [comp, setComp] = useState(mesAtual());
   const [comps, setComps] = useState<any[]>([]);
+  const avalBsc = useAvaliacoesBsc(comp);
   const [envios, setEnvios] = useState<any[]>([]);
   const [lancs, setLancs] = useState<any[]>([]);
   const [audit, setAudit] = useState<any[]>([]);
