@@ -12,11 +12,13 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI } from "@/hooks/useMetasBase";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
+import PendenciasComites from "@/components/PendenciasComites";
+import { entregasDoCheckin, puxarAcao, PrioridadeSemanal } from "@/lib/governancaPendencias";
 
 const db = supabase as any;
-export type Prioridade = { titulo: string; iniciativa_id: string; resultado: string };
+export type Prioridade = PrioridadeSemanal;
 export type CheckinConteudo = { prioridades: Prioridade[]; riscos: string; apoio: string; confianca: number };
-export type Entrega = { titulo: string; status: "entregue" | "parcial" | "nao_entregue" | ""; motivo: string; iniciativa_id?: string; novo_status_ini?: string };
+export type Entrega = { titulo: string; status: "entregue" | "parcial" | "nao_entregue" | ""; motivo: string; iniciativa_id?: string; novo_status_ini?: string; gov_acao_id?: string; gov_comite_codigo?: string };
 export type KpiSituacao = { indicador_id: string; valor: string; situacao: "no_trilho" | "atencao" | "fora" | ""; comentario: string };
 export const SITUACAO_LBL: Record<string, string> = { no_trilho: "No trilho", atencao: "Atenção", fora: "Fora do trilho" };
 export type CheckoutConteudo = { entregas: Entrega[]; extras: string; aprendizados: string; proxima: string; ritmo: number; kpis?: KpiSituacao[] };
@@ -53,7 +55,7 @@ export default function MetasSemanal() {
     const cin: CheckinConteudo = rIn?.conteudo?.prioridades ? rIn.conteudo : vazioIn();
     setCi(cin);
     setCo(rOut?.conteudo?.entregas ? rOut.conteudo : {
-      entregas: cin.prioridades.filter((p) => p.titulo).map((p) => ({ titulo: p.titulo, status: "", motivo: "", iniciativa_id: p.iniciativa_id })),
+      entregas: entregasDoCheckin(cin.prioridades),
       extras: "", aprendizados: "", proxima: "", ritmo: 3, kpis: [],
     });
   };
@@ -136,12 +138,22 @@ export default function MetasSemanal() {
         <TabsList><TabsTrigger value="checkin">Check-in (segunda)</TabsTrigger><TabsTrigger value="checkout">Checkout (sexta)</TabsTrigger></TabsList>
 
         <TabsContent value="checkin">
+          <div className="mb-4"><PendenciasComites cadeira={cad} usuario={b.user?.id} podeEditar={podeEditar} admin={access.roles.some(r => r === "admin" || r === "super_admin")}
+            vinculadas={ci.prioridades.flatMap(p => p.gov_acao_id ? [p.gov_acao_id] : [])}
+            onPuxar={acao => {
+              if (!podeEditar) return;
+              const r = puxarAcao(ci.prioridades, acao);
+              if (r.erro === "duplicada") return toast.info("Esta pendência já está nas prioridades.");
+              if (r.erro === "cheio") return toast.error("Limite de 5 prioridades atingido.");
+              setCi({ ...ci, prioridades: r.prioridades });
+            }} /></div>
           <Card className="p-4 space-y-4">
             <div className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">Prioridades da semana</h2><Situacao tipo="checkin" /></div>
             {ci.prioridades.map((p, i) => {
               const set = (x: Partial<Prioridade>) => setCi({ ...ci, prioridades: ci.prioridades.map((q, j) => (j === i ? { ...q, ...x } : q)) });
               return (
                 <div key={i} className="grid gap-2 rounded border p-3 md:grid-cols-[1fr_1fr_auto]">
+                  {p.gov_acao_id && <div className="md:col-span-3"><Badge variant="secondary">Comitê {p.gov_comite_codigo || "—"}</Badge></div>}
                   <Input placeholder={`Prioridade ${i + 1}`} value={p.titulo} disabled={!podeEditar} onChange={(e) => set({ titulo: e.target.value })} />
                   <Select value={p.iniciativa_id || "none"} onValueChange={(v) => set({ iniciativa_id: v === "none" ? "" : v })} disabled={!podeEditar}>
                     <SelectTrigger><SelectValue placeholder="Iniciativa vinculada" /></SelectTrigger>
@@ -168,13 +180,13 @@ export default function MetasSemanal() {
             <div className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">Resultado das prioridades</h2><Situacao tipo="checkout" /></div>
             {co.entregas.length === 0 && <p className="text-sm text-muted-foreground">Preencha e salve o check-in para trazer as prioridades da semana.</p>}
             {podeEditar && co.entregas.length === 0 && ci.prioridades.some((p) => p.titulo) && (
-              <Button variant="outline" size="sm" onClick={() => setCo({ ...co, entregas: ci.prioridades.filter((p) => p.titulo).map((p) => ({ titulo: p.titulo, status: "", motivo: "", iniciativa_id: p.iniciativa_id })) })}>Trazer prioridades do check-in</Button>
+              <Button variant="outline" size="sm" onClick={() => setCo({ ...co, entregas: entregasDoCheckin(ci.prioridades) })}>Trazer prioridades do check-in</Button>
             )}
             {co.entregas.map((e, i) => {
               const set = (x: Partial<Entrega>) => setCo({ ...co, entregas: co.entregas.map((q, j) => (j === i ? { ...q, ...x } : q)) });
               return (
                 <div key={i} className="grid gap-2 rounded border p-3 md:grid-cols-[1fr_180px]">
-                  <p className="font-medium self-center">{e.titulo}</p>
+                  <div className="self-center space-y-1"><p className="font-medium">{e.titulo}</p>{e.gov_acao_id && <Badge variant="secondary">Comitê {e.gov_comite_codigo || "—"}</Badge>}</div>
                   <Select value={e.status} onValueChange={(v) => set({ status: v as Entrega["status"] })} disabled={!podeEditar}>
                     <SelectTrigger><SelectValue placeholder="Resultado" /></SelectTrigger>
                     <SelectContent>{Object.entries(ENTREGA_LBL).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent>
