@@ -1,9 +1,9 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
 # Organograma atualizado
-- [ ] Extrair a hierarquia da planilha enviada e incorporar sem perder fichas e vínculos existentes.
-- [ ] Exibir organograma visual e edição autorizada das cadeiras, ocupantes e hierarquia.
-- [ ] Testar validação, segurança e salvamento/leitura pela tela.
+- [x] Importar os 145 cargos da aba atual, preservando as 11 fichas e vínculos existentes; agrupamento inferido explicitamente marcado para confirmação.
+- [x] Organograma recolhível, busca, lista, importação e edição autorizada de cargos e fichas estratégicas.
+- [x] 169 testes aprovados; importação e salvamento/leitura com Naira conferidos, computador/celular sem transbordamento nem erros.
 
 # Integração Governança · Fase D
 - [x] Publicar 12 deliberações (1 reservada) por função service-only; 110 D-NNN inalterados, md5 67ac670d16b573732889b113b74febaf; total 110 → 122.
