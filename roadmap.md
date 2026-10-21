@@ -1,5 +1,10 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
+# Integração Governança · Fase D
+- [ ] Publicar deliberações por função service-only preservando D-NNN e enriquecimentos manuais.
+- [ ] Acrescentar filtro de origem e ficha GOV; configurar completa diária 03:17 mantendo job horário.
+- [ ] Testar SQL, frontend, sincronização e ficha autenticada; conferir contagens e assinatura Ian.
+
 # Integração Governança · Fase C
 - [x] Acrescentar consulta autorizada das pendências e bloco recolhível no formulário, sem mudar o fluxo existente.
 - [x] Configurar segredo interno e sincronização incremental horária no minuto 7; manual permanece completa. Cron ativo; chamada agendada de teste HTTP 200, zero mudanças desde a última sincronização.
