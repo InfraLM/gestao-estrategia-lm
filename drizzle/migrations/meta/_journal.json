@@ -92,6 +92,13 @@
       "when": 1792532943140,
       "tag": "0012_socios_link_resultados_produtos",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792545263240,
+      "tag": "0013_governanca_fase_b",
+      "breakpoints": true
     }
   ]
 }

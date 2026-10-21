@@ -93,7 +93,11 @@ const navGroups: NavGroup[] = [
   },
 ];
 
+// Visível só para admin/super_admin (filtrado no componente).
+const integracoesGroup: NavGroup = { id: "integracoes", label: "Integrações", icon: Server, children: [{ to: "/governanca/integracao", label: "Integração Governança", icon: Server }] };
+
 const titles: Record<string, string> = {
+  "/governanca/integracao": "Integração Governança",
   "/contexto-decisoes": "Contexto e decisões",
   "/socios/insights": "Desejos dos Sócios 2027 · Insights sócios",
   "/estrutura-organizacional": "Estrutura organizacional",
@@ -140,7 +144,7 @@ export default function AppLayout() {
   const [profile, setProfile] = useState<{ display_name?: string | null; cargo?: string | null; email?: string | null } | null>(null);
   const access = useModuleAccess();
   const isAdmin = access.isSuperAdmin || access.roles.includes("admin");
-  const visibleGroups = navGroups.map(group => ({ ...group, children: group.children.filter(child => {
+  const visibleGroups = [...navGroups, ...(isAdmin ? [integracoesGroup] : [])].map(group => ({ ...group, children: group.children.filter(child => {
     const module = moduleForPath(child.to);
     return !module || access.canAccessPath(module, child.to);
   }) })).filter(group => group.children.length > 0);

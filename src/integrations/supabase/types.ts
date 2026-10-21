@@ -846,6 +846,239 @@ export type Database = {
         }
         Relationships: []
       }
+      gov_acoes: {
+        Row: {
+          comite_codigo: string | null
+          comite_nome: string | null
+          concluida_em: string | null
+          descricao: string | null
+          id: string
+          origem_created_at: string | null
+          origem_id: string
+          origem_updated_at: string | null
+          prazo: string | null
+          precisa_escalar: boolean | null
+          prioridade: string | null
+          responsavel_normalizado: string | null
+          responsavel_origem: string | null
+          reuniao_data: string | null
+          reuniao_origem_id: string | null
+          reuniao_titulo: string | null
+          sincronizado_em: string | null
+          status: string | null
+          titulo: string
+        }
+        Insert: {
+          comite_codigo?: string | null
+          comite_nome?: string | null
+          concluida_em?: string | null
+          descricao?: string | null
+          id?: string
+          origem_created_at?: string | null
+          origem_id: string
+          origem_updated_at?: string | null
+          prazo?: string | null
+          precisa_escalar?: boolean | null
+          prioridade?: string | null
+          responsavel_normalizado?: string | null
+          responsavel_origem?: string | null
+          reuniao_data?: string | null
+          reuniao_origem_id?: string | null
+          reuniao_titulo?: string | null
+          sincronizado_em?: string | null
+          status?: string | null
+          titulo: string
+        }
+        Update: {
+          comite_codigo?: string | null
+          comite_nome?: string | null
+          concluida_em?: string | null
+          descricao?: string | null
+          id?: string
+          origem_created_at?: string | null
+          origem_id?: string
+          origem_updated_at?: string | null
+          prazo?: string | null
+          precisa_escalar?: boolean | null
+          prioridade?: string | null
+          responsavel_normalizado?: string | null
+          responsavel_origem?: string | null
+          reuniao_data?: string | null
+          reuniao_origem_id?: string | null
+          reuniao_titulo?: string | null
+          sincronizado_em?: string | null
+          status?: string | null
+          titulo?: string
+        }
+        Relationships: []
+      }
+      gov_deliberacoes: {
+        Row: {
+          comite_codigo: string | null
+          comite_nome: string | null
+          id: string
+          indice: number
+          pauta: string | null
+          racional: string | null
+          reuniao_data: string | null
+          reuniao_origem_id: string
+          reuniao_titulo: string | null
+          reuniao_updated_at: string | null
+          sincronizado_em: string | null
+          titulo: string | null
+        }
+        Insert: {
+          comite_codigo?: string | null
+          comite_nome?: string | null
+          id?: string
+          indice: number
+          pauta?: string | null
+          racional?: string | null
+          reuniao_data?: string | null
+          reuniao_origem_id: string
+          reuniao_titulo?: string | null
+          reuniao_updated_at?: string | null
+          sincronizado_em?: string | null
+          titulo?: string | null
+        }
+        Update: {
+          comite_codigo?: string | null
+          comite_nome?: string | null
+          id?: string
+          indice?: number
+          pauta?: string | null
+          racional?: string | null
+          reuniao_data?: string | null
+          reuniao_origem_id?: string
+          reuniao_titulo?: string | null
+          reuniao_updated_at?: string | null
+          sincronizado_em?: string | null
+          titulo?: string | null
+        }
+        Relationships: []
+      }
+      gov_responsaveis_map: {
+        Row: {
+          atualizado_por: string | null
+          created_at: string
+          id: string
+          mt_cadeira_id: string | null
+          nome_normalizado: string
+          nome_origem: string
+          observacao: string | null
+          situacao: string
+          updated_at: string
+        }
+        Insert: {
+          atualizado_por?: string | null
+          created_at?: string
+          id?: string
+          mt_cadeira_id?: string | null
+          nome_normalizado: string
+          nome_origem: string
+          observacao?: string | null
+          situacao?: string
+          updated_at?: string
+        }
+        Update: {
+          atualizado_por?: string | null
+          created_at?: string
+          id?: string
+          mt_cadeira_id?: string | null
+          nome_normalizado?: string
+          nome_origem?: string
+          observacao?: string | null
+          situacao?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gov_responsaveis_map_mt_cadeira_id_fkey"
+            columns: ["mt_cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gov_responsaveis_map_cadeiras: {
+        Row: {
+          map_id: string
+          mt_cadeira_id: string
+        }
+        Insert: {
+          map_id: string
+          mt_cadeira_id: string
+        }
+        Update: {
+          map_id?: string
+          mt_cadeira_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gov_responsaveis_map_cadeiras_map_id_fkey"
+            columns: ["map_id"]
+            isOneToOne: false
+            referencedRelation: "gov_responsaveis_map"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gov_responsaveis_map_cadeiras_mt_cadeira_id_fkey"
+            columns: ["mt_cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gov_sync_log: {
+        Row: {
+          acoes_atualizadas: number | null
+          acoes_inseridas: number | null
+          acoes_recebidas: number | null
+          concluido_em: string | null
+          deliberacoes_excluidas: number | null
+          deliberacoes_recebidas: number | null
+          erro: string | null
+          id: string
+          iniciado_em: string | null
+          iniciado_por: string | null
+          nomes_novos: number | null
+          ok: boolean | null
+          status_http: number | null
+        }
+        Insert: {
+          acoes_atualizadas?: number | null
+          acoes_inseridas?: number | null
+          acoes_recebidas?: number | null
+          concluido_em?: string | null
+          deliberacoes_excluidas?: number | null
+          deliberacoes_recebidas?: number | null
+          erro?: string | null
+          id?: string
+          iniciado_em?: string | null
+          iniciado_por?: string | null
+          nomes_novos?: number | null
+          ok?: boolean | null
+          status_http?: number | null
+        }
+        Update: {
+          acoes_atualizadas?: number | null
+          acoes_inseridas?: number | null
+          acoes_recebidas?: number | null
+          concluido_em?: string | null
+          deliberacoes_excluidas?: number | null
+          deliberacoes_recebidas?: number | null
+          erro?: string | null
+          id?: string
+          iniciado_em?: string | null
+          iniciado_por?: string | null
+          nomes_novos?: number | null
+          ok?: boolean | null
+          status_http?: number | null
+        }
+        Relationships: []
+      }
       incentivo_metas: {
         Row: {
           created_at: string
@@ -2728,6 +2961,11 @@ export type Database = {
       fase1_diretor: { Args: { _cadeira: string }; Returns: boolean }
       fase1_ocupante: { Args: { _cadeira: string }; Returns: boolean }
       fase1_sistema_proprio: { Args: { _sistema: string }; Returns: boolean }
+      gov_diretor_da_acao: {
+        Args: { _nome_norm: string; _uid: string }
+        Returns: boolean
+      }
+      gov_is_admin: { Args: { _uid: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
