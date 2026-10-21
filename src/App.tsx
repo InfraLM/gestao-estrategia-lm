@@ -38,6 +38,7 @@ import SociosFormulario from "./pages/SociosFormulario";
 import SociosConsolidado from "./pages/SociosConsolidado";
 import SociosResponder from "./pages/SociosResponder";
 import NotFound from "./pages/NotFound.tsx";
+import GovernancaIntegracao from "./pages/GovernancaIntegracao";
 import { AuthProvider } from "@/hooks/useAuth";
 import ModuleAccessGate from "./components/ModuleAccessGate";
 import { ContextoDecisoes, SociosInsights, EstruturaOrganizacional, Incentivos, CestaInsights } from "./pages/Phase1Spaces";
@@ -60,6 +61,7 @@ const App = () => (
               <Route path="/estrutura-organizacional" element={<EstruturaOrganizacional />} />
               <Route path="/incentivos" element={<Incentivos />} />
               <Route path="/cesta-metas/insights" element={<CestaInsights />} />
+              <Route path="/governanca/integracao" element={<GovernancaIntegracao />} />
               <Route path="/gestao-usuarios" element={<GestaoUsuarios />} />
               <Route path="/minhas-permissoes" element={<MinhasPermissoes />} />
               <Route path="/" element={<Dashboard />} />
