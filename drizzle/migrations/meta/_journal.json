@@ -120,6 +120,13 @@
       "when": 1792597258670,
       "tag": "0016_organograma_atualizado",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792601825516,
+      "tag": "0017_rotina_semanal_v2",
+      "breakpoints": true
     }
   ]
 }
