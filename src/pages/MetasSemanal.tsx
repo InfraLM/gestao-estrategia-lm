@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,7 +75,9 @@ export default function MetasSemanal() {
   const comp = sem.slice(0, 7);
   const competencia = MESES_2S26.includes(comp) ? comp : null;
 
-  const agendar = useCallback(() => { clearTimeout(timer.current); timer.current = setTimeout(() => flush(), 1000); }, [cad, sem]);
+  const flushRef = useRef<() => void>(() => {});
+  const rowsRef = useRef<any[]>([]); rowsRef.current = rows;
+  const agendar = () => { clearTimeout(timer.current); timer.current = setTimeout(() => flushRef.current(), 1000); };
   const setCi = (x: CheckinV2) => { setCiRaw(x); ciRef.current = x; sujo.current.checkin = true; localStorage.setItem(chaveLocal("checkin"), JSON.stringify(x)); agendar(); };
   const setCo = (x: CheckoutV2) => { setCoRaw(x); coRef.current = x; sujo.current.checkout = true; localStorage.setItem(chaveLocal("checkout"), JSON.stringify(x)); agendar(); };
 
@@ -134,11 +136,11 @@ export default function MetasSemanal() {
 
   const gravar = async (tipo: Tipo, extra: any = {}, conteudoOverride?: any) => {
     const conteudo = await prepararContatos(conteudoOverride ?? (tipo === "checkin" ? ciRef.current : coRef.current));
-    const atual = rows.find((r) => r.tipo === tipo);
+    const atual = rowsRef.current.find((r) => r.tipo === tipo);
     const payload: any = { cadeira_id: cad, semana: sem, tipo, conteudo, status: atual?.status ?? "rascunho", ...extra };
     const { data, error } = await db.from("mt_checkins").upsert(payload, { onConflict: "cadeira_id,semana,tipo" }).select().single();
     if (error) throw error;
-    setRows((rs) => [...rs.filter((r) => r.tipo !== tipo), data]);
+    rowsRef.current = [...rowsRef.current.filter((r) => r.tipo !== tipo), data]; setRows(rowsRef.current);
     localStorage.removeItem(chaveLocal(tipo));
   };
 
@@ -160,6 +162,7 @@ export default function MetasSemanal() {
     }
   };
 
+  flushRef.current = flush;
   const reaproveitaveis = useMemo(() => {
     const m: Record<string, any[]> = {};
     for (const i of b.iniciativas as any[]) {
