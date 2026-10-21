@@ -1,0 +1,25 @@
+.org-visual { min-width: 0; --org-cor: var(--primary); }
+.org-painel { overflow: auto; min-height: 420px; max-height: 70dvh; background: hsl(var(--card)); }
+.org-escala { width: max-content; min-width: 100%; padding: 16px 16px 40px; }
+.org-raizes, .org-filhos { display: flex; justify-content: center; width: max-content; margin: 0 auto; list-style: none; padding: 0; }
+.org-ramo { position: relative; flex: 0 0 auto; padding: 0 10px; text-align: center; }
+.org-cadeira { position: relative; display: flex; align-items: center; flex-direction: column; width: 150px; margin: 0 auto; }
+.org-visual .org-no { width: 150px; height: 84px; border-radius: 42px; border: 1.5px solid hsl(var(--org-cor)); background: hsl(var(--org-cor) / 0.1); color: hsl(var(--foreground)); display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 10px 14px; white-space: normal; letter-spacing: 0; }
+.org-visual .org-no:hover { background: hsl(var(--org-cor) / 0.18); border-color: hsl(var(--org-cor)); }
+.org-visual .org-no-direcao { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-color: hsl(var(--primary)); }
+.org-visual .org-no-direcao:hover { background: hsl(var(--primary) / 0.9); }
+.org-nome { font-size: 14px; line-height: 16px; font-weight: 700; overflow-wrap: anywhere; }
+.org-ocupante { font-size: 12px; line-height: 14px; font-weight: 400; overflow-wrap: anywhere; }
+.org-visual .org-expandir { position: absolute; z-index: 1; bottom: -12px; height: 24px; min-width: 40px; padding: 0 7px; gap: 3px; font-size: 10px; border-radius: 12px; background: hsl(var(--card)); border-color: hsl(var(--org-cor) / 0.5); color: hsl(var(--foreground)); }
+.org-filhos { position: relative; padding-top: 36px; }
+.org-filhos::before { content: ''; position: absolute; top: 0; left: 50%; height: 18px; border-left: 1.5px solid hsl(var(--org-cor) / 0.7); }
+.org-filhos > .org-ramo::before, .org-filhos > .org-ramo::after { content: ''; position: absolute; top: -18px; width: 50%; height: 18px; border-top: 1.5px solid hsl(var(--org-cor) / 0.7); }
+.org-filhos > .org-ramo::before { right: 50%; }
+.org-filhos > .org-ramo::after { left: 50%; border-left: 1.5px solid hsl(var(--org-cor) / 0.7); }
+.org-filhos > .org-ramo:first-child::before, .org-filhos > .org-ramo:last-child::after { border-top: none; }
+.org-filhos > .org-ramo:only-child::before { display: none; }
+.org-cor-0 { --org-cor: var(--primary); }
+.org-cor-1 { --org-cor: var(--success); }
+.org-cor-2 { --org-cor: var(--info); }
+.org-cor-3 { --org-cor: var(--warning); }
+.org-cor-4 { --org-cor: var(--neutral); }

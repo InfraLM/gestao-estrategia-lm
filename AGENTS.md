@@ -3,7 +3,7 @@
 - Phase 1 spaces use six isolated tables and additive `fase1_*` auth helpers; new modules default closed, with owner/director read exceptions enforced server-side without changing legacy module access.
 - Strategic reference URLs use linksEstrategicos; Contexto and Insights select sheets from the codigo query parameter using replace navigation and only RLS-visible records, preserving filters and existing access gates.
 - Strategic spaces use RLS reads; Contexto, Insights Sócios and Incentivos are read-only. Incentivos reads active shared-goal indicators or incentivo_metas; CestaInsights updates only adherence/observation/date/evaluator with incentivos editors/admin and RLS. Text uses Contexto parsing; DS links require socios insights access. No AI or general exports.
-- org_organograma_cargos stores operational positions separately from org_cadeiras mandates to preserve goal/incentive links. Both edit paths use estrutura grants/admin and RLS; visible-sheet imports preserve source text/cells and mark inferred grouping. Server validation rejects cycles.
+- Read subdirectory AGENTS.md rules before editing there, including src/components/estrutura.
 
 - Metas 2S26 and weekly check-ins share `mt_*` via `useMetasBase`.
 - KPIs, KRs and Cesta metas share `mt_indicadores`, distinguished by `origem`; monthly forms and scoring treat them equally.
