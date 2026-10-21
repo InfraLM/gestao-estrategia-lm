@@ -358,7 +358,7 @@ export default function MetasSemanal() {
                   <Input className="md:col-span-2" placeholder="Resultado esperado até sexta" value={p.resultado} disabled={!podeEditar} onChange={(e) => set({ resultado: e.target.value })} />
                   <div className="md:col-span-2 grid gap-2 sm:grid-cols-[160px_1fr]">
                     <div className="space-y-1"><Label htmlFor={`pri-${i}-prazo`}>Prazo</Label><Input id={`pri-${i}-prazo`} type="date" value={p.prazo} disabled={!podeEditar} onChange={(e) => set({ prazo: e.target.value })} /></div>
-                    <div className="space-y-1"><Label>Responsável</Label><RespSelect id={`pri-${i}-resp`} v={p.responsavel} on={(r) => set({ responsavel: r })} /></div>
+                    <div className="space-y-1"><Label>Responsável</Label>{RespSelect({ id: `pri-${i}-resp`, v: p.responsavel, on: (r) => set({ responsavel: r }) })}</div>
                   </div>
                 </div>
               );
@@ -437,7 +437,7 @@ export default function MetasSemanal() {
                       </Select>
                     </div>); })()}
                   {e.status && e.status !== "entregue" && <Input id={`ent-${i}-motivo`} className="md:col-span-2" placeholder="Por que não foi entregue e qual o novo prazo?" value={e.motivo} disabled={!podeEditar} onChange={(ev) => set({ motivo: ev.target.value })} />}
-                  <div className="md:col-span-2 space-y-1"><Label>Responsável</Label><RespSelect id={`ent-${i}-resp`} v={e.responsavel ?? { tipo: "eu" }} on={(r) => set({ responsavel: r })} /></div>
+                  <div className="md:col-span-2 space-y-1"><Label>Responsável</Label>{RespSelect({ id: `ent-${i}-resp`, v: e.responsavel ?? { tipo: "eu" }, on: (r) => set({ responsavel: r }) })}</div>
                 </div>
               );
             })}
@@ -478,7 +478,7 @@ export default function MetasSemanal() {
                               <Select value={r.status_ini} disabled={!podeEditar} onValueChange={(v) => setResp(k.indicador_id, { status_ini: v })}><SelectTrigger><SelectValue /></SelectTrigger>
                                 <SelectContent>{["a_iniciar", "em_andamento", "concluida", "cancelada"].map((s) => <SelectItem key={s} value={s}>{STATUS_INI[s]}</SelectItem>)}</SelectContent></Select></div>
                           </div>
-                          <div className="space-y-1"><Label>Responsável</Label><RespSelect id={`kpi-${k.indicador_id}-resp`} v={r.responsavel} on={(x) => setResp(k.indicador_id, { responsavel: x })} /></div>
+                          <div className="space-y-1"><Label>Responsável</Label>{RespSelect({ id: `kpi-${k.indicador_id}-resp`, v: r.responsavel, on: (x) => setResp(k.indicador_id, { responsavel: x }) })}</div>
                           {cand.length > 0 && <div id={`kpi-${k.indicador_id}-reap`} tabIndex={-1} className="space-y-1 text-sm">
                             <p>Já existe iniciativa aberta deste indicador criada em check-in anterior: <b>{cand[0].titulo}</b></p>
                             <div className="flex gap-2">
