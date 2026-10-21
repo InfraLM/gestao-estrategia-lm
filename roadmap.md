@@ -1,7 +1,7 @@
 # Roadmap · Lançamento Mensal de Metas 2S26
 
 # Organograma atualizado
-- [ ] Tornar a estrutura um organograma conectado e visual, com descrição ao clicar, preservando dados e edição autorizada.
+- [x] Estrutura em organograma conectado, cores por ramificação, zoom/recolhimento e ficha ao clicar; acesso com Naira, tela estreita e 169 testes conferidos, sem alterar dados ou permissões.
 - [x] Importar os 145 cargos da aba atual, preservando as 11 fichas e vínculos existentes; agrupamento inferido explicitamente marcado para confirmação.
 - [x] Organograma recolhível, busca, lista, importação e edição autorizada de cargos e fichas estratégicas.
 - [x] 169 testes aprovados; importação e salvamento/leitura com Naira conferidos, computador/celular sem transbordamento nem erros.
