@@ -51,3 +51,7 @@
 - [x] Consolidado (só Naira e Ian), histórico de envios e exportação
 - [ ] Confirmar os sócios no formulário real — depende de Ian, Yuri e Cleto aceitarem o convite
 - Depois: promoção de projetos ao Backlog Estratégico
+
+## Rotina semanal — pendências (aguardando decisão/confirmação)
+- Vincular diretores às cadeiras: COO (Yuri Garcia), Institucional (Cleto), CMO (Iuri Franco, convite pendente); sem conta: CFO (Bruno), CRO (Guilherme), Comercial (Felipe).
+- BHAG "Salvar vidas"; exibição a/b do C.02-a.04; Vendas ACLS em SP (mantido); corresponsável (não fazer).

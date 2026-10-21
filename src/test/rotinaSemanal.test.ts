@@ -69,7 +69,7 @@ describe("Rotina semanal", () => {
     expect(normalizarCheckout(null).entregas).toEqual([]);
   });
   it("período, idade e reabertura de riscos", () => {
-    expect(periodoSemana("2026-10-19")).toBe("Checkout 19/10 a 23/10 · Check-in 19/10 a 23/10/26");
+    expect(periodoSemana("2026-10-26")).toBe("Checkout 19/10 a 25/10 · Check-in 26/10 a 30/10/26");
     expect(idadeSemanas("2026-10-19", "2026-10-19")).toBe("esta semana");
     expect(idadeSemanas("2026-10-05", "2026-10-19")).toBe("há 2 semanas");
     expect(riscoAberto({ resolvido_em: "2026-10-10", reaberto_em: "2026-10-12" })).toBe(true);

@@ -11,10 +11,12 @@ export type Entrega = {
 export type KpiRetrato = {
   indicador_id: string; codigo: string; nome: string; origem: "bsc" | "okr" | "cesta"; peso: number; unidade: string | null;
   competencia: string | null; meta_mes: number | null; realizado: number | null; atingimento: number | null; faixa: string | null; congelado_em: string;
+  sentido?: "maior" | "menor"; nivel?: string | null; meta_semestre?: number | null; meta_texto?: string | null;
 };
 export type KpiResposta = {
   indicador_id: string; ok: boolean | null; impacto: string; plano: string; vira_iniciativa: boolean; prazo: string;
   responsavel: Responsavel; status_ini: string; reaproveitar: "" | "sim" | "nova"; iniciativa_alvo_id?: string; iniciativa_criada_id?: string;
+  situacao_atual?: string;
 };
 export type KpiLegado = { indicador_id: string; valor: string; situacao: string; comentario: string };
 export type CheckoutV2 = {
@@ -100,7 +102,8 @@ export function montarRetrato(base: any[], competencia: string | null, faixas: F
     return {
       indicador_id: b.indicador_id, codigo: b.codigo, nome: b.nome, origem: b.origem, peso: Number(b.peso ?? 0), unidade: b.unidade ?? null,
       competencia, meta_mes: competencia ? b.meta_mes ?? null : null, realizado: competencia ? b.realizado ?? null : null,
-      atingimento: at, faixa: faixaDe(at, faixas), congelado_em: agora,
+      atingimento: b.origem === "bsc" ? null : at, faixa: b.origem === "bsc" ? null : faixaDe(at, faixas), congelado_em: agora,
+      sentido: b.sentido, nivel: b.nivel ?? null, meta_semestre: b.meta_semestre ?? null, meta_texto: b.meta_texto ?? null,
     };
   });
 }
@@ -188,10 +191,36 @@ export function addDias(iso: string, n: number) {
   const d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10);
 }
 const dm = (iso: string) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
-/** "Checkout dd/mm a dd/mm · Check-in dd/mm a dd/mm/aa" — ambos do registro da semana escolhida (segunda a sexta). */
-export function periodoSemana(sem: string) {
-  const fim = addDias(sem, 4);
-  return `Checkout ${dm(sem)} a ${dm(fim)} · Check-in ${dm(sem)} a ${dm(fim)}/${fim.slice(2, 4)}`;
+/** Ciclo S = check-in da semana S + checkout da semana S−7 (segunda a domingo). */
+export const semanaCheckout = (ciclo: string) => addDias(ciclo, -7);
+/** "Checkout dd/mm a dd/mm · Check-in dd/mm a dd/mm/aa". */
+export function periodoSemana(ciclo: string) {
+  const co = semanaCheckout(ciclo), fim = addDias(ciclo, 4);
+  return `Checkout ${dm(co)} a ${dm(addDias(co, 6))} · Check-in ${dm(ciclo)} a ${dm(fim)}/${fim.slice(2, 4)}`;
+}
+/** Competência = mês do domingo da semana. */
+export const competenciaDaSemana = (semana: string) => addDias(semana, 6).slice(0, 7);
+/** Ciclo padrão no horário de São Paulo: de sexta 00h a domingo já abre o ciclo da segunda seguinte. */
+export function cicloPadrao(agora = new Date()) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit", weekday: "short" })
+    .formatToParts(agora).map((x) => [x.type, x.value]));
+  const hoje = `${p.year}-${p.month}-${p.day}`;
+  const w = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(p.weekday);
+  const seg = addDias(hoje, -w);
+  return w >= 4 ? addDias(seg, 7) : seg;
+}
+export const ciclosDisponiveis = (agora = new Date()) => [0, 1, 2, 3, 4, 5, 6].map((n) => addDias(cicloPadrao(agora), -7 * n));
+
+/** Última situação atual: a mais recente entre a árvore de KPIs e o último checkout enviado que apontou o KPI. */
+export function ultimaSituacao(indicador_id: string, arvore: { valor: string; data: string | null } | null, checkouts: { semana: string; status: string; enviado_em: string | null; conteudo: any }[], antesDe: string) {
+  let ck: { valor: string; fonte: string; data: string } | null = null;
+  for (const r of [...checkouts].filter((r) => r.status === "enviado" && r.semana < antesDe).sort((a, b) => b.semana.localeCompare(a.semana))) {
+    const k = normalizarCheckout(r.conteudo).kpis_resposta.find((x) => x.indicador_id === indicador_id && x.situacao_atual?.trim());
+    if (k) { ck = { valor: k.situacao_atual!.trim(), fonte: `checkout de ${dm(r.semana)}`, data: r.enviado_em ?? r.semana }; break; }
+  }
+  const av = arvore?.valor?.trim() ? { valor: arvore.valor.trim(), fonte: "Árvore de KPIs", data: arvore.data ?? "" } : null;
+  if (!ck) return av; if (!av) return ck;
+  return (av.data || "") > ck.data ? av : ck;
 }
 export function idadeSemanas(criada: string, sem: string) {
   const n = Math.round((new Date(sem + "T12:00").getTime() - new Date(criada + "T12:00").getTime()) / (7 * 864e5));

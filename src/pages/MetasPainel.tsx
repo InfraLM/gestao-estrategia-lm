@@ -13,6 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, MESES_2S26, statusEfetivo } from "@/hooks/useMetasBase";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { prazoDe, ENTREGA_LBL } from "@/pages/MetasSemanal";
+import { cicloPadrao, semanaCheckout } from "@/lib/rotinaSemanal";
+import { useAvaliacoesBsc } from "@/hooks/useAvaliacoesBsc";
 
 const db = supabase as any;
 const MES_LONGO: Record<string, string> = { "07": "Julho", "08": "Agosto", "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro" };
@@ -50,6 +52,7 @@ export default function MetasPainel() {
   const b = useMetasBase();
   const [comp, setComp] = useState(mesAtual());
   const [comps, setComps] = useState<any[]>([]);
+  const avalBsc = useAvaliacoesBsc(comp);
   const [envios, setEnvios] = useState<any[]>([]);
   const [lancs, setLancs] = useState<any[]>([]);
   const [audit, setAudit] = useState<any[]>([]);
@@ -98,7 +101,7 @@ export default function MetasPainel() {
   }, [audit, lancs, envios, b.indicadores, b.cadeiras, comp]);
   const reaberturas = linhas.filter((l) => l.ant);
 
-  const semanas = [0, 1, 2, 3].map((n) => segunda(new Date(Date.now() - n * 7 * 864e5)));
+  const ciclo = cicloPadrao(); const semOut = semanaCheckout(ciclo);
 
   const salvarRegua = async () => {
     if (!edReg) return;
@@ -114,8 +117,8 @@ export default function MetasPainel() {
   };
 
   const Sem = ({ k, tipo, nome }: { k: any; tipo: string; nome: string }) => {
-    if (!k) return <Badge variant={new Date() > prazoDe(semanas[0], tipo) ? "destructive" : "outline"}>Pendente</Badge>;
-    const late = new Date(k.enviado_em) > prazoDe(k.semana, tipo);
+    if (!k) return <Badge variant={new Date() > prazoDe(tipo === "checkin" ? ciclo : semOut, tipo) ? "destructive" : "outline"}>Pendente</Badge>;
+    const late = new Date(k.conteudo?.primeiro_envio_em ?? k.enviado_em) > prazoDe(k.semana, tipo);
     return <button onClick={() => setVer({ ...k, nome })}><Badge className={late ? "bg-warning text-warning-foreground" : "bg-success text-success-foreground"}>Enviado{late ? " · atrasado" : ""}</Badge></button>;
   };
 
@@ -176,14 +179,14 @@ export default function MetasPainel() {
               <tr>
                 <th className="py-2 pr-3">Cadeira</th><th className="pr-3">Nota</th><th className="pr-3">Faixa</th>
                 <th className="pr-3">Form. mensal de OKRs/metas</th>
-                <th className="pr-3">Check-in semana</th><th className="pr-3">Checkout semana</th>
+                <th className="pr-3">BSC (não entra na nota)</th><th className="pr-3">Checkout semana anterior</th><th className="pr-3">Check-in semana</th>
                 <th className="pr-3">Iniciativas atrasadas</th>
               </tr>
             </thead>
             <tbody>
               {linhas.map(({ c, e, ant, atrasadas }) => {
-                const ci = checks.find((k) => k.cadeira_id === c.id && k.semana === semanas[0] && k.tipo === "checkin" && k.status === "enviado");
-                const co = checks.find((k) => k.cadeira_id === c.id && k.semana === semanas[0] && k.tipo === "checkout" && k.status === "enviado");
+                const ci = checks.find((k) => k.cadeira_id === c.id && k.semana === ciclo && k.tipo === "checkin" && k.status === "enviado");
+                const co = checks.find((k) => k.cadeira_id === c.id && k.semana === semOut && k.tipo === "checkout" && k.status === "enviado");
                 return (
                   <tr key={c.id} className="border-b last:border-0">
                     <td className="py-2 pr-3"><p className="font-medium">{c.nome}</p><p className="text-xs text-muted-foreground">{c.diretor_nome ?? "—"}</p></td>
@@ -195,8 +198,9 @@ export default function MetasPainel() {
                         : e ? <span className="inline-flex items-center gap-1 text-warning"><Clock className="h-4 w-4" /> Rascunho</span>
                         : <span className="inline-flex items-center gap-1 text-destructive"><AlertTriangle className="h-4 w-4" /> Não atualizada</span>}
                     </td>
-                    <td className="pr-3"><Sem k={ci} tipo="checkin" nome={c.nome} /></td>
+                    <td className="pr-3 text-xs">{(() => { const a = avalBsc.porCadeira[c.id]; return a ? <span><b className="text-success">{a.cont.on}</b> on · <b className="text-destructive">{a.cont.off}</b> off · {a.cont.acomp} acomp.{a.cont.sem_meta ? ` · ${a.cont.sem_meta} s/ meta` : ""}</span> : "—"; })()}</td>
                     <td className="pr-3"><Sem k={co} tipo="checkout" nome={c.nome} /></td>
+                    <td className="pr-3"><Sem k={ci} tipo="checkin" nome={c.nome} /></td>
                     <td className="pr-3">{atrasadas ? <Badge variant="destructive">{atrasadas}</Badge> : "0"}</td>
                   </tr>
                 );
@@ -204,7 +208,7 @@ export default function MetasPainel() {
             </tbody>
           </table>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">Check-in e checkout referem-se à semana de {new Date(semanas[0] + "T12:00").toLocaleDateString("pt-BR")}. Clique em "Enviado" para ver o conteúdo. Prazos: check-in segunda 12h, checkout sexta 18h.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Ciclo de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}: checkout da semana de {new Date(semOut + "T12:00").toLocaleDateString("pt-BR")} e check-in da semana de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}. A nota conta só KRs e cesta. Clique em "Enviado" para ver o conteúdo. Prazos: check-in segunda 12h, checkout sexta 18h.</p>
         <p className="text-xs"><Link className="underline" to="/metas/semanal">Abrir formulário semanal</Link></p>
         <Button asChild variant="link" className="px-0"><Link to="/metas/lancamento">Abrir formulário mensal</Link></Button>
       </Card>

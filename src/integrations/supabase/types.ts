@@ -1556,6 +1556,7 @@ export type Database = {
           id: string
           meta_semestre: number | null
           meta_texto: string | null
+          nivel: string | null
           nome: string
           objetivo_id: string | null
           observacoes: string | null
@@ -1577,6 +1578,7 @@ export type Database = {
           id?: string
           meta_semestre?: number | null
           meta_texto?: string | null
+          nivel?: string | null
           nome: string
           objetivo_id?: string | null
           observacoes?: string | null
@@ -1598,6 +1600,7 @@ export type Database = {
           id?: string
           meta_semestre?: number | null
           meta_texto?: string | null
+          nivel?: string | null
           nome?: string
           objetivo_id?: string | null
           observacoes?: string | null
@@ -1918,6 +1921,41 @@ export type Database = {
           valor?: Json
         }
         Relationships: []
+      }
+      mt_pesos_vigencia: {
+        Row: {
+          alterado_por: string | null
+          competencia_inicio: string
+          created_at: string
+          id: string
+          indicador_id: string
+          peso: number
+        }
+        Insert: {
+          alterado_por?: string | null
+          competencia_inicio: string
+          created_at?: string
+          id?: string
+          indicador_id: string
+          peso: number
+        }
+        Update: {
+          alterado_por?: string | null
+          competencia_inicio?: string
+          created_at?: string
+          id?: string
+          indicador_id?: string
+          peso?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_pesos_vigencia_indicador_id_fkey"
+            columns: ["indicador_id"]
+            isOneToOne: false
+            referencedRelation: "mt_indicadores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mt_rotina_contatos: {
         Row: {

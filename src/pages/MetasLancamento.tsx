@@ -19,6 +19,8 @@ import {
 } from "@/hooks/useMetasBase";
 import { StatusReportsDaCadeira } from "@/components/StatusReportProjeto";
 import { faixaDaNota, type Regua } from "@/pages/MetasPainel";
+import { notaMensal, pesoVigente, type PesoVigencia } from "@/lib/notaMensal";
+import { avaliarBsc, AVALIACAO_LBL } from "@/lib/avaliacaoBsc";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 
 const db = supabase as any;
@@ -61,6 +63,8 @@ export default function MetasLancamento() {
   const [erros, setErros] = useState<Record<string, string>>({});
   const [salvando, setSalvando] = useState(false);
   const [regua, setRegua] = useState<Regua | null>(null);
+  const [vig, setVig] = useState<PesoVigencia[]>([]);
+  useEffect(() => { db.from("mt_pesos_vigencia").select("indicador_id,competencia_inicio,peso").then(({ data }: any) => setVig(data ?? [])); }, []);
   useEffect(() => { db.from("mt_parametros").select("valor").eq("chave", "regua").maybeSingle().then(({ data }: any) => setRegua(data?.valor ?? null)); }, []);
   const [confirmar, setConfirmar] = useState<null | "fechar" | "reabrir">(null);
 
@@ -134,12 +138,12 @@ export default function MetasLancamento() {
     }
     return { mes, dez: atingimento(real, metaDez(i), i.sentido), nota: mes };
   };
-  const nota = useMemo(() => {
-    let sp = 0, s = 0;
-    topo.filter((i) => i.peso > 0).forEach((i) => { const a = calc(i).nota; if (a != null) { sp += i.peso; s += a * i.peso; } });
-    return sp ? s / sp : null;
+  // BSC fica fora da nota; KRs e cesta usam o peso vigente na competência.
+  const pesoDe = (i: Indicador) => pesoVigente(i, comp, vig);
+  const nota = useMemo(() => notaMensal(topo, (i) => calc(i).nota, comp, vig),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [topo, rasc, comp]);
+  [topo, rasc, comp, vig]);
+  const avalBsc = (i: Indicador) => avaliarBsc({ sentido: i.sentido, competencia: comp, meta_mes: metaDe(i.id, comp)?.meta_mes ?? null, meta_semestre: i.meta_semestre, meta_texto: i.meta_texto, realizado: rasc[i.id]?.sem ? null : parseNum(rasc[i.id]?.valor ?? "") });
 
   const envio = envios.find((e) => e.cadeira_id === cadeira && e.competencia === comp && e.revisao === rev);
 
@@ -191,11 +195,11 @@ export default function MetasLancamento() {
 
   if (b.loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
 
-  const peso0 = topo.filter((i) => i.peso === 0);
+  const peso0 = topo.filter((i) => i.origem !== "bsc" && pesoDe(i) === 0);
   const secoes: { t: string; itens: Indicador[] }[] = [
-    { t: "1. KPIs estratégicos do BSC", itens: topo.filter((i) => i.origem === "bsc" && i.peso > 0) },
-    { t: "2. KRs dos OKRs", itens: topo.filter((i) => i.origem === "okr" && i.peso > 0) },
-    { t: "3. Cesta de metas", itens: topo.filter((i) => i.origem === "cesta" && i.peso > 0) },
+    { t: "1. Avaliação BSC (não entra na nota)", itens: topo.filter((i) => i.origem === "bsc" && (i as any).nivel !== "Operacional") },
+    { t: "2. KRs dos OKRs", itens: topo.filter((i) => i.origem === "okr" && pesoDe(i) > 0) },
+    { t: "3. Cesta de metas", itens: topo.filter((i) => i.origem === "cesta" && pesoDe(i) > 0) },
     { t: "4. Indicadores de peso zero (não entram na nota)", itens: peso0 },
   ];
 
@@ -215,7 +219,7 @@ export default function MetasLancamento() {
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-xs text-muted-foreground">{i.codigo}</span>
               <Badge variant="outline" className="uppercase text-[10px]">{i.origem}</Badge>
-              <Badge variant="secondary" className="text-[10px]">Peso {fmtNum(i.peso)}</Badge>
+              {i.origem !== "bsc" && <Badge variant="secondary" className="text-[10px]">Peso {fmtNum(pesoDe(i))}</Badge>}
               <Badge variant="outline" className="text-[10px]">{i.sentido === "maior" ? "↑ maior é melhor" : "↓ menor é melhor"}</Badge>
               {kids.length > 0 && <Badge className="text-[10px]">Composto · {i.regra_consolidacao === "pior" ? "pior resultado" : "média ponderada"}</Badge>}
             </div>
@@ -223,7 +227,7 @@ export default function MetasLancamento() {
           </div>
           <div className="text-right">
             <p className="text-xs text-muted-foreground">Atingimento</p>
-            <p className="text-lg font-semibold tabular-nums">{pct(c.nota)}</p>
+            {i.origem === "bsc" ? <Badge variant={avalBsc(i) === "off" ? "destructive" : avalBsc(i) === "on" ? "default" : "outline"}>{AVALIACAO_LBL[avalBsc(i)]}</Badge> : <p className="text-lg font-semibold tabular-nums">{pct(c.nota)}</p>}
           </div>
         </div>
 
