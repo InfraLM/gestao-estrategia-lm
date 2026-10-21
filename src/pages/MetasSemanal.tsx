@@ -102,7 +102,7 @@ export default function MetasSemanal() {
     setArvore({ mapa, data: arv?.updated_at ?? null });
     const atual = (data ?? []).filter((r: any) => (r.semana === sem && r.tipo === "checkin") || (r.semana === semOut && r.tipo === "checkout"));
     setRows(atual); setHist(data ?? []); setRiscos(rs ?? []); setContatos(cts ?? []);
-    const comEmail = (x: any) => JSON.parse(JSON.stringify(x), (_k, v) => (v && v.tipo === "externo" && v.contato_id ? { ...v, email: (cts ?? []).find((c: any) => c.id === v.contato_id)?.email ?? "" } : v));
+    const comEmail = (x: any) => x == null ? x : JSON.parse(JSON.stringify(x), (_k, v) => (v && v.tipo === "externo" && v.contato_id ? { ...v, email: (cts ?? []).find((c: any) => c.id === v.contato_id)?.email ?? "" } : v));
     const local = (t: Tipo) => { try { const s = localStorage.getItem(`rotina:${cad}:${t === "checkin" ? sem : semOut}:${t}`); return s ? JSON.parse(s) : null; } catch { return null; } };
     const rIn = atual.find((r: any) => r.tipo === "checkin"); const rOut = atual.find((r: any) => r.tipo === "checkout");
     const lin = local("checkin"), lout = local("checkout");
