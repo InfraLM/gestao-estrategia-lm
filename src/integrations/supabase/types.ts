@@ -2094,6 +2094,59 @@ export type Database = {
           },
         ]
       }
+      org_organograma_cargos: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          fonte_celula: string | null
+          id: string
+          nivel: string
+          nome: string
+          observacoes: string | null
+          ocupante_nome: string | null
+          ordem: number
+          parent_id: string | null
+          texto_original: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          fonte_celula?: string | null
+          id?: string
+          nivel?: string
+          nome: string
+          observacoes?: string | null
+          ocupante_nome?: string | null
+          ordem?: number
+          parent_id?: string | null
+          texto_original?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          fonte_celula?: string | null
+          id?: string
+          nivel?: string
+          nome?: string
+          observacoes?: string | null
+          ocupante_nome?: string | null
+          ordem?: number
+          parent_id?: string | null
+          texto_original?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_organograma_cargos_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "org_organograma_cargos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       processos: {
         Row: {
           area: string | null
