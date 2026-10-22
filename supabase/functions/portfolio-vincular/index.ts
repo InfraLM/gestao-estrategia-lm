@@ -32,7 +32,7 @@ Deno.serve(async req => {
    sb.from('projetos').select('id,codigo,nome,descricao,objetivos,krs,cadeira_id'),
    sb.from('mt_iniciativas').select('id,titulo,indicador_id,objetivo_id,okr_id,cadeira_id'),
    sb.from('mt_objetivos').select('id,codigo,descricao'),sb.from('mt_indicadores').select('id,codigo,nome,origem,okr_id,objetivo_id').eq('status','ativo'),sb.from('mt_okrs').select('id,semestre'),
-   sb.from('portfolio_vinculos').select('id,fonte_tipo,fonte_id,tipo,ref_id,status,justificativa'),
+   sb.from('portfolio_vinculos').select('id,fonte_tipo,fonte_id,tipo,ref_id,status,justificativa,editado_por'),
    sb.from('projeto_vinculos').select('projeto_id,tipo,ref_id'),sb.from('mt_acao_vinculos').select('iniciativa_id,tipo,ref_id'),sb.from('portfolio_vinculacao_jobs').select('fonte_tipo,fonte_id,status')
   ]);
   if(results.some(r=>r.error)) return response({error:'Não foi possível consultar os cadastros autorizados.'},400);
@@ -41,7 +41,7 @@ Deno.serve(async req => {
   const sem=`${sp.find(p=>p.type==='year')?.value}/${Number(sp.find(p=>p.type==='month')?.value)<=6?1:2}`;
   const vig=new Set(okrs.filter((o:any)=>o.semestre===sem).map((o:any)=>o.id));
   const alvos:Alvo[]=[...os.map((o:any)=>({id:o.id,tipo:'objetivo' as const,codigo:o.codigo,nome:o.descricao})),...inds.filter((i:any)=>i.origem!=='okr'||vig.has(i.okr_id)).map((i:any)=>({...i,tipo:'indicador' as const}))];
-  const validados=new Set(vs.filter((v:any)=>v.status==='validado').map((v:any)=>`${v.fonte_tipo}:${v.fonte_id}`));
+  const validados=new Set(vs.filter((v:any)=>v.status==='validado'||v.editado_por).map((v:any)=>`${v.fonte_tipo}:${v.fonte_id}`));
   const fontesBase:Fonte[]=[...ps.map((p:any)=>({...p,fonte_tipo:'projeto' as const,texto:''})),...ins.map((i:any)=>({...i,nome:i.titulo,fonte_tipo:'iniciativa' as const,texto:JSON.stringify({titulo:i.titulo})}))];
   const elegiveis=fontesBase.filter(f=>!validados.has(`${f.fonte_tipo}:${f.id}`) && !history.some((j:any)=>j.fonte_tipo===f.fonte_tipo&&j.fonte_id===f.id&&['concluido','executando'].includes(j.status)));
   if(modo==='resumo') return response({total:elegiveis.length,limite:LIMITE,lote:LOTE,fontes:elegiveis.map(f=>({id:f.id,fonte_tipo:f.fonte_tipo,nome:f.nome,codigo:f.codigo}))});
