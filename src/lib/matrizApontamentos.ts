@@ -29,7 +29,8 @@ export function celulaMes(ind: IndM, competencia: string, meta_mes: number | nul
   const tipo = ind.tipo_apontamento ?? "valor_mensal";
   const foraCalendario = !!ind.frequencia && !previstoNoMes(ind,competencia);
   const historico = checkouts.filter(c=>competenciaDa(c)<=competencia);
-  const ap = apontamentoMaisRecente(ind.id, foraCalendario?null:competencia, lanc, historico);
+  const longa=['trimestral','semestral'].includes(ind.frequencia??'');
+  const ap = apontamentoMaisRecente(ind.id, foraCalendario||longa?null:competencia, lanc, historico);
   const r = avaliarPorTipo({ ...ind, indicador_id: ind.id, sentido: ind.sentido, competencia, meta_mes: tipo === "valor_mensal" ? meta_mes : null, meta_semestre: ind.meta_semestre, meta_texto: ind.meta_texto, realizado,
     tipo, prazo_entrega: ind.prazo_entrega ?? null, apontamento: ap }, arvore, checkouts, hoje);
   const valor = tipo === "entrega" ? null : realizado ?? situacaoNumerica(ind.id, arvore, checkouts, competencia)?.valor ?? null;

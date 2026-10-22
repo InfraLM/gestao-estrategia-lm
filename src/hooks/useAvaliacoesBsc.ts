@@ -42,7 +42,7 @@ export function useAvaliacoesBsc(competencia: string | null, cadeiras: string[] 
       const out: Record<string, AvalCadeira> = {};
       for (const ind of (i.data ?? []).filter((x: any) => x.cadeira_id && !x.parent_id && (x.nivel ?? "Tático") !== "Operacional" && (!cadeiras || cadeiras.includes(x.cadeira_id)))) {
         const meta = (m.data ?? []).find((x: any) => x.indicador_id === ind.id)?.meta_mes ?? null;
-        const fora=!!ind.frequencia&&!previstoNoMes(ind,competencia);
+        const fora=!!ind.frequencia&&(!previstoNoMes(ind,competencia)||['trimestral','semestral'].includes(ind.frequencia));
         const todos = (l.data ?? []).filter((x: any) => x.indicador_id === ind.id && (fora||x.competencia===competencia)).sort((a:any,b:any)=>b.competencia.localeCompare(a.competencia)||b.revisao-a.revisao);
         const lanc = todos.find((x: any) => !x.sem_medicao);
         const sit = ind.origem === "bsc" ? arv[String(ind.nome).trim()] : undefined;

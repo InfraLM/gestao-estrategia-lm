@@ -29,7 +29,7 @@ export function montarKpisObjetivo(inds:any[], metas:any[], lancs:any[], cks:any
     const comp=mes;
     const mensal=atual?.comp?metas.find(m=>m.indicador_id===i.id&&m.competencia===atual.comp)?.meta_mes??null:null;
     const meta=i.tipo_apontamento==='valor_mensal'&&mensal!=null?mensal:i.meta_semestre??i.meta_texto??tree?.meta2026??null;
-    const fora=!!i.frequencia&&!previstoNoMes(i,mes);
+    const fora=!!i.frequencia&&(!previstoNoMes(i,mes)||['trimestral','semestral'].includes(i.frequencia));
     const lancAtual=ls.find(l=>fora||l.competencia===mes);
     const apAtual=apontamentoMaisRecente(i.id,fora?null:mes,lancAtual??null,cks);
     const metaAtual=metas.find(m=>m.indicador_id===i.id&&m.competencia===mes)?.meta_mes??null;

@@ -53,7 +53,7 @@ export default function MatrizApontamentos() {
     return inds.map((i: any) => {
       const ck = cks.filter((c) => c.cadeira_id === i.cadeira_id);
       const sit = arv.m[String(i.nome).trim()]; const arvore = sit ? { valor: sit, data: arv.d } : null;
-      const fora=(comp:string)=>!!i.frequencia&&!previstoNoMes(i,comp);
+      const fora=(comp:string)=>!!i.frequencia&&(!previstoNoMes(i,comp)||['trimestral','semestral'].includes(i.frequencia));
       const realizado = (comp: string) => lancs.filter((x) => x.indicador_id === i.id && (fora(comp)?x.competencia<=comp:x.competencia===comp) && !x.sem_medicao).sort((a,z)=>z.competencia.localeCompare(a.competencia)||z.revisao-a.revisao)[0]?.valor ?? null;
       const lancDe = (comp: string) => lancs.filter((x) => x.indicador_id === i.id && (fora(comp)?x.competencia<=comp:x.competencia===comp)).sort((a,z)=>z.competencia.localeCompare(a.competencia)||z.revisao-a.revisao)[0] ?? null;
       const metaMes = (comp: string) => metas.find((x) => x.indicador_id === i.id && x.competencia === comp)?.meta_mes ?? null;
