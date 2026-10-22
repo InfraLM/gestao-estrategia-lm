@@ -209,7 +209,7 @@ export default function MetasLancamento() {
   const Linha = ({ i, nivel = 0 }: { i: Indicador; nivel?: number }) => {
     const kids = filhos(i.id);
     const m = metaDe(i.id, comp);
-    const d = rasc[i.id] ?? { valor: "", sem: false, comentario: "" };
+    const d: Rascunho = rasc[i.id] ?? { valor: "", sem: false, comentario: "", declaracao: null, justificativa: "", status_entrega: "", avanco: "", evidencia: "" };
     const c = calc(i); const tipo = tipoDe(i); const av = avalDe(i);
     const idxComp = MESES_2S26.indexOf(comp);
     const anteriores = MESES_2S26.slice(0, idxComp).map((mm) => ({ mm, l: lancDe(i.id, mm) }));
