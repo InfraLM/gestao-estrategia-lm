@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { calcularReferencias, dataDecisao, filtrarDecisoes, FORUNS, IMPACTOS, parseStatus, rotuloForum, TIPOS_FORUM, type Decisao, type FiltrosDecisoes } from "./contextoDecisoes";
+import DecisoesProjetos from "@/components/DecisoesProjetos";
 
 const CORES_STATUS = {
   premissa: "bg-warning-soft text-warning-foreground border-warning/40",
@@ -111,5 +112,6 @@ export default function ContextoDecisoes() {
         })}{(["cita", "citadaPor"] as const).map(tipo => <section key={tipo} className="py-5"><h3 className="mb-2 text-sm font-semibold text-muted-foreground">{tipo === "cita" ? "Cita" : "Citada por"}</h3><div className="flex flex-wrap gap-x-4 gap-y-2">{referencias.get(atual.codigo)?.[tipo].length ? referencias.get(atual.codigo)?.[tipo].map(ref => <Button key={ref} variant="link" className="h-auto p-0" onClick={() => setCodigo(ref)} aria-label={`Abrir decisão ${ref}`}>{ref}</Button>) : <span className="text-sm text-muted-foreground">—</span>}</div></section>)}</div>
       </div><div className="flex shrink-0 items-center justify-between gap-3 border-t bg-background px-6 py-4"><Button variant="outline" size="icon" title="Decisão anterior" aria-label="Decisão anterior" disabled={indice <= 0} onClick={() => { const d = filtradas[indice - 1]; if (d) setCodigo(d.codigo); }}><ArrowLeft className="h-4 w-4" /></Button><span className="text-sm text-muted-foreground">{indice >= 0 ? `${indice + 1} de ${filtradas.length}` : "Fora dos filtros atuais"}</span><Button variant="outline" size="icon" title="Próxima decisão" aria-label="Próxima decisão" disabled={indice < 0 || indice >= filtradas.length - 1} onClick={() => { const d = filtradas[indice + 1]; if (d) setCodigo(d.codigo); }}><ArrowRight className="h-4 w-4" /></Button></div></>}
     </SheetContent></Sheet>
+    <DecisoesProjetos />
   </div>;
 }

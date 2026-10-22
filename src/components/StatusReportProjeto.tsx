@@ -201,7 +201,9 @@ export function StatusReportTab({ lista }: { lista: StatusProjeto[] }) {
             <div key={r.id} className="py-2 flex flex-wrap items-center gap-3 text-sm">
               <span className="font-medium w-20">{compLabel(r.competencia)}</span>
               <Badge variant="outline">{r.saude ?? "—"}</Badge>
-              <span className="text-muted-foreground">Cronograma {r.pct_cronograma ?? "—"}% · Custo {brl(r.custo_realizado)}</span>
+              {(r as any).farol_escopo || (r as any).farol_custo || (r as any).farol_cronograma
+                ? <span className="text-muted-foreground">Escopo {(r as any).farol_escopo ?? "—"} · Custo {(r as any).farol_custo ?? "—"} · Cronograma {(r as any).farol_cronograma ?? "—"}{(r as any).comentario ? ` · ${(r as any).comentario}` : ""}</span>
+                : <span className="text-muted-foreground">Cronograma {r.pct_cronograma ?? "—"}% · Custo {brl(r.custo_realizado)}</span>}
               {r.arquivo_path && <Button size="sm" variant="ghost" className="ml-auto" onClick={() => baixar(r.arquivo_path!)}><Download className="h-4 w-4 mr-1" /> {r.arquivo_nome}</Button>}
             </div>
           ))}

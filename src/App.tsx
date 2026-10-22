@@ -8,6 +8,9 @@ import Dashboard from "./pages/Dashboard";
 import Submissao from "./pages/Submissao";
 import Portfolio from "./pages/Portfolio";
 import StatusReport from "./pages/StatusReport";
+import PmoResponsaveis from "./pages/PmoResponsaveis";
+import PmoFarol from "./pages/PmoFarol";
+import PmoVinculos from "./pages/PmoVinculos";
 import Gestao from "./pages/Gestao";
 import GestaoProjeto from "./pages/GestaoProjeto";
 import Melhorias from "./pages/Melhorias";
@@ -68,6 +71,9 @@ const App = () => (
               <Route path="/submissao" element={<Submissao />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/status-report" element={<StatusReport />} />
+              <Route path="/pmo/responsaveis" element={<PmoResponsaveis />} />
+              <Route path="/pmo/farol" element={<PmoFarol />} />
+              <Route path="/pmo/vinculos" element={<PmoVinculos />} />
               <Route path="/gestao" element={<Gestao />} />
               <Route path="/gestao/:id" element={<GestaoProjeto />} />
               <Route path="/melhorias" element={<Melhorias />} />

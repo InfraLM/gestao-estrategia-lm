@@ -11,6 +11,7 @@ import { useProjetosDB } from "@/hooks/useProjetosDB";
 import { useProcessosDB } from "@/hooks/useProcessosDB";
 import { useRiscosInstitucionaisDB } from "@/hooks/useRiscosInstitucionaisDB";
 import { objetivosBSC } from "@/data/mockData";
+import EmpilhadosVinculo from "@/components/EmpilhadosVinculo";
 
 const PERSPECTIVA_COLOR: Record<string, string> = {
   Financeira: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30 dark:text-emerald-300",
@@ -228,6 +229,12 @@ export default function ImpactoEstrategico() {
                   </CardContent>
                 </Card>
               )}
+
+              <Card>
+                <CardHeader className="pb-2"><CardTitle className="text-sm">Iniciativas da rotina e de Metas vinculadas a este objetivo e aos seus KPIs</CardTitle></CardHeader>
+                <CardContent><EmpilhadosVinculo objetivoCodigo={o.id} /></CardContent>
+              </Card>
+
 
               <Card>
                 <CardHeader className="pb-2 flex-row items-center justify-between gap-2 space-y-0">
