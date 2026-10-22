@@ -25,7 +25,8 @@ export function moduleForPath(path: string): AccessModule | null {
   if (path.startsWith("/socios")) return "socios";
   if (path.startsWith("/historico")) return "historico";
   if (path === "/metas/semanal" || path.startsWith("/semanal")) return "rotina";
-  if (path.startsWith("/metas")) return "metas";
+  if (path.startsWith("/metas") || path.startsWith("/lancamentos")) return "metas";
+  if (path.startsWith("/planejamento")) return "diagnostico";
   if (path.startsWith("/cesta-metas")) return "cesta";
   if (path.startsWith("/okrs")) return "okrs";
   if (["/matriz-processos", "/gestao-processos", "/dashboard-processos", "/status-report-processos"].some(p => path.startsWith(p))) return "bpmo";

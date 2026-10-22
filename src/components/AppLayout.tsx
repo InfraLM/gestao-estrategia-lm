@@ -28,6 +28,7 @@ const navGroups: NavGroup[] = [
       { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
       { to: "/impacto-estrategico", label: "Impacto Estratégico", icon: TrendingUp },
       { to: "/contexto-decisoes", label: "Contexto e decisões", icon: ScrollText },
+      { to: "/planejamento/revisoes", label: "Relatório e diagnóstico (revisões)", icon: FileCheck2 },
     ],
   },
   {
@@ -62,10 +63,8 @@ const navGroups: NavGroup[] = [
     children: [
       { to: "/okrs", label: "OKRs do Semestre", icon: Target },
       { to: "/cesta-metas", label: "Cesta de Metas", icon: UserCog },
-      { to: "/cesta-metas/insights", label: "Insights da Cesta", icon: ListChecks },
-      { to: "/metas/painel", label: "Metas 2S26 · Painel da Governança", icon: Settings2 },
-      { to: "/metas/lancamento", label: "Metas 2S26 · Lançamento mensal", icon: Settings2 },
-      { to: "/metas/cadastros", label: "Metas 2S26 · Cadastros", icon: Settings2 },
+      { to: "/lancamentos", label: "Lançamentos", icon: Settings2 },
+      { to: "/cesta-metas/insights", label: "Insights", icon: ListChecks },
     ],
   },
   {
@@ -108,7 +107,9 @@ const titles: Record<string, string> = {
   "/socios/insights": "Desejos dos Sócios 2027 · Insights sócios",
   "/estrutura-organizacional": "Estrutura organizacional",
   "/incentivos": "Sistemas de incentivo",
-  "/cesta-metas/insights": "Insights da Cesta",
+  "/cesta-metas/insights": "OKRs · Insights",
+  "/lancamentos": "OKRs · Lançamentos",
+  "/planejamento/revisoes": "Relatório de planejamento e diagnóstico · Revisões",
   "/": "Dashboard Estratégico",
   "/diagnostico": "Diagnóstico Estratégico LM",
   "/okrs": "OKRs · 2026/2",

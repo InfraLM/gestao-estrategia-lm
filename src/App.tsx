@@ -1,5 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, useSearchParams } from "react-router-dom";
+import { OkrsHub, CestaHub, LancamentosHub } from "./pages/Hubs";
+import PlanejamentoRevisoes from "./pages/PlanejamentoRevisoes";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,15 +20,10 @@ import MelhoriaContinua from "./pages/MelhoriaContinua";
 import MelhoriaDetalhe from "./pages/MelhoriaDetalhe";
 import PlaceholderDoc from "./pages/PlaceholderDoc";
 import HistoricoModulo from "./pages/HistoricoModulo";
-import MetasCadastros from "./pages/MetasCadastros";
-import MetasLancamento from "./pages/MetasLancamento";
-import MetasPainel from "./pages/MetasPainel";
 import MetasSemanal from "./pages/MetasSemanal";
 import SemanalVisao from "./pages/SemanalVisao";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
-import Okrs from "./pages/Okrs";
-import CestaMetas from "./pages/CestaMetas";
 import BacklogEstrategico from "./pages/BacklogEstrategico";
 import ImpactoEstrategico from "./pages/ImpactoEstrategico";
 import MatrizProcessos from "./pages/MatrizProcessos";
@@ -88,11 +85,13 @@ const App = () => (
               {/* Repositórios — apenas a versão vigente de cada documento */}
               <Route path="/diagnostico" element={<Diagnostico />} />
               <Route path="/estrategia" element={<Estrategia />} />
-              <Route path="/okrs" element={<Okrs />} />
-              <Route path="/cesta-metas" element={<CestaMetas />} />
-              <Route path="/metas/cadastros" element={<MetasCadastros />} />
-              <Route path="/metas/lancamento" element={<MetasLancamento />} />
-              <Route path="/metas/painel" element={<MetasPainel />} />
+              <Route path="/okrs" element={<OkrsHub />} />
+              <Route path="/cesta-metas" element={<CestaHub />} />
+              <Route path="/lancamentos" element={<LancamentosHub />} />
+              <Route path="/planejamento/revisoes" element={<PlanejamentoRevisoes />} />
+              <Route path="/metas/cadastros" element={<RedirCadastros />} />
+              <Route path="/metas/lancamento" element={<Navigate to="/lancamentos?aba=lancar" replace />} />
+              <Route path="/metas/painel" element={<Navigate to="/lancamentos?aba=painel" replace />} />
               <Route path="/metas/semanal" element={<MetasSemanal />} />
               <Route path="/semanal/visao" element={<SemanalVisao />} />
               <Route path="/backlog-estrategico" element={<BacklogEstrategico />} />
@@ -114,3 +113,11 @@ const App = () => (
 );
 
 export default App;
+
+/** Links antigos de Cadastros: ?aba=okrs|cesta|bsc|cadeiras|iniciativas vai para o novo lugar. */
+function RedirCadastros() {
+  const [sp] = useSearchParams();
+  const a = sp.get("aba");
+  const to = a === "cesta" ? "/cesta-metas?aba=cadastro" : a === "bsc" || a === "objetivos" ? "/estrategia?aba=cadastro-bsc" : a === "cadeiras" || a === "usuarios" ? "/estrutura-organizacional?aba=cadeiras" : a === "iniciativas" ? "/pmo/vinculos?aba=cadastro" : "/okrs?aba=cadastro";
+  return <Navigate to={to} replace />;
+}
