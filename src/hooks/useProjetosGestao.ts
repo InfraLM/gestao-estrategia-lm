@@ -6,6 +6,7 @@ const db = supabase as any;
 export type ProjetoG = {
   id: string; codigo: string; nome: string; status: string; diretor: string | null; cadeira_id: string | null;
   cadeira_confirmada_em: string | null; situacao_confirmada_em: string | null; objetivos: string[] | null; krs: string[] | null;
+  atualizacao_direta_em: string | null; atualizacao_direta_nome: string | null;
 };
 export type ProjVinc = { id: string; projeto_id: string; tipo: "bsc_objetivo" | "bsc_kpi" | "kr" | "cesta"; ref_id: string };
 export type StatusRep = {
@@ -23,7 +24,7 @@ export function useProjetosGestao() {
   const [loading, setLoading] = useState(true);
   const load = useCallback(async () => {
     const [p, a, v, r, d] = await Promise.all([
-      db.from("projetos").select("id,codigo,nome,status,diretor,cadeira_id,cadeira_confirmada_em,situacao_confirmada_em,objetivos,krs").order("codigo"),
+      db.from("projetos").select("id,codigo,nome,status,diretor,cadeira_id,cadeira_confirmada_em,situacao_confirmada_em,objetivos,krs,atualizacao_direta_em,atualizacao_direta_nome").order("codigo"),
       db.from("projeto_cadeiras_apoio").select("projeto_id,cadeira_id"),
       db.from("projeto_vinculos").select("id,projeto_id,tipo,ref_id"),
       db.from("mt_status_projetos").select("*").order("competencia", { ascending: false }),

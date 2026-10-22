@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { invitationId, invitationLink } from "@/lib/userInvitation";
+import { retornoStatus } from "@/lib/atualizacaoStatus";
 
 export default function Auth() {
   const { user, loading, signOut } = useAuth();
@@ -25,6 +26,7 @@ export default function Auth() {
   const [convite] = useState(() => invitationId(new URLSearchParams(window.location.search).get("convite")) ?? invitationId(sessionStorage.getItem("convite-pendente")));
   const [inviteError, setInviteError] = useState("");
   const [accepted, setAccepted] = useState(false);
+  const retorno = retornoStatus(new URLSearchParams(window.location.search).get("retorno"));
 
   useEffect(() => {
     if (!convite || !user) return;
@@ -40,7 +42,7 @@ export default function Auth() {
   }, [convite, user]);
 
 
-  if (!loading && user && (!convite || accepted)) return <Navigate to="/" replace />;
+  if (!loading && user && (!convite || accepted)) return <Navigate to={retorno} replace />;
   if (!loading && user && convite) return <div className="min-h-screen grid place-items-center p-6"><Card className="w-full max-w-md p-8 space-y-4 text-center"><h1 className="text-xl font-semibold">Convite Gestão e Estratégia</h1>{inviteError ? <><p className="text-destructive">{inviteError}</p><Button variant="outline" onClick={async () => { await signOut(); setInviteError(""); }}>Entrar com outra conta</Button></> : <><Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" /><p>Confirmando seu convite…</p></>}</Card></div>;
 
   const signIn = async (e: React.FormEvent) => {
@@ -50,7 +52,7 @@ export default function Auth() {
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Bem-vindo!");
-    if (!convite) nav("/");
+    if (!convite) nav(retorno);
   };
 
   const signUp = async (e: React.FormEvent) => {
@@ -70,7 +72,7 @@ export default function Auth() {
     try {
       if (convite) sessionStorage.setItem("convite-pendente", convite);
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: convite ? invitationLink(convite) : window.location.origin,
+        redirect_uri: convite ? invitationLink(convite) : `${window.location.origin}/auth${retorno !== "/" ? `?retorno=${encodeURIComponent(retorno)}` : ""}`,
       });
       if (result.error) toast.error(result.error.message);
     } catch { toast.error("Não foi possível entrar com Google. Tente novamente."); }

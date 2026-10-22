@@ -2618,6 +2618,44 @@ export type Database = {
         }
         Relationships: []
       }
+      pmo_atualizacoes_auditoria: {
+        Row: {
+          anterior: Json
+          created_at: string
+          id: string
+          novo: Json
+          projeto_id: string
+          usuario_id: string
+          usuario_nome: string | null
+        }
+        Insert: {
+          anterior: Json
+          created_at?: string
+          id?: string
+          novo: Json
+          projeto_id: string
+          usuario_id: string
+          usuario_nome?: string | null
+        }
+        Update: {
+          anterior?: Json
+          created_at?: string
+          id?: string
+          novo?: Json
+          projeto_id?: string
+          usuario_id?: string
+          usuario_nome?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pmo_atualizacoes_auditoria_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       proc_diretoria_cadeira: {
         Row: {
           cadeira_id: string | null
@@ -3226,6 +3264,11 @@ export type Database = {
       }
       projetos: {
         Row: {
+          atualizacao_comentario: string | null
+          atualizacao_direta_em: string | null
+          atualizacao_direta_nome: string | null
+          atualizacao_direta_por: string | null
+          avanco_pct: number | null
           avancos: string | null
           budget: number
           cadeira_confirmada_em: string | null
@@ -3262,6 +3305,11 @@ export type Database = {
           wave: Database["public"]["Enums"]["wave_enum"]
         }
         Insert: {
+          atualizacao_comentario?: string | null
+          atualizacao_direta_em?: string | null
+          atualizacao_direta_nome?: string | null
+          atualizacao_direta_por?: string | null
+          avanco_pct?: number | null
           avancos?: string | null
           budget?: number
           cadeira_confirmada_em?: string | null
@@ -3298,6 +3346,11 @@ export type Database = {
           wave?: Database["public"]["Enums"]["wave_enum"]
         }
         Update: {
+          atualizacao_comentario?: string | null
+          atualizacao_direta_em?: string | null
+          atualizacao_direta_nome?: string | null
+          atualizacao_direta_por?: string | null
+          avanco_pct?: number | null
           avancos?: string | null
           budget?: number
           cadeira_confirmada_em?: string | null
@@ -4022,6 +4075,8 @@ export type Database = {
       }
       mt_reabrir: { Args: { _comp: string }; Returns: undefined }
       planejamento_aprovar: { Args: { _id: string }; Returns: undefined }
+      pmo_atualizar_status: { Args: { _itens: Json }; Returns: number }
+      pmo_pode_atualizar: { Args: never; Returns: boolean }
       proj_eh_ceo: { Args: { _uid: string }; Returns: boolean }
       proj_gov_ou_ceo: { Args: { _uid: string }; Returns: boolean }
       proj_principal: {
