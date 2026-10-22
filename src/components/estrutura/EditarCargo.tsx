@@ -10,10 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { NIVEIS } from "@/pages/estruturaOrganizacional";
 import { descendentes, validarCargo } from "@/lib/organograma";
 
-export type CargoEdicao = { id?: string; nome: string; ocupante_nome: string | null; nivel: string | null; parent_id: string | null; ordem: number | null; ativo: boolean | null; observacoes?: string | null };
-export default function EditarCargo({ cargo, cargos, salvar, fechar, campos = [] }: {
+export type CargoEdicao = { id?: string; nome: string; ocupante_nome: string | null; nivel: string | null; parent_id: string | null; ordem: number | null; ativo: boolean | null; observacoes?: string | null; mt_cadeira_id?: string | null };
+export default function EditarCargo({ cargo, cargos, salvar, fechar, campos = [], cadeirasSemanal }: {
   cargo: CargoEdicao; cargos: CargoEdicao[]; salvar: (valor: CargoEdicao & Record<string, unknown>) => Promise<void>;
   fechar: () => void; campos?: { campo: string; titulo: string; valor: string | null }[];
+  /** Só para a Governança: liga o cargo à cadeira do formulário semanal (líderes diretos = cargos abaixo). */
+  cadeirasSemanal?: { id: string; nome: string }[];
 }) {
   const [valor, setValor] = useState<CargoEdicao & Record<string, unknown>>({ ...cargo, ...Object.fromEntries(campos.map(c => [c.campo, c.valor])) });
   const [erro, setErro] = useState("");
@@ -37,6 +39,7 @@ export default function EditarCargo({ cargo, cargos, salvar, fechar, campos = []
       <div className="grid gap-4 sm:grid-cols-2"><div className="space-y-1.5"><Label>Nível</Label><Select value={valor.nivel ?? "outro"} onValueChange={v => alterar("nivel", v)}><SelectTrigger aria-label="Nível do cargo"><SelectValue /></SelectTrigger><SelectContent>{Object.entries(NIVEIS).map(([v, t]) => <SelectItem key={v} value={v}>{v === "outro" ? "Operacional / outro" : t}</SelectItem>)}</SelectContent></Select></div>
         <div className="space-y-1.5"><Label htmlFor="cargo-ordem">Ordem</Label><Input id="cargo-ordem" type="number" step="1" value={valor.ordem ?? 0} onChange={e => alterar("ordem", Number(e.target.value))} /></div></div>
       <div className="space-y-1.5"><Label>Cadeira superior</Label><Select value={valor.parent_id ?? "raiz"} onValueChange={v => alterar("parent_id", v === "raiz" ? null : v)}><SelectTrigger aria-label="Cadeira superior"><SelectValue /></SelectTrigger><SelectContent><div className="p-2"><Input placeholder="Buscar cargo ou ocupante" aria-label="Buscar cadeira superior" value={busca} onChange={e => setBusca(e.target.value)} onKeyDown={e => e.stopPropagation()} /></div><SelectItem value="raiz">Sem superior</SelectItem>{cargos.filter(c => c.id && !bloqueados.has(c.id) && `${c.nome} ${c.ocupante_nome}`.toLocaleLowerCase().includes(busca.toLocaleLowerCase())).map(c => <SelectItem key={c.id} value={c.id ?? "raiz"}>{c.nome} {c.ocupante_nome ? `· ${c.ocupante_nome}` : ""}</SelectItem>)}</SelectContent></Select></div>
+      {cadeirasSemanal && <div className="space-y-1.5"><Label>Diretor da cadeira (formulário semanal)</Label><Select value={(valor.mt_cadeira_id as string | null) ?? "nenhuma"} onValueChange={v => alterar("mt_cadeira_id", v === "nenhuma" ? null : v)}><SelectTrigger aria-label="Cadeira do formulário semanal"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="nenhuma">Não é diretor de cadeira</SelectItem>{cadeirasSemanal.map(c => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent></Select><p className="text-xs text-muted-foreground">Os cargos logo abaixo deste aparecem como "Responsável pela entrega" no formulário semanal.</p></div>}
       <Label className="flex items-center gap-2"><Checkbox checked={valor.ativo === true} onCheckedChange={v => alterar("ativo", v === true)} />Ativo</Label>
       {campos.length ? campos.map(c => <div className="space-y-1.5" key={c.campo}><Label htmlFor={`edit-${c.campo}`}>{c.titulo}</Label><Textarea id={`edit-${c.campo}`} value={String(valor[c.campo] ?? "")} onChange={e => alterar(c.campo, e.target.value || null)} rows={3} /></div>) : <div className="space-y-1.5"><Label htmlFor="cargo-notas">Observações</Label><Textarea id="cargo-notas" value={valor.observacoes ?? ""} onChange={e => alterar("observacoes", e.target.value)} /></div>}
       {erro && <p role="alert" className="text-sm text-destructive">{erro}</p>}

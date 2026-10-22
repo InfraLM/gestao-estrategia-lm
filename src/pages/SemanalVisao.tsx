@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI } from "@/hooks/useMetasBase";
-import { segunda, prazoDe, SITUACAO_LBL, ENTREGA_LBL } from "./MetasSemanal";
-import { normalizarCheckout, riscoAberto, idadeSemanas, cicloPadrao, ciclosDisponiveis, semanaCheckout, periodoSemana, competenciaDaSemana } from "@/lib/rotinaSemanal";
+import { SITUACAO_LBL, ENTREGA_LBL } from "./MetasSemanal";
+import { normalizarCheckout, riscoAberto, idadeSemanas, cicloPadrao, ciclosDisponiveis, semanaCheckout, periodoSemana, competenciaDaSemana, seloCiclo, prazoCiclo } from "@/lib/rotinaSemanal";
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 
 const db = supabase as any;
@@ -29,18 +29,17 @@ export default function SemanalVisao() {
   const cads = b.cadeiras.filter((c) => c.ativo);
   const get = (c: string, t: string) => rows.find((r) => r.cadeira_id === c && r.tipo === t && r.semana === (t === "checkin" ? sem : semOut));
   const enviado = (r: any) => r?.status === "enviado";
-  const totIn = cads.filter((c) => enviado(get(c.id, "checkin"))).length;
-  const totOut = cads.filter((c) => enviado(get(c.id, "checkout"))).length;
+  const totCiclo = cads.filter((c) => seloCiclo(get(c.id, "checkin"), get(c.id, "checkout"), sem).estado === "enviado").length;
   const kpisNao = (r: any) => { const c = normalizarCheckout(r?.conteudo); return c.kpis_resposta.filter((k) => k.ok === false).map((k) => ({ ...k, ret: c.kpis_retrato?.find((x) => x.indicador_id === k.indicador_id) })); };
   const kpisFora = [
     ...rows.flatMap((r) => (r.tipo === "checkout" ? r.conteudo?.kpis ?? [] : [])).filter((k: any) => k.situacao && k.situacao !== "no_trilho"),
     ...rows.filter((r) => r.tipo === "checkout").flatMap(kpisNao),
   ];
 
-  const Sit = ({ r, tipo }: { r: any; tipo: string }) => {
-    const semReg = tipo === "checkin" ? sem : semOut;
-    if (enviado(r)) return <Badge className={new Date(r.conteudo?.primeiro_envio_em ?? r.enviado_em) > prazoDe(semReg, tipo) ? "bg-warning text-warning-foreground" : "bg-success text-success-foreground"}>Enviado</Badge>;
-    return <Badge variant={new Date() > prazoDe(semReg, tipo) ? "destructive" : "outline"}>{r ? "Rascunho" : "Pendente"}</Badge>;
+  const Selo = ({ c }: { c: string }) => {
+    const sc = seloCiclo(get(c, "checkin"), get(c, "checkout"), sem);
+    if (sc.estado === "enviado") return <Badge className={sc.atrasado ? "bg-warning text-warning-foreground" : "bg-success text-success-foreground"}>Enviado{sc.atrasado ? " · fora do prazo" : ""}</Badge>;
+    return <Badge variant={sc.atrasado ? "destructive" : "outline"}>{sc.estado === "parcial" ? "Parcial" : sc.estado === "rascunho" ? "Rascunho" : "Pendente"}</Badge>;
   };
 
   return (
@@ -49,7 +48,7 @@ export default function SemanalVisao() {
         <div>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Rotina semanal dos diretores</p>
           <h1 className="text-2xl font-bold">{periodoSemana(sem)}</h1>
-          <p className="text-sm text-muted-foreground">Check-in {totIn}/{cads.length} · Checkout {totOut}/{cads.length} · {kpisFora.length} KPI(s) em atenção ou fora do trilho</p>
+          <p className="text-sm text-muted-foreground">Ciclos enviados {totCiclo}/{cads.length} · prazo {prazoCiclo(sem).toLocaleString("pt-BR", { weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })} · {kpisFora.length} KPI(s) em atenção ou fora do trilho</p>
         </div>
         <div className="flex items-end gap-2">
           <div className="w-64 space-y-1"><Label>Ciclo</Label>
@@ -71,7 +70,7 @@ export default function SemanalVisao() {
             <Card key={c.id} className="p-4 space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div><h2 className="font-semibold">{c.nome}</h2><p className="text-xs text-muted-foreground">{c.diretor_nome ?? "Sem diretor"}</p></div>
-                <div className="flex gap-1 items-center text-xs">In <Sit r={ci} tipo="checkin" /> Out <Sit r={co} tipo="checkout" /></div>
+                <div className="flex gap-1 items-center text-xs">Ciclo <Selo c={c.id} /></div>
               </div>
               {pri.length === 0 ? <p className="text-sm text-muted-foreground">Sem prioridades registradas.</p> : (
                 <ul className="space-y-1 text-sm">
@@ -112,6 +111,7 @@ export default function SemanalVisao() {
                 <div className="space-y-1 text-sm"><p className="font-medium">BSC · {a.cont.on} on track · {a.cont.off} off track · {a.cont.acomp} em acompanhamento{a.cont.sem_meta ? ` · ${a.cont.sem_meta} sem meta` : ""}</p>
                   {a.off.map((i) => <p key={i.id} className="text-destructive text-xs">Off track: {i.nome}{i.origem ? ` (${i.origem})` : ""}</p>)}
                 </div>); })()}
+              {(() => { const n = normalizarCheckout(co?.conteudo).atas?.filter((a) => a.status === "entregue").length ?? 0; return n > 0 && enviado(co) ? <p className="text-xs text-muted-foreground">{n} pendência(s) de ata marcadas como entregues, aguardando baixa na Governança</p> : null; })()}
               {atrasadas > 0 && <p className="text-xs text-destructive">{atrasadas} iniciativa(s) atrasada(s)</p>}
             </Card>
           );

@@ -859,6 +859,7 @@ export type Database = {
           prazo: string | null
           precisa_escalar: boolean | null
           prioridade: string | null
+          responsavel_email: string | null
           responsavel_normalizado: string | null
           responsavel_origem: string | null
           reuniao_data: string | null
@@ -880,6 +881,7 @@ export type Database = {
           prazo?: string | null
           precisa_escalar?: boolean | null
           prioridade?: string | null
+          responsavel_email?: string | null
           responsavel_normalizado?: string | null
           responsavel_origem?: string | null
           reuniao_data?: string | null
@@ -901,6 +903,7 @@ export type Database = {
           prazo?: string | null
           precisa_escalar?: boolean | null
           prioridade?: string | null
+          responsavel_email?: string | null
           responsavel_normalizado?: string | null
           responsavel_origem?: string | null
           reuniao_data?: string | null
@@ -1319,6 +1322,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      mt_acao_vinculos: {
+        Row: {
+          created_at: string
+          id: string
+          iniciativa_id: string
+          principal: boolean
+          ref_id: string
+          tipo: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          iniciativa_id: string
+          principal?: boolean
+          ref_id: string
+          tipo: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          iniciativa_id?: string
+          principal?: boolean
+          ref_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_acao_vinculos_iniciativa_id_fkey"
+            columns: ["iniciativa_id"]
+            isOneToOne: false
+            referencedRelation: "mt_iniciativas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mt_auditoria: {
         Row: {
@@ -2229,6 +2267,7 @@ export type Database = {
           created_at: string
           fonte_celula: string | null
           id: string
+          mt_cadeira_id: string | null
           nivel: string
           nome: string
           observacoes: string | null
@@ -2243,6 +2282,7 @@ export type Database = {
           created_at?: string
           fonte_celula?: string | null
           id?: string
+          mt_cadeira_id?: string | null
           nivel?: string
           nome: string
           observacoes?: string | null
@@ -2257,6 +2297,7 @@ export type Database = {
           created_at?: string
           fonte_celula?: string | null
           id?: string
+          mt_cadeira_id?: string | null
           nivel?: string
           nome?: string
           observacoes?: string | null
@@ -2267,6 +2308,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "org_organograma_cargos_mt_cadeira_id_fkey"
+            columns: ["mt_cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "org_organograma_cargos_parent_id_fkey"
             columns: ["parent_id"]
@@ -3232,6 +3280,10 @@ export type Database = {
       rotina_retrato: {
         Args: { _cadeira: string; _comp: string }
         Returns: Json
+      }
+      rotina_vincular_iniciativa: {
+        Args: { _iniciativa: string; _vinculos: Json }
+        Returns: undefined
       }
       socios_eh_respondente: { Args: { _uid: string }; Returns: boolean }
       socios_enviar: { Args: never; Returns: undefined }

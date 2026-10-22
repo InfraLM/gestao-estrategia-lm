@@ -11,6 +11,7 @@ import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { moduleForPath } from "@/lib/moduleAccess";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useLembreteCiclo } from "@/hooks/useLembreteCiclo";
 
 type NavChild = { to: string; label: string; icon: any };
 type NavGroup = { id: string; label: string; icon: any; children: NavChild[] };
@@ -141,6 +142,7 @@ const titles: Record<string, string> = {
 
 export default function AppLayout() {
   const loc = useLocation();
+  const lembrete = useLembreteCiclo();
   const title = titles[loc.pathname] ?? "Gestão e Estratégia";
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<{ display_name?: string | null; cargo?: string | null; email?: string | null } | null>(null);
@@ -264,6 +266,7 @@ export default function AppLayout() {
                       >
                         <Icon className="h-4 w-4 shrink-0" />
                         <span>{label}</span>
+                        {to === "/metas/semanal" && lembrete.ativo && <span className="ml-auto rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground" aria-label="1 formulário pendente">1</span>}
                       </NavLink>
                     ))}
                   </div>
@@ -376,6 +379,7 @@ export default function AppLayout() {
         </header>
 
         <main className="flex-1 p-6 animate-fade-in">
+          {lembrete.ativo && loc.pathname !== "/metas/semanal" && <div role="status" className="mb-4 rounded border border-primary/40 bg-primary/5 p-3 text-sm">Formulário semanal do ciclo de {new Date(lembrete.ciclo + "T12:00").toLocaleDateString("pt-BR")} aberto — prazo segunda 23h59. <Link className="underline font-medium" to="/metas/semanal">Preencher agora</Link></div>}
           <Outlet />
         </main>
       </div>
