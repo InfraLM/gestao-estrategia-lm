@@ -15,21 +15,24 @@ import DesdobramentoObjetivo from "@/components/DesdobramentoObjetivo";
 import { useSearchParams } from "react-router-dom";
 import PmoVinculos from "./PmoVinculos";
 import { CadastroIniciativas } from "./Hubs";
+import IntegracaoProcessos from "@/components/IntegracaoProcessos";
 
 /** Impacto Estratégico: objetivos com drill-down, visão por vínculo e cadastro de iniciativas. */
 export default function ImpactoEstrategico() {
   const [sp, setSp] = useSearchParams();
-  const aba = ["vinculos", "cadastro"].includes(sp.get("aba") ?? "") ? sp.get("aba")! : "objetivos";
+  const aba = ["vinculos", "cadastro", "processos"].includes(sp.get("aba") ?? "") ? sp.get("aba")! : "objetivos";
   return (
     <Tabs value={aba} onValueChange={(v) => { const n = new URLSearchParams(sp); if (v === "objetivos") n.delete("aba"); else n.set("aba", v); setSp(n, { replace: true }); }} className="space-y-4">
       <TabsList>
         <TabsTrigger value="objetivos">Objetivos</TabsTrigger>
         <TabsTrigger value="vinculos">Por vínculo</TabsTrigger>
         <TabsTrigger value="cadastro">Cadastro de iniciativas</TabsTrigger>
+        <TabsTrigger value="processos">Integração processos</TabsTrigger>
       </TabsList>
       <TabsContent value="objetivos"><ImpactoObjetivos /></TabsContent>
       <TabsContent value="vinculos"><PmoVinculos /></TabsContent>
       <TabsContent value="cadastro"><CadastroIniciativas /></TabsContent>
+      <TabsContent value="processos"><IntegracaoProcessos /></TabsContent>
     </Tabs>
   );
 }
