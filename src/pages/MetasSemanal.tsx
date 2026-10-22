@@ -34,6 +34,7 @@ import StatusReportCiclo, { ResumoSR } from "@/components/StatusReportCiclo";
 import { ultimoCicloDoMes } from "@/lib/projetosGestao";
 import EntregasExtras from '@/components/EntregasExtras';
 import { semanaLink } from '@/lib/avisosCiclo';
+import { INICIO_FREQUENCIA, periodoApontamento, resumoFrequencia } from '@/lib/frequenciaApontamento';
 
 const db = supabase as any;
 export type Prioridade = PrioridadeV2;
@@ -78,6 +79,8 @@ export default function MetasSemanal() {
   const [riscos, setRiscos] = useState<any[]>([]);
   const [contatos, setContatos] = useState<any[]>([]);
   const [projetos, setProjetos] = useState<ProjetoLite[]>([]);
+  const [todosKpis, setTodosKpis] = useState<KpiRetrato[]>([]);
+  const [desvioEscolha, setDesvioEscolha] = useState(false);
   const [lideres, setLideres] = useState<{ id: string; nome: string; ocupante_nome: string | null }[]>([]);
   const [salvo, setSalvo] = useState<Salvo>({ estado: "ocioso" });
   const [enviando, setEnviando] = useState(false);
@@ -137,8 +140,19 @@ export default function MetasSemanal() {
     if (!cout.atas?.length) cout.atas = atasAnteriores(data ?? [], semOut);
     // Números ao vivo até o primeiro envio; depois ficam os gravados no envio.
     if (!cout.primeiro_envio_em) {
-      const { data: base } = await db.rpc("rotina_retrato", { _cadeira: cad, _comp: competencia ?? comp });
-      cout.kpis_retrato = montarRetrato(base ?? [], competencia, reg?.valor?.faixas);
+      if (sem >= INICIO_FREQUENCIA) {
+        const [devidos, todos] = await Promise.all([db.rpc('rotina_retrato_ciclo', {_cadeira:cad,_ciclo:sem}),db.rpc('rotina_retrato_ciclo', {_cadeira:cad,_ciclo:sem,_incluir_fora:true})]);
+        if(devidos.error || todos.error) { toast.error('Não foi possível carregar o calendário dos KPIs'); return; }
+        const montar = (base:any[]) => montarRetrato(base.map(k=>({...k,periodo_label:periodoApontamento(k,sem,k.desvio_critico).label})), competencia,reg?.valor?.faixas);
+        setTodosKpis(montar(todos.data??[]));
+        const extras=(cout.kpis_retrato??[]).filter(k=>cout.kpis_resposta.some(r=>r.indicador_id===k.indicador_id&&r.desvio_critico));
+        const atuais=montar(devidos.data??[]);
+        cout.kpis_retrato=[...atuais,...extras.filter(k=>!atuais.some(a=>a.indicador_id===k.indicador_id))];
+      } else {
+        const { data: base } = await db.rpc("rotina_retrato", { _cadeira: cad, _comp: competencia ?? comp });
+        cout.kpis_retrato = montarRetrato(base ?? [], competencia, reg?.valor?.faixas);
+        setTodosKpis([]);
+      }
     }
     setCiRaw(cin); ciRef.current = cin; setCoRaw(cout); coRef.current = cout;
     if (lin) sujo.current.checkin = true;
@@ -243,7 +257,7 @@ export default function MetasSemanal() {
           resp.push({ ...k, iniciativa_criada_id: data });
         } else resp.push(k);
       }
-      out.kpis_resposta = resp;
+      out.kpis_resposta = resp.map(k=>({...k,periodo_apontado:out.kpis_retrato?.find((r:KpiRetrato)=>r.indicador_id===k.indicador_id)?.competencia}));
       for (const e of out.entregas as EntregaV2[]) {
         if (e.iniciativa_id && e.novo_status_ini) await db.from("mt_iniciativas").update({ status: e.novo_status_ini }).eq("id", e.iniciativa_id);
       }
@@ -394,11 +408,13 @@ export default function MetasSemanal() {
           <Card className="p-4 space-y-3" id="bloco-kpis">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold">1. Seus KPIs estão performando dentro do esperado?</h2>
+              {podeEditar && sem>=INICIO_FREQUENCIA && !co.primeiro_envio_em && <Button size="sm" variant="outline" onClick={()=>setDesvioEscolha(!desvioEscolha)}><Plus className="h-4 w-4 mr-1"/>Desvio crítico</Button>}
               {podeEditar && noAlvo.length > 0 && <Button size="sm" variant="outline" onClick={() => setCo({ ...co, kpis_resposta: confirmarNoAlvo(retrato, co.kpis_resposta, sem) })}>Confirmar Sim nos {noAlvo.length} no alvo</Button>}
             </div>
             <p className="text-xs text-muted-foreground">Resposta opcional. {co.primeiro_envio_em ? `Números gravados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}` : "Números ao vivo até o envio"}{competencia ? ` · competência ${competencia.slice(5)}/${competencia.slice(0, 4)}` : " · semana sem competência mensal"}. Não altera o lançamento mensal.</p>
             <p className="text-sm rounded bg-muted p-2">Cada KPI pede um apontamento conforme o tipo: <b>valor mensal</b> (On/Off calculado após o fim do mês), <b>meta semestral/anual</b> (você declara On/Off no mês; justificativa se Off) ou <b>entrega</b> (status de implantação × prazo).</p>
-            {retrato.length === 0 && <p className="text-sm text-muted-foreground">Nenhum KPI sob responsabilidade desta cadeira.</p>}
+            {desvioEscolha && <Select onValueChange={id=>{const k=todosKpis.find(k=>k.indicador_id===id);if(!k)return;setCo({...co,kpis_retrato:[...retrato,{...k,desvio_critico:true}],kpis_resposta:[...co.kpis_resposta.filter(r=>r.indicador_id!==id),{...respostaVazia(id,sem),desvio_critico:true,ok:false}]});setDesvioEscolha(false);}}><SelectTrigger aria-label="KPI fora do calendário"><SelectValue placeholder="Adicionar KPI próprio fora do calendário"/></SelectTrigger><SelectContent>{todosKpis.filter(k=>!retrato.some(r=>r.indicador_id===k.indicador_id)).map(k=><SelectItem key={k.indicador_id} value={k.indicador_id}>{k.codigo} · {k.nome}</SelectItem>)}</SelectContent></Select>}
+            {retrato.length === 0 && <p className="text-sm text-muted-foreground">{sem>=INICIO_FREQUENCIA?'Nenhum KPI devido neste ciclo.':'Nenhum KPI sob responsabilidade desta cadeira.'}</p>}
             <div className="grid gap-3 lg:grid-cols-2">
               {retrato.map((k) => {
                 const r = resp(k.indicador_id); const cand = reaproveitaveis[k.indicador_id] ?? [];
@@ -413,6 +429,8 @@ export default function MetasSemanal() {
                   <div key={k.indicador_id} className="rounded border p-3 space-y-2">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div><p className="font-medium text-sm">{k.codigo} · {k.nome}</p>
+                        {k.frequencia&&<p className="text-xs text-muted-foreground">{resumoFrequencia(k)} · Período: {k.periodo_label??k.competencia}{k.tratamento?` · ${k.tratamento}`:''}</p>}
+                        {k.desvio_critico&&<Badge variant="destructive">Desvio crítico · cobrança mensal</Badge>}
                         <p className="text-xs text-muted-foreground">Última situação atual apontada: {ult ? <><b className="text-foreground">{ult.valor}</b> · {ult.fonte}{ult.data && ult.fonte === "Árvore de KPIs" ? ` · ${new Date(ult.data).toLocaleDateString("pt-BR")}` : ult.fonte === "Árvore de KPIs" ? " · Rev.02" : ""}</> : "—"}</p></div>
                       <div className="flex gap-1"><Badge variant="outline">{ORIGEM_LBL[k.origem]}</Badge><Badge variant="secondary">{TIPO_LBL[tipo]}</Badge>{aval && <Badge variant={aval === "off" ? "destructive" : aval === "on" ? "default" : "outline"}>{AVALIACAO_LBL[aval]}</Badge>}</div>
                     </div>
@@ -423,6 +441,7 @@ export default function MetasSemanal() {
                       <div><p className="text-muted-foreground">Valor apontado no mês</p><p>{tipo === "entrega" ? "—" : fmtNum(k.realizado)}</p></div>
                       <div><p className="text-muted-foreground">Avaliação</p><p>{AVALIACAO_LBL[aval]}{avR.origem && <span className="block text-muted-foreground">{avR.origem}</span>}{tipo === "valor_mensal" && k.origem !== "bsc" && !semMeta && k.atingimento != null && <span className="block text-muted-foreground">atingimento {pct(k.atingimento)}</span>}</p></div></div>
                     {tipo !== "entrega" && <Input placeholder={tipo === "valor_mensal" ? "Valor apontado — situação atual (número)" : "Valor apontado — situação atual (opcional)"} maxLength={200} value={r.situacao_atual ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { situacao_atual: e.target.value })} />}
+                    {r.desvio_critico&&<div id={`kpi-${k.indicador_id}-desvio`} className="space-y-2"><Label>Desvio crítico · valor, causa, impacto e ação obrigatórios</Label>{tipo==='entrega'&&<Input aria-label="Valor do desvio" value={r.situacao_atual??''} onChange={e=>setResp(k.indicador_id,{situacao_atual:e.target.value})} disabled={!podeEditar}/>}<Textarea aria-label="Causa do desvio" placeholder="Causa" value={r.causa??''} onChange={e=>setResp(k.indicador_id,{causa:e.target.value})} disabled={!podeEditar}/><Textarea aria-label="Impacto do desvio" placeholder="Impacto" value={r.impacto} onChange={e=>setResp(k.indicador_id,{impacto:e.target.value})} disabled={!podeEditar}/><Textarea aria-label="Ação do desvio" placeholder="Ação" value={r.plano} onChange={e=>setResp(k.indicador_id,{plano:e.target.value})} disabled={!podeEditar}/></div>}
                     {tipo === "valor_periodo" && <div className="space-y-2 rounded bg-muted/40 p-2">
                       <p className="text-xs font-medium">Declaração do diretor para o mês</p>
                       <div className="flex gap-2">

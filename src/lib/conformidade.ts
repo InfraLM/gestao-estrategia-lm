@@ -17,7 +17,8 @@ export function calcularCompletude(co: CheckoutV2, ci: CheckinV2, sr: { total: n
   for (const k of co.kpis_retrato ?? []) {
     const r = co.kpis_resposta.find((x) => x.indicador_id === k.indicador_id);
     const tipo = k.tipo_apontamento ?? "valor_mensal";
-    if (tipo === "entrega") conta(!!r?.status_entrega, `${k.codigo}: status de entrega`);
+    if (r?.desvio_critico) conta(!!r.situacao_atual?.trim()&&!!r.causa?.trim()&&!!r.impacto?.trim()&&!!r.plano?.trim(),`${k.codigo}: desvio crítico`);
+    else if (tipo === "entrega") conta(!!r?.status_entrega, `${k.codigo}: status de entrega`);
     else if (tipo === "valor_periodo") conta(!!r?.declaracao && (r.declaracao === "on" || !!r.justificativa?.trim()), `${k.codigo}: declaração On/Off`);
     else conta(!!r?.situacao_atual?.trim() || k.realizado != null, `${k.codigo}: valor apontado`);
   }
