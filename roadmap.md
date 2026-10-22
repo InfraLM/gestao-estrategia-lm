@@ -1,4 +1,5 @@
 # Pedidos da Naira · 22/10
+- [ ] Checkout: retirar aprendizados/foco, estruturar extras e cadastro de motivos, atualizar leitura/IA/resumo e testar formulário.
 - [x] Revisões documentais: baseline Rev.01 preservada e v2 com 19 itens pendentes; aprovação/publicação auditada, conteúdo versionável, histórico/CSV/filtros; 301 testes e conferência com Naira no computador/celular, sem aprovar/publicar reais.
 - [x] Vínculos automáticos do portfólio/iniciativas: propostas, edição/validação auditada, geração limitada e novos cadastros; 273 testes, prévia/seleção com Naira e celular; sem gerar/validar reais. Novos cadastros aguardam sessão do criador para processar.
 - [x] PROC_EXPORT_URL salvo; integração mantida desligada e orientações preparadas
