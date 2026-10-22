@@ -201,7 +201,7 @@ export default function MetasPainel() {
             </tbody>
           </table>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">Ciclo de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}: checkout da semana de {new Date(semOut + "T12:00").toLocaleDateString("pt-BR")} e check-in da semana de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}. Não há nota mensal: cada indicador tem sua avaliação pelo tipo de apontamento (valor mensal, meta semestral/anual declarada ou entrega). Conformidade = ciclos enviados no prazo e completos ÷ ciclos devidos, desde o checkout de 19/10/2026. Use "ver checkout/check-in" para o conteúdo. Envio único do ciclo; prazo segunda 23h59 (São Paulo).</p>
+        <p className="mt-2 text-xs text-muted-foreground">Ciclo de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}: checkout da semana de {new Date(semOut + "T12:00").toLocaleDateString("pt-BR")} e check-in da semana de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}. Não há nota mensal: cada indicador tem sua avaliação pelo tipo de apontamento (valor mensal, meta semestral/anual declarada ou entrega). Conformidade = ciclos enviados no prazo com 90% ou mais de completude ÷ ciclos devidos, desde o ciclo de 26/10/2026. Use "ver checkout/check-in" para o conteúdo. Envio único do ciclo; prazo segunda 23h59 (São Paulo).</p>
         <p className="text-xs"><Link className="underline" to="/metas/semanal">Abrir formulário semanal</Link></p>
         <Button asChild variant="link" className="px-0"><Link to="/lancamentos?aba=lancar">Abrir formulário mensal</Link></Button>
       </Card>

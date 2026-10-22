@@ -190,6 +190,13 @@
       "when": 1792660101979,
       "tag": "0026_reabrir_copia_apontamentos",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1792661512566,
+      "tag": "0027_conformidade_visivel_diretores",
+      "breakpoints": true
     }
   ]
 }
