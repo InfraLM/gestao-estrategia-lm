@@ -7,7 +7,7 @@ import EmpilhadosVinculo from "@/components/EmpilhadosVinculo";
 import { cn } from "@/lib/utils";
 
 /** Bloco "Iniciativas e projetos vinculados" para cada KR (origem kr) ou item da cesta (origem cesta). */
-export default function VinculadosPorIndicador({ origem, titulo }: { origem: "kr" | "cesta"; titulo: string }) {
+export default function VinculadosPorIndicador({ origem, titulo }: { origem: "okr" | "cesta"; titulo: string }) {
   const [itens, setItens] = useState<any[]>([]);
   const [cads, setCads] = useState<Record<string, string>>({});
   const [aberto, setAberto] = useState<string | null>(null);
