@@ -63,3 +63,9 @@
 ## Rotina semanal — pendências (aguardando decisão/confirmação)
 - Vincular diretores às cadeiras: COO (Yuri Garcia), Institucional (Cleto), CMO (Iuri Franco, convite pendente); sem conta: CFO (Bruno), CRO (Guilherme), Comercial (Felipe).
 - BHAG "Salvar vidas"; exibição a/b do C.02-a.04; Vendas ACLS em SP (mantido); corresponsável (não fazer).
+
+## Tipo de apontamento + conformidade (out/2026)
+- [x] Tipo por indicador gravado (39 V, 35 S, 5 E), prazos das entregas, selo de medição no cadastro
+- [x] Regra única por tipo no checkout, Lançar mês, matriz, painel e relatório de IA; nota e régua fora das telas
+- [x] Taxa de conformidade (painel, visão semanal, cartão do diretor, IA)
+- [ ] Confirmar regras provisórias da conformidade com a Naira: quem vê outras cadeiras, tolerância de completude, status report sem anexo, início da contagem
