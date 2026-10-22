@@ -1,4 +1,5 @@
 # Pedidos da Naira · 22/10
+- [ ] Sugestões de vínculo: fila privada, geração manual em lotes, revisão/aprovação em massa, auditoria e testes sem geração real
 - [x] Etapa 0 · Yuri Ribeiro → Yuri Garcia (30 projetos + textos fixos)
 - [x] Etapa 1 · Vinculados em KR/Cesta; status reports pendentes no Painel; AGENTS.md por pasta
 - [x] Etapa 2 · Espaço OKRs com 4 listas e redirecionamentos
