@@ -10,7 +10,7 @@ describe("Avisos em banco isolado", () => {
     pg = new PGlite();
     await pg.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role; CREATE SCHEMA auth; CREATE SCHEMA cron;
     CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$SELECT '${uid}'::uuid$$;
-    CREATE FUNCTION auth.role() RETURNS text LANGUAGE sql AS $$SELECT 'authenticated'::text$$;
+    CREATE FUNCTION auth.role() RETURNS text LANGUAGE sql AS $$SELECT coalesce(nullif(current_setting('request.jwt.claims',true),'')::jsonb->>'role','authenticated')$$;
     CREATE FUNCTION mt_is_governanca(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT true$$;
     CREATE FUNCTION acesso_modulo(uuid,text,boolean) RETURNS boolean LANGUAGE sql AS $$SELECT true$$;
     CREATE TABLE cron.job(jobid bigint,jobname text,schedule text);
@@ -31,6 +31,7 @@ describe("Avisos em banco isolado", () => {
     INSERT INTO mt_cadeiras VALUES('${chair}','CPPO','${uid}','Naira',true),('00000000-0000-4000-8000-000000000011','CFO',NULL,'Bruno',true);
     INSERT INTO profiles VALUES('${uid}','naira@example.test','Naira'); INSERT INTO mt_usuarios VALUES('${uid}','${chair}');`);
     await pg.exec(readFileSync("drizzle/migrations/0041_rotina_avisos_email_preparacao.sql", "utf8"));
+    await pg.exec(readFileSync("drizzle/migrations/0042_rotina_avisos_contexto_agendamento.sql", "utf8"));
   });
   afterEach(async () => { await pg.close(); });
   it("começa desligado e bloqueia ativação sem domínio/conexão", async () => {
@@ -82,5 +83,11 @@ describe("Avisos em banco isolado", () => {
     await expect(pg.query("select rotina_avisos_destinatarios('2026-10-26')")).rejects.toThrow("Sem permissão");
     await expect(pg.query("select rotina_avisos_salvar(false,5,'08:00',1,'14:00')")).rejects.toThrow("Sem permissão");
     await expect(pg.query("select rotina_avisos_preparar('2026-10-26','manual')")).rejects.toThrow("Sem permissão");
+  });
+  it("agendamento privado funciona sem sessão e restaura o contexto", async () => {
+    await pg.exec("INSERT INTO rotina_avisos_config(id,ativo,remetente_pronto) VALUES(true,true,true); CREATE OR REPLACE FUNCTION mt_is_governanca(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT false$$");
+    await pg.query("select rotina_avisos_agendar('abertura')");
+    expect((await pg.query("select * from rotina_avisos_envios")).rows).toHaveLength(1);
+    expect((await pg.query<any>("select auth.role() as role")).rows[0].role).toBe("authenticated");
   });
 });
