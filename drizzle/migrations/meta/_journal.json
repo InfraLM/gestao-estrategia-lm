@@ -169,6 +169,20 @@
       "when": 1792657896689,
       "tag": "0023_situacoes_kpi_com_alerta",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1792659835717,
+      "tag": "0024_tipo_apontamento_indicadores",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1792659926258,
+      "tag": "0025_retrato_com_tipo_apontamento",
+      "breakpoints": true
     }
   ]
 }

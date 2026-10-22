@@ -1,7 +1,7 @@
 /** Avaliação dos KPIs de BSC (fora da nota): On track / Off track só depois do fim do mês ou do período da meta. Calculada na leitura, nunca gravada. */
 export type MetaLida = { tipo: "valor"; v: number; sentido?: "maior" | "menor" } | { tipo: "faixa"; min: number; max: number };
-export type Avaliacao = "on" | "off" | "acomp" | "sem_meta";
-export const AVALIACAO_LBL: Record<Avaliacao, string> = { on: "On track", off: "Off track", acomp: "Em acompanhamento", sem_meta: "Sem meta registrada" };
+export type Avaliacao = "on" | "off" | "acomp" | "sem_meta" | "pendente" | "encerrada";
+export const AVALIACAO_LBL: Record<Avaliacao, string> = { on: "On track", off: "Off track", acomp: "Em acompanhamento", sem_meta: "Sem meta registrada", pendente: "Pendente de apontamento", encerrada: "Encerrada" };
 export const FIM_PERIODO = "2026-12-31";
 
 export function numeroBr(s: string): number | null {
@@ -57,7 +57,8 @@ export function avaliarBsc(e: EntradaBsc, hoje = new Date()): Avaliacao {
 }
 
 export function contarAvaliacoes(lista: Avaliacao[]) {
-  return { on: lista.filter((x) => x === "on").length, off: lista.filter((x) => x === "off").length, acomp: lista.filter((x) => x === "acomp").length, sem_meta: lista.filter((x) => x === "sem_meta").length };
+  const n = (a: Avaliacao) => lista.filter((x) => x === a).length;
+  return { on: n("on"), off: n("off"), acomp: n("acomp"), sem_meta: n("sem_meta"), pendente: n("pendente"), encerrada: n("encerrada") };
 }
 
 // ---- Regra única (formulário de checkout, Painel de Metas e Visão semanal) ----
@@ -95,4 +96,60 @@ export function mapaArvore(valor: any[]): Record<string, string> {
   const m: Record<string, string> = {};
   for (const o of valor ?? []) for (const k of o.kpis ?? []) if (k.situacaoAtual) m[String(k.kpi).trim()] = k.situacaoAtual;
   return m;
+}
+
+// ---- Tipo de apontamento (V = valor mensal, S = meta do período, E = entrega) ----
+export type TipoApontamento = "valor_mensal" | "valor_periodo" | "entrega";
+export const TIPO_LBL: Record<TipoApontamento, string> = { valor_mensal: "Valor mensal", valor_periodo: "Meta semestral/anual", entrega: "Entrega" };
+export type StatusEntrega = "nao_iniciada" | "em_implantacao" | "implantada" | "atrasada" | "cancelada";
+export const STATUS_ENTREGA_LBL: Record<StatusEntrega, string> = { nao_iniciada: "Não iniciada", em_implantacao: "Em implantação", implantada: "Implantada", atrasada: "Atrasada", cancelada: "Cancelada" };
+export type Fonte = "calculado" | "declarado" | "entrega";
+export type Apontamento = { declaracao?: "on" | "off" | null; justificativa?: string | null; status_entrega?: StatusEntrega | null; avanco_pct?: number | null; data: string; origem: string };
+
+/** Apontamento mais recente (declaração ou status) entre o lançamento do mês e os checkouts ENVIADOS da competência. */
+export function apontamentoMaisRecente(indicador_id: string, competencia: string | null,
+  lanc: { declaracao?: string | null; justificativa?: string | null; status_entrega?: string | null; avanco_pct?: number | null; updated_at?: string | null } | null,
+  checkouts: CheckoutReg[]): Apontamento | null {
+  const cand: Apontamento[] = [];
+  if (lanc && (lanc.declaracao || lanc.status_entrega)) cand.push({ declaracao: (lanc.declaracao as any) ?? null, justificativa: lanc.justificativa ?? null, status_entrega: (lanc.status_entrega as any) ?? null, avanco_pct: lanc.avanco_pct ?? null, data: lanc.updated_at ?? "", origem: "Lançar mês" });
+  for (const r of checkouts) {
+    if (r.status !== "enviado" || (competencia && competenciaDaSemana(r.semana) !== competencia)) continue;
+    const k = (r.conteudo?.kpis_resposta ?? []).find((x: any) => x.indicador_id === indicador_id && (x.declaracao || x.status_entrega));
+    if (k) cand.push({ declaracao: k.declaracao ?? null, justificativa: k.justificativa ?? null, status_entrega: k.status_entrega ?? null, avanco_pct: k.avanco_pct != null && k.avanco_pct !== "" ? Number(k.avanco_pct) : null, data: r.enviado_em ?? r.semana, origem: `checkout de ${dmBr(r.semana)}` });
+  }
+  return cand.sort((a, b) => b.data.localeCompare(a.data))[0] ?? null;
+}
+
+/** Farol de entrega (regra simples): Implantada = On; Cancelada = Encerrada; Atrasada ou prazo vencido sem Implantada = Off; no prazo = acompanhamento. */
+export function farolEntrega(status: StatusEntrega | null | undefined, prazo: string | null, hoje = new Date()): Avaliacao {
+  if (status === "cancelada") return "encerrada";
+  if (status === "implantada") return "on";
+  if (status === "atrasada") return "off";
+  if (prazo && hojeIso(hoje) > prazo) return "off";
+  return status ? "acomp" : "pendente";
+}
+
+export type EntradaTipo = EntradaKpiBsc & { tipo?: TipoApontamento | null; prazo_entrega?: string | null; apontamento?: Apontamento | null };
+export type ResultadoTipo = { aval: Avaliacao; origem: string | null; fonte: Fonte };
+
+/** Regra única por tipo. V: automático após o fim do mês. S: declaração do diretor no mês; automático só no fim do período. E: status × prazo. */
+export function avaliarPorTipo(e: EntradaTipo, arvore: ArvoreSit, checkouts: CheckoutReg[], hoje = new Date()): ResultadoTipo {
+  const tipo = e.tipo ?? "valor_mensal";
+  const h = hojeIso(hoje);
+  const mesFechado = !!e.competencia && h > fimDoMes(e.competencia);
+  const ap = e.apontamento ?? null;
+  if (tipo === "entrega") {
+    const aval = farolEntrega(ap?.status_entrega ?? null, e.prazo_entrega ?? null, hoje);
+    return { aval: aval === "pendente" && !mesFechado ? "acomp" : aval, origem: ap?.status_entrega ? `status de entrega · ${ap.origem}` : null, fonte: "entrega" };
+  }
+  if (tipo === "valor_periodo") {
+    if (h > FIM_PERIODO) {
+      const r = avaliarKpiBsc({ ...e, meta_mes: null }, arvore, checkouts, hoje);
+      return { ...r, aval: r.aval === "acomp" ? "pendente" : r.aval, fonte: "calculado" };
+    }
+    if (ap?.declaracao) return { aval: ap.declaracao, origem: `declarado pelo diretor · ${ap.origem}`, fonte: "declarado" };
+    return { aval: mesFechado ? "pendente" : "acomp", origem: null, fonte: "declarado" };
+  }
+  const r = avaliarKpiBsc(e, arvore, checkouts, hoje);
+  return { ...r, aval: r.aval === "acomp" && mesFechado ? "pendente" : r.aval, fonte: "calculado" };
 }
