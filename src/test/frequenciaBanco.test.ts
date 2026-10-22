@@ -22,6 +22,7 @@ describe('Frequência e desvios em banco isolado',()=>{
  INSERT INTO mt_indicadores(id,codigo,nome,cadeira_id,origem,sentido,tipo_apontamento,meta_semestre,status,nivel) VALUES('${k}','K1','KPI','${c}','bsc','maior','valor_mensal',10,'ativo','Tático');`);
  await pg.exec(readFileSync('drizzle/migrations/0043_frequencia_kpi_calendario_desvios.sql','utf8'));
  await pg.exec(readFileSync('drizzle/migrations/0045_frequencia_leituras_validacao.sql','utf8'));
+ await pg.exec(readFileSync('drizzle/migrations/0046_frequencia_autorizacao_null_segura.sql','utf8'));
  });
  afterEach(async()=>{await pg.close();});
  const freq=()=>pg.query("select mt_frequencia_salvar($1::uuid,$2::jsonb)",[k,JSON.stringify({frequencia:'trimestral',mes_ciclo:2,semana_mes:3})]);

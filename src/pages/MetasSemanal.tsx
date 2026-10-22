@@ -423,7 +423,7 @@ export default function MetasSemanal() {
                 const tipo = k.tipo_apontamento ?? "valor_mensal";
                 const cks = hist.filter((h) => h.tipo === "checkout");
                 const avR = avaliarPorTipo({ indicador_id: k.indicador_id, sentido: k.sentido ?? "maior", competencia: k.competencia, meta_mes: tipo === "valor_mensal" ? k.meta_mes : null, meta_semestre: k.meta_semestre ?? null, meta_texto: k.meta_texto ?? null, realizado: k.realizado,
-                  tipo, prazo_entrega: k.prazo_entrega ?? null, apontamento: apontamentoMaisRecente(k.indicador_id, k.competencia, null, cks) }, arvore.mapa[k.nome.trim()] ? { valor: arvore.mapa[k.nome.trim()], data: arvore.data } : null, cks);
+                  fora_calendario:false, tipo, prazo_entrega: k.prazo_entrega ?? null, apontamento: apontamentoMaisRecente(k.indicador_id, k.competencia, null, cks) }, arvore.mapa[k.nome.trim()] ? { valor: arvore.mapa[k.nome.trim()], data: arvore.data } : null, cks);
                 const aval = avR.aval;
                 return (
                   <div key={k.indicador_id} className="rounded border p-3 space-y-2">

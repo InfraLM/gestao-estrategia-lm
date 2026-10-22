@@ -72,7 +72,7 @@ const dmBr = (iso: string) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
 /** Última situação atual NUMÉRICA: checkout ENVIADO (até a competência) ou árvore de KPIs, valendo a mais recente. Texto livre é ignorado. */
 export function situacaoNumerica(indicador_id: string, arvore: ArvoreSit, checkouts: CheckoutReg[], competencia: string | null) {
   let ck: { valor: number; fonte: string; data: string } | null = null;
-  const enviados = checkouts.filter((r) => r.status === "enviado" && (!competencia || competenciaDaSemana(r.semana) <= competencia)).sort((a, b) => b.semana.localeCompare(a.semana));
+  const enviados = checkouts.filter((r) => r.status === "enviado" && (!competencia || (r.conteudo?.kpis_resposta?.find((k:any)=>k.indicador_id===indicador_id)?.periodo_apontado ?? competenciaDaSemana(r.semana)) <= competencia)).sort((a, b) => b.semana.localeCompare(a.semana));
   for (const r of enviados) {
     const k = normalizarCheckout(r.conteudo).kpis_resposta.find((x) => x.indicador_id === indicador_id && x.situacao_atual?.trim() && numeroBr(x.situacao_atual) != null);
     if (k) { ck = { valor: numeroBr(k.situacao_atual!)!, fonte: `checkout de ${dmBr(r.semana)}`, data: r.enviado_em ?? r.semana }; break; }
