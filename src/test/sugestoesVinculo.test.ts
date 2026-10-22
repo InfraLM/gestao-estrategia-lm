@@ -53,6 +53,7 @@ describe('Aprovação transacional no PostgreSQL isolado', () => {
       CREATE TABLE public.mt_indicadores(id uuid PRIMARY KEY,status text,origem text,okr_id uuid);
       CREATE TABLE public.estrategia_vinculos_gov(id uuid DEFAULT gen_random_uuid(),origem_tipo text,origem_id uuid,tipo text,ref_id uuid,criado_por uuid, UNIQUE(origem_tipo,origem_id,tipo,ref_id));`);
     await pg.exec(readFileSync('drizzle/migrations/0030_sugestoes_vinculo_ia.sql', 'utf8'));
+    await pg.exec(readFileSync('drizzle/migrations/0031_sugestoes_aprovacao_lote_ampliado.sql', 'utf8'));
     await pg.exec(`INSERT INTO gov_acoes(id) VALUES('${uuid(11)}'),('${uuid(12)}'),('${uuid(13)}'); INSERT INTO mt_objetivos VALUES('${uuid(20)}');
       INSERT INTO estrategia_sugestoes(id,origem_tipo,origem_id,tipo,ref_id,justificativa,trecho,confianca) VALUES
       ('${uuid(31)}','acao','${uuid(11)}','objetivo','${uuid(20)}','j','t','alta'),

@@ -13,7 +13,7 @@ const db = supabase;
 type Alvo = { id: string; tipo: string; codigo: string; nome: string; perspectiva: string; origem: string };
 type Fonte = { chave: string; origem_id: string; origem_tipo: string; codigo: string; titulo: string; comite: string; situacao: string };
 type Resumo = { fontes: Fonte[]; candidatos: string[]; alvos: Alvo[]; limite: number; lote: number; semestre: string };
-type Sugestao = { id: string; origem_tipo: string; origem_id: string; tipo: string; ref_id: string; status: string; justificativa: string; trecho: string; confianca: string; revisado_em: string | null; revisado_por: string | null };
+type Sugestao = { id: string; origem_tipo: string; origem_id: string; tipo: string; ref_id: string; status: string; justificativa: string; trecho: string; confianca: string; revisado_em: string | null; revisado_por: string | null; aprovado_tipo?: string | null; aprovado_ref_id?: string | null };
 type Confirmacao = { acao: 'aprovar' | 'rejeitar' | 'gerar'; ids: string[]; novamente?: boolean };
 const confiancas: Record<string, string> = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
 
@@ -55,7 +55,7 @@ export default function SugestoesVinculo() {
   };
   useEffect(() => { void carregar(); }, [novamente]);
   const fonte = (s: Sugestao) => resumo?.fontes.find(f => f.origem_id === s.origem_id && f.origem_tipo === s.origem_tipo);
-  const alvo = (s: Sugestao) => resumo?.alvos.find(a => `${a.tipo}:${a.id}` === (trocas[s.id] ?? `${s.tipo}:${s.ref_id}`));
+  const alvo = (s: Sugestao) => resumo?.alvos.find(a => `${a.tipo}:${a.id}` === (trocas[s.id] ?? `${s.aprovado_tipo ?? s.tipo}:${s.aprovado_ref_id ?? s.ref_id}`));
   const visiveis = useMemo(() => sugestoes.filter(s => {
     const f = fonte(s); const a = alvo(s);
     return (status === 'todos' || s.status === status) && (confianca === 'todas' || s.confianca === confianca) && (origem === 'todas' || s.origem_tipo === origem) && (comite === 'todos' || f?.comite === comite) && (perspectiva === 'todas' || a?.perspectiva === perspectiva) && `${f?.codigo} ${f?.titulo} ${a?.codigo} ${a?.nome}`.toLowerCase().includes(busca.toLowerCase());
