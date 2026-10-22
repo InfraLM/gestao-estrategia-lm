@@ -1,0 +1,42 @@
+// @vitest-environment node
+import { beforeEach, afterEach, describe, expect, it } from 'vitest';
+import { PGlite } from '@electric-sql/pglite';
+import { readFileSync } from 'node:fs';
+import { legado, propostasIa, textoSeguroProjeto, LIMITE, LOTE } from '../../supabase/functions/portfolio-vincular/domain';
+import { seloVinculo, resumoVinculos, type VinculoPortfolio } from '../lib/portfolioVinculos';
+const uuid=(n:number)=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
+const f={id:uuid(10),fonte_tipo:'projeto' as const,nome:'Projeto',texto:'Implantar atendimento',objetivos:[' F01 ']};
+const a={id:uuid(20),tipo:'objetivo' as const,codigo:'F01',nome:'Objetivo'};
+describe('Propostas de portfólio',()=>{
+ it('legado vira proposto, nunca validado',()=>{const vs=legado(f,[a],[]);expect(vs).toHaveLength(1);expect(vs[0].status).toBe('proposto');expect(vs[0].origem).toBe('legado');});
+ it('IA limita 1 a 4 vínculos e não processa fonte validada',()=>{const alvos=[1,2,3,4,5].map(n=>({...a,id:uuid(20+n)}));const saida=alvos.map(a=>({fonte:`projeto:${f.id}`,alvo:`objetivo:${a.id}`,justificativa:'Sustenta objetivo',confianca:'alta' as const}));expect(propostasIa(saida,[f],alvos,new Set()).get(`projeto:${f.id}`)).toHaveLength(4);expect(propostasIa(saida,[f],alvos,new Set([`projeto:${f.id}`])).size).toBe(0);});
+ it('itens inexistentes nunca viram propostas',()=>{expect(propostasIa([{fonte:`projeto:${f.id}`,alvo:'objetivo:inexistente',justificativa:'x',confianca:'alta'}],[f],[a],new Set()).size).toBe(0);});
+ it('usa limite de 20 fontes e lotes de 5',()=>{expect(LIMITE).toBe(20);expect(LOTE).toBe(5);});
+ it('reserva anexos, comentários e contatos mesmo para Governança',()=>{const t=textoSeguroProjeto({nome:'P',descricao:'D',comentario:'RESERVADO',socios_respostas:'SOCIOS'},true,[{avancos:'Avanço público',comentario:'RESERVADO',equipe:'CONTATOS',arquivo_path:'ANEXO'}],[{problema_descricao:'Problema',problema_evidencias:'RESERVADO'}]);expect(t).toContain('Avanço público');expect(t).not.toMatch(/RESERVADO|SOCIOS|CONTATOS|ANEXO/);expect(textoSeguroProjeto({nome:'P'},false,[{avancos:'privado'}],[])).not.toContain('privado');});
+ it('conta propostos e validados, mas distingue o selo',()=>{const v={id:'1',status:'proposto',origem:'ia',validado_nome:null,validado_em:null} as VinculoPortfolio;expect(resumoVinculos([v,{...v,id:'2',status:'validado'},{...v,id:'3',status:'removido'}])).toEqual({total:2,aValidar:1});expect(seloVinculo(v)).toContain('a validar');expect(seloVinculo(v)).not.toContain('Validado');});
+});
+describe('Validação em PostgreSQL isolado',()=>{
+ let pg:PGlite;
+ beforeEach(async()=>{pg=new PGlite();await pg.exec(`CREATE ROLE anon;CREATE ROLE authenticated;CREATE ROLE service_role;CREATE SCHEMA auth;
+ CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$SELECT '${uuid(1)}'::uuid$$;
+ CREATE FUNCTION public.acesso_modulo(uuid,text,boolean) RETURNS boolean LANGUAGE sql AS $$SELECT true$$;
+ CREATE FUNCTION public.proj_gov_ou_ceo(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT true$$;
+ CREATE FUNCTION public.proj_principal(uuid,uuid) RETURNS boolean LANGUAGE sql AS $$SELECT false$$;
+ CREATE FUNCTION public.mt_cadeira_do_usuario(uuid) RETURNS uuid LANGUAGE sql AS $$SELECT '${uuid(40)}'::uuid$$;
+ CREATE FUNCTION public.estrategia_alvo_ativo(text,uuid) RETURNS boolean LANGUAGE sql AS $$SELECT $2<>'${uuid(99)}'::uuid$$;
+ CREATE TABLE profiles(user_id uuid,display_name text);INSERT INTO profiles VALUES('${uuid(1)}','Naira');
+ CREATE TABLE mt_cadeiras(id uuid,diretor_user_id uuid);CREATE TABLE projetos(id uuid PRIMARY KEY,cadeira_id uuid,created_by uuid);CREATE TABLE mt_iniciativas(id uuid PRIMARY KEY,cadeira_id uuid,created_by uuid);
+ CREATE TABLE projeto_vinculos(projeto_id uuid,tipo text,ref_id uuid,criado_por uuid);CREATE TABLE mt_acao_vinculos(iniciativa_id uuid,tipo text,ref_id uuid);
+ INSERT INTO projetos(id) VALUES('${uuid(10)}'),('${uuid(11)}');`);
+ await pg.exec(readFileSync('drizzle/migrations/0033_portfolio_vinculos_propostos.sql','utf8'));
+ await pg.exec(`INSERT INTO portfolio_vinculos(id,fonte_tipo,fonte_id,tipo,ref_id) VALUES('${uuid(31)}','projeto','${uuid(10)}','objetivo','${uuid(20)}'),('${uuid(32)}','projeto','${uuid(10)}','objetivo','${uuid(21)}'),('${uuid(33)}','projeto','${uuid(11)}','objetivo','${uuid(22)}');`);
+ });afterEach(async()=>pg.close());
+ const revisar=(ids:number[],acao='validar')=>pg.query('select portfolio_revisar($1::jsonb,$2)',[JSON.stringify(ids.map(n=>({id:uuid(n),fonte_tipo:'projeto',fonte_id:uuid(n===33?11:10)}))),acao]);
+ it('validação em massa grava apenas selecionados e auditoria',async()=>{await revisar([31,33]);const r=await pg.query<{id:string}>('select id from portfolio_vinculos where status=$1 order by id',['validado']);expect(r.rows.map(r=>r.id)).toEqual([uuid(31),uuid(33)]);expect((await pg.query<{status:string}>('select status from portfolio_vinculos where id=$1',[uuid(32)])).rows[0].status).toBe('proposto');expect((await pg.query<{n:number}>('select count(*)::int n from portfolio_vinculos_auditoria where acao=$1',['validar'])).rows[0].n).toBe(2);});
+ it('reprocessamento não sobrescreve ou acrescenta vínculos a fonte validada',async()=>{await revisar([31]);await pg.query('select portfolio_gravar_propostas($1,$2,$3,$4::jsonb)',['projeto',uuid(10),uuid(1),JSON.stringify([{tipo:'objetivo',ref_id:uuid(25),origem:'ia',justificativa:'Nova',confianca:'alta'}])]);expect((await pg.query<{n:number}>('select count(*)::int n from portfolio_vinculos where fonte_id=$1',[uuid(10)])).rows[0].n).toBe(2);expect((await pg.query<{status:string}>('select status from portfolio_vinculos where id=$1',[uuid(31)])).rows[0].status).toBe('validado');});
+ it('gravação automática força proposto mesmo quando IA tenta validar',async()=>{await pg.query('select portfolio_gravar_propostas($1,$2,$3,$4::jsonb)',['projeto',uuid(11),uuid(1),JSON.stringify([{tipo:'objetivo',ref_id:uuid(25),origem:'ia',status:'validado',justificativa:'Nova',confianca:'alta'}])]);const r=await pg.query<{status:string;validado_por:string|null}>('select status,validado_por from portfolio_vinculos where ref_id=$1',[uuid(25)]);expect(r.rows[0]).toEqual({status:'proposto',validado_por:null});});
+ it('edição manual valida e remoção impede ressurgimento',async()=>{await pg.query('select portfolio_revisar($1::jsonb,$2)',[JSON.stringify([{id:uuid(31),fonte_tipo:'projeto',fonte_id:uuid(10),tipo:'objetivo',ref_id:uuid(25),justificativa:'Editado'}]),'salvar']);expect((await pg.query<{status:string}>('select status from portfolio_vinculos where ref_id=$1',[uuid(25)])).rows[0].status).toBe('validado');await revisar([33],'remover');await pg.query('select portfolio_gravar_propostas($1,$2,$3,$4::jsonb)',['projeto',uuid(11),uuid(1),JSON.stringify([{tipo:'objetivo',ref_id:uuid(22),origem:'ia',justificativa:'Nova',confianca:'alta'}])]);expect((await pg.query<{status:string}>('select status from portfolio_vinculos where id=$1',[uuid(33)])).rows[0].status).toBe('removido');});
+ it('fonte/alvo inválido desfaz toda a seleção',async()=>{await pg.exec(`UPDATE portfolio_vinculos SET ref_id='${uuid(99)}' WHERE id='${uuid(33)}'`);await expect(revisar([31,33])).rejects.toThrow('Alvo inativo');expect((await pg.query<{n:number}>('select count(*)::int n from portfolio_vinculos where status=$1',['validado'])).rows[0].n).toBe(0);});
+ it('permite somente Governança/CEO ou cadeira principal, não apoio',async()=>{await pg.exec(`CREATE OR REPLACE FUNCTION proj_gov_ou_ceo(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT false$$`);await expect(revisar([31])).rejects.toThrow('Sem permissão');await pg.exec(`CREATE OR REPLACE FUNCTION proj_principal(uuid,uuid) RETURNS boolean LANGUAGE sql AS $$SELECT $2='${uuid(10)}'::uuid$$`);await revisar([31]);await expect(revisar([33])).rejects.toThrow('Sem permissão');});
+ it('todo novo cadastro cria job sem chamar IA nem gravar vínculo',async()=>{await pg.exec(`INSERT INTO mt_iniciativas(id,created_by) VALUES('${uuid(60)}','${uuid(1)}')`);expect((await pg.query<{status:string}>('select status from portfolio_vinculacao_jobs where fonte_id=$1',[uuid(60)])).rows[0].status).toBe('pendente');expect((await pg.query<{n:number}>('select count(*)::int n from portfolio_vinculos where fonte_id=$1',[uuid(60)])).rows[0].n).toBe(0);});
+});

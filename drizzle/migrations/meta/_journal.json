@@ -232,6 +232,20 @@
       "when": 1792664704000,
       "tag": "0032_pmo_atualizacao_direta_auditada",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1792665891006,
+      "tag": "0033_portfolio_vinculos_propostos",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1792666124420,
+      "tag": "0034_portfolio_permissoes_e_jobs_atomicos",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { seloVinculo } from "@/lib/portfolioVinculos";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +43,9 @@ export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodi
   ]).then(([a, d, v]: any[]) => setGov({ acoes: a.data ?? [], decisoes: d.data ?? [], vinc: v.data ?? [] }));
 
   useEffect(() => {
-    carregarBaseVinculos().then(setBase);
+    const loadBase = () => carregarBaseVinculos(true).then(setBase);
+    loadBase();
+    window.addEventListener("portfolio-vinculos", loadBase);
     db.from("mt_indicadores").select("id,codigo,nome,origem,objetivo_id,cadeira_id").eq("status", "ativo").is("parent_id", null).then(({ data }: any) => setInds(data ?? []));
     carregarGov();
     Promise.all([
@@ -54,6 +57,7 @@ export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodi
       db.from("proc_diretoria_cadeira").select("diretoria,cadeira_id,status").eq("status", "confirmado"),
     ]).then(([l, e, i, m, c, d]: any[]) => setProc({ local: l.data ?? [], esp: e.data ?? [], imps: i.data ?? [], mels: m.data ?? [], corr: c.data ?? [], dirs: d.data ?? [] }));
     supabase.auth.getUser().then(({ data }) => data.user && db.rpc("proj_gov_ou_ceo", { _uid: data.user.id }).then(({ data: ok }: any) => setPode(!!ok)));
+    return () => window.removeEventListener("portfolio-vinculos", loadBase);
   }, []);
 
   const obj = base?.objetivos.find((o: any) => o.codigo === objetivoCodigo);
@@ -62,11 +66,12 @@ export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodi
   const itensDe = (refs: string[]): ItemImpacto[] => {
     if (!base) return [];
     const set = new Set(refs);
+    const links = (tipo: string, id: string) => base.estrategicos.filter((v: any) => v.fonte_tipo === tipo && v.fonte_id === id && set.has(v.ref_id));
     const out: ItemImpacto[] = iniciativasDoItem(base.inis, base.vinc, refs).map((i: any) => ({
-      id: i.id, titulo: i.titulo, origem: i.checkin_semana ? "rotina" : "metas", status: STATUS_INI[statusEfetivo(i)], prazo: i.prazo, responsavel: i.responsavel_nome, cadeira: cad(i.cadeira_id),
+      id: i.id, titulo: i.titulo, origem: i.checkin_semana ? "rotina" : "metas", status: STATUS_INI[statusEfetivo(i)], prazo: i.prazo, responsavel: i.responsavel_nome, cadeira: cad(i.cadeira_id), aValidar: links("iniciativa", i.id).some((v: any) => v.status === "proposto"), selos: links("iniciativa", i.id).map(seloVinculo),
     }));
     const pids = new Set(base.pv.filter((v: any) => set.has(v.ref_id)).map((v: any) => v.projeto_id));
-    for (const p of base.projetos.filter((p: any) => pids.has(p.id))) out.push({ id: p.id, codigo: p.codigo, titulo: p.nome, origem: "projeto", status: p.status, prazo: null, responsavel: null, cadeira: cad(p.cadeira_id), link: `/gestao/${p.codigo}` });
+    for (const p of base.projetos.filter((p: any) => pids.has(p.id))) out.push({ id: p.id, codigo: p.codigo, titulo: p.nome, origem: "projeto", status: p.status, prazo: null, responsavel: null, cadeira: cad(p.cadeira_id), link: `/gestao/${p.codigo}`, aValidar: links("projeto", p.id).some((v: any) => v.status === "proposto"), selos: links("projeto", p.id).map(seloVinculo) });
     for (const v of gov.vinc.filter((v) => set.has(v.ref_id))) {
       if (v.origem_tipo === "acao") { const a = gov.acoes.find((x) => x.id === v.origem_id); if (a) out.push({ id: a.id, titulo: a.titulo, origem: "ata", status: a.status, prazo: a.prazo, responsavel: a.responsavel_origem, cadeira: a.comite_codigo, codigo: a.comite_codigo }); }
       else { const d = gov.decisoes.find((x) => x.id === v.origem_id); if (d) out.push({ id: d.id, codigo: d.codigo, titulo: d.titulo, origem: "decisao", status: "Decidido", prazo: d.data_decisao, responsavel: d.responsavel, cadeira: null, link: `/contexto-decisoes?codigo=${d.codigo}` }); }
@@ -76,7 +81,7 @@ export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodi
 
   if (!base) return <p className="text-xs text-muted-foreground">Carregando desdobramento…</p>;
   if (!obj) return <p className="text-xs text-muted-foreground">Objetivo {objetivoCodigo} não está cadastrado na base de metas.</p>;
-  const doObj = inds.filter((i) => i.objetivo_id === obj.id);
+  const doObj = inds.filter((i) => i.objetivo_id === obj.id && base.indicadores.some((a: any) => a.id === i.id));
   const diretos = itensDe([obj.id]);
   const todos = [...diretos, ...doObj.flatMap((i) => itensDe([i.id]))];
   const r = resumoImpacto(todos, hoje());
@@ -110,7 +115,7 @@ export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodi
       <CardHeader className="pb-2">
         <CardTitle className="text-sm">Desdobramento do objetivo · todas as origens</CardTitle>
         <div className="flex flex-wrap gap-1.5 pt-1 text-xs">
-          <Badge variant="outline">{r.total} itens</Badge>
+          <Badge variant="outline">{r.total} itens</Badge><Badge variant="outline">{new Set(todos.filter(i => i.aValidar).map(i => i.origem + i.id)).size} a validar</Badge>
           {(Object.keys(r.porOrigem) as OrigemImpacto[]).map((o) => <Badge key={o} variant="secondary">{ROTULO_ORIGEM[o]}: {r.porOrigem[o]}</Badge>)}
           <Badge variant={r.atrasados ? "destructive" : "outline"}>{r.atrasados} atrasados</Badge>
           {Object.entries(contAval as Record<string, number>).map(([a, n]) => <Badge key={a} variant={AVAL[a]?.v ?? "outline"}>KPIs {AVAL[a]?.t ?? a}: {n}</Badge>)}
@@ -188,8 +193,9 @@ function Bloco({ titulo, sub, farol, itens, vincular, gov, onMudou, extra }: {
     ].slice(0, 8);
   }, [busca, gov]);
   const add = async (o: { t: string; id: string }) => {
+    if (!vincular) return;
     const { data: u } = await supabase.auth.getUser();
-    const { error } = await db.from("estrategia_vinculos_gov").insert({ origem_tipo: o.t, origem_id: o.id, tipo: vincular!.tipo, ref_id: vincular!.ref, criado_por: u.user?.id });
+    const { error } = await db.from("estrategia_vinculos_gov").insert({ origem_tipo: o.t, origem_id: o.id, tipo: vincular.tipo, ref_id: vincular.ref, criado_por: u.user?.id });
     if (error) return toast.error(error.message.includes("duplicate") ? "Já vinculado." : "Não foi possível vincular.");
     toast.success("Vínculo registrado."); setBusca(""); onMudou();
   };
@@ -219,6 +225,7 @@ function Bloco({ titulo, sub, farol, itens, vincular, gov, onMudou, extra }: {
             <li key={i.origem + i.id} className={`flex flex-wrap items-center gap-2 py-1.5 px-1 ${atr ? "bg-destructive/10" : ""}`}>
               <Badge variant="secondary" className="text-[10px]">{ROTULO_ORIGEM[i.origem]}</Badge>
               {i.link ? <Link to={i.link} className="font-medium text-primary underline flex-1 min-w-[160px]">{i.codigo ? `${i.codigo} · ` : ""}{i.titulo}</Link> : <span className="font-medium flex-1 min-w-[160px]">{i.titulo}</span>}
+              {i.selos?.map((s, n) => <Badge key={n} variant={i.aValidar ? "outline" : "default"}>{s}</Badge>)}
               {atr ? <Badge variant="destructive">Atrasado</Badge> : i.status && <Badge variant="outline">{i.status}</Badge>}
               <span className="text-muted-foreground">{i.origem === "decisao" ? "Decidido em" : "Prazo"} {i.prazo ? fmtData(i.prazo) : "—"} · {i.responsavel || "—"}{i.cadeira ? ` · ${i.cadeira}` : ""}</span>
               {vincular && (i.origem === "ata" || i.origem === "decisao") && <button type="button" className="text-muted-foreground underline" onClick={() => remover(i)}>remover</button>}

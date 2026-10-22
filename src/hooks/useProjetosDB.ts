@@ -17,17 +17,32 @@ export function useProjetosDB() {
   const fetchProjetos = useCallback(async () => {
     const { data: rows, error } = await supabase
       .from("projetos")
-      .select("codigo,nome,wave,classificacao,categoria,objetivos,krs,diretor,gerente,budget,realizado,status_bc,status,saude,inicio,termino,ice,descricao,avancos,causa_raiz,plano_acao");
+      .select("id,codigo,nome,wave,classificacao,categoria,objetivos,krs,diretor,gerente,budget,realizado,status_bc,status,saude,inicio,termino,ice,descricao,avancos,causa_raiz,plano_acao");
     if (cancelRef.current) return;
     if (!error && rows && rows.length > 0) {
+      const [links, objs, inds, okrs] = await Promise.all([
+        supabase.from("portfolio_vinculos").select("fonte_id,tipo,ref_id,status").eq("fonte_tipo", "projeto").neq("status", "removido"),
+        supabase.from("mt_objetivos").select("id,codigo"),
+        supabase.from("mt_indicadores").select("id,codigo,origem,objetivo_id,okr_id").eq("status", "ativo"),
+        supabase.from("mt_okrs").select("id,semestre"),
+      ]);
+      const parts = new Intl.DateTimeFormat("en-CA", {timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(new Date());
+      const semestre = `${parts.find(p=>p.type==="year")?.value}/${Number(parts.find(p=>p.type==="month")?.value)<=6?1:2}`;
+      const vigentes = new Set((okrs.data??[]).filter(o=>o.semestre===semestre).map(o=>o.id));
+      const ativos = (inds.data??[]).filter(i=>i.origem!=="okr"||vigentes.has(i.okr_id??""));
+      const objCodigo = (oid: string) => objs.data?.find(o => o.id === oid)?.codigo;
+      const refs = (pid: string) => (links.data ?? []).filter(v => v.fonte_id === pid);
       const mapped: Projeto[] = rows.map((r: any) => ({
         id: r.codigo,
         nome: r.nome,
         wave: r.wave,
         classificacao: r.classificacao,
         categoria: r.categoria || undefined,
-        objetivos: r.objetivos || [],
-        krs: r.krs || [],
+        objetivos: [...new Set(refs(r.id).flatMap(v => {
+          const codigo = v.tipo === "objetivo" ? objCodigo(v.ref_id) : objCodigo(ativos.find(i => i.id === v.ref_id)?.objetivo_id ?? "");
+          return codigo ? [codigo] : [];
+        }))],
+        krs: refs(r.id).flatMap(v => { const i = ativos.find(i => i.id === v.ref_id && i.origem === "okr"); return i ? [i.codigo] : []; }),
         diretor: r.diretor || "Não atribuído",
         gerente: r.gerente || undefined,
         budget: Number(r.budget) || 0,
@@ -52,7 +67,8 @@ export function useProjetosDB() {
   useEffect(() => {
     cancelRef.current = false;
     fetchProjetos();
-    return () => { cancelRef.current = true; };
+    window.addEventListener("portfolio-vinculos", fetchProjetos);
+    return () => { cancelRef.current = true; window.removeEventListener("portfolio-vinculos", fetchProjetos); };
   }, [fetchProjetos]);
 
   useRefetchOnFocus(fetchProjetos);

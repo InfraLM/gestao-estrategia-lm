@@ -1,4 +1,5 @@
 # Pedidos da Naira · 22/10
+- [x] Vínculos automáticos do portfólio/iniciativas: propostas, edição/validação auditada, geração limitada e novos cadastros; 273 testes, prévia/seleção com Naira e celular; sem gerar/validar reais. Novos cadastros aguardam sessão do criador para processar.
 - [x] PROC_EXPORT_URL salvo; integração mantida desligada e orientações preparadas
 - [ ] PROC_EXPORT_TOKEN — Naira deve colar o valor do outro app em Configurações → Segredos
 - [x] Página compartilhável de atualização direta: filtros, edição autorizada, auditoria e aviso no farol; 260 testes aprovados, Naira no computador/celular, sem salvar dados reais

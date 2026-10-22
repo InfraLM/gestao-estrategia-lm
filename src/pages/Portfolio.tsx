@@ -1,3 +1,4 @@
+import PortfolioVinculos from "@/components/PortfolioVinculos";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -262,6 +263,7 @@ export default function Portfolio() {
         )}
       </Card>
 
+      <PortfolioVinculos fonteTipo="projeto" projetoCodigos={filtered.map(p => p.id)} />
       {/* View */}
       {view === "tabela" ? (
         <Card className="shadow-card overflow-hidden">
@@ -338,20 +340,10 @@ export default function Portfolio() {
                       </InlineSelect>
                     </td>
                     <td className="px-2 py-2 overflow-hidden">
-                      <MultiSelectPopover
-                        label="Objetivos"
-                        options={objetivoOpts}
-                        selected={p.objetivos}
-                        onChange={(vals) => updateProject(p.id, { objetivos: vals })}
-                      />
+                      <span className="text-xs text-muted-foreground">Histórico: {p.objetivos.join(", ") || "—"}</span>
                     </td>
                     <td className="px-2 py-2 overflow-hidden">
-                      <MultiSelectPopover
-                        label="KRs"
-                        options={krOpts}
-                        selected={p.krs}
-                        onChange={(vals) => updateProject(p.id, { krs: vals })}
-                      />
+                      <span className="text-xs text-muted-foreground">Histórico: {p.krs.join(", ") || "—"}</span>
                     </td>
                     <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.statusBC} options={bcOpts} onChange={(v) => updateProject(p.id, { statusBC: v as Projeto["statusBC"] })}>

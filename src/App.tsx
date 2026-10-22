@@ -1,3 +1,4 @@
+import PortfolioNovosVinculos from "./components/PortfolioNovosVinculos";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate, useSearchParams } from "react-router-dom";
 import { OkrsHub, CestaHub, LancamentosHub } from "./pages/Hubs";
@@ -52,6 +53,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <PortfolioNovosVinculos />
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/responder/:token" element={<SociosResponder />} />
