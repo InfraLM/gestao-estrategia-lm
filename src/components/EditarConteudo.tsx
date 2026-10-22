@@ -86,7 +86,7 @@ export function EditarConteudo<T>({ chave, padrao, titulo }: { chave: string; pa
 
   return (
     <>
-      {item && <Link to={`/historico/${ctx?.documento}?documento=${ctx?.documento}&rev=${ctx?.revisao?.numero}&item=${item.id}`}><Badge variant="outline">alterado · {item.status.replaceAll("_", " ")}</Badge></Link>}
+      {item && <Link to={`/historico/${ctx?.documento}?documento=${ctx?.documento}&rev=${ctx?.revisao?.numero}&item=${item.id}`}><Badge variant="outline">alterado · {item.status.replace(/_/g, " ")}</Badge></Link>}
       {canEdit && <>
       <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => { setDraft(clone(data)); setOpen(true); }}>
         <Pencil className="h-3 w-3 mr-1" /> Editar{editado ? " · editado" : ""}

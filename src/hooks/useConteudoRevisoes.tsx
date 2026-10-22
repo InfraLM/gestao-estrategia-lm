@@ -33,11 +33,11 @@ export function useRevisaoItens(id?: string) {
 }
 export function ConteudoRevisaoProvider({ documento, children }: { documento: DocumentoConteudo; children: ReactNode }) {
   const [sp] = useSearchParams();
-  const { revisoes, loading, recarregar } = useRevisoes(documento);
+  const { revisoes, loading, error, recarregar } = useRevisoes(documento);
   const numero = sp.get('rev');
   const revisao = (numero ? revisoes.find(r => r.numero === Number(numero)) : revisoes.find(r => r.status === 'publicada')) ?? null;
   const query = useRevisaoItens(revisao?.id);
   const itens = query.data ?? [];
-  const indisponivel = !!numero && !loading && !revisao;
+  const indisponivel = !!error || !!query.error || (!!numero && !loading && !revisao);
   return <Context.Provider value={{ documento, revisao, valores: revisao ? valoresRevisao(revisao, itens) : {}, itens, leitura: indisponivel || loading || revisao?.status === 'substituida', indisponivel, loading: loading || (!!revisao && query.isPending), recarregar }}>{children}</Context.Provider>;
 }

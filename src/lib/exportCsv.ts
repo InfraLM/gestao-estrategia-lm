@@ -31,7 +31,7 @@ export function exportRevisionCsv(filename: string, rows: Record<string, unknown
   const cell = (value: unknown) => {
     let text = typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value ?? '');
     if (/^[\s]*[=+@-]/.test(text)) text = `'${text}`;
-    return `"${text.replaceAll('"', '""')}"`;
+    return `"${text.replace(/"/g, '""')}"`;
   };
   const csv = '\uFEFF' + [keys.map(cell).join(';'), ...rows.map(row => keys.map(key => cell(row[key])).join(';'))].join('\r\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
