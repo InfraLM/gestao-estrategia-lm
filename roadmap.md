@@ -85,3 +85,8 @@
 - [x] Lado deste app da integração de processos (espelhos, correspondências, log, sincronização desligada)
 - [ ] Ligar a integração de processos — ação da Naira após cadastrar PROC_EXPORT_TOKEN; não ligar nem sincronizar por ela
 - [x] Processos (lista local) no desdobramento do objetivo
+
+## Rotina semanal — out/2026 (Naira)
+- [x] Lançamentos movido para Rotina Semanal (rotas e acesso inalterados)
+- [x] "+ Apontar outros KPIs" (voluntário, fora do calendário, sugestão de desvio crítico)
+- [x] Dashboard da rotina (/semanal/dashboard) com aderência, painel por origem e formulários do ciclo
