@@ -253,6 +253,13 @@
       "when": 1792674696194,
       "tag": "0035_portfolio_vinculos_impacto_revisao",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1792675915457,
+      "tag": "0036_portfolio_edicao_sem_validar",
+      "breakpoints": true
     }
   ]
 }
