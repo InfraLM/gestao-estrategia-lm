@@ -62,7 +62,6 @@ const navGroups: NavGroup[] = [
     children: [
       { to: "/okrs", label: "OKRs do Semestre", icon: Target },
       { to: "/cesta-metas", label: "Cesta de Metas", icon: UserCog },
-      { to: "/lancamentos", label: "Lançamentos", icon: Settings2 },
       { to: "/cesta-metas/insights", label: "Insights", icon: ListChecks },
     ],
   },
@@ -71,8 +70,9 @@ const navGroups: NavGroup[] = [
     label: "Rotina Semanal",
     icon: Repeat,
     children: [
-      { to: "/semanal/visao", label: "Visão semanal", icon: LayoutGrid },
       { to: "/metas/semanal", label: "Check-in e Checkout", icon: ListChecks },
+      { to: "/semanal/visao", label: "Visão semanal", icon: LayoutGrid },
+      { to: "/lancamentos", label: "Lançamentos", icon: Settings2 },
     ],
   },
   {
@@ -108,7 +108,7 @@ const titles: Record<string, string> = {
   "/estrutura-organizacional": "Estrutura organizacional",
   "/incentivos": "Sistemas de incentivo",
   "/cesta-metas/insights": "OKRs · Insights",
-  "/lancamentos": "OKRs · Lançamentos",
+  "/lancamentos": "Rotina Semanal · Lançamentos",
   "/planejamento/revisoes": "Relatório de planejamento e diagnóstico · Revisões",
   "/pmo/dashboard": "PMO · Dashboard do Portfólio Estratégico",
   "/diagnostico": "Diagnóstico Estratégico LM",
