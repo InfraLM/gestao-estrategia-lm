@@ -1,7 +1,19 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { avaliarKpiBsc, contarAvaliacoes, mapaArvore, Avaliacao } from "@/lib/avaliacaoBsc";
+import { avaliarKpiBsc, contarAvaliacoes, mapaArvore, Avaliacao, CheckoutReg } from "@/lib/avaliacaoBsc";
 import rev02 from "@/data/bscRev02.json";
+
+/** Situações numéricas dos checkouts ENVIADOS, só os números (sem o resto do formulário), via função autorizada. */
+export async function carregarSituacoesKpi(): Promise<{ data: CheckoutReg[] }> {
+  const { data } = await (supabase as any).rpc("rotina_situacoes_kpi");
+  const m = new Map<string, CheckoutReg & { cadeira_id: string }>();
+  for (const r of (data ?? []) as any[]) {
+    const k = `${r.cadeira_id}|${r.semana}`;
+    if (!m.has(k)) m.set(k, { cadeira_id: r.cadeira_id, semana: r.semana, status: "enviado", enviado_em: r.enviado_em, conteudo: { kpis_resposta: [] } });
+    m.get(k)!.conteudo.kpis_resposta.push({ indicador_id: r.indicador_id, situacao_atual: r.situacao_atual });
+  }
+  return { data: [...m.values()] };
+}
 
 export type ItemBsc = { id: string; nome: string; cadeira_id: string; aval: Avaliacao; origem: string | null };
 export type AvalCadeira = { itens: ItemBsc[]; cont: ReturnType<typeof contarAvaliacoes>; off: ItemBsc[] };
@@ -14,8 +26,7 @@ export function useAvaliacoesBsc(competencia: string | null, cadeiras: string[] 
   useEffect(() => {
     if (!competencia || (cadeiras && cadeiras.length === 0)) { setPor({}); return; }
     const db = supabase as any;
-    let ck = db.from("mt_checkins").select("cadeira_id,semana,status,enviado_em,conteudo").eq("tipo", "checkout").eq("status", "enviado");
-    if (cadeiras) ck = ck.in("cadeira_id", cadeiras);
+    const ck = carregarSituacoesKpi();
     Promise.all([
       db.from("mt_indicadores").select("id,nome,cadeira_id,sentido,meta_semestre,meta_texto,nivel,parent_id").eq("origem", "bsc").eq("status", "ativo"),
       db.from("mt_metas_mensais").select("indicador_id,meta_mes").eq("competencia", competencia),
@@ -41,9 +52,8 @@ export function useAvaliacoesBsc(competencia: string | null, cadeiras: string[] 
   return { porCadeira };
 }
 
-/** Governança e CEO veem todas as cadeiras; diretor só a própria. */
+/** Transparência: Governança, CEO e todo diretor com cadeira veem a avaliação de todas as cadeiras; sem cadeira, nada. */
 export function cadeirasVisiveisBsc(b: { isGovernanca: boolean; minhaCadeira: string | null; cadeiras: { id: string; nome: string }[] }): string[] | null {
-  if (b.isGovernanca) return null;
-  if (b.minhaCadeira && b.cadeiras.find((c) => c.id === b.minhaCadeira)?.nome.trim().toUpperCase() === "CEO") return null;
-  return b.minhaCadeira ? [b.minhaCadeira] : [];
+  if (b.isGovernanca || b.minhaCadeira) return null;
+  return [];
 }
