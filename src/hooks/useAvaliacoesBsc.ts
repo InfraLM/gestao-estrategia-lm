@@ -6,12 +6,12 @@ import { previstoNoMes } from '@/lib/frequenciaApontamento';
 
 /** Situações numéricas dos checkouts ENVIADOS, só os números (sem o resto do formulário), via função autorizada. */
 export async function carregarSituacoesKpi(): Promise<{ data: CheckoutReg[]; alertas: Set<string> }> {
-  const { data } = await (supabase as any).rpc("rotina_situacoes_kpi");
+  const { data } = await (supabase as any).rpc("rotina_situacoes_kpi_frequencia");
   const m = new Map<string, CheckoutReg & { cadeira_id: string }>();
   for (const r of (data ?? []) as any[]) {
     const k = `${r.cadeira_id}|${r.semana}`;
     if (!m.has(k)) m.set(k, { cadeira_id: r.cadeira_id, semana: r.semana, status: "enviado", enviado_em: r.enviado_em, conteudo: { kpis_resposta: [] } });
-    m.get(k)!.conteudo.kpis_resposta.push({ indicador_id: r.indicador_id, situacao_atual: r.situacao_atual, declaracao: r.declaracao, justificativa: r.justificativa, status_entrega: r.status_entrega, avanco_pct: r.avanco_pct });
+    const row=m.get(k);if(row)row.conteudo.kpis_resposta.push({ indicador_id: r.indicador_id, situacao_atual: r.situacao_atual, declaracao: r.declaracao, justificativa: r.justificativa, status_entrega: r.status_entrega, avanco_pct: r.avanco_pct,periodo_apontado:r.periodo_apontado,desvio_critico:r.desvio_critico });
   }
   const ultimo = new Map<string, any>();
   for (const r of (data ?? []) as any[]) { const u = ultimo.get(r.indicador_id); if (!u || r.semana > u.semana) ultimo.set(r.indicador_id, r); }

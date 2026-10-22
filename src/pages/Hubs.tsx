@@ -7,6 +7,7 @@ import MetasCadastros from "./MetasCadastros";
 import MetasPainel from "./MetasPainel";
 import MetasLancamento from "./MetasLancamento";
 import MatrizApontamentos from "./MatrizApontamentos";
+import { CalendarioApontamento } from '@/components/FrequenciaKpi';
 
 export function OkrsHub() {
   return <AbasPagina abas={[
@@ -30,6 +31,7 @@ export function LancamentosHub() {
   return <AbasPagina abas={[
     { id: "matriz", label: "Matriz de apontamentos", conteudo: <MatrizApontamentos /> },
     { id: "lancar", label: "Lançar mês", conteudo: <MetasLancamento /> },
+    { id: "calendario", label: "Calendário de apontamento", conteudo: <CalendarioApontamento indicadores={b.indicadores.filter(i=>i.status==='ativo'&&!i.parent_id)} cadeiras={b.cadeiras.filter(c=>c.ativo)}/> },
     ...(b.isGovernanca || ceo ? [{ id: "painel", label: "Painel e configuração", conteudo: <MetasPainel /> }] : []),
   ]} />;
 }
