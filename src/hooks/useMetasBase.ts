@@ -2,12 +2,13 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useModuleAccess } from "./useModuleAccess";
+import type { CalendarioKpi } from '@/lib/frequenciaApontamento';
 
 /** Base compartilhada do Sistema de Metas 2S26 (lançamento mensal e, depois, check-in semanal). */
 export type Cadeira = { id: string; nome: string; diretor_user_id: string | null; diretor_nome: string | null; ativo: boolean };
 export type Objetivo = { id: string; codigo: string; perspectiva: string; descricao: string };
 export type Okr = { id: string; codigo: string; nome: string; semestre: string };
-export type Indicador = {
+export type Indicador = CalendarioKpi & {
   id: string; codigo: string; nome: string; origem: "bsc" | "okr" | "cesta"; objetivo_id: string | null; okr_id: string | null;
   cadeira_id: string | null; unidade: string | null; sentido: "maior" | "menor"; peso: number; status: "ativo" | "arquivado";
   meta_semestre: number | null; meta_texto: string | null; parent_id: string | null; regra_consolidacao: "pior" | "media_ponderada";
