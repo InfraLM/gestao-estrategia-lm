@@ -39,7 +39,7 @@ export function valorEscalar(v: unknown): number | null {
 export function atingimentoMeta(valor: number | null, meta: unknown, sentido: string) {
   if (valor == null) return null;
   const escalar = valorEscalar(meta);
-  const m = escalar == null ? lerMeta(typeof meta === 'string' ? meta : null) : { tipo: 'valor' as const, v: escalar };
+  const m = escalar == null ? null : { tipo: 'valor' as const, v: escalar, sentido: undefined as 'maior' | 'menor' | undefined };
   if (!m || m.tipo === 'faixa' || m.v === 0) return null;
   const menor = (m.sentido ?? sentido) === 'menor' || typeof meta === 'string' && /^[<≤]/.test(meta.trim());
   return menor ? valor === 0 ? null : m.v / valor * 100 : valor / m.v * 100;
