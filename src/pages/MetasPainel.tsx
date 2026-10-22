@@ -16,8 +16,10 @@ import { ENTREGA_LBL } from "@/pages/MetasSemanal";
 import { cicloPadrao, semanaCheckout, seloCiclo } from "@/lib/rotinaSemanal";
 import { srPendentesPorCadeira } from "@/lib/projetosGestao";
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
+import { useConformidade, pctC } from "@/components/Conformidade";
 
 const db = supabase as any;
+const ORIGENS = ["bsc", "okr", "cesta"];
 const MES_LONGO: Record<string, string> = { "07": "Julho", "08": "Agosto", "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro" };
 const tituloComp = (c: string) => `${MES_LONGO[c.slice(5)]}/${c.slice(0, 4)}`;
 const pct = (v: number | null | undefined) => (v == null ? "—" : `${(Number(v) * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%`);
@@ -53,13 +55,12 @@ export default function MetasPainel() {
   const b = useMetasBase();
   const [comp, setComp] = useState(mesAtual());
   const [comps, setComps] = useState<any[]>([]);
-  const avalBsc = useAvaliacoesBsc(b.loading ? null : comp, cadeirasVisiveisBsc(b));
+  const avalBsc = useAvaliacoesBsc(b.loading ? null : comp, cadeirasVisiveisBsc(b), ORIGENS);
+  const conf = useConformidade();
   const [envios, setEnvios] = useState<any[]>([]);
   const [lancs, setLancs] = useState<any[]>([]);
   const [audit, setAudit] = useState<any[]>([]);
   const [checks, setChecks] = useState<any[]>([]);
-  const [regua, setRegua] = useState<Regua | null>(null);
-  const [edReg, setEdReg] = useState<Regua | null>(null);
   const [ver, setVer] = useState<any>(null);
   const [srProj, setSrProj] = useState<any[]>([]);
   const [srRegs, setSrRegs] = useState<any[]>([]);
@@ -70,15 +71,13 @@ export default function MetasPainel() {
   const srPend = useMemo(() => srPendentesPorCadeira(srProj, srRegs), [srProj, srRegs]);
 
   const load = async () => {
-    const [c, e, l, a, k, p] = await Promise.all([
+    const [c, e, l, a, k] = await Promise.all([
       db.from("mt_competencias").select("*"), db.from("mt_envios").select("*"),
       db.from("mt_lancamentos").select("id,indicador_id,competencia,revisao"),
       db.from("mt_auditoria").select("*").order("alterado_em", { ascending: false }).limit(1000),
       db.from("mt_checkins").select("*").gte("semana", segunda(new Date(Date.now() - 28 * 864e5))),
-      db.from("mt_parametros").select("*").eq("chave", "regua").maybeSingle(),
     ]);
     setComps(c.data ?? []); setEnvios(e.data ?? []); setLancs(l.data ?? []); setAudit(a.data ?? []); setChecks(k.data ?? []);
-    setRegua(p.data?.valor ?? { ativa: false, faixas: [] }); setEdReg(p.data?.valor ?? { ativa: false, faixas: [] });
   };
   useEffect(() => { load(); }, []);
 
@@ -111,18 +110,7 @@ export default function MetasPainel() {
 
   const ciclo = cicloPadrao(); const semOut = semanaCheckout(ciclo);
 
-  const salvarRegua = async () => {
-    if (!edReg) return;
-    const { error } = await db.from("mt_parametros").upsert({ chave: "regua", valor: edReg, updated_by: b.user?.id });
-    if (error) toast.error(error.message); else { toast.success("Régua salva."); setRegua(edReg); }
-  };
-
-  if (b.loading || !regua) return <p className="text-sm text-muted-foreground">Carregando…</p>;
-
-  const FaixaBadge = ({ nota }: { nota: number | null }) => {
-    const f = faixaDaNota(nota, regua);
-    return f ? <span className={`rounded px-2 py-0.5 text-xs font-medium ${CORES[f.cor]?.cls ?? ""}`}>{f.nome}</span> : null;
-  };
+  if (b.loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
 
   return (
     <div className="space-y-4">
@@ -174,14 +162,14 @@ export default function MetasPainel() {
       </Card>
 
       <Card className="p-4">
-        <h2 className="font-semibold mb-3">Nota e formulários por cadeira</h2>
+        <h2 className="font-semibold mb-3">Conformidade, indicadores e formulários por cadeira</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="text-left text-xs text-muted-foreground border-b">
               <tr>
-                <th className="py-2 pr-3">Cadeira</th><th className="pr-3">Nota</th><th className="pr-3">Faixa</th>
+                <th className="py-2 pr-3">Cadeira</th><th className="pr-3">Conformidade do ciclo semanal</th>
                 <th className="pr-3">Form. mensal de OKRs/metas</th>
-                <th className="pr-3">BSC (não entra na nota)</th><th className="pr-3">Ciclo semanal (checkout + check-in)</th>
+                <th className="pr-3">Indicadores (BSC, KRs e cesta)</th><th className="pr-3">Ciclo semanal (checkout + check-in)</th>
                 <th className="pr-3">Iniciativas atrasadas</th><th className="pr-3">Status reports pendentes no mês</th>
               </tr>
             </thead>
@@ -192,15 +180,15 @@ export default function MetasPainel() {
                 return (
                   <tr key={c.id} className="border-b last:border-0">
                     <td className="py-2 pr-3"><p className="font-medium">{c.nome}</p><p className="text-xs text-muted-foreground">{c.diretor_nome ?? "—"}</p></td>
-                    <td className="pr-3 font-semibold tabular-nums">{pct(e?.nota)}{ant && <span className="block text-xs font-normal text-muted-foreground">Rev. {rev - 1}: {pct(ant.nota)}</span>}</td>
-                    <td className="pr-3">{regua.ativa ? <FaixaBadge nota={e?.nota ?? null} /> : <span className="text-xs text-muted-foreground">régua desligada</span>}</td>
+                    <td className="pr-3 text-xs">{(() => { if (!conf.carregado) return "…"; const r = conf.de(c.id); const m = r.porMes[comp]; return <span><b className="text-sm tabular-nums">{pctC(r.acumulado.taxa)}</b> acumulado{r.tendencia != null && <span className={r.tendencia < 0 ? "text-destructive" : "text-success"}> {r.tendencia >= 0 ? "▲" : "▼"}{Math.abs(Math.round(r.tendencia * 100))} p.p.</span>}
+                      <span className="block text-muted-foreground">mês: {pctC(m?.taxa ?? null)} · pontualidade {pctC(r.acumulado.pontualidade)} · completude {pctC(r.acumulado.completudeMedia)}</span></span>; })()}</td>
                     <td className="pr-3">
                       {e?.status === "enviado"
                         ? <span className="inline-flex items-center gap-1 text-success"><CheckCircle2 className="h-4 w-4" /> Enviado {e.enviado_em ? dt(e.enviado_em) : ""}</span>
                         : e ? <span className="inline-flex items-center gap-1 text-warning"><Clock className="h-4 w-4" /> Rascunho</span>
                         : <span className="inline-flex items-center gap-1 text-destructive"><AlertTriangle className="h-4 w-4" /> Não atualizada</span>}
                     </td>
-                    <td className="pr-3 text-xs">{(() => { const a = avalBsc.porCadeira[c.id]; return a ? <span><b className="text-success">{a.cont.on}</b> on · <b className="text-destructive">{a.cont.off}</b> off · {a.cont.acomp} acomp.{a.cont.sem_meta ? ` · ${a.cont.sem_meta} s/ meta` : ""}{a.itens.filter((x) => x.origem).map((x) => <span key={x.id} className="block text-muted-foreground">{x.nome}: {x.origem}</span>)}</span> : "—"; })()}</td>
+                    <td className="pr-3 text-xs">{(() => { const a = avalBsc.porCadeira[c.id]; return a ? <span><b className="text-success">{a.cont.on}</b> on · <b className="text-destructive">{a.cont.off}</b> off · {a.cont.acomp} acomp.{a.cont.pendente ? ` · ${a.cont.pendente} pendente(s) de apontamento` : ""}{a.cont.encerrada ? ` · ${a.cont.encerrada} encerrada(s)` : ""}{a.cont.sem_meta ? ` · ${a.cont.sem_meta} s/ meta` : ""}{a.itens.filter((x) => x.origem).map((x) => <span key={x.id} className="block text-muted-foreground">{x.nome}: {x.origem}</span>)}</span> : "—"; })()}</td>
                     <td className="pr-3">{(() => { const sc = seloCiclo(ci, co, ciclo); return <div className="space-y-1">
                       <Badge className={sc.estado === "enviado" ? (sc.atrasado ? "bg-warning text-warning-foreground" : "bg-success text-success-foreground") : ""} variant={sc.estado === "enviado" ? "default" : sc.atrasado ? "destructive" : "outline"}>{sc.estado === "enviado" ? `Enviado${sc.atrasado ? " · fora do prazo" : ""}` : sc.estado === "parcial" ? "Parcial" : sc.estado === "rascunho" ? "Rascunho" : "Pendente"}</Badge>
                       <div className="flex gap-2 text-xs">{co && <button className="underline" onClick={() => setVer({ ...co, nome: c.nome })}>ver checkout</button>}{ci && <button className="underline" onClick={() => setVer({ ...ci, nome: c.nome })}>ver check-in</button>}</div>
@@ -213,7 +201,7 @@ export default function MetasPainel() {
             </tbody>
           </table>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">Ciclo de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}: checkout da semana de {new Date(semOut + "T12:00").toLocaleDateString("pt-BR")} e check-in da semana de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}. A nota conta só KRs e cesta. Use "ver checkout/check-in" para o conteúdo. Envio único do ciclo; prazo segunda 23h59 (São Paulo).</p>
+        <p className="mt-2 text-xs text-muted-foreground">Ciclo de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}: checkout da semana de {new Date(semOut + "T12:00").toLocaleDateString("pt-BR")} e check-in da semana de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}. Não há nota mensal: cada indicador tem sua avaliação pelo tipo de apontamento (valor mensal, meta semestral/anual declarada ou entrega). Conformidade = ciclos enviados no prazo e completos ÷ ciclos devidos, desde o checkout de 19/10/2026. Use "ver checkout/check-in" para o conteúdo. Envio único do ciclo; prazo segunda 23h59 (São Paulo).</p>
         <p className="text-xs"><Link className="underline" to="/metas/semanal">Abrir formulário semanal</Link></p>
         <Button asChild variant="link" className="px-0"><Link to="/lancamentos?aba=lancar">Abrir formulário mensal</Link></Button>
       </Card>
@@ -224,7 +212,7 @@ export default function MetasPainel() {
         <div className="space-y-2">
           {reaberturas.map(({ c, e, ant }) => (
             <div key={"r" + c.id} className="rounded border border-warning/50 bg-warning-soft p-3 text-sm">
-              <b>{c.nome}</b>: mês reaberto (Rev. {rev}). Nota {pct(ant.nota)} → {pct(e?.nota)}
+              <b>{c.nome}</b>: mês reaberto (Rev. {rev}).
             </div>
           ))}
           {avisos.map(({ a, ind, e, cad }) => (
@@ -233,45 +221,12 @@ export default function MetasPainel() {
                 <span><b>{cad}</b> · <span className="font-mono text-xs">{ind.codigo}</span> {ind.nome}</span>
                 <span className="text-xs text-muted-foreground">{nomeUser(a.alterado_por)} · {dt(a.alterado_em)}</span>
               </div>
-              <p className="mt-1">{a.campo === "comentario" ? "Comentário" : "Realizado"}: <s className="text-muted-foreground">{a.valor_anterior ?? "vazio"}</s> → <b>{a.valor_novo ?? "vazio"}</b></p>
-              <p className="text-xs text-muted-foreground">Impacto na nota da cadeira: {pct(e.nota_original)} (no 1º envio) → {pct(e.nota)} (atual)</p>
+              <p className="mt-1">{a.campo === "comentario" ? "Comentário" : a.campo === "apontamento" ? "Declaração / status de entrega" : "Valor apontado"}: <s className="text-muted-foreground">{a.valor_anterior ?? "vazio"}</s> → <b>{a.valor_novo ?? "vazio"}</b></p>
             </div>
           ))}
         </div>
       </Card>
 
-      <Card className="p-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <h2 className="font-semibold">Faixas de status (régua de pontuação)</h2>
-          <div className="flex items-center gap-2">
-            <Switch id="ativa" checked={!!edReg?.ativa} disabled={!b.isGov} onCheckedChange={(v) => setEdReg((r) => r && { ...r, ativa: v })} />
-            <Label htmlFor="ativa">{edReg?.ativa ? "Ligada" : "Desligada (só a nota aparece)"}</Label>
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground mb-3">A régua ainda não foi homologada. Cada faixa vale a partir do limite mínimo (em % da nota).</p>
-        <div className="space-y-2">
-          {edReg?.faixas.map((f, idx) => {
-            const set = (p: Partial<Faixa>) => setEdReg((r) => r && { ...r, faixas: r.faixas.map((x, j) => (j === idx ? { ...x, ...p } : x)) });
-            return (
-              <div key={idx} className="grid grid-cols-[1fr_110px_140px_auto] gap-2 items-center">
-                <Input aria-label="Nome da faixa" value={f.nome} disabled={!b.isGov} onChange={(e) => set({ nome: e.target.value })} />
-                <Input aria-label="Mínimo em %" inputMode="decimal" value={String(f.min)} disabled={!b.isGov} onChange={(e) => set({ min: Number(e.target.value.replace(",", ".")) || 0 })} />
-                <Select value={f.cor} onValueChange={(v) => set({ cor: v })} disabled={!b.isGov}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>{Object.entries(CORES).map(([k, v]) => <SelectItem key={k} value={k}>{v.l}</SelectItem>)}</SelectContent>
-                </Select>
-                {b.isGov && <Button variant="ghost" size="icon" aria-label="Remover faixa" onClick={() => setEdReg((r) => r && { ...r, faixas: r.faixas.filter((_, j) => j !== idx) })}><Trash2 className="h-4 w-4" /></Button>}
-              </div>
-            );
-          })}
-        </div>
-        {b.isGov && (
-          <div className="mt-3 flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setEdReg((r) => r && { ...r, faixas: [...r.faixas, { nome: "Nova faixa", min: 0, cor: "neutral" }] })}><Plus className="h-4 w-4 mr-1" /> Faixa</Button>
-            <Button size="sm" onClick={salvarRegua}>Salvar régua</Button>
-          </div>
-        )}
-      </Card>
     </div>
   );
 }
