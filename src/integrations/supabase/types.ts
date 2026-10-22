@@ -3577,6 +3577,8 @@ export type Database = {
           cadeira_id: string
           enviado_em: string
           indicador_id: string
+          ok: boolean
+          plano_sem_iniciativa: boolean
           semana: string
           situacao_atual: string
         }[]

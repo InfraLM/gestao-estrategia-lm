@@ -162,6 +162,13 @@
       "when": 1792657825273,
       "tag": "0022_transparencia_diretores_e_revisoes",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1792657896689,
+      "tag": "0023_situacoes_kpi_com_alerta",
+      "breakpoints": true
     }
   ]
 }
