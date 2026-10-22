@@ -1,0 +1,20 @@
+import { describe,it,expect } from 'vitest';
+import { devidoNoCiclo,periodoApontamento,semanaDoMes,registrarLeituraNormal } from '@/lib/frequenciaApontamento';
+import { calcularCompletude } from '@/lib/conformidade';
+import { normalizarCheckout,normalizarCheckin } from '@/lib/rotinaSemanal';
+import { avaliarPorTipo } from '@/lib/avaliacaoBsc';
+import { celulaMes } from '@/lib/matrizApontamentos';
+describe('Framework da Naira',()=>{
+ it('quinzenal só segundas 1 e 3',()=>expect(['2026-11-02','2026-11-09','2026-11-16','2026-11-23','2026-11-30'].map(c=>devidoNoCiclo({frequencia:'quinzenal'},c))).toEqual([true,false,true,false,false]));
+ it('semana 5 só semanais',()=>{expect(semanaDoMes('2026-11-30')).toBe(5);expect(devidoNoCiclo({frequencia:'semanal'},'2026-11-30')).toBe(true);expect(devidoNoCiclo({frequencia:'mensal',semana_mes:4},'2026-11-30')).toBe(false);});
+ it('ordem da segunda e não dia fixo',()=>{expect(semanaDoMes('2026-11-02')).toBe(1);expect(semanaDoMes('2026-11-23')).toBe(4);});
+ it('trimestre civil mês 2 semana 3',()=>{const k={frequencia:'trimestral' as const,mes_ciclo:2,semana_mes:3};expect(devidoNoCiclo(k,'2026-11-16')).toBe(true);expect(devidoNoCiclo(k,'2026-12-21')).toBe(false);expect(periodoApontamento(k,'2026-11-16')).toMatchObject({inicio:'2026-07-01',fim:'2026-09-30',label:'3º tri 2026'});});
+ it('semestre civil mês 2 semana 2',()=>{const k={frequencia:'semestral' as const,mes_ciclo:2,semana_mes:2};expect(devidoNoCiclo(k,'2027-02-08')).toBe(true);expect(periodoApontamento(k,'2027-02-08')).toMatchObject({inicio:'2026-07-01',fim:'2026-12-31',label:'2º sem 2026'});});
+ it('mensal aponta mês anterior inclusive virada do ano',()=>expect(periodoApontamento({frequencia:'mensal'},'2027-01-04')).toMatchObject({competencia:'2026-12',inicio:'2026-12-01',fim:'2026-12-31'}));
+ it('início em 26/10 não modifica ciclos antigos',()=>expect(devidoNoCiclo({frequencia:'semestral',mes_ciclo:2,semana_mes:2},'2026-10-19')).toBe(true));
+ it('desvio cobra mensal e retorna após duas leituras normais distintas',()=>{let s={ativo:true,normais:0,ultimoPeriodo:null as string|null};s=registrarLeituraNormal(s,'2026-10',true);expect(s.ativo).toBe(true);s=registrarLeituraNormal(s,'2026-10',true);expect(s.normais).toBe(1);s=registrarLeituraNormal(s,'2026-11',true);expect(s.ativo).toBe(false);});
+ it('leitura anormal zera sequência',()=>expect(registrarLeituraNormal({ativo:true,normais:1,ultimoPeriodo:'2026-10'},'2026-11',false).normais).toBe(0));
+ it('conformidade só retrato devido e desvio preenchido',()=>{const co=normalizarCheckout({kpis_retrato:[{indicador_id:'d',codigo:'D'}],kpis_resposta:[{indicador_id:'fora'},{indicador_id:'d',desvio_critico:true,situacao_atual:'5',causa:'c',impacto:'i',plano:'a'}]});const ci=normalizarCheckin({prioridades:[{titulo:'P'}]});expect(calcularCompletude(co,ci,null)).toMatchObject({feitos:2,total:2});});
+ it('trimestral não vira pendente em mês sem calendário',()=>{const r=avaliarPorTipo({indicador_id:'k',sentido:'maior',competencia:'2026-12',meta_mes:10,meta_semestre:10,meta_texto:null,realizado:12,frequencia:'trimestral',mes_ciclo:2,semana_mes:3},null,[],new Date('2027-01-05'));expect(r.aval).toBe('on');});
+ it('matriz S conserva declaração e marca fora do calendário',()=>{const k={id:'k',sentido:'maior' as const,meta_semestre:100,meta_texto:null,tipo_apontamento:'valor_periodo' as const,frequencia:'trimestral' as const,mes_ciclo:2,semana_mes:3};const c=celulaMes(k,'2026-12',null,null,null,[{semana:'2026-11-09',status:'enviado',enviado_em:'2026-11-16',conteudo:{kpis_resposta:[{indicador_id:'k',declaracao:'on',periodo_apontado:'2026-09'}]}}],new Date('2026-12-20'));expect(c).toMatchObject({aval:'on',foraCalendario:true});});
+});
