@@ -197,6 +197,13 @@
       "when": 1792661512566,
       "tag": "0027_conformidade_visivel_diretores",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1792662582409,
+      "tag": "0028_estrategia_vinculos_gov",
+      "breakpoints": true
     }
   ]
 }

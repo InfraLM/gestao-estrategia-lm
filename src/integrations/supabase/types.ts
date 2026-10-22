@@ -822,6 +822,36 @@ export type Database = {
         }
         Relationships: []
       }
+      estrategia_vinculos_gov: {
+        Row: {
+          created_at: string
+          criado_por: string | null
+          id: string
+          origem_id: string
+          origem_tipo: string
+          ref_id: string
+          tipo: string
+        }
+        Insert: {
+          created_at?: string
+          criado_por?: string | null
+          id?: string
+          origem_id: string
+          origem_tipo: string
+          ref_id: string
+          tipo: string
+        }
+        Update: {
+          created_at?: string
+          criado_por?: string | null
+          id?: string
+          origem_id?: string
+          origem_tipo?: string
+          ref_id?: string
+          tipo?: string
+        }
+        Relationships: []
+      }
       gmail_processados: {
         Row: {
           draft_id: string | null
