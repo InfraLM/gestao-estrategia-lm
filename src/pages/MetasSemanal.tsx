@@ -34,6 +34,7 @@ import StatusReportCiclo, { ResumoSR } from "@/components/StatusReportCiclo";
 import { ultimoCicloDoMes } from "@/lib/projetosGestao";
 import EntregasExtras from '@/components/EntregasExtras';
 import { semanaLink } from '@/lib/avisosCiclo';
+import { sugerirDesvio } from '@/lib/dashboardRotina';
 import { INICIO_FREQUENCIA, periodoApontamento, resumoFrequencia } from '@/lib/frequenciaApontamento';
 
 const db = supabase as any;
@@ -81,6 +82,9 @@ export default function MetasSemanal() {
   const [projetos, setProjetos] = useState<ProjetoLite[]>([]);
   const [todosKpis, setTodosKpis] = useState<KpiRetrato[]>([]);
   const [desvioEscolha, setDesvioEscolha] = useState(false);
+  const [outrosAberto, setOutrosAberto] = useState(false);
+  const [outrosBusca, setOutrosBusca] = useState("");
+  const [outrosSel, setOutrosSel] = useState<string[]>([]);
   const [lideres, setLideres] = useState<{ id: string; nome: string; ocupante_nome: string | null }[]>([]);
   const [salvo, setSalvo] = useState<Salvo>({ estado: "ocioso" });
   const [enviando, setEnviando] = useState(false);
@@ -145,7 +149,7 @@ export default function MetasSemanal() {
         if(devidos.error || todos.error) { toast.error('Não foi possível carregar o calendário dos KPIs'); return; }
         const montar = (base:any[]) => montarRetrato(base.map(k=>({...k,periodo_label:periodoApontamento(k,sem,k.desvio_critico).label})), competencia,reg?.valor?.faixas);
         setTodosKpis(montar(todos.data??[]));
-        const extras=(cout.kpis_retrato??[]).filter(k=>cout.kpis_resposta.some(r=>r.indicador_id===k.indicador_id&&r.desvio_critico));
+        const extras=(cout.kpis_retrato??[]).filter(k=>cout.kpis_resposta.some(r=>r.indicador_id===k.indicador_id&&(r.desvio_critico||r.voluntario)));
         const atuais=montar(devidos.data??[]);
         cout.kpis_retrato=[...atuais,...extras.filter(k=>!atuais.some(a=>a.indicador_id===k.indicador_id))];
       } else {
@@ -410,11 +414,21 @@ export default function MetasSemanal() {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold">1. Seus KPIs estão performando dentro do esperado?</h2>
               {podeEditar && sem>=INICIO_FREQUENCIA && !co.primeiro_envio_em && <Button size="sm" variant="outline" onClick={()=>setDesvioEscolha(!desvioEscolha)}><Plus className="h-4 w-4 mr-1"/>Desvio crítico</Button>}
+              {podeEditar && sem>=INICIO_FREQUENCIA && !co.primeiro_envio_em && <Button size="sm" variant="outline" onClick={()=>{setOutrosAberto(!outrosAberto);setOutrosSel([]);}}><Plus className="h-4 w-4 mr-1"/>Apontar outros KPIs</Button>}
               {podeEditar && noAlvo.length > 0 && <Button size="sm" variant="outline" onClick={() => setCo({ ...co, kpis_resposta: confirmarNoAlvo(retrato, co.kpis_resposta, sem) })}>Confirmar Sim nos {noAlvo.length} no alvo</Button>}
             </div>
             <p className="text-xs text-muted-foreground">Resposta opcional. {co.primeiro_envio_em ? `Números gravados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}` : "Números ao vivo até o envio"}{sem>=INICIO_FREQUENCIA?' · período fechado indicado em cada KPI':competencia ? ` · competência ${competencia.slice(5)}/${competencia.slice(0, 4)}` : " · semana sem competência mensal"}. Não altera o lançamento mensal.</p>
             <p className="text-sm rounded bg-muted p-2">Cada KPI pede um apontamento conforme o tipo: <b>valor mensal</b> (On/Off calculado após o fim do mês), <b>meta semestral/anual</b> (você declara On/Off no mês; justificativa se Off) ou <b>entrega</b> (status de implantação × prazo).</p>
             {desvioEscolha && <Select onValueChange={id=>{const k=todosKpis.find(k=>k.indicador_id===id);if(!k)return;setCo({...co,kpis_retrato:[...retrato,{...k,desvio_critico:true}],kpis_resposta:[...co.kpis_resposta.filter(r=>r.indicador_id!==id),{...respostaVazia(id,sem),desvio_critico:true,ok:false}]});setDesvioEscolha(false);}}><SelectTrigger aria-label="KPI fora do calendário"><SelectValue placeholder="Adicionar KPI próprio fora do calendário"/></SelectTrigger><SelectContent>{todosKpis.filter(k=>!retrato.some(r=>r.indicador_id===k.indicador_id)).map(k=><SelectItem key={k.indicador_id} value={k.indicador_id}>{k.codigo} · {k.nome}</SelectItem>)}</SelectContent></Select>}
+            {outrosAberto && (()=>{ const q=outrosBusca.trim().toLowerCase(); const disp=todosKpis.filter(k=>!retrato.some(r=>r.indicador_id===k.indicador_id)&&(!q||`${k.codigo} ${k.nome}`.toLowerCase().includes(q)));
+              const grupos=[['bsc_e','BSC estratégico',disp.filter(k=>k.origem==='bsc'&&(k.nivel??'').toLowerCase().startsWith('estrat'))],['bsc_t','BSC tático',disp.filter(k=>k.origem==='bsc'&&!(k.nivel??'').toLowerCase().startsWith('estrat'))],['okr','KRs de OKR',disp.filter(k=>k.origem==='okr')],['cesta','Cesta de metas',disp.filter(k=>k.origem==='cesta')]] as const;
+              return <div className="rounded border p-3 space-y-2 bg-muted/30" role="region" aria-label="Apontar outros KPIs">
+                <p className="text-xs text-muted-foreground">KPIs da sua cadeira fora do calendário deste ciclo. Apontamento voluntário: não conta como pendência, não reduz a completude e não muda a frequência.</p>
+                <Input aria-label="Buscar KPI" placeholder="Buscar por código ou nome" value={outrosBusca} onChange={e=>setOutrosBusca(e.target.value)}/>
+                <div className="max-h-72 overflow-auto space-y-2">{disp.length===0&&<p className="text-sm text-muted-foreground">Nenhum outro KPI disponível.</p>}
+                  {grupos.filter(g=>g[2].length).map(([id,lbl,ks])=><div key={id}><p className="text-xs font-semibold">{lbl} ({ks.length})</p>{ks.map(k=><label key={k.indicador_id} className="flex items-center gap-2 py-1 text-sm"><Checkbox checked={outrosSel.includes(k.indicador_id)} onCheckedChange={v=>setOutrosSel(v?[...outrosSel,k.indicador_id]:outrosSel.filter(x=>x!==k.indicador_id))}/>{k.codigo} · {k.nome}</label>)}</div>)}</div>
+                <div className="flex gap-2"><Button size="sm" disabled={!outrosSel.length} onClick={()=>{const novos=todosKpis.filter(k=>outrosSel.includes(k.indicador_id)).map(k=>({...k,desvio_critico:false,voluntario:true,periodo_label:periodoApontamento(k,sem,false).label}));setCo({...co,kpis_retrato:[...retrato,...novos],kpis_resposta:[...co.kpis_resposta.filter(r=>!outrosSel.includes(r.indicador_id)),...novos.map(k=>({...respostaVazia(k.indicador_id,sem),voluntario:true}))]});setOutrosAberto(false);setOutrosSel([]);}}>Adicionar {outrosSel.length||''}</Button><Button size="sm" variant="ghost" onClick={()=>setOutrosAberto(false)}>Cancelar</Button></div>
+              </div>; })()}
             {retrato.length === 0 && <p className="text-sm text-muted-foreground">{sem>=INICIO_FREQUENCIA?'Nenhum KPI devido neste ciclo.':'Nenhum KPI sob responsabilidade desta cadeira.'}</p>}
             <div className="grid gap-3 lg:grid-cols-2">
               {retrato.map((k) => {
@@ -432,6 +446,8 @@ export default function MetasSemanal() {
                       <div><p className="font-medium text-sm">{k.codigo} · {k.nome}</p>
                         {k.frequencia&&<p className="text-xs text-muted-foreground">{resumoFrequencia(k)} · Período: {k.periodo_label??k.competencia}{k.tratamento?` · ${k.tratamento}`:''}</p>}
                         {k.desvio_critico&&<Badge variant="destructive">Desvio crítico · cobrança mensal</Badge>}
+                        {k.voluntario&&!r.desvio_critico&&<div className="flex flex-wrap items-center gap-1"><Badge variant="outline">Fora do calendário · voluntário</Badge>{podeEditar&&!co.primeiro_envio_em&&<Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={()=>setCo({...co,kpis_retrato:retrato.filter(x=>x.indicador_id!==k.indicador_id),kpis_resposta:co.kpis_resposta.filter(x=>x.indicador_id!==k.indicador_id)})}>Remover</Button>}</div>}
+                        {k.voluntario&&!r.desvio_critico&&podeEditar&&!co.primeiro_envio_em&&sugerirDesvio({...k,...r,voluntario:true} as any)&&<div role="status" className="mt-1 rounded border border-destructive/40 bg-destructive/5 p-2 text-xs">Valor indica Off track com desvio crítico. <Button size="sm" variant="outline" className="ml-1 h-6 px-2 text-xs" onClick={()=>{setCo({...co,kpis_retrato:retrato.map(x=>x.indicador_id===k.indicador_id?{...x,desvio_critico:true,periodo_label:periodoApontamento(x,sem,true).label}:x),kpis_resposta:co.kpis_resposta.map(x=>x.indicador_id===k.indicador_id?{...x,desvio_critico:true,ok:false}:x)});}}>Transformar em desvio crítico</Button></div>}
                         <p className="text-xs text-muted-foreground">Última situação atual apontada: {ult ? <><b className="text-foreground">{ult.valor}</b> · {ult.fonte}{ult.data && ult.fonte === "Árvore de KPIs" ? ` · ${new Date(ult.data).toLocaleDateString("pt-BR")}` : ult.fonte === "Árvore de KPIs" ? " · Rev.02" : ""}</> : "—"}</p></div>
                       <div className="flex gap-1"><Badge variant="outline">{ORIGEM_LBL[k.origem]}</Badge><Badge variant="secondary">{TIPO_LBL[tipo]}</Badge>{aval && <Badge variant={aval === "off" ? "destructive" : aval === "on" ? "default" : "outline"}>{AVALIACAO_LBL[aval]}</Badge>}</div>
                     </div>

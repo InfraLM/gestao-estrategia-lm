@@ -25,6 +25,8 @@ export type KpiRetrato = CalendarioKpi & {
   sentido?: "maior" | "menor"; nivel?: string | null; meta_semestre?: number | null; meta_texto?: string | null;
   tipo_apontamento?: "valor_mensal" | "valor_periodo" | "entrega"; prazo_entrega?: string | null;
   periodo_inicio?: string; periodo_fim?: string; periodo_label?: string; desvio_critico?: boolean; desvio_id?: string;
+  /** Apontamento voluntário ("+ Apontar outros KPIs"): fora do calendário, não conta na completude nem muda a frequência. */
+  voluntario?: boolean;
 };
 export type KpiResposta = {
   indicador_id: string; ok: boolean | null; impacto: string; plano: string; vira_iniciativa: boolean; prazo: string;
@@ -32,7 +34,7 @@ export type KpiResposta = {
   situacao_atual?: string; vinculos?: Vinculos;
   /** Tipo S: declaração do diretor no mês. Tipo E: status de entrega. */
   declaracao?: "on" | "off" | null; justificativa?: string; status_entrega?: "" | "nao_iniciada" | "em_implantacao" | "implantada" | "atrasada" | "cancelada"; avanco_pct?: string; evidencia?: string;
-  desvio_critico?: boolean; causa?: string; periodo_apontado?: string;
+  desvio_critico?: boolean; causa?: string; periodo_apontado?: string; voluntario?: boolean;
 };
 export type KpiLegado = { indicador_id: string; valor: string; situacao: string; comentario: string };
 export type CheckoutV2 = {
