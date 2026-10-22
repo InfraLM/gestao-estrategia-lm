@@ -6,6 +6,7 @@ import { competenciaDaSemana } from '@/lib/rotinaSemanal';
 import { atingimentoMeta, valorEscalar } from '@/lib/impactoFinanceiro';
 import rev02 from '@/data/bscRev02.json';
 import { metas2030Arvore } from '@/data/metas2030';
+import { previstoNoMes } from '@/lib/frequenciaApontamento';
 const db = supabase as any;
 export function montarKpisObjetivo(inds:any[], metas:any[], lancs:any[], cks:any[], arv:any[], arvData:string|null, hoje=new Date()) {
   const mes = hoje.toISOString().slice(0,7);
@@ -28,10 +29,11 @@ export function montarKpisObjetivo(inds:any[], metas:any[], lancs:any[], cks:any
     const comp=mes;
     const mensal=atual?.comp?metas.find(m=>m.indicador_id===i.id&&m.competencia===atual.comp)?.meta_mes??null:null;
     const meta=i.tipo_apontamento==='valor_mensal'&&mensal!=null?mensal:i.meta_semestre??i.meta_texto??tree?.meta2026??null;
-    const lancAtual=ls.find(l=>l.competencia===mes);
-    const apAtual=apontamentoMaisRecente(i.id,mes,lancAtual??null,cks);
+    const fora=!!i.frequencia&&!previstoNoMes(i,mes);
+    const lancAtual=ls.find(l=>fora||l.competencia===mes);
+    const apAtual=apontamentoMaisRecente(i.id,fora?null:mes,lancAtual??null,cks);
     const metaAtual=metas.find(m=>m.indicador_id===i.id&&m.competencia===mes)?.meta_mes??null;
-    const r=avaliarPorTipo({indicador_id:i.id,sentido:i.sentido,competencia:comp,meta_mes:i.tipo_apontamento==='valor_mensal'?metaAtual:null,meta_semestre:i.meta_semestre,meta_texto:i.meta_texto,realizado:lancAtual?.valor??null,tipo:i.tipo_apontamento,prazo_entrega:i.prazo_entrega,apontamento:apAtual},tree?.situacaoAtual?{valor:tree.situacaoAtual,data:arvData}:null,cks,hoje);
+    const r=avaliarPorTipo({...i,indicador_id:i.id,sentido:i.sentido,competencia:comp,meta_mes:i.tipo_apontamento==='valor_mensal'?metaAtual:null,meta_semestre:i.meta_semestre,meta_texto:i.meta_texto,realizado:lancAtual?.valor??null,tipo:i.tipo_apontamento,prazo_entrega:i.prazo_entrega,apontamento:apAtual},tree?.situacaoAtual?{valor:tree.situacaoAtual,data:arvData}:null,cks,hoje);
     const meta2030=i.meta_2030??tree?.meta2030??metas2030Arvore[String(i.nome).trim()]??null;
     return {...i,aval:r.aval,meta,meta2030,atual:i.tipo_apontamento==='entrega'?(ap?.status_entrega?STATUS_ENTREGA_LBL[ap.status_entrega]:'—'):atual?.texto??tree?.situacaoAtual??'—',valor:atual?.valor??null,data:i.tipo_apontamento==='entrega'?ap?.data:atual?.data,comp:atual?.comp??null,fonte:r.origem??atual?.fonte??null,atingimento:i.tipo_apontamento==='entrega'?null:atingimentoMeta(atual?.valor??null,meta,i.sentido),ating2030:i.tipo_apontamento==='entrega'?null:atingimentoMeta(atual?.valor??null,meta2030,i.sentido)};
   });

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { avaliarPorTipo, apontamentoMaisRecente, contarAvaliacoes, mapaArvore, Avaliacao, CheckoutReg, Fonte } from "@/lib/avaliacaoBsc";
 import rev02 from "@/data/bscRev02.json";
+import { previstoNoMes } from '@/lib/frequenciaApontamento';
 
 /** Situações numéricas dos checkouts ENVIADOS, só os números (sem o resto do formulário), via função autorizada. */
 export async function carregarSituacoesKpi(): Promise<{ data: CheckoutReg[]; alertas: Set<string> }> {
@@ -31,9 +32,9 @@ export function useAvaliacoesBsc(competencia: string | null, cadeiras: string[] 
     const db = supabase as any;
     const ck = carregarSituacoesKpi();
     Promise.all([
-      db.from("mt_indicadores").select("id,nome,origem,cadeira_id,sentido,meta_semestre,meta_texto,nivel,parent_id,tipo_apontamento,prazo_entrega").in("origem", origens).eq("status", "ativo"),
+      db.from("mt_indicadores").select("*").in("origem", origens).eq("status", "ativo"),
       db.from("mt_metas_mensais").select("indicador_id,meta_mes").eq("competencia", competencia),
-      db.from("mt_lancamentos").select("indicador_id,valor,revisao,sem_medicao,declaracao,justificativa,status_entrega,avanco_pct,updated_at").eq("competencia", competencia),
+      db.from("mt_lancamentos").select("indicador_id,competencia,valor,revisao,sem_medicao,declaracao,justificativa,status_entrega,avanco_pct,updated_at").lte("competencia", competencia),
       ck,
       db.from("conteudo_editavel").select("valor,updated_at").eq("chave", "bsc.rev02").maybeSingle(),
     ]).then(([i, m, l, c, a]: any[]) => {
@@ -41,13 +42,14 @@ export function useAvaliacoesBsc(competencia: string | null, cadeiras: string[] 
       const out: Record<string, AvalCadeira> = {};
       for (const ind of (i.data ?? []).filter((x: any) => x.cadeira_id && !x.parent_id && (x.nivel ?? "Tático") !== "Operacional" && (!cadeiras || cadeiras.includes(x.cadeira_id)))) {
         const meta = (m.data ?? []).find((x: any) => x.indicador_id === ind.id)?.meta_mes ?? null;
-        const todos = (l.data ?? []).filter((x: any) => x.indicador_id === ind.id).sort((a: any, b: any) => b.revisao - a.revisao);
+        const fora=!!ind.frequencia&&!previstoNoMes(ind,competencia);
+        const todos = (l.data ?? []).filter((x: any) => x.indicador_id === ind.id && (fora||x.competencia===competencia)).sort((a:any,b:any)=>b.competencia.localeCompare(a.competencia)||b.revisao-a.revisao);
         const lanc = todos.find((x: any) => !x.sem_medicao);
         const sit = ind.origem === "bsc" ? arv[String(ind.nome).trim()] : undefined;
         const cks = (c.data ?? []).filter((x: any) => x.cadeira_id === ind.cadeira_id);
         const tipo = ind.tipo_apontamento ?? "valor_mensal";
-        const r = avaliarPorTipo({ indicador_id: ind.id, sentido: ind.sentido, competencia, meta_mes: tipo === "valor_mensal" ? meta : null, meta_semestre: ind.meta_semestre, meta_texto: ind.meta_texto, realizado: lanc?.valor ?? null,
-          tipo, prazo_entrega: ind.prazo_entrega, apontamento: apontamentoMaisRecente(ind.id, competencia, todos[0] ?? null, cks) },
+        const r = avaliarPorTipo({ ...ind, indicador_id: ind.id, sentido: ind.sentido, competencia, meta_mes: tipo === "valor_mensal" ? meta : null, meta_semestre: ind.meta_semestre, meta_texto: ind.meta_texto, realizado: lanc?.valor ?? null,
+          tipo, prazo_entrega: ind.prazo_entrega, apontamento: apontamentoMaisRecente(ind.id, fora?null:competencia, todos[0] ?? null, cks) },
           sit ? { valor: sit, data: arvData } : null, cks);
         (out[ind.cadeira_id] ??= { itens: [], cont: contarAvaliacoes([]), off: [] }).itens.push({ id: ind.id, nome: ind.nome, cadeira_id: ind.cadeira_id, grupo: ind.origem, ...r });
       }
