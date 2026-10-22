@@ -59,3 +59,40 @@ export function avaliarBsc(e: EntradaBsc, hoje = new Date()): Avaliacao {
 export function contarAvaliacoes(lista: Avaliacao[]) {
   return { on: lista.filter((x) => x === "on").length, off: lista.filter((x) => x === "off").length, acomp: lista.filter((x) => x === "acomp").length, sem_meta: lista.filter((x) => x === "sem_meta").length };
 }
+
+// ---- Regra única (formulário de checkout, Painel de Metas e Visão semanal) ----
+import { normalizarCheckout, competenciaDaSemana } from "@/lib/rotinaSemanal";
+
+export type CheckoutReg = { semana: string; status: string; enviado_em: string | null; conteudo: any };
+export type ArvoreSit = { valor: string; data: string | null } | null;
+const dmBr = (iso: string) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
+
+/** Última situação atual NUMÉRICA: checkout ENVIADO (até a competência) ou árvore de KPIs, valendo a mais recente. Texto livre é ignorado. */
+export function situacaoNumerica(indicador_id: string, arvore: ArvoreSit, checkouts: CheckoutReg[], competencia: string | null) {
+  let ck: { valor: number; fonte: string; data: string } | null = null;
+  const enviados = checkouts.filter((r) => r.status === "enviado" && (!competencia || competenciaDaSemana(r.semana) <= competencia)).sort((a, b) => b.semana.localeCompare(a.semana));
+  for (const r of enviados) {
+    const k = normalizarCheckout(r.conteudo).kpis_resposta.find((x) => x.indicador_id === indicador_id && x.situacao_atual?.trim() && numeroBr(x.situacao_atual) != null);
+    if (k) { ck = { valor: numeroBr(k.situacao_atual!)!, fonte: `checkout de ${dmBr(r.semana)}`, data: r.enviado_em ?? r.semana }; break; }
+  }
+  const nArv = arvore?.valor?.trim() ? numeroBr(arvore.valor) : null;
+  const av = nArv != null ? { valor: nArv, fonte: "Árvore de KPIs", data: arvore!.data ?? "" } : null;
+  if (!ck) return av; if (!av) return ck;
+  return (av.data || "") > ck.data ? av : ck;
+}
+
+export type EntradaKpiBsc = Omit<EntradaBsc, "situacao"> & { indicador_id: string };
+/** Apontamento: (1) realizado lançado no mês; (2) situação numérica mais recente. Devolve a origem quando vem da situação. */
+export function avaliarKpiBsc(e: EntradaKpiBsc, arvore: ArvoreSit, checkouts: CheckoutReg[], hoje = new Date()): { aval: Avaliacao; origem: string | null } {
+  const sit = e.realizado == null ? situacaoNumerica(e.indicador_id, arvore, checkouts, e.competencia) : null;
+  const aval = avaliarBsc({ ...e, realizado: e.realizado ?? sit?.valor ?? null }, hoje);
+  const origem = sit && (aval === "on" || aval === "off") ? `pela situação apontada no ${sit.fonte === "Árvore de KPIs" ? "Árvore de KPIs" : sit.fonte}` : null;
+  return { aval, origem: origem?.replace("no Árvore", "na Árvore") ?? null };
+}
+
+/** Mapa nome do KPI → situação atual, a partir do conteúdo editável da árvore (ou Rev.02). */
+export function mapaArvore(valor: any[]): Record<string, string> {
+  const m: Record<string, string> = {};
+  for (const o of valor ?? []) for (const k of o.kpis ?? []) if (k.situacaoAtual) m[String(k.kpi).trim()] = k.situacaoAtual;
+  return m;
+}
