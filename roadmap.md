@@ -69,3 +69,6 @@
 - [x] Regra única por tipo no checkout, Lançar mês, matriz, painel e relatório de IA; nota e régua fora das telas
 - [x] Taxa de conformidade (painel, visão semanal, cartão do diretor, IA)
 - [x] Regras finais da conformidade aplicadas (todos os diretores veem, ≥90%, status report conta, desde 26/10)
+
+- [ ] Integração Gestão Processos (Zeev): espelhos, sincronização horária e correspondência de KPIs — aguarda função de exportação no outro app, token e decisões 4–8 do plano
+- [ ] Processos e melhorias no desdobramento do objetivo — depende da integração acima
