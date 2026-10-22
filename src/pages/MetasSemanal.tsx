@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTransparencia, AvisoTransparencia } from "@/hooks/useTransparencia";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,6 +57,7 @@ type Tipo = "checkin" | "checkout";
 type Salvo = { estado: "ocioso" | "salvando" | "salvo" | "erro"; em?: Date; erro?: string };
 
 export default function MetasSemanal() {
+  const transp = useTransparencia();
   const b = useMetasBase();
   const access = useModuleAccess();
   const [cad, setCad] = useState<string>("");
@@ -373,6 +375,7 @@ export default function MetasSemanal() {
           </div>
         </div>
       </Card>
+      <AvisoTransparencia ativo={transp.ativo} />
 
       <Tabs value={aba} onValueChange={(v) => setAba(v as Tipo)}>
         <TabsList className="h-auto flex-wrap"><TabsTrigger value="checkout">Checkout · semana de {fmtSem(semOut)}</TabsTrigger><TabsTrigger value="checkin">Check-in · semana de {fmtSem(sem)}</TabsTrigger></TabsList>
