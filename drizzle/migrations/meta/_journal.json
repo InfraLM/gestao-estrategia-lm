@@ -330,6 +330,13 @@
       "when": 1792709492846,
       "tag": "0046_frequencia_autorizacao_null_segura",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1792709611181,
+      "tag": "0047_frequencia_projecao_periodos",
+      "breakpoints": true
     }
   ]
 }

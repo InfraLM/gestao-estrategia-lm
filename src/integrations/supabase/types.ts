@@ -5012,6 +5012,7 @@ export type Database = {
           status_entrega: string
         }[]
       }
+      rotina_situacoes_kpi_frequencia: { Args: never; Returns: Json }
       rotina_status_ciclos: {
         Args: { _semanas: string[] }
         Returns: {
