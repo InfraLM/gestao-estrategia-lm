@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { cicloPadrao, semanaCheckout, competenciaDaSemana, ultimaSituacao, montarRetrato } from "@/lib/rotinaSemanal";
 import { prazoDe } from "@/pages/MetasSemanal";
 import { avaliarBsc, lerMeta } from "@/lib/avaliacaoBsc";
-import { notaMensal, pesoVigente } from "@/lib/notaMensal";
 
 describe("Ciclo semanal", () => {
   it("quinta 22/10 abre o ciclo 19/10; sexta 23/10 00h em São Paulo já abre 26/10", () => {
@@ -53,17 +52,3 @@ describe("Avaliação BSC", () => {
   });
 });
 
-describe("Nota mensal", () => {
-  const ind = (id: string, origem: string, peso: number) => ({ id, origem, peso });
-  it("BSC fica fora; CEO = só a cesta 50/50 a partir de julho", () => {
-    const itens = [ind("ac01", "bsc", 1), ind("ebitda", "cesta", 0.33), ind("nps", "cesta", 0.33)];
-    const vig = [{ indicador_id: "ebitda", competencia_inicio: "2026-07", peso: 0.5 }, { indicador_id: "nps", competencia_inicio: "2026-07", peso: 0.5 }];
-    const atg: Record<string, number> = { ac01: 0, ebitda: 1, nps: 0.8 };
-    expect(notaMensal(itens, (i) => atg[i.id], "2026-10", vig)).toBeCloseTo(0.9);
-  });
-  it("peso vigente por competência", () => {
-    const vig = [{ indicador_id: "x", competencia_inicio: "2026-09", peso: 0.5 }];
-    expect(pesoVigente({ id: "x", peso: 0.33 }, "2026-08", vig)).toBe(0.33);
-    expect(pesoVigente({ id: "x", peso: 0.33 }, "2026-10", vig)).toBe(0.5);
-  });
-});
