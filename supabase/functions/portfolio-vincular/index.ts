@@ -32,17 +32,17 @@ Deno.serve(async req => {
    sb.from('mt_iniciativas').select('id,titulo,indicador_id,objetivo_id,okr_id,cadeira_id'),
    sb.from('mt_objetivos').select('id,codigo,descricao'),sb.from('mt_indicadores').select('id,codigo,nome,origem,okr_id').eq('status','ativo'),sb.from('mt_okrs').select('id,semestre'),
    sb.from('portfolio_vinculos').select('fonte_tipo,fonte_id,tipo,ref_id,status'),
-   sb.from('projeto_vinculos').select('projeto_id,tipo,ref_id'),sb.from('mt_acao_vinculos').select('iniciativa_id,tipo,ref_id')
+   sb.from('projeto_vinculos').select('projeto_id,tipo,ref_id'),sb.from('mt_acao_vinculos').select('iniciativa_id,tipo,ref_id'),sb.from('portfolio_vinculacao_jobs').select('fonte_tipo,fonte_id,status')
   ]);
   if(results.some(r=>r.error)) return response({error:'Não foi possível consultar os cadastros autorizados.'},400);
-  const [ps,ins,os,inds,okrs,vs,pv,iv]=results.map(r=>r.data??[]);
+  const [ps,ins,os,inds,okrs,vs,pv,iv,history]=results.map(r=>r.data??[]);
   const sp=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).formatToParts(new Date());
   const sem=`${sp.find(p=>p.type==='year')?.value}/${Number(sp.find(p=>p.type==='month')?.value)<=6?1:2}`;
   const vig=new Set(okrs.filter((o:any)=>o.semestre===sem).map((o:any)=>o.id));
   const alvos:Alvo[]=[...os.map((o:any)=>({id:o.id,tipo:'objetivo' as const,codigo:o.codigo,nome:o.descricao})),...inds.filter((i:any)=>i.origem!=='okr'||vig.has(i.okr_id)).map((i:any)=>({...i,tipo:'indicador' as const}))];
   const validados=new Set(vs.filter((v:any)=>v.status==='validado').map((v:any)=>`${v.fonte_tipo}:${v.fonte_id}`));
   const fontesBase:Fonte[]=[...ps.map((p:any)=>({...p,fonte_tipo:'projeto' as const,texto:''})),...ins.map((i:any)=>({...i,nome:i.titulo,fonte_tipo:'iniciativa' as const,texto:JSON.stringify({titulo:i.titulo})}))];
-  const elegiveis=fontesBase.filter(f=>!validados.has(`${f.fonte_tipo}:${f.id}`));
+  const elegiveis=fontesBase.filter(f=>!validados.has(`${f.fonte_tipo}:${f.id}`) && !history.some((j:any)=>j.fonte_tipo===f.fonte_tipo&&j.fonte_id===f.id&&['concluido','executando'].includes(j.status)));
   if(modo==='resumo') return response({total:elegiveis.length,limite:LIMITE,lote:LOTE,fontes:elegiveis.map(f=>({id:f.id,fonte_tipo:f.fonte_tipo,nome:f.nome,codigo:f.codigo}))});
   let escolhidas=modo==='novo'&&item?elegiveis.filter(f=>f.id===item.id&&f.fonte_tipo===item.fonte_tipo):fontes.length?elegiveis.filter(f=>fontes.includes(`${f.fonte_tipo}:${f.id}`)):elegiveis.slice(0,LIMITE);
   if(escolhidas.length>LIMITE||(fontes.length&&escolhidas.length!==new Set(fontes).size)) return response({error:'Seleção indisponível ou com vínculos já validados.'},400);
@@ -51,14 +51,9 @@ Deno.serve(async req => {
   const {data:blocked}=await admin.from('portfolio_vinculacao_jobs').select('bloqueio').eq('status','pausado').not('bloqueio','is',null).limit(1);
   if(blocked?.length) return response({error:'A geração está pausada. Restabeleça o acesso ou os créditos antes de iniciar uma nova execução.'},403);
   for(const f of escolhidas) {
-   if(newJob) jobs.push(newJob.id);
-   else {
-    const {data:j,error}=await admin.from('portfolio_vinculacao_jobs').upsert({fonte_tipo:f.fonte_tipo,fonte_id:f.id,criado_por:auth.user.id,status:'pendente'},{onConflict:'fonte_tipo,fonte_id'}).select('id').single();
-    if(error||!j) throw new Error('Não foi possível registrar a execução.'); jobs.push(j.id);
-   }
+   const {data:j,error}=await admin.rpc('portfolio_iniciar_job',{_tipo:f.fonte_tipo,_id:f.id,_usuario:auth.user.id,_novo:modo==='novo'});
+   if(error||!j) throw new Error('Um item já está em processamento ou pausado.'); jobs.push(j);
   }
-  const {data:claimed,error:ce}=await admin.from('portfolio_vinculacao_jobs').update({status:'executando',updated_at:new Date().toISOString()}).in('id',jobs).eq('status','pendente').select('id');
-  if(ce||claimed?.length!==jobs.length) return response({error:'Um item já está em processamento.'},409);
   let total=0; const ia:Fonte[]=[];
   for(const f of escolhidas) {
    const antigos=f.fonte_tipo==='projeto'?pv.filter((v:any)=>v.projeto_id===f.id).map((v:any)=>({tipo:v.tipo==='bsc_objetivo'?'objetivo':'indicador',ref_id:v.ref_id})):iv.filter((v:any)=>v.iniciativa_id===f.id&&v.tipo!=='projeto').map((v:any)=>({tipo:v.tipo==='objetivo'?'objetivo':'indicador',ref_id:v.ref_id}));
