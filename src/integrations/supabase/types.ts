@@ -2086,7 +2086,9 @@ export type Database = {
           arquivo_path: string | null
           avancos: string | null
           cadeira_id: string | null
+          comentario: string | null
           competencia: string
+          confirmacao_status: string | null
           created_at: string
           custo_realizado: number | null
           desvios: string | null
@@ -2094,11 +2096,16 @@ export type Database = {
           enviado_por: string | null
           enviado_por_nome: string | null
           equipe: string | null
+          farol_cronograma: string | null
+          farol_custo: string | null
+          farol_escopo: string | null
           id: string
           pct_cronograma: number | null
           projeto_codigo: string
           recursos: string | null
+          revisao: number
           saude: string | null
+          semana_ciclo: string | null
           updated_at: string
         }
         Insert: {
@@ -2106,7 +2113,9 @@ export type Database = {
           arquivo_path?: string | null
           avancos?: string | null
           cadeira_id?: string | null
+          comentario?: string | null
           competencia: string
+          confirmacao_status?: string | null
           created_at?: string
           custo_realizado?: number | null
           desvios?: string | null
@@ -2114,11 +2123,16 @@ export type Database = {
           enviado_por?: string | null
           enviado_por_nome?: string | null
           equipe?: string | null
+          farol_cronograma?: string | null
+          farol_custo?: string | null
+          farol_escopo?: string | null
           id?: string
           pct_cronograma?: number | null
           projeto_codigo: string
           recursos?: string | null
+          revisao?: number
           saude?: string | null
+          semana_ciclo?: string | null
           updated_at?: string
         }
         Update: {
@@ -2126,7 +2140,9 @@ export type Database = {
           arquivo_path?: string | null
           avancos?: string | null
           cadeira_id?: string | null
+          comentario?: string | null
           competencia?: string
+          confirmacao_status?: string | null
           created_at?: string
           custo_realizado?: number | null
           desvios?: string | null
@@ -2134,11 +2150,16 @@ export type Database = {
           enviado_por?: string | null
           enviado_por_nome?: string | null
           equipe?: string | null
+          farol_cronograma?: string | null
+          farol_custo?: string | null
+          farol_escopo?: string | null
           id?: string
           pct_cronograma?: number | null
           projeto_codigo?: string
           recursos?: string | null
+          revisao?: number
           saude?: string | null
+          semana_ciclo?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -2147,6 +2168,38 @@ export type Database = {
             columns: ["cadeira_id"]
             isOneToOne: false
             referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_status_projetos_versoes: {
+        Row: {
+          created_at: string
+          dados: Json
+          id: string
+          revisao: number
+          status_id: string
+        }
+        Insert: {
+          created_at?: string
+          dados: Json
+          id?: string
+          revisao: number
+          status_id: string
+        }
+        Update: {
+          created_at?: string
+          dados?: Json
+          id?: string
+          revisao?: number
+          status_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_status_projetos_versoes_status_id_fkey"
+            columns: ["status_id"]
+            isOneToOne: false
+            referencedRelation: "mt_status_projetos"
             referencedColumns: ["id"]
           },
         ]
@@ -2440,6 +2493,89 @@ export type Database = {
           },
         ]
       }
+      projeto_cadeiras_apoio: {
+        Row: {
+          cadeira_id: string
+          created_at: string
+          projeto_id: string
+        }
+        Insert: {
+          cadeira_id: string
+          created_at?: string
+          projeto_id: string
+        }
+        Update: {
+          cadeira_id?: string
+          created_at?: string
+          projeto_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projeto_cadeiras_apoio_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projeto_cadeiras_apoio_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projeto_decisoes: {
+        Row: {
+          codigo: string
+          competencia: string
+          created_at: string
+          decidido_por: string
+          decidido_por_nome: string | null
+          decisao: string
+          desfecho: string | null
+          id: string
+          justificativa: string
+          projecoes: string | null
+          projeto_id: string
+        }
+        Insert: {
+          codigo: string
+          competencia: string
+          created_at?: string
+          decidido_por: string
+          decidido_por_nome?: string | null
+          decisao: string
+          desfecho?: string | null
+          id?: string
+          justificativa: string
+          projecoes?: string | null
+          projeto_id: string
+        }
+        Update: {
+          codigo?: string
+          competencia?: string
+          created_at?: string
+          decidido_por?: string
+          decidido_por_nome?: string | null
+          decisao?: string
+          desfecho?: string | null
+          id?: string
+          justificativa?: string
+          projecoes?: string | null
+          projeto_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projeto_decisoes_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projeto_membros: {
         Row: {
           created_at: string
@@ -2521,10 +2657,48 @@ export type Database = {
         }
         Relationships: []
       }
+      projeto_vinculos: {
+        Row: {
+          created_at: string
+          criado_por: string | null
+          id: string
+          projeto_id: string
+          ref_id: string
+          tipo: string
+        }
+        Insert: {
+          created_at?: string
+          criado_por?: string | null
+          id?: string
+          projeto_id: string
+          ref_id: string
+          tipo: string
+        }
+        Update: {
+          created_at?: string
+          criado_por?: string | null
+          id?: string
+          projeto_id?: string
+          ref_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projeto_vinculos_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projetos: {
         Row: {
           avancos: string | null
           budget: number
+          cadeira_confirmada_em: string | null
+          cadeira_confirmada_por: string | null
+          cadeira_id: string | null
           categoria:
             | Database["public"]["Enums"]["categoria_estrategica_enum"]
             | null
@@ -2547,6 +2721,8 @@ export type Database = {
           plano_acao: string | null
           realizado: number
           saude: Database["public"]["Enums"]["saude_enum"]
+          situacao_confirmada_em: string | null
+          situacao_confirmada_por: string | null
           status: Database["public"]["Enums"]["status_execucao_enum"]
           status_bc: Database["public"]["Enums"]["status_bc_enum"]
           termino: string | null
@@ -2556,6 +2732,9 @@ export type Database = {
         Insert: {
           avancos?: string | null
           budget?: number
+          cadeira_confirmada_em?: string | null
+          cadeira_confirmada_por?: string | null
+          cadeira_id?: string | null
           categoria?:
             | Database["public"]["Enums"]["categoria_estrategica_enum"]
             | null
@@ -2578,6 +2757,8 @@ export type Database = {
           plano_acao?: string | null
           realizado?: number
           saude?: Database["public"]["Enums"]["saude_enum"]
+          situacao_confirmada_em?: string | null
+          situacao_confirmada_por?: string | null
           status?: Database["public"]["Enums"]["status_execucao_enum"]
           status_bc?: Database["public"]["Enums"]["status_bc_enum"]
           termino?: string | null
@@ -2587,6 +2768,9 @@ export type Database = {
         Update: {
           avancos?: string | null
           budget?: number
+          cadeira_confirmada_em?: string | null
+          cadeira_confirmada_por?: string | null
+          cadeira_id?: string | null
           categoria?:
             | Database["public"]["Enums"]["categoria_estrategica_enum"]
             | null
@@ -2609,13 +2793,23 @@ export type Database = {
           plano_acao?: string | null
           realizado?: number
           saude?: Database["public"]["Enums"]["saude_enum"]
+          situacao_confirmada_em?: string | null
+          situacao_confirmada_por?: string | null
           status?: Database["public"]["Enums"]["status_execucao_enum"]
           status_bc?: Database["public"]["Enums"]["status_bc_enum"]
           termino?: string | null
           updated_at?: string
           wave?: Database["public"]["Enums"]["wave_enum"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "projetos_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       repositorio_documentos: {
         Row: {
@@ -3262,6 +3456,31 @@ export type Database = {
         Returns: boolean
       }
       mt_reabrir: { Args: { _comp: string }; Returns: undefined }
+      proj_eh_ceo: { Args: { _uid: string }; Returns: boolean }
+      proj_gov_ou_ceo: { Args: { _uid: string }; Returns: boolean }
+      proj_principal: {
+        Args: { _projeto: string; _uid: string }
+        Returns: boolean
+      }
+      projeto_confirmar_situacao: {
+        Args: { _projeto: string; _situacao: string }
+        Returns: undefined
+      }
+      projeto_definir_cadeira: {
+        Args: { _apoio?: string[]; _cadeira: string; _projetos: string[] }
+        Returns: undefined
+      }
+      projeto_registrar_decisao: {
+        Args: {
+          _competencia: string
+          _decisao: string
+          _desfecho: string
+          _justificativa: string
+          _projecoes: string
+          _projeto: string
+        }
+        Returns: string
+      }
       rotina_criar_iniciativa: {
         Args: {
           _cadeira: string
@@ -3312,6 +3531,7 @@ export type Database = {
         Returns: undefined
       }
       socios_vincular: { Args: never; Returns: undefined }
+      status_report_pode_arquivo: { Args: { _name: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "pmo" | "viewer" | "super_admin"
