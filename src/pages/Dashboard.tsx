@@ -17,6 +17,7 @@ import {
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import DashboardPortfolioExtras from "@/components/DashboardPortfolioExtras";
 
 const fmtBRL = (n: number) => `R$ ${(n / 1_000_000).toFixed(2)}M`;
 
@@ -388,6 +389,8 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Dashboard do Portfólio Estratégico</h1>
+      <DashboardPortfolioExtras />
       {/* Filtro por classificação */}
       <Card className="p-4 shadow-card">
         <div className="flex flex-wrap items-center gap-3">

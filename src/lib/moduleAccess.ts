@@ -31,8 +31,13 @@ export function moduleForPath(path: string): AccessModule | null {
   if (path.startsWith("/okrs")) return "okrs";
   if (["/matriz-processos", "/gestao-processos", "/dashboard-processos", "/status-report-processos"].some(p => path.startsWith(p))) return "bpmo";
   if (["/portfolio", "/pmo", "/gestao", "/status-report", "/submissao", "/melhorias", "/melhoria-continua"].some(p => path.startsWith(p))) return "pmo";
-  if (path === "/" || ["/diagnostico", "/estrategia", "/backlog-estrategico", "/impacto-estrategico"].some(p => path.startsWith(p))) return "estrategia";
+  if (["/diagnostico", "/estrategia", "/backlog-estrategico", "/impacto-estrategico"].some(p => path.startsWith(p))) return "estrategia";
   return null;
+}
+
+/** Link antigo "/" (Dashboard Estratégico): vai ao dashboard do portfólio no PMO, mantendo filtros; sem PMO, à Estratégia. */
+export function destinoInicio(search: string, podePmo: boolean): string {
+  return podePmo ? `/pmo/dashboard${search}` : "/estrategia";
 }
 
 export function moduleForContent(key: string): AccessModule {
