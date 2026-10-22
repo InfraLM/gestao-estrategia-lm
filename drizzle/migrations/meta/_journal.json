@@ -309,6 +309,13 @@
       "when": 1792709126368,
       "tag": "0043_frequencia_kpi_calendario_desvios",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1792709318246,
+      "tag": "0044_frequencia_avisos_contagem",
+      "breakpoints": true
     }
   ]
 }
