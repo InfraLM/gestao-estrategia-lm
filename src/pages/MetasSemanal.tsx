@@ -379,7 +379,7 @@ export default function MetasSemanal() {
           </div>
           <div className="w-64 space-y-1"><Label>Ciclo</Label>
             <Select value={sem} onValueChange={(v) => { flush(); setSem(v); }}><SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{ciclosDisponiveis().map((s) => <SelectItem key={s} value={s}>{fmtSem(s)} (checkout {fmtSem(semanaCheckout(s))})</SelectItem>)}</SelectContent></Select>
+              <SelectContent>{[...new Set([sem, ...ciclosDisponiveis()])].sort().reverse().map((s) => <SelectItem key={s} value={s}>{fmtSem(s)} (checkout {fmtSem(semanaCheckout(s))})</SelectItem>)}</SelectContent></Select>
           </div>
         </div>
       </Card>
