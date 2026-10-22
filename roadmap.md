@@ -1,10 +1,10 @@
 # Pedidos da Naira · 22/10
 - [x] Etapa 0 · Yuri Ribeiro → Yuri Garcia (30 projetos + textos fixos)
-- [ ] Etapa 1 · Vinculados em KR/Cesta; status reports pendentes no Painel; AGENTS.md por pasta
-- [ ] Etapa 2 · Espaço OKRs com 4 listas e redirecionamentos
-- [ ] Etapa 3 · Matriz consolidada em Lançamentos
-- [ ] Etapa 4 · Transparência entre diretores (interruptor)
-- [ ] Etapa 5 · Relatório mensal e diagnóstico com IA
+- [x] Etapa 1 · Vinculados em KR/Cesta; status reports pendentes no Painel; AGENTS.md por pasta
+- [x] Etapa 2 · Espaço OKRs com 4 listas e redirecionamentos
+- [x] Etapa 3 · Matriz consolidada em Lançamentos
+- [x] Etapa 4 · Transparência entre diretores (interruptor)
+- [x] Etapa 5 · Relatório mensal e diagnóstico com IA
 
 # Roadmap · Lançamento Mensal de Metas 2S26
 
