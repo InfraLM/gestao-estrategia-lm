@@ -351,6 +351,13 @@
       "when": 1792711186138,
       "tag": "0049_rotina_dashboard_kpis",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1792712565303,
+      "tag": "0050_impedimentos_atribuicao_respostas",
+      "breakpoints": true
     }
   ]
 }
