@@ -205,7 +205,7 @@ export function pendenciasCheckout(c: CheckoutV2, reaproveitaveis: Record<string
     if (!responsavelOk(e.responsavel)) p.push({ campo: `ent-${i}-resp`, texto: `"${e.titulo}": responsável incompleto.` });
   });
   for (const k of c.kpis_resposta) {
-    if (!c.kpis_retrato?.some(r => r.indicador_id === k.indicador_id)) continue;
+    if (c.kpis_retrato && !c.kpis_retrato.some(r => r.indicador_id === k.indicador_id)) continue;
     if (k.desvio_critico && (!k.situacao_atual?.trim() || !k.causa?.trim() || !k.impacto?.trim() || !k.plano?.trim()))
       p.push({ campo: `kpi-${k.indicador_id}-desvio`, texto: "Desvio crítico: preencha valor, causa, impacto e ação." });
     const ret = c.kpis_retrato?.find((r) => r.indicador_id === k.indicador_id);
