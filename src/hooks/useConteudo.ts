@@ -60,5 +60,5 @@ export function useConteudo<T>(chave: string, padrao: T) {
 
   const restaurar = useCallback(() => save(padrao), [save, padrao]);
 
-  return { data, save, restaurar, canEdit: !revisao?.leitura && access.canWrite(moduleForContent(chave)) && (canEdit || access.explicitEditor(moduleForContent(chave))), editado: !!cache && chave in cache, sugestao: !!documento };
+  return { data, save, restaurar, canEdit: !(documento && revisao?.leitura) && access.canWrite(moduleForContent(chave)) && (canEdit || access.explicitEditor(moduleForContent(chave))), editado: !!cache && chave in cache, sugestao: !!documento };
 }
