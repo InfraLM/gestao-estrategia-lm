@@ -18,6 +18,7 @@ import { srPendentesPorCadeira } from "@/lib/projetosGestao";
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 import { useConformidade, pctC } from "@/components/Conformidade";
 import { ExtrasLeitura, ResumoExtras } from '@/components/EntregasExtras';
+import AvisosCiclo from '@/components/AvisosCiclo';
 
 const db = supabase as any;
 const ORIGENS = ["bsc", "okr", "cesta"];
@@ -207,6 +208,7 @@ export default function MetasPainel() {
       </Card>
 
       {b.isGovernanca && <ResumoExtras mes={comp} cadeiras={cadeiras} />}
+      {b.isGovernanca && <AvisosCiclo />}
       <Card className="p-4">
         <h2 className="font-semibold mb-3">Avisos de mudanças em dados já enviados</h2>
         {avisos.length === 0 && reaberturas.length === 0 && <p className="text-sm text-muted-foreground">Nenhuma alteração após envio nesta competência.</p>}
