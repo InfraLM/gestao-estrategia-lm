@@ -57,7 +57,7 @@ export default function PendenciasComites({ cadeira, usuario, podeEditar, admin,
           {a.prioridade && <Badge variant="outline">{a.prioridade}</Badge>}
           {a.precisa_escalar && <Badge variant="destructive">Escalar</Badge>}
         </div>
-        <p className="text-sm text-muted-foreground break-words">{a.reuniao_titulo ?? "Reunião não informada"} · {data(a.reuniao_data)} · Responsável: {a.responsavel_origem ?? "—"}</p>
+        <p className="text-sm text-muted-foreground break-words">Ata · {a.reuniao_titulo ?? "Reunião não informada"} ({data(a.reuniao_data)}) · Responsável: {a.responsavel_origem ?? "—"}</p>
         {onStatus && <div className="grid gap-2 sm:grid-cols-[200px_1fr]">
           <Select value={a.meu.status || "none"} disabled={!podeEditar} onValueChange={(v) => onStatus({ ...a.meu, titulo: a.titulo, status: (v === "none" ? "" : v) as AtaStatus["status"] })}>
             <SelectTrigger aria-label={`Seu status: ${a.titulo}`}><SelectValue placeholder="Seu status" /></SelectTrigger>
