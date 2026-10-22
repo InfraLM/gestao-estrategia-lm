@@ -52,3 +52,11 @@ describe("dashboard do portfólio no PMO", () => {
   it("sem acesso ao PMO vai à Estratégia", () => { expect(destinoInicio("?x=1", false)).toBe("/estrategia"); });
   it("novo dashboard segue o módulo PMO", () => { expect(mfp("/pmo/dashboard")).toBe("pmo"); });
 });
+
+describe("Lançamentos na Rotina Semanal", () => {
+  it("rota segue no módulo Metas, sem ganho ou perda de acesso", () => {
+    expect(mfp("/lancamentos")).toBe("metas");
+    expect(mfp("/metas/lancamento")).toBe("metas");
+    expect(mfp("/metas/semanal")).toBe("rotina");
+  });
+});
