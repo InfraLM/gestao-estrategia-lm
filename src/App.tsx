@@ -12,7 +12,6 @@ import Portfolio from "./pages/Portfolio";
 import StatusReport from "./pages/StatusReport";
 import PmoResponsaveis from "./pages/PmoResponsaveis";
 import PmoFarol from "./pages/PmoFarol";
-import PmoVinculos from "./pages/PmoVinculos";
 import Gestao from "./pages/Gestao";
 import GestaoProjeto from "./pages/GestaoProjeto";
 import Melhorias from "./pages/Melhorias";

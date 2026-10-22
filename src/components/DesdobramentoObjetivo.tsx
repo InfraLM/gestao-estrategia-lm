@@ -80,7 +80,7 @@ export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodi
           <Badge variant="outline">{r.total} itens</Badge>
           {(Object.keys(r.porOrigem) as OrigemImpacto[]).map((o) => <Badge key={o} variant="secondary">{ROTULO_ORIGEM[o]}: {r.porOrigem[o]}</Badge>)}
           <Badge variant={r.atrasados ? "destructive" : "outline"}>{r.atrasados} atrasados</Badge>
-          {Object.entries(contAval).map(([a, n]) => <Badge key={a} variant={AVAL[a]?.v ?? "outline"}>KPIs {AVAL[a]?.t ?? a}: {n}</Badge>)}
+          {Object.entries(contAval as Record<string, number>).map(([a, n]) => <Badge key={a} variant={AVAL[a]?.v ?? "outline"}>KPIs {AVAL[a]?.t ?? a}: {n}</Badge>)}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
