@@ -1,3 +1,6 @@
+import { VISAO_MISSAO_DEF, PESTEL_DATA_DEF, PORTER_DATA_DEF, RBV_RECURSOS_DEF, SWOT_DATA_DEF, ANSOFF_DEF, ERRC_DEF, saidas_DEF } from "@/data/conteudoPadroes";
+import { ConteudoRevisaoProvider, useRevisaoContexto } from "@/hooks/useConteudoRevisoes";
+import RevisaoSeletor from "@/components/RevisaoSeletor";
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,65 +31,12 @@ const FRAMEWORK_META: Record<Framework, { label: string; icon: any; color: strin
   Geral:       { label: "Geral",        icon: Lightbulb, color: "text-muted-foreground", descr: "Insight transversal." },
 };
 
-const VISAO_MISSAO_DEF = {
-  proposito: "Capacitar médicos e médicas para salvarem vidas.",
-  bhag: "1 milhão de vidas salvas até 2026",
-  valores: [
-    "Evoluímos sempre",
-    "Somos mais fortes juntos",
-    "Trabalhamos muito e nos divertimos",
-    "O que importa é o sucesso do aluno",
-    "Pensamos e agimos com inteligência",
-    "Protagonistas do nosso sucesso",
-    "Encantamos além do esperado",
-  ],
-};
 
-const PESTEL_DATA_DEF: Record<string, string[]> = {
-  "Político":   ["Fomento via FINEP, Start-Ed", "Relações entre países", "Risco regulatório/corrupção"],
-  "Econômico":  ["Inflação e juros (custo de capital)", "Câmbio internacional", "Poder de compra do médico"],
-  "Social":     ["Mudança no perfil do médico (digital)", "Demanda por especialização prática", "Problemas éticos"],
-  "Tecnológico":["IA generativa para conteúdo técnico", "Plataformas EAD escaláveis", "Simulação realística"],
-  "Ecológico":  ["Pressão por sustentabilidade", "Pegada de eventos presenciais"],
-  "Legal":      ["Normas do CFM/MEC", "LGPD", "Normas específicas de saúde"],
-};
 
-const PORTER_DATA_DEF = [
-  { forca: "Novos entrantes",  intensidade: "Alta",  acao: "Desenvolver barreiras (marca forte, parcerias exclusivas, conteúdo proprietário)." },
-  { forca: "Poder de clientes", intensidade: "Alta", acao: "Programas de fidelização e comunidade para reduzir churn." },
-  { forca: "Poder de fornecedores", intensidade: "Média", acao: "IA para gerar drafts técnicos — professores supervisionam." },
-  { forca: "Substitutos",       intensidade: "Alta",  acao: "Investir em simulação prática, casos reais e uso didático de IA." },
-  { forca: "Rivalidade",        intensidade: "Alta",  acao: "Posicionamento de nicho premium com autoridade técnica." },
-];
 
-const RBV_RECURSOS_DEF = [
-  { tipo: "Físicos",        item: "Hospitais parceiros, infraestrutura de simulação", vrin: "◐" },
-  { tipo: "Humanos",        item: "Corpo docente médico ativo em plantão",            vrin: "✔" },
-  { tipo: "Organizacionais",item: "Método didático integrado prática-teoria",          vrin: "✔" },
-  { tipo: "Tecnológicos",   item: "Plataforma EAD + IA didática",                      vrin: "◐" },
-  { tipo: "Reputacionais",  item: "Marca técnica, comunidade de ex-alunos",            vrin: "✔" },
-];
 
-const SWOT_DATA_DEF = {
-  Forças:        ["Conexão forte com plantão", "Time unido com autonomia", "Autoridade técnica de docentes", "Ecossistema integrado"],
-  Fraquezas:     ["Capital limitado", "Dependência operacional hospitalar", "Escala restrita", "Processos ainda manuais"],
-  Oportunidades: ["IA para escala de conteúdo", "Internacionalização (LatAm)", "Parcerias com hospitais/universidades", "Novos produtos digitais"],
-  Ameaças:       ["Afya com investimento pesado em nicho", "Sanar competindo digital em escala", "Mudança regulatória", "Substitutos gratuitos com IA"],
-};
 
-const ANSOFF_DEF = [
-  { quad: "Penetração de Mercado",      ex: "Ampliar share nas residências atuais com upsell e fidelização." },
-  { quad: "Desenvolvimento de Mercado", ex: "Expandir para novas regiões/países com mesmo portfólio." },
-  { quad: "Desenvolvimento de Produto", ex: "Lançar trilhas/IA tutor/simulação para clientes existentes." },
-  { quad: "Diversificação",             ex: "Novo modelo (B2B hospitais, fellowships, EdTech vertical)." },
-];
 
-const ERRC_DEF = {
-  Eliminar: ["Conteúdo genérico que não ensina prática", "Burocracia que afasta o médico ocupado"],
-  Reduzir:  ["Tempo de produção de conteúdo (com IA)", "Dependência de presença física"],
-  Elevar:   ["Experiência de simulação prática", "Comunidade e mentoria entre pares"],
-  Criar:    ["IA tutor personalizado", "Trilhas com casos reais de plantão"],
-};
 
 type Insight = {
   id: string;
@@ -103,13 +53,18 @@ type Insight = {
   created_at: string;
 };
 
-export default function Diagnostico() {
+export default function Diagnostico() { return <ConteudoRevisaoProvider documento="diagnostico"><DiagnosticoConteudo /></ConteudoRevisaoProvider>; }
+
+function DiagnosticoConteudo() {
+  const revisaoCtx = useRevisaoContexto();
   const VISAO_MISSAO = useConteudo("diag.proposito", VISAO_MISSAO_DEF).data;
   const PESTEL_DATA = useConteudo("diag.pestel", PESTEL_DATA_DEF).data;
-  const PORTER_DATA = useConteudo("diag.porter", PORTER_DATA_DEF).data;
+  const porterDados = useConteudo<any>("diag.porter", PORTER_DATA_DEF).data;
+  const PORTER_DATA: any[] = Array.isArray(porterDados) ? porterDados : porterDados.forcas ?? [];
+  const saidas = useConteudo("diag.saidas", saidas_DEF).data;
   const RBV_RECURSOS = useConteudo("diag.rbv", RBV_RECURSOS_DEF).data;
   const SWOT_DATA = useConteudo("diag.swot", SWOT_DATA_DEF).data;
-  const ANSOFF = useConteudo("diag.ansoff", ANSOFF_DEF).data;
+  const ANSOFF = useConteudo<any[]>("diag.ansoff", ANSOFF_DEF).data;
   const ERRC = useConteudo("diag.errc", ERRC_DEF).data;
   const { user } = useAuth();
   const [insights, setInsights] = useState<Insight[]>([]);
@@ -194,6 +149,8 @@ export default function Diagnostico() {
 
   return (
     <div className="space-y-6">
+      <RevisaoSeletor />
+      {revisaoCtx?.indisponivel ? null : <>
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
@@ -300,44 +257,13 @@ export default function Diagnostico() {
       <Card className="p-5 shadow-card border-l-4 border-l-primary">
         <div className="flex items-center gap-2 mb-1">
           <Lightbulb className="h-4 w-4 text-primary" />
-          <h3 className="font-semibold">Principais Saídas do Diagnóstico</h3>
+          <h3 className="font-semibold">Principais Saídas do Diagnóstico</h3><EditarConteudo chave="diag.saidas" padrao={saidas_DEF} titulo="Saídas e Síntese" />
         </div>
         <p className="text-xs text-muted-foreground mb-4">
           Sínteses transversais que conectam PESTEL, Porter, RBV/VRIN, Oceano Azul, SWOT e Ansoff — base para a Formulação Estratégica.
         </p>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {[
-            {
-              titulo: "Onde jogar",
-              cor: "border-primary/30 bg-primary/5 text-primary",
-              texto: "Nicho premium de formação prática para o médico early-career exposto ao paciente grave — não competir em volume com Afya/Sanar.",
-            },
-            {
-              titulo: "Como vencer",
-              cor: "border-success/30 bg-success/5 text-success",
-              texto: "Prática hospitalar real supervisionada (método LM) + comunidade + jornada longitudinal — barreira difícil de copiar.",
-            },
-            {
-              titulo: "Moat a construir (VRIN)",
-              cor: "border-info/30 bg-info/5 text-info",
-              texto: "Rede hospitalar padronizada, marca técnica, integração longitudinal da carreira e parcerias âncora (ex.: Hosp. Jacob Facuri).",
-            },
-            {
-              titulo: "Riscos prioritários",
-              cor: "border-destructive/30 bg-destructive/5 text-destructive",
-              texto: "Substitutos gratuitos com IA, escala de Afya/Sanar, dependência operacional hospitalar e capital limitado.",
-            },
-            {
-              titulo: "Oportunidades a capturar",
-              cor: "border-warning/30 bg-warning/5 text-warning",
-              texto: "IA didática nativa, expansão geográfica via polos padronizados, internacionalização (LatAm) e novos produtos B2B com hospitais.",
-            },
-            {
-              titulo: "Avenidas de crescimento (Ansoff)",
-              cor: "border-accent/40 bg-accent/10 text-accent-foreground",
-              texto: "40% Penetração · 30% Desenvolvimento de Produto · 20% Desenvolvimento de Mercado · 10% Diversificação/Ecossistema.",
-            },
-          ].map((s) => (
+          {saidas.itens.map((s) => (
             <div key={s.titulo} className={cn("p-3 rounded-md border", s.cor)}>
               <div className="text-xs font-bold uppercase tracking-wider mb-1">{s.titulo}</div>
               <p className="text-xs text-foreground/80 leading-relaxed">{s.texto}</p>
@@ -345,8 +271,7 @@ export default function Diagnostico() {
           ))}
         </div>
         <div className="mt-4 p-3 rounded-md bg-surface-muted/50 border border-border text-xs text-muted-foreground">
-          <span className="font-semibold text-foreground">Síntese estratégica:</span> consolidar o método LM como infraestrutura de carreira do médico early-career,
-          transformando educação prática em vínculo longitudinal de alta margem — desdobrado na página <span className="font-semibold text-primary">Estratégia LM</span>.
+          <span className="font-semibold text-foreground">Síntese estratégica:</span> {saidas.sintese}
         </div>
       </Card>
 
@@ -398,7 +323,7 @@ export default function Diagnostico() {
             </div>
             <div className="mt-4 p-3 rounded-md bg-primary/5 border border-primary/20">
               <div className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">LM × Concorrentes</div>
-              <p className="text-xs"><b>Afya</b> — perde se LM se especializar em nicho premium. <b>Sanar</b> — vence se LM mantiver execução de plantão e comunidade técnica.</p>
+              <p className="text-xs">{!Array.isArray(porterDados) ? porterDados.concorrentes : "Afya — perde se LM se especializar em nicho premium. Sanar — vence se LM mantiver execução de plantão e comunidade técnica."}</p>
             </div>
           </Card>
         </TabsContent>
@@ -478,10 +403,11 @@ export default function Diagnostico() {
               {ANSOFF.map(a => (
                 <Card key={a.quad} className="p-4 bg-surface-muted/40">
                   <div className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">{a.quad}</div>
-                  <p className="text-sm">{a.ex}</p>
+                  <p className="text-sm">{a.ex}</p>{a.portao && <p className="text-xs mt-2"><b>Portão:</b> {a.portao}</p>}{a.peso && <Badge variant="outline" className="mt-2">{a.peso}</Badge>}
                 </Card>
               ))}
             </div>
+            {ANSOFF.find(a => a.nota)?.nota && <p className="text-sm text-warning mt-3">{ANSOFF.find(a => a.nota)?.nota}</p>}
           </Card>
         </TabsContent>
 
@@ -558,6 +484,7 @@ export default function Diagnostico() {
           )}
         </TabsContent>
       </Tabs>
+      </>}
     </div>
   );
 }
