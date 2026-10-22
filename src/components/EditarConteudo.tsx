@@ -6,6 +6,9 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Pencil, Plus, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConteudo } from "@/hooks/useConteudo";
+import { useRevisaoContexto } from "@/hooks/useConteudoRevisoes";
+import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 const clone = (v: any) => JSON.parse(JSON.stringify(v));
 const OCULTOS = ["cor", "badge", "chip", "icon", "cls"];
@@ -66,11 +69,13 @@ function Campo({ value, onChange, label }: { value: any; onChange: (v: any) => v
 
 /** Botão "Editar" que abre um formulário gerado a partir dos dados. Só aparece para Admin/PMO. */
 export function EditarConteudo<T>({ chave, padrao, titulo }: { chave: string; padrao: T; titulo: string }) {
-  const { data, save, restaurar, canEdit, editado } = useConteudo(chave, padrao);
+  const { data, save, restaurar, canEdit, editado, sugestao } = useConteudo(chave, padrao);
+  const ctx = useRevisaoContexto();
+  const item = ctx?.revisao?.status === "rascunho" ? ctx.itens.find(i => i.chave === chave) : null;
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<any>(null);
   const [saving, setSaving] = useState(false);
-  if (!canEdit) return null;
+  if (!canEdit && !item) return null;
 
   const run = async (fn: () => Promise<void>, msg: string) => {
     setSaving(true);
@@ -81,6 +86,8 @@ export function EditarConteudo<T>({ chave, padrao, titulo }: { chave: string; pa
 
   return (
     <>
+      {item && <Link to={`/historico/${ctx?.documento}?documento=${ctx?.documento}&rev=${ctx?.revisao?.numero}&item=${item.id}`}><Badge variant="outline">alterado · {item.status.replaceAll("_", " ")}</Badge></Link>}
+      {canEdit && <>
       <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => { setDraft(clone(data)); setOpen(true); }}>
         <Pencil className="h-3 w-3 mr-1" /> Editar{editado ? " · editado" : ""}
       </Button>
@@ -90,14 +97,15 @@ export function EditarConteudo<T>({ chave, padrao, titulo }: { chave: string; pa
           {draft !== null && <Campo value={draft} onChange={setDraft} />}
           <DialogFooter className="gap-2">
             {editado && (
-              <Button variant="outline" disabled={saving} onClick={() => run(restaurar, "Conteúdo original restaurado")}>Restaurar original</Button>
+              <Button variant="outline" disabled={saving} onClick={() => run(restaurar, sugestao ? "Restauração enviada para aprovação" : "Conteúdo original restaurado")}>{sugestao ? "Propor restauração" : "Restaurar original"}</Button>
             )}
-            <Button disabled={saving} onClick={() => run(() => save(draft), "Alterações salvas")}>
-              {saving && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Salvar
+            <Button disabled={saving} onClick={() => run(() => save(draft), sugestao ? "Sugestão enviada para aprovação; conteúdo vigente preservado" : "Alterações salvas")}>
+              {saving && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} {sugestao ? "Enviar para aprovação" : "Salvar"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </>}
     </>
   );
 }
