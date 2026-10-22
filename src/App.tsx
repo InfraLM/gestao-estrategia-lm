@@ -70,7 +70,7 @@ const App = () => (
               <Route path="/status-report" element={<StatusReport />} />
               <Route path="/pmo/responsaveis" element={<PmoResponsaveis />} />
               <Route path="/pmo/farol" element={<PmoFarol />} />
-              <Route path="/pmo/vinculos" element={<PmoVinculos />} />
+              <Route path="/pmo/vinculos" element={<Navigate to="/impacto-estrategico?aba=vinculos" replace />} />
               <Route path="/gestao" element={<Gestao />} />
               <Route path="/gestao/:id" element={<GestaoProjeto />} />
               <Route path="/melhorias" element={<Melhorias />} />
@@ -118,6 +118,6 @@ export default App;
 function RedirCadastros() {
   const [sp] = useSearchParams();
   const a = sp.get("aba");
-  const to = a === "cesta" ? "/cesta-metas?aba=cadastro" : a === "bsc" || a === "objetivos" ? "/estrategia?aba=cadastro-bsc" : a === "cadeiras" || a === "usuarios" ? "/estrutura-organizacional?aba=cadeiras" : a === "iniciativas" ? "/pmo/vinculos?aba=cadastro" : "/okrs?aba=cadastro";
+  const to = a === "cesta" ? "/cesta-metas?aba=cadastro" : a === "bsc" || a === "objetivos" ? "/estrategia?aba=cadastro-bsc" : a === "cadeiras" || a === "usuarios" ? "/estrutura-organizacional?aba=cadeiras" : a === "iniciativas" ? "/impacto-estrategico?aba=cadastro" : "/okrs?aba=cadastro";
   return <Navigate to={to} replace />;
 }
