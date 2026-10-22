@@ -6,7 +6,7 @@ export function retornoStatus(value: string | null): string {
   if (!value) return "/";
   try {
     const url = new URL(value, "https://local.invalid");
-    return url.origin === "https://local.invalid" && url.pathname === "/pmo/atualizar-status" ? url.pathname + url.search : "/";
+    return url.origin === "https://local.invalid" && ["/pmo/atualizar-status", "/metas/semanal"].includes(url.pathname) ? url.pathname + url.search : "/";
   } catch { return "/"; }
 }
 export function filtrarAtualizacao<T extends { status: string; cadeira?: string; diretor?: string | null; tipo: string }>(itens: T[], filtros: URLSearchParams): T[] {
