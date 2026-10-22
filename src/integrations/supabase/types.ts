@@ -4588,6 +4588,10 @@ export type Database = {
         Returns: undefined
       }
       orc_pode_ler: { Args: never; Returns: boolean }
+      orc_registrar_falha: {
+        Args: { _arquivo?: string; _mensagem: string; _modo: string }
+        Returns: undefined
+      }
       planejamento_aprovar: { Args: { _id: string }; Returns: undefined }
       pmo_atualizar_status: { Args: { _itens: Json }; Returns: number }
       pmo_pode_atualizar: { Args: never; Returns: boolean }
