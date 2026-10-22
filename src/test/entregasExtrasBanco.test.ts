@@ -1,0 +1,31 @@
+// @vitest-environment node
+import { PGlite } from '@electric-sql/pglite';
+import { readFileSync } from 'node:fs';
+import { describe, it, expect } from 'vitest';
+const migration = readFileSync('drizzle/migrations/0038_checkout_entregas_motivos.sql', 'utf8');
+describe('Entregas extras no banco', () => {
+  it('cadastro só Governança; envio exige Outros; legado e motivos desativados antigos sobrevivem', async () => {
+    const db = new PGlite();
+    await db.exec(`CREATE ROLE authenticated; CREATE ROLE service_role; CREATE SCHEMA auth;
+      CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$ SELECT '00000000-0000-0000-0000-000000000001'::uuid $$;
+      CREATE FUNCTION public.acesso_modulo(uuid,text,boolean) RETURNS boolean LANGUAGE sql AS $$ SELECT true $$;
+      CREATE FUNCTION public.mt_is_governanca(uuid) RETURNS boolean LANGUAGE sql AS $$ SELECT current_setting('test.gov',true)='true' $$;
+      CREATE TABLE mt_checkins (id int primary key, tipo text, status text, conteudo jsonb);`);
+    await db.exec(migration);
+    await db.exec(`INSERT INTO mt_extra_motivos(id,nome,exige_detalhe) VALUES ('00000000-0000-0000-0000-000000000002','Outros',true); SET ROLE authenticated; SET test.gov='false';`);
+    await expect(db.exec(`INSERT INTO mt_extra_motivos(nome) VALUES ('não autorizado')`)).rejects.toThrow('row-level security');
+    await db.exec(`SET test.gov='true'; INSERT INTO mt_extra_motivos(nome) VALUES ('Autorizado'); RESET ROLE;`);
+    expect((await db.query<{n: number}>('select count(*)::int n from mt_extra_motivos')).rows[0].n).toBe(2);
+    await db.exec(`INSERT INTO mt_checkins VALUES (1,'checkout','enviado','{"extras":"Legado","aprendizados":"A","proxima":"F"}'); INSERT INTO mt_checkins VALUES (2,'checkout','enviado','{"extras_lista":[]}');`);
+    const conteudo = { extras_lista: [{ id: 'e', descricao: 'Entrega', motivo_id: '00000000-0000-0000-0000-000000000002', motivo_nome: 'Outros', exige_detalhe: true, detalhe: '' }] };
+    await expect(db.query(`INSERT INTO mt_checkins VALUES (3,'checkout','enviado',$1)`, [JSON.stringify(conteudo)])).rejects.toThrow('Especifique');
+    conteudo.extras_lista[0].detalhe = 'Detalhe';
+    await db.query(`INSERT INTO mt_checkins VALUES (3,'checkout','enviado',$1)`, [JSON.stringify(conteudo)]);
+    await db.exec(`UPDATE mt_extra_motivos SET ativo=false,nome='Renomeado' WHERE id='00000000-0000-0000-0000-000000000002'; UPDATE mt_checkins SET conteudo=conteudo WHERE id=3;`);
+    await expect(db.query(`INSERT INTO mt_checkins VALUES (4,'checkout','enviado',$1)`, [JSON.stringify(conteudo)])).rejects.toThrow('desativado');
+    const rows = (await db.query<any>('select id,conteudo from mt_checkins order by id')).rows;
+    expect(rows[0].conteudo).toEqual({ extras: 'Legado', aprendizados: 'A', proxima: 'F' });
+    expect(rows[2].conteudo.extras_lista[0].motivo_nome).toBe('Outros');
+    await db.close();
+  });
+});

@@ -1,5 +1,6 @@
 // Gera RASCUNHO de revisão (relatório mensal ou diagnóstico por ferramenta). Só Governança; 3 por mês por tipo.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { entregaFonte } from './entregas.ts';
 
 const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status, headers: { ...cors, "Content-Type": "application/json" } });
@@ -28,7 +29,7 @@ Deno.serve(async (req) => {
     const { count } = await sb.from("planejamento_revisoes").select("id", { count: "exact", head: true }).eq("tipo", tipo).gte("gerado_em", inicioMes.toISOString());
     if ((count ?? 0) >= 3) return json({ error: "Limite de 3 gerações neste mês para este tipo." }, 429);
 
-    const [dec, pdec, lanc, ind, sit, sr, vig, conf, cads] = await Promise.all([
+    const [dec, pdec, lanc, ind, sit, sr, vig, conf, cads, extras] = await Promise.all([
       sb.from("decisoes_estrategicas").select("codigo,titulo,data_decisao,decisao,racional,impacto_bsc").eq("acesso_reservado", false).order("data_decisao", { ascending: false }).limit(150),
       sb.from("projeto_decisoes").select("codigo,competencia,decisao,desfecho,justificativa").order("created_at", { ascending: false }).limit(80),
       sb.from("mt_lancamentos").select("indicador_id,competencia,valor,revisao,declaracao,justificativa,status_entrega,avanco_pct"),
@@ -38,6 +39,8 @@ Deno.serve(async (req) => {
       sb.from("planejamento_revisoes").select("numero,conteudo").eq("tipo", tipo).eq("status", "aprovado").maybeSingle(),
       sb.rpc("rotina_conformidade", { _de: "2026-10-19", _ate: new Date().toISOString().slice(0, 10) }),
       sb.from("mt_cadeiras").select("id,nome,diretor_user_id").eq("ativo", true),
+      // JSON projections explicitly exclude aprendizados/proxima/contacts/reserved content.
+      sb.from('mt_checkins').select('id,cadeira_id,semana,extras_lista:conteudo->extras_lista,extras:conteudo->>extras').eq('tipo','checkout').eq('status','enviado').order('semana', { ascending: false }).limit(300),
     ]);
     const inds = new Map((ind.data ?? []).map((i: any) => [i.id, i]));
     const fontes = new Set<string>();
@@ -76,6 +79,17 @@ Deno.serve(async (req) => {
     L.push("## Status reports (projeto@mês)");
     for (const r of sr.data ?? []) { const c = `${r.projeto_codigo}@${r.competencia}`.toUpperCase(); fontes.add(c); L.push(`- ${c}: saúde ${r.saude ?? "—"}; faróis escopo ${r.farol_escopo ?? "—"}, custo ${r.farol_custo ?? "—"}, cronograma ${r.farol_cronograma ?? "—"}. Avanços: ${r.avancos ?? ""} Desvios: ${r.desvios ?? ""}`); }
     if (vig.data) { fontes.add(`REV-${vig.data.numero}`); L.push(`## Versão vigente (REV-${vig.data.numero})\n${vig.data.conteudo}`); }
+    if (tipo === 'relatorio') {
+      L.push('## Entregas fora do planejado por cadeira e semana (com motivo)');
+      for (const r of extras.data ?? []) {
+        const domingo = new Date(r.semana + 'T12:00:00Z'); domingo.setUTCDate(domingo.getUTCDate() + 6);
+        if (competencia && domingo.toISOString().slice(0,7) !== competencia) continue;
+        const texto = entregaFonte(r); if (!texto) continue;
+        const c = `EXTRA-${r.id}`.toUpperCase(); fontes.add(c);
+        const cadeira = (cads.data ?? []).find((x: any) => x.id === r.cadeira_id)?.nome ?? '—';
+        L.push(`- ${c}: ${cadeira}, semana ${r.semana}: ${texto}`);
+      }
+    }
 
     const alvo = tipo === "relatorio" ? `um RELATÓRIO MENSAL de planejamento estratégico para tomada de decisão, competência ${competencia ?? ""}: síntese, avanços, desvios, decisões tomadas, decisões pendentes e recomendações`
       : `a nova revisão do DIAGNÓSTICO ESTRATÉGICO pela ferramenta ${tipo.slice(5).replace("_", " ")}`;

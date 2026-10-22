@@ -267,6 +267,13 @@
       "when": 1792679320028,
       "tag": "0037_conteudo_revisoes_aprovacao",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1792679932452,
+      "tag": "0038_checkout_entregas_motivos",
+      "breakpoints": true
     }
   ]
 }
