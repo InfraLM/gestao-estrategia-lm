@@ -28,3 +28,7 @@
 
 - Desktop/mobile share AppLayout's permission-filtered sidebar; mobile uses a left Sheet closing on navigation.
 - Checkout KPI numbers are live until first send, then stored in `kpis_retrato`; `src/lib/rotinaSemanal.ts` normalizes old/new JSON. Plans → initiatives only via idempotent `rotina_criar_iniciativa`; risks in `mt_rotina_riscos` (immutable text); outside e-mails only in `mt_rotina_contatos`, never in weekly JSON.
+
+- Projects get a confirmed principal chair (`projetos.cadeira_id`, set only via Governança RPC `projeto_definir_cadeira`; text `diretor` is only a suggestion) plus support chairs; impact links live in `projeto_vinculos` (legacy `objetivos`/`krs` are read-only history).
+- Monthly project status reports are requested only in the checkout of the last cycle of the month (`ultimoCicloDoMes`), to the principal chair, for open statuses; missing attachment is a pending item, never a send blocker. Edits version into `mt_status_projetos_versoes`; files are readable only by principal chair, Governança and CEO.
+- Project status changes only via `projeto_confirmar_situacao` (director) or `projeto_registrar_decisao` (Governança/CEO, SR codes shown in Contexto e Decisões).
