@@ -30,7 +30,7 @@ describe('Validação em PostgreSQL isolado',()=>{
  CREATE TABLE mt_cadeiras(id uuid,diretor_user_id uuid);CREATE TABLE projetos(id uuid PRIMARY KEY,cadeira_id uuid,created_by uuid);CREATE TABLE mt_iniciativas(id uuid PRIMARY KEY,cadeira_id uuid,created_by uuid);
  CREATE TABLE projeto_vinculos(projeto_id uuid,tipo text,ref_id uuid,criado_por uuid);CREATE TABLE mt_acao_vinculos(iniciativa_id uuid,tipo text,ref_id uuid);
  INSERT INTO projetos(id) VALUES('${uuid(10)}'),('${uuid(11)}');`);
- await pg.exec(readFileSync('drizzle/migrations/0033_portfolio_vinculos_propostos.sql','utf8'));await pg.exec(readFileSync('drizzle/migrations/0035_portfolio_vinculos_impacto_revisao.sql','utf8'));await pg.exec(readFileSync('src/test/sql/portfolio_edicao_sem_validar.sql','utf8'));
+ await pg.exec(readFileSync('drizzle/migrations/0033_portfolio_vinculos_propostos.sql','utf8'));await pg.exec(readFileSync('drizzle/migrations/0035_portfolio_vinculos_impacto_revisao.sql','utf8'));await pg.exec(readFileSync('drizzle/migrations/0036_portfolio_edicao_sem_validar.sql','utf8'));
  await pg.exec(`INSERT INTO portfolio_vinculos(id,fonte_tipo,fonte_id,tipo,ref_id) VALUES('${uuid(31)}','projeto','${uuid(10)}','objetivo','${uuid(20)}'),('${uuid(32)}','projeto','${uuid(10)}','objetivo','${uuid(21)}'),('${uuid(33)}','projeto','${uuid(11)}','objetivo','${uuid(22)}');`);
  });afterEach(async()=>pg.close());
  const revisar=(ids:number[],acao='validar')=>pg.query('select portfolio_revisar($1::jsonb,$2)',[JSON.stringify(ids.map(n=>({id:uuid(n),fonte_tipo:'projeto',fonte_id:uuid(n===33?11:10)}))),acao]);
