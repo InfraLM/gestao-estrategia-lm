@@ -2479,6 +2479,297 @@ export type Database = {
         }
         Relationships: []
       }
+      proc_diretoria_cadeira: {
+        Row: {
+          cadeira_id: string | null
+          confirmado_em: string | null
+          confirmado_por: string | null
+          created_at: string
+          diretoria: string
+          id: string
+          status: string
+        }
+        Insert: {
+          cadeira_id?: string | null
+          confirmado_em?: string | null
+          confirmado_por?: string | null
+          created_at?: string
+          diretoria: string
+          id?: string
+          status?: string
+        }
+        Update: {
+          cadeira_id?: string | null
+          confirmado_em?: string | null
+          confirmado_por?: string | null
+          created_at?: string
+          diretoria?: string
+          id?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      proc_espelho_impactos: {
+        Row: {
+          baseline_meta: string | null
+          defasagem: string | null
+          grau_alvo: number | null
+          grau_hoje: number | null
+          icep: number | null
+          icep_em: string | null
+          id: string
+          kpi_codigo: string | null
+          kpi_nome: string
+          mecanismo: string | null
+          prioridade: string | null
+          processo_origem_id: string
+          sincronizado_em: string
+          tipo: string | null
+          vinculo: string | null
+        }
+        Insert: {
+          baseline_meta?: string | null
+          defasagem?: string | null
+          grau_alvo?: number | null
+          grau_hoje?: number | null
+          icep?: number | null
+          icep_em?: string | null
+          id?: string
+          kpi_codigo?: string | null
+          kpi_nome: string
+          mecanismo?: string | null
+          prioridade?: string | null
+          processo_origem_id: string
+          sincronizado_em?: string
+          tipo?: string | null
+          vinculo?: string | null
+        }
+        Update: {
+          baseline_meta?: string | null
+          defasagem?: string | null
+          grau_alvo?: number | null
+          grau_hoje?: number | null
+          icep?: number | null
+          icep_em?: string | null
+          id?: string
+          kpi_codigo?: string | null
+          kpi_nome?: string
+          mecanismo?: string | null
+          prioridade?: string | null
+          processo_origem_id?: string
+          sincronizado_em?: string
+          tipo?: string | null
+          vinculo?: string | null
+        }
+        Relationships: []
+      }
+      proc_espelho_melhorias: {
+        Row: {
+          ativo: boolean
+          automacao: boolean | null
+          criada_em: string | null
+          implantada_em: string | null
+          origem_id: string
+          previsao: string | null
+          prioridade: string | null
+          processo_codigo: string | null
+          responsavel: string | null
+          sincronizado_em: string
+          status: string | null
+          titulo: string
+        }
+        Insert: {
+          ativo?: boolean
+          automacao?: boolean | null
+          criada_em?: string | null
+          implantada_em?: string | null
+          origem_id: string
+          previsao?: string | null
+          prioridade?: string | null
+          processo_codigo?: string | null
+          responsavel?: string | null
+          sincronizado_em?: string
+          status?: string | null
+          titulo: string
+        }
+        Update: {
+          ativo?: boolean
+          automacao?: boolean | null
+          criada_em?: string | null
+          implantada_em?: string | null
+          origem_id?: string
+          previsao?: string | null
+          prioridade?: string | null
+          processo_codigo?: string | null
+          responsavel?: string | null
+          sincronizado_em?: string
+          status?: string | null
+          titulo?: string
+        }
+        Relationships: []
+      }
+      proc_espelho_processos: {
+        Row: {
+          ativo: boolean
+          codigo: string | null
+          diretor: string | null
+          diretoria: string | null
+          dono_email: string | null
+          dono_nome: string | null
+          macro_codigo: string | null
+          macro_nome: string | null
+          matriz_impacto: Json
+          maturidade_avaliado_em: string | null
+          maturidade_fragilidade: boolean | null
+          maturidade_gate: string | null
+          maturidade_nivel: number | null
+          maturidade_nota: number | null
+          nome: string | null
+          origem_atualizado_em: string | null
+          origem_id: string
+          sincronizado_em: string
+          status_implantacao: string | null
+          status_mapeamento: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          codigo?: string | null
+          diretor?: string | null
+          diretoria?: string | null
+          dono_email?: string | null
+          dono_nome?: string | null
+          macro_codigo?: string | null
+          macro_nome?: string | null
+          matriz_impacto?: Json
+          maturidade_avaliado_em?: string | null
+          maturidade_fragilidade?: boolean | null
+          maturidade_gate?: string | null
+          maturidade_nivel?: number | null
+          maturidade_nota?: number | null
+          nome?: string | null
+          origem_atualizado_em?: string | null
+          origem_id: string
+          sincronizado_em?: string
+          status_implantacao?: string | null
+          status_mapeamento?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          codigo?: string | null
+          diretor?: string | null
+          diretoria?: string | null
+          dono_email?: string | null
+          dono_nome?: string | null
+          macro_codigo?: string | null
+          macro_nome?: string | null
+          matriz_impacto?: Json
+          maturidade_avaliado_em?: string | null
+          maturidade_fragilidade?: boolean | null
+          maturidade_gate?: string | null
+          maturidade_nivel?: number | null
+          maturidade_nota?: number | null
+          nome?: string | null
+          origem_atualizado_em?: string | null
+          origem_id?: string
+          sincronizado_em?: string
+          status_implantacao?: string | null
+          status_mapeamento?: string | null
+        }
+        Relationships: []
+      }
+      proc_integracao_config: {
+        Row: {
+          ativo: boolean
+          atualizado_por: string | null
+          id: boolean
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_por?: string | null
+          id?: boolean
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_por?: string | null
+          id?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      proc_kpi_correspondencia: {
+        Row: {
+          confirmado_em: string | null
+          confirmado_por: string | null
+          created_at: string
+          id: string
+          indicador_id: string | null
+          kpi_chave: string
+          kpi_codigo_origem: string | null
+          kpi_nome_origem: string
+          status: string
+        }
+        Insert: {
+          confirmado_em?: string | null
+          confirmado_por?: string | null
+          created_at?: string
+          id?: string
+          indicador_id?: string | null
+          kpi_chave: string
+          kpi_codigo_origem?: string | null
+          kpi_nome_origem: string
+          status?: string
+        }
+        Update: {
+          confirmado_em?: string | null
+          confirmado_por?: string | null
+          created_at?: string
+          id?: string
+          indicador_id?: string | null
+          kpi_chave?: string
+          kpi_codigo_origem?: string | null
+          kpi_nome_origem?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      proc_sync_log: {
+        Row: {
+          concluido_em: string | null
+          id: string
+          impactos: number | null
+          iniciado_em: string
+          melhorias: number | null
+          mensagem: string | null
+          modo: string | null
+          ok: boolean | null
+          processos: number | null
+        }
+        Insert: {
+          concluido_em?: string | null
+          id?: string
+          impactos?: number | null
+          iniciado_em?: string
+          melhorias?: number | null
+          mensagem?: string | null
+          modo?: string | null
+          ok?: boolean | null
+          processos?: number | null
+        }
+        Update: {
+          concluido_em?: string | null
+          id?: string
+          impactos?: number | null
+          iniciado_em?: string
+          melhorias?: number | null
+          mensagem?: string | null
+          modo?: string | null
+          ok?: boolean | null
+          processos?: number | null
+        }
+        Relationships: []
+      }
       processos: {
         Row: {
           area: string | null
