@@ -10,11 +10,11 @@ describe("Ciclo semanal", () => {
     expect(cicloPadrao(new Date("2026-10-23T00:00:00-03:00"))).toBe("2026-10-26");
     expect(cicloPadrao(new Date("2026-10-22T23:59:00-03:00"))).toBe("2026-10-19");
   });
-  it("checkout = ciclo − 7; competência pelo domingo; checkout vence na sexta 18h da semana retratada", () => {
+  it("checkout = ciclo − 7; competência pelo domingo; checkout e check-in vencem juntos na segunda 23h59 (São Paulo) do ciclo", () => {
     expect(semanaCheckout("2026-10-26")).toBe("2026-10-19");
     expect(competenciaDaSemana("2026-09-28")).toBe("2026-10");
-    const p = prazoDe(semanaCheckout("2026-10-26"), "checkout");
-    expect([p.getDate(), p.getMonth() + 1, p.getHours()]).toEqual([23, 10, 18]);
+    expect(prazoDe(semanaCheckout("2026-10-26"), "checkout").toISOString()).toBe("2026-10-27T02:59:59.000Z");
+    expect(prazoDe("2026-10-26", "checkin").toISOString()).toBe("2026-10-27T02:59:59.000Z");
   });
   it("última situação: a mais recente entre árvore e checkout enviado; rascunho não conta", () => {
     const ck = (semana: string, status: string, v: string) => ({ semana, status, enviado_em: semana + "T20:00:00Z", conteudo: { kpis_resposta: [{ indicador_id: "a", situacao_atual: v }] } });
