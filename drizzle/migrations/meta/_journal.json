@@ -225,6 +225,13 @@
       "when": 1792664346363,
       "tag": "0031_sugestoes_aprovacao_lote_ampliado",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1792664704000,
+      "tag": "0032_pmo_atualizacao_direta_auditada",
+      "breakpoints": true
     }
   ]
 }
