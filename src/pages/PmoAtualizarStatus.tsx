@@ -23,7 +23,7 @@ export default function PmoAtualizarStatus() {
     const [p, c, m, perm] = await Promise.all([
       supabase.from("projetos").select("id,codigo,nome,status,classificacao,cadeira_id,diretor,termino,avanco_pct,updated_at,atualizacao_comentario").order("codigo"),
       supabase.from("mt_cadeiras").select("id,nome").eq("ativo", true),
-      supabase.from("proc_espelho_melhorias").select("*,proc_espelho_processos(diretoria)").eq("ativo", true),
+      supabase.from("proc_espelho_melhorias").select("*").eq("ativo", true),
       supabase.rpc("pmo_pode_atualizar"),
     ]);
     if (p.error || perm.error) { setError(true); setLoading(false); return; }
