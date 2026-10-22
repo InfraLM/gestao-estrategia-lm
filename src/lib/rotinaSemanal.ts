@@ -1,12 +1,21 @@
 /** Regras puras do formulário semanal (check-in / checkout). Lê registros antigos (sem `v`) sem perder dados. */
 import type { PrioridadeSemanal } from "@/lib/governancaPendencias";
 
-export type Responsavel = { tipo: "" | "eu" | "cadeira" | "externo"; cadeira_id?: string; nome?: string; email?: string; contato_id?: string };
-export type Prioridade = PrioridadeSemanal & { id: string; prazo: string; responsavel: Responsavel };
-export type CheckinV2 = { v: 2; prioridades: Prioridade[]; riscos: string; apoio: string; confianca: number };
+export type Responsavel = { tipo: "" | "eu" | "lider" | "cadeira" | "externo"; cadeira_id?: string; nome?: string; email?: string; contato_id?: string; cargo_id?: string };
+/** Vínculos múltiplos de uma ação (ids de mt_indicadores / projetos). */
+export type Vinculos = { bsc: string[]; kr: string[]; cesta: string[]; projetos: string[] };
+export const vinculosVazios = (): Vinculos => ({ bsc: [], kr: [], cesta: [], projetos: [] });
+export function normalizarVinculos(v: any): Vinculos {
+  const arr = (x: any) => (Array.isArray(x) ? x.filter((y) => typeof y === "string") : []);
+  return { bsc: arr(v?.bsc), kr: arr(v?.kr), cesta: arr(v?.cesta), projetos: arr(v?.projetos) };
+}
+/** Status do diretor numa pendência de ata (vale até a baixa na Governança). */
+export type AtaStatus = { gov_acao_id: string; titulo: string; status: "" | "entregue" | "em_andamento" | "nao_entregue"; comentario: string };
+export type Prioridade = PrioridadeSemanal & { id: string; prazo: string; responsavel: Responsavel; vinculos?: Vinculos };
+export type CheckinV2 = { v: 2; prioridades: Prioridade[]; riscos: string; apoio: string; confianca: number; envio_token?: string; primeiro_envio_em?: string };
 export type Entrega = {
   titulo: string; status: "entregue" | "parcial" | "nao_entregue" | ""; motivo: string; iniciativa_id?: string; novo_status_ini?: string;
-  gov_acao_id?: string; gov_comite_codigo?: string; prioridade_id?: string; responsavel?: Responsavel; herdada_de?: string;
+  gov_acao_id?: string; gov_comite_codigo?: string; prioridade_id?: string; responsavel?: Responsavel; herdada_de?: string; vinculos?: Vinculos;
 };
 export type KpiRetrato = {
   indicador_id: string; codigo: string; nome: string; origem: "bsc" | "okr" | "cesta"; peso: number; unidade: string | null;
@@ -16,12 +25,12 @@ export type KpiRetrato = {
 export type KpiResposta = {
   indicador_id: string; ok: boolean | null; impacto: string; plano: string; vira_iniciativa: boolean; prazo: string;
   responsavel: Responsavel; status_ini: string; reaproveitar: "" | "sim" | "nova"; iniciativa_alvo_id?: string; iniciativa_criada_id?: string;
-  situacao_atual?: string;
+  situacao_atual?: string; vinculos?: Vinculos;
 };
 export type KpiLegado = { indicador_id: string; valor: string; situacao: string; comentario: string };
 export type CheckoutV2 = {
   v: 2; entregas: Entrega[]; extras: string; aprendizados: string; proxima: string; ritmo: number;
-  kpis?: KpiLegado[]; kpis_retrato?: KpiRetrato[]; kpis_resposta: KpiResposta[]; envio_token?: string; primeiro_envio_em?: string;
+  kpis?: KpiLegado[]; kpis_retrato?: KpiRetrato[]; kpis_resposta: KpiResposta[]; envio_token?: string; primeiro_envio_em?: string; atas?: AtaStatus[];
 };
 
 export const LIMITE_TEXTO = 4000;
@@ -31,6 +40,7 @@ const respVazio = (): Responsavel => ({ tipo: "" });
 export function normalizarResponsavel(r: any): Responsavel {
   if (!r || typeof r !== "object") return respVazio();
   if (r.tipo === "eu") return { tipo: "eu" };
+  if (r.tipo === "lider") return { tipo: "lider", nome: r.nome ?? "", cargo_id: r.cargo_id };
   if (r.tipo === "cadeira") return { tipo: "cadeira", cadeira_id: r.cadeira_id ?? "" };
   if (r.tipo === "externo") return { tipo: "externo", nome: r.nome ?? "", email: r.email ?? "", contato_id: r.contato_id };
   return respVazio();
@@ -42,21 +52,23 @@ export function normalizarCheckin(c: any): CheckinV2 {
     v: 2,
     prioridades: (pri.length ? pri : [{}]).map((p: any, i: number) => ({
       ...p, id: p.id || `legado-${i}-${p.titulo ?? ""}`, titulo: p.titulo ?? "", iniciativa_id: p.iniciativa_id ?? "", resultado: p.resultado ?? "",
-      prazo: p.prazo ?? "", responsavel: normalizarResponsavel(p.responsavel),
+      prazo: p.prazo ?? "", responsavel: normalizarResponsavel(p.responsavel), vinculos: normalizarVinculos(p.vinculos),
     })),
     riscos: c?.riscos ?? "", apoio: c?.apoio ?? "", confianca: c?.confianca ?? 3,
+    envio_token: c?.envio_token, primeiro_envio_em: c?.primeiro_envio_em,
   };
 }
 
 export function normalizarCheckout(c: any): CheckoutV2 {
   return {
     v: 2,
-    entregas: (Array.isArray(c?.entregas) ? c.entregas : []).map((e: any) => ({ ...e, titulo: e.titulo ?? "", status: e.status ?? "", motivo: e.motivo ?? "", responsavel: normalizarResponsavel(e.responsavel) })),
+    entregas: (Array.isArray(c?.entregas) ? c.entregas : []).map((e: any) => ({ ...e, titulo: e.titulo ?? "", status: e.status ?? "", motivo: e.motivo ?? "", responsavel: normalizarResponsavel(e.responsavel), vinculos: normalizarVinculos(e.vinculos) })),
     extras: c?.extras ?? "", aprendizados: c?.aprendizados ?? "", proxima: c?.proxima ?? "", ritmo: c?.ritmo ?? 3,
     kpis: Array.isArray(c?.kpis) ? c.kpis : [],
     kpis_retrato: Array.isArray(c?.kpis_retrato) ? c.kpis_retrato : undefined,
-    kpis_resposta: Array.isArray(c?.kpis_resposta) ? c.kpis_resposta.map((k: any) => ({ ...respostaVazia(k.indicador_id), ...k, responsavel: normalizarResponsavel(k.responsavel) })) : [],
+    kpis_resposta: Array.isArray(c?.kpis_resposta) ? c.kpis_resposta.map((k: any) => ({ ...respostaVazia(k.indicador_id), ...k, responsavel: normalizarResponsavel(k.responsavel), vinculos: normalizarVinculos(k.vinculos) })) : [],
     envio_token: c?.envio_token, primeiro_envio_em: c?.primeiro_envio_em,
+    atas: Array.isArray(c?.atas) ? c.atas.filter((a: any) => a?.gov_acao_id).map((a: any) => ({ gov_acao_id: a.gov_acao_id, titulo: a.titulo ?? "", status: a.status ?? "", comentario: a.comentario ?? "" })) : [],
   };
 }
 
@@ -67,7 +79,7 @@ export function respostaVazia(indicador_id: string, sem = ""): KpiResposta {
 /** Prioridades do check-in → entregas do checkout, levando id e responsável. */
 export function entregasDePrioridades(p: Prioridade[]): Entrega[] {
   return p.filter((x) => x.titulo.trim()).map((x) => ({
-    titulo: x.titulo, status: "", motivo: "", iniciativa_id: x.iniciativa_id, prioridade_id: x.id, responsavel: x.responsavel,
+    titulo: x.titulo, status: "", motivo: "", iniciativa_id: x.iniciativa_id, prioridade_id: x.id, responsavel: x.responsavel, vinculos: x.vinculos,
     ...(x.gov_acao_id ? { gov_acao_id: x.gov_acao_id, gov_comite_codigo: x.gov_comite_codigo } : {}),
   }));
 }
@@ -150,6 +162,7 @@ export function mesclarHerdadas(atuais: Entrega[], herdadas: Entrega[]): Entrega
 // ---------- Responsável ----------
 export function responsavelOk(r: Responsavel | undefined) {
   if (!r || !r.tipo || r.tipo === "eu") return true;
+  if (r.tipo === "lider") return !!r.nome?.trim();
   if (r.tipo === "cadeira") return !!r.cadeira_id && !r.nome && !r.email;
   return !!r.nome?.trim() && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(r.email?.trim() ?? "") && !r.cadeira_id;
 }
@@ -228,3 +241,60 @@ export function idadeSemanas(criada: string, sem: string) {
 }
 export const riscoAberto = (r: { resolvido_em: string | null; reaberto_em: string | null }) =>
   !r.resolvido_em || (!!r.reaberto_em && r.reaberto_em > r.resolvido_em);
+
+// ---------- Ciclo único (check-in + checkout enviados juntos) ----------
+/** Prazo único do ciclo S: segunda da semana S, 23h59 em São Paulo (UTC−3). */
+export const prazoCiclo = (ciclo: string) => new Date(`${ciclo}T23:59:59-03:00`);
+type RegCiclo = { status?: string; enviado_em?: string | null; conteudo?: any } | null | undefined;
+export type SeloCiclo = { estado: "enviado" | "parcial" | "rascunho" | "pendente"; atrasado: boolean; enviado_em: string | null };
+/** Um selo por ciclo: check-in de S e checkout de S−7. "Parcial" = ciclos antigos com só um dos dois enviado. */
+export function seloCiclo(checkin: RegCiclo, checkout: RegCiclo, ciclo: string, agora = new Date()): SeloCiclo {
+  const env = [checkin, checkout].filter((r) => r?.status === "enviado") as NonNullable<RegCiclo>[];
+  const prazo = prazoCiclo(ciclo);
+  const primeiros = env.map((r) => r.conteudo?.primeiro_envio_em ?? r.enviado_em).filter(Boolean).sort() as string[];
+  const ultimo = env.map((r) => r.enviado_em).filter(Boolean).sort().pop() ?? null;
+  if (env.length === 2) return { estado: "enviado", atrasado: new Date(primeiros[0]) > prazo, enviado_em: ultimo };
+  if (env.length === 1) return { estado: "parcial", atrasado: agora > prazo, enviado_em: ultimo };
+  return { estado: checkin || checkout ? "rascunho" : "pendente", atrasado: agora > prazo, enviado_em: null };
+}
+/** Lembrete no app: a partir de sexta 8h (São Paulo) da abertura do ciclo, até o envio. */
+export function lembreteAtivo(ciclo: string, enviado: boolean, agora = new Date()) {
+  return !enviado && agora >= new Date(`${addDias(ciclo, -3)}T08:00:00-03:00`);
+}
+
+// ---------- Pendências de atas ----------
+/** Status registrados pelo diretor no último checkout enviado antes desta semana; carregados até a baixa na Governança. */
+export function atasAnteriores(rows: Row[], semana: string): AtaStatus[] {
+  const ult = rows.filter((r) => r.tipo === "checkout" && r.semana < semana && (r as any).status === "enviado").sort((a, b) => b.semana.localeCompare(a.semana))[0];
+  return ult ? normalizarCheckout(ult.conteudo).atas ?? [] : [];
+}
+/** Lista empilhada: toda pendência aberta na Governança aparece; "entregue" vai para o fim aguardando baixa. */
+export function empilharAtas<T extends { id: string; titulo: string }>(abertas: T[], status: AtaStatus[]): (T & { meu: AtaStatus })[] {
+  const m = new Map(status.map((s) => [s.gov_acao_id, s]));
+  const out = abertas.map((a) => ({ ...a, meu: m.get(a.id) ?? { gov_acao_id: a.id, titulo: a.titulo, status: "" as const, comentario: "" } }));
+  return [...out.filter((a) => a.meu.status !== "entregue"), ...out.filter((a) => a.meu.status === "entregue")];
+}
+
+// ---------- Vínculos ----------
+type IndV = { id: string; origem: string; objetivo_id: string | null; codigo: string; status?: string; parent_id?: string | null };
+/** Projeto do portfólio → objetivos dele sugerem os KPIs de BSC desses objetivos; códigos de KR batem com o código do indicador. */
+export function vinculosDoProjeto(proj: { objetivos?: string[] | null; krs?: string[] | null }, inds: IndV[], objetivos: { id: string; codigo: string }[]) {
+  const cods = new Set((proj.objetivos ?? []).map((c) => c.trim().toUpperCase()));
+  const objIds = new Set(objetivos.filter((o) => cods.has(o.codigo.trim().toUpperCase())).map((o) => o.id));
+  const krs = new Set((proj.krs ?? []).map((c) => c.trim().toLowerCase()));
+  const ativo = (i: IndV) => (i.status ?? "ativo") === "ativo" && !i.parent_id;
+  return {
+    bsc: inds.filter((i) => ativo(i) && i.origem === "bsc" && i.objetivo_id && objIds.has(i.objetivo_id)).map((i) => i.id),
+    kr: inds.filter((i) => ativo(i) && i.origem === "okr" && krs.has(i.codigo.trim().toLowerCase())).map((i) => i.id),
+  };
+}
+/** Junta sem duplicar. */
+export const unir = (a: string[], b: string[]) => [...new Set([...a, ...b])];
+/** Lista de vínculos para gravar na iniciativa (o principal continua no campo único). */
+export function vinculosParaGravar(v: Vinculos | undefined, principal: string | null) {
+  const n = normalizarVinculos(v);
+  return [
+    ...n.bsc.map((ref_id) => ({ tipo: "bsc", ref_id })), ...n.kr.map((ref_id) => ({ tipo: "kr", ref_id })),
+    ...n.cesta.map((ref_id) => ({ tipo: "cesta", ref_id })), ...n.projetos.map((ref_id) => ({ tipo: "projeto", ref_id })),
+  ].filter((x) => x.ref_id !== principal);
+}

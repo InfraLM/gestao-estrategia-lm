@@ -20,6 +20,7 @@ export function mapearAcao(a: Reg) {
     descricao: txt(a.description),
     responsavel_origem: txt(a.owner_name),
     responsavel_normalizado: normalizarNome(a.owner_name),
+    responsavel_email: txt(a.owner_email)?.toLowerCase() ?? null,
     prazo: dia(a.due_date),
     status: txt(a.status),
     prioridade: txt(a.priority),
