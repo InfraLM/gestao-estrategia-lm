@@ -9,7 +9,7 @@ export type Impedimento = {
   resposta_ciclo: RespostaImpedimento | null;
 };
 export function respostaCompleta(r: RespostaImpedimento | null | undefined) {
-  return !!r?.plano.trim() && !!r.prazo && Object.hasOwn(STATUS_IMPEDIMENTO, r.status) && (r.status !== 'nao_procede' || !!r.justificativa.trim());
+  return !!r?.plano.trim() && !!r.prazo && Object.prototype.hasOwnProperty.call(STATUS_IMPEDIMENTO, r.status) && (r.status !== 'nao_procede' || !!r.justificativa.trim());
 }
 export function devidoImpedimento(r: Impedimento, cadeira: string, ciclo: string) {
   return r.atribuido_cadeira_id === cadeira && !!r.publicado_ciclo && r.publicado_ciclo < ciclo &&

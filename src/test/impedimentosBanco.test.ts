@@ -28,6 +28,7 @@ describe('Atribuição, envio e respostas em banco isolado',()=>{
     const baseline=readFileSync('drizzle/migrations/0017_rotina_semanal_v2.sql','utf8').split('CREATE TABLE public.mt_rotina_contatos')[0];
     await pg.exec(baseline);
     await pg.exec(readFileSync('drizzle/migrations/0050_impedimentos_atribuicao_respostas.sql','utf8'));
+    await pg.exec(readFileSync('drizzle/migrations/0051_impedimentos_atividades_projecao.sql','utf8'));
     risco=(await pg.query<{id:string}>(`INSERT INTO mt_rotina_riscos(cadeira_id,tipo,descricao,semana_criada,atribuido_cadeira_id,impacto) VALUES('${origem}','impedimento','Liberar acesso','2026-10-26','${destino}','Entrega bloqueada') RETURNING id`)).rows[0].id;
   },30000);
   afterAll(async()=>{await pg.close();});
