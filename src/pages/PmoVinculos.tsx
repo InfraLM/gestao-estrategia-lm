@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { CadastroIniciativas } from "./Hubs";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -51,10 +50,6 @@ export default function PmoVinculos() {
           {aberto === it.id && <div className="mt-3">{tipo === "objetivo" ? <EmpilhadosVinculo objetivoCodigo={it.codigo} /> : <EmpilhadosVinculo refs={[it.id]} />}</div>}
         </Card>
       ))}</div>
-      <details className="rounded border p-3" open={new URLSearchParams(window.location.search).get("aba") === "cadastro"}>
-        <summary className="cursor-pointer font-semibold">Cadastro de iniciativas</summary>
-        <div className="mt-3"><CadastroIniciativas /></div>
-      </details>
     </div>
   );
 }

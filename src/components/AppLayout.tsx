@@ -51,7 +51,6 @@ const navGroups: NavGroup[] = [
       { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
       { to: "/pmo/farol", label: "Farol de Status Report", icon: LineChart },
       { to: "/pmo/responsaveis", label: "Responsáveis dos projetos", icon: UserCog },
-      { to: "/pmo/vinculos", label: "Iniciativas por vínculo", icon: ListChecks },
       { to: "/gestao", label: "Gestão de Projetos", icon: FolderKanban },
       { to: "/melhorias", label: "Melhorias Estratégicas", icon: Sparkles },
     ],
