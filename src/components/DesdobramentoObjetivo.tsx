@@ -81,7 +81,7 @@ export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodi
 
   if (!base) return <p className="text-xs text-muted-foreground">Carregando desdobramento…</p>;
   if (!obj) return <p className="text-xs text-muted-foreground">Objetivo {objetivoCodigo} não está cadastrado na base de metas.</p>;
-  const doObj = inds.filter((i) => i.objetivo_id === obj.id);
+  const doObj = inds.filter((i) => i.objetivo_id === obj.id && base.indicadores.some((a: any) => a.id === i.id));
   const diretos = itensDe([obj.id]);
   const todos = [...diretos, ...doObj.flatMap((i) => itensDe([i.id]))];
   const r = resumoImpacto(todos, hoje());
