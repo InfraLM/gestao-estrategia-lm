@@ -14,6 +14,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI, fmtNum, MESES_2S26 } from "@/hooks/useMetasBase";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
+import ImpedimentosRecebidos from "@/components/ImpedimentosRecebidos";
+import { Impedimento, devidoImpedimento, respostaCompleta } from "@/lib/impedimentos";
 import PendenciasComites from "@/components/PendenciasComites";
 import { puxarAcao } from "@/lib/governancaPendencias";
 import {
@@ -78,6 +80,18 @@ export default function MetasSemanal() {
   const [ci, setCiRaw] = useState<CheckinV2>(normalizarCheckin(null));
   const [co, setCoRaw] = useState<CheckoutV2>(normalizarCheckout(null));
   const [riscos, setRiscos] = useState<any[]>([]);
+  const [impedimentos, setImpedimentos] = useState<Impedimento[]>([]);
+  const [erroImpedimentos, setErroImpedimentos] = useState(false);
+  const carregarImpedimentos = async () => {
+    if (!cad) return;
+    const { data, error } = await db.rpc("rotina_impedimentos_ciclo", { _cadeira: cad, _ciclo: sem });
+    setErroImpedimentos(!!error); setImpedimentos(data ?? []);
+  };
+  useEffect(() => { void carregarImpedimentos(); }, [cad, sem]);
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("impedimento");
+    if (id && impedimentos.some(r=>r.id===id)) document.getElementById(`impedimento-${id}`)?.scrollIntoView({block:"center"});
+  }, [impedimentos]);
   const [contatos, setContatos] = useState<any[]>([]);
   const [projetos, setProjetos] = useState<ProjetoLite[]>([]);
   const [todosKpis, setTodosKpis] = useState<KpiRetrato[]>([]);
@@ -223,7 +237,9 @@ export default function MetasSemanal() {
     return m;
   }, [b.iniciativas, cad, co.envio_token]);
   const pendIn = pendenciasCheckin(ci);
-  const pendOut = pendenciasCheckout(co, reaproveitaveis);
+  const pendOut = [...pendenciasCheckout(co, reaproveitaveis),
+    ...impedimentos.filter(r => devidoImpedimento(r, cad, sem) && !respostaCompleta(r.resposta_ciclo)).map(r => ({ campo: `impedimento-${r.id}`, texto: `Impedimento: preencha e salve plano, prazo e status — ${r.descricao}` })),
+    ...(erroImpedimentos ? [{campo:"bloco-impedimentos",texto:"Não foi possível carregar os impedimentos recebidos."}] : [])];
 
   const cadRow = b.cadeiras.find((c) => c.id === cad);
   const diretorNome = cadRow?.diretor_nome ?? b.perfis.find((p) => p.user_id === cadRow?.diretor_user_id)?.display_name ?? "";
@@ -277,6 +293,8 @@ export default function MetasSemanal() {
       ], { onConflict: "cadeira_id,semana,tipo" }).select();
       if (error) throw error;
       rowsRef.current = data; setRows(data);
+      await carregarImpedimentos();
+      const {data: novosRiscos} = await db.from("mt_rotina_riscos").select("*").eq("cadeira_id",cad).order("created_at"); setRiscos(novosRiscos ?? []);
       localStorage.removeItem(chaveLocal("checkin")); localStorage.removeItem(chaveLocal("checkout"));
       b.reload();
       setSalvo({ estado: "salvo", em: new Date() });
@@ -286,12 +304,12 @@ export default function MetasSemanal() {
   };
 
   // ---------- Riscos ----------
-  const [novoRisco, setNovoRisco] = useState({ tipo: "risco", descricao: "" });
+  const [novoRisco, setNovoRisco] = useState({ tipo: "risco", descricao: "", impacto: "", atribuido_cadeira_id: "", prazo_desejado: "" });
   const registrarRisco = async () => {
     if (!novoRisco.descricao.trim()) return;
-    const { data, error } = await db.from("mt_rotina_riscos").insert({ cadeira_id: cad, tipo: novoRisco.tipo, descricao: novoRisco.descricao.trim(), semana_criada: sem, criado_por: b.user?.id }).select().single();
+    const { data, error } = await db.from("mt_rotina_riscos").insert({ cadeira_id: cad, tipo: novoRisco.tipo, descricao: novoRisco.descricao.trim(), semana_criada: sem, criado_por: b.user?.id, impacto: novoRisco.impacto.trim(), atribuido_cadeira_id: novoRisco.atribuido_cadeira_id || null, prazo_desejado: novoRisco.prazo_desejado || null }).select().single();
     if (error) return toast.error(error.message);
-    setRiscos([...riscos, data]); setNovoRisco({ tipo: novoRisco.tipo, descricao: "" });
+    setRiscos([...riscos, data]); setNovoRisco({ tipo: novoRisco.tipo, descricao: "", impacto: "", atribuido_cadeira_id: "", prazo_desejado: "" }); void carregarImpedimentos();
   };
   const mudarRisco = async (r: any, resolver: boolean) => {
     const upd = resolver ? { resolvido_em: new Date().toISOString(), resolvido_por: b.user?.id } : { reaberto_em: new Date().toISOString() };
@@ -299,7 +317,7 @@ export default function MetasSemanal() {
     if (error) return toast.error(error.message);
     setRiscos(riscos.map((x) => (x.id === r.id ? data : x)));
   };
-  const riscosVisiveis = riscos.filter((r) => r.semana_criada <= sem);
+  const riscosVisiveis = riscos.filter((r) => r.semana_criada <= sem && !r.atribuido_cadeira_id);
   const abertos = riscosVisiveis.filter(riscoAberto); const resolvidos = riscosVisiveis.filter((r) => !riscoAberto(r));
 
   // ---------- Componentes ----------
@@ -508,7 +526,7 @@ export default function MetasSemanal() {
               })}
             </div>
             {(co.kpis?.length ?? 0) > 0 && <div className="space-y-1 text-sm"><p className="text-xs text-muted-foreground">Apontamentos antigos</p>
-              {co.kpis!.map((k, i) => { const ind = b.indicadores.find((x) => x.id === k.indicador_id); return <p key={i}>{ind?.codigo} · {ind?.nome} {k.valor && `— ${k.valor}`} {k.situacao && `(${SITUACAO_LBL[k.situacao]})`}</p>; })}</div>}
+              {(co.kpis ?? []).map((k, i) => { const ind = b.indicadores.find((x) => x.id === k.indicador_id); return <p key={i}>{ind?.codigo} · {ind?.nome} {k.valor && `— ${k.valor}`} {k.situacao && `(${SITUACAO_LBL[k.situacao]})`}</p>; })}</div>}
           </Card>
 
           <Card className="p-4 space-y-4" id="bloco-entregas">
@@ -521,7 +539,7 @@ export default function MetasSemanal() {
               const set = (x: Partial<EntregaV2>) => setCo({ ...co, entregas: co.entregas.map((q, j) => (j === i ? { ...q, ...x } : q)) });
               if (e.herdada_de) return (
                 <div key={i} id={`ent-${i}`} className="rounded border border-dashed p-3 space-y-2 text-sm">
-                  <p className="font-medium">{e.titulo} <span className="text-muted-foreground font-normal">· semana de {fmtSem(e.herdada_de)}</span></p>
+                  <p className="font-medium">{e.titulo} <span className="text-muted-foreground font-normal">· Prioridade estratégica apontada (ciclo {fmtSem(e.herdada_de)})</span></p>
                   <p className="text-muted-foreground">Você declarou isto como prioridade. Entregou nesta semana?</p>
                   <div className="flex flex-wrap gap-2 items-center">
                     {podeEditar && e.status !== "entregue" && <Button size="sm" variant="outline" onClick={() => set({ status: "entregue" })}>Entreguei</Button>}
@@ -572,14 +590,20 @@ export default function MetasSemanal() {
                   {podeEditar && <Button size="sm" variant="ghost" onClick={() => mudarRisco(r, false)}>Reabrir</Button>}
                 </div>))}
             </details>}
-            {podeEditar && <div className="grid gap-2 sm:grid-cols-[180px_1fr_auto]">
+            {podeEditar && <div className="grid gap-3 sm:grid-cols-2">
               <Select value={novoRisco.tipo} onValueChange={(v) => setNovoRisco({ ...novoRisco, tipo: v })}><SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>{Object.entries(TIPO_RISCO).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent></Select>
-              <Input placeholder="Descrição (não poderá ser editada depois)" value={novoRisco.descricao} onChange={(e) => setNovoRisco({ ...novoRisco, descricao: e.target.value })} />
-              <Button variant="outline" onClick={registrarRisco}>Registrar</Button>
+              <div className="space-y-1"><Label htmlFor="risco-descricao">Descrição</Label><Textarea id="risco-descricao" aria-label="Descrição do risco ou impedimento" placeholder="Descrição" maxLength={4000} value={novoRisco.descricao} onChange={(e) => setNovoRisco({ ...novoRisco, descricao: e.target.value })} /></div>
+              <div className="space-y-1"><Label htmlFor="risco-impacto">Impacto</Label><Textarea id="risco-impacto" aria-label="Impacto do risco ou impedimento" value={novoRisco.impacto} onChange={e=>setNovoRisco({...novoRisco,impacto:e.target.value})} maxLength={4000}/></div>
+              <div className="space-y-1"><Label>Diretor atribuído (opcional)</Label><Select value={novoRisco.atribuido_cadeira_id || "nenhum"} onValueChange={v=>setNovoRisco({...novoRisco,atribuido_cadeira_id:v==="nenhum"?"":v})}><SelectTrigger aria-label="Diretor atribuído"><SelectValue placeholder="Diretor atribuído (opcional)"/></SelectTrigger><SelectContent><SelectItem value="nenhum">Sem atribuição</SelectItem>{b.cadeiras.filter(c=>c.ativo).map(c=><SelectItem key={c.id} value={c.id}>{c.nome} · {c.diretor_nome || "Sem diretor vinculado"}</SelectItem>)}</SelectContent></Select></div>
+              <div className="space-y-1"><Label htmlFor="risco-prazo">Prazo desejado (opcional)</Label><Input id="risco-prazo" type="date" value={novoRisco.prazo_desejado} onChange={e=>setNovoRisco({...novoRisco,prazo_desejado:e.target.value})}/></div>
+              <Button variant="outline" disabled={!novoRisco.descricao.trim()} onClick={registrarRisco}>Registrar</Button>
             </div>}
             {ci.riscos.trim() && <div className="rounded bg-muted p-2 text-sm"><p className="text-xs text-muted-foreground">Registro antigo desta semana</p><p className="whitespace-pre-wrap">{ci.riscos}</p></div>}
           </Card>
+
+          <ImpedimentosRecebidos itens={impedimentos} cadeira={cad} ciclo={sem} editar={podeEditar} governanca={b.isGovernanca} onReload={carregarImpedimentos} />
+          {erroImpedimentos && <p role="alert" className="text-destructive">Não foi possível carregar os impedimentos.</p>}
 
           <div id="bloco-atas" className="space-y-2"><h2 className="font-semibold">4. Pendências das reuniões</h2>
           <PendenciasComites status={co.atas ?? []} onStatus={(st: AtaStatus) => setCo({ ...co, atas: [...(co.atas ?? []).filter((x) => x.gov_acao_id !== st.gov_acao_id), st] })} cadeira={cad} usuario={b.user?.id} podeEditar={podeEditar} admin={access.roles.some((r) => r === "admin" || r === "super_admin")}

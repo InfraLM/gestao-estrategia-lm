@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import AtividadesRotina from "@/components/AtividadesRotina";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -108,6 +109,8 @@ export default function SemanalDashboard() {
           </Card>;
         })}
       </div>
+
+      <AtividadesRotina ciclo={ate} cadeira={cad} />
 
       <h2 className="text-lg font-semibold">Formulários do ciclo {fmt(ate)}</h2>
       <div className="grid gap-3 lg:grid-cols-2">

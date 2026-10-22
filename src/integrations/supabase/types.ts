@@ -1906,6 +1906,91 @@ export type Database = {
         }
         Relationships: []
       }
+      mt_impedimento_auditoria: {
+        Row: {
+          acao: string
+          anterior: Json | null
+          criado_em: string
+          id: string
+          novo: Json | null
+          risco_id: string
+          usuario_id: string | null
+          usuario_nome: string | null
+        }
+        Insert: {
+          acao: string
+          anterior?: Json | null
+          criado_em?: string
+          id?: string
+          novo?: Json | null
+          risco_id: string
+          usuario_id?: string | null
+          usuario_nome?: string | null
+        }
+        Update: {
+          acao?: string
+          anterior?: Json | null
+          criado_em?: string
+          id?: string
+          novo?: Json | null
+          risco_id?: string
+          usuario_id?: string | null
+          usuario_nome?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_impedimento_auditoria_risco_id_fkey"
+            columns: ["risco_id"]
+            isOneToOne: false
+            referencedRelation: "mt_rotina_riscos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_impedimento_respostas: {
+        Row: {
+          ciclo: string
+          id: string
+          justificativa: string
+          plano: string
+          prazo: string
+          respondido_em: string
+          respondido_por: string
+          risco_id: string
+          status: string
+        }
+        Insert: {
+          ciclo: string
+          id?: string
+          justificativa?: string
+          plano: string
+          prazo: string
+          respondido_em?: string
+          respondido_por: string
+          risco_id: string
+          status: string
+        }
+        Update: {
+          ciclo?: string
+          id?: string
+          justificativa?: string
+          plano?: string
+          prazo?: string
+          respondido_em?: string
+          respondido_por?: string
+          risco_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_impedimento_respostas_risco_id_fkey"
+            columns: ["risco_id"]
+            isOneToOne: false
+            referencedRelation: "mt_rotina_riscos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mt_indicadores: {
         Row: {
           cadeira_id: string | null
@@ -2516,45 +2601,91 @@ export type Database = {
       }
       mt_rotina_riscos: {
         Row: {
+          atribuido_cadeira_id: string | null
           cadeira_id: string
           created_at: string
           criado_por: string | null
           descricao: string
           id: string
+          impacto: string
+          justificativa_resposta: string
+          motivo_reabertura: string | null
+          plano_acao: string
+          prazo_desejado: string | null
+          prazo_plano: string | null
+          publicado_ciclo: string | null
+          publicado_em: string | null
           reaberto_em: string | null
           resolvido_em: string | null
           resolvido_por: string | null
+          respondido_em: string | null
+          respondido_por: string | null
+          resposta_status: string
           semana_criada: string
+          sinalizado_por_nome: string | null
           tipo: string
           updated_at: string
         }
         Insert: {
+          atribuido_cadeira_id?: string | null
           cadeira_id: string
           created_at?: string
           criado_por?: string | null
           descricao: string
           id?: string
+          impacto?: string
+          justificativa_resposta?: string
+          motivo_reabertura?: string | null
+          plano_acao?: string
+          prazo_desejado?: string | null
+          prazo_plano?: string | null
+          publicado_ciclo?: string | null
+          publicado_em?: string | null
           reaberto_em?: string | null
           resolvido_em?: string | null
           resolvido_por?: string | null
+          respondido_em?: string | null
+          respondido_por?: string | null
+          resposta_status?: string
           semana_criada: string
+          sinalizado_por_nome?: string | null
           tipo: string
           updated_at?: string
         }
         Update: {
+          atribuido_cadeira_id?: string | null
           cadeira_id?: string
           created_at?: string
           criado_por?: string | null
           descricao?: string
           id?: string
+          impacto?: string
+          justificativa_resposta?: string
+          motivo_reabertura?: string | null
+          plano_acao?: string
+          prazo_desejado?: string | null
+          prazo_plano?: string | null
+          publicado_ciclo?: string | null
+          publicado_em?: string | null
           reaberto_em?: string | null
           resolvido_em?: string | null
           resolvido_por?: string | null
+          respondido_em?: string | null
+          respondido_por?: string | null
+          resposta_status?: string
           semana_criada?: string
+          sinalizado_por_nome?: string | null
           tipo?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "mt_rotina_riscos_atribuido_cadeira_id_fkey"
+            columns: ["atribuido_cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "mt_rotina_riscos_cadeira_id_fkey"
             columns: ["cadeira_id"]
@@ -4197,6 +4328,7 @@ export type Database = {
           enviado_em: string | null
           erro: string | null
           id: string
+          impedimento_id: string | null
           nome: string
           pendencias: Json
           provedor_id: string | null
@@ -4215,6 +4347,7 @@ export type Database = {
           enviado_em?: string | null
           erro?: string | null
           id?: string
+          impedimento_id?: string | null
           nome: string
           pendencias: Json
           provedor_id?: string | null
@@ -4233,6 +4366,7 @@ export type Database = {
           enviado_em?: string | null
           erro?: string | null
           id?: string
+          impedimento_id?: string | null
           nome?: string
           pendencias?: Json
           provedor_id?: string | null
@@ -4247,6 +4381,13 @@ export type Database = {
             columns: ["cadeira_id"]
             isOneToOne: false
             referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rotina_avisos_envios_impedimento_id_fkey"
+            columns: ["impedimento_id"]
+            isOneToOne: false
+            referencedRelation: "mt_rotina_riscos"
             referencedColumns: ["id"]
           },
         ]
@@ -4945,6 +5086,11 @@ export type Database = {
         Args: { _chave: string; _secao: string; _valor: Json }
         Returns: string
       }
+      rotina_atividade_permitida: {
+        Args: { _destino: string; _origem: string }
+        Returns: boolean
+      }
+      rotina_atividades_abertas: { Args: { _ciclo: string }; Returns: Json }
       rotina_avisos_agendar: { Args: { _tipo: string }; Returns: undefined }
       rotina_avisos_destinatarios: { Args: { _ciclo: string }; Returns: Json }
       rotina_avisos_preparar: {
@@ -4998,6 +5144,25 @@ export type Database = {
           semana: string
           status: string
         }[]
+      }
+      rotina_impedimento_reabrir: {
+        Args: { _id: string; _motivo: string }
+        Returns: undefined
+      }
+      rotina_impedimento_responder: {
+        Args: {
+          _ciclo: string
+          _id: string
+          _justificativa?: string
+          _plano: string
+          _prazo: string
+          _status: string
+        }
+        Returns: undefined
+      }
+      rotina_impedimentos_ciclo: {
+        Args: { _cadeira: string; _ciclo: string }
+        Returns: Json
       }
       rotina_pode_ler_checkin: { Args: { _cadeira: string }; Returns: boolean }
       rotina_retrato: {
