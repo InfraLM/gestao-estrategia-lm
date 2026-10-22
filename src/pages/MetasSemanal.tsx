@@ -26,6 +26,8 @@ import VinculosAcao, { ProjetoLite } from "@/components/VinculosAcao";
 import { prazoCiclo, seloCiclo, atasAnteriores, AtaStatus, vinculosParaGravar } from "@/lib/rotinaSemanal";
 import { useAvaliacoesBsc } from "@/hooks/useAvaliacoesBsc";
 import rev02 from "@/data/bscRev02.json";
+import StatusReportCiclo, { ResumoSR } from "@/components/StatusReportCiclo";
+import { ultimoCicloDoMes } from "@/lib/projetosGestao";
 
 const db = supabase as any;
 export type Prioridade = PrioridadeV2;
@@ -84,6 +86,8 @@ export default function MetasSemanal() {
   const comp = competenciaDaSemana(semOut);
   const competencia = MESES_2S26.includes(comp) ? comp : null;
   const avalCad = useAvaliacoesBsc(competencia, cad ? [cad] : []);
+  const mesSR = ultimoCicloDoMes(sem);
+  const [resumoSR, setResumoSR] = useState<ResumoSR>({ total: 0, completos: 0, pendentes: [] });
 
   const flushRef = useRef<() => void>(() => {});
   const rowsRef = useRef<any[]>([]); rowsRef.current = rows;
@@ -526,6 +530,8 @@ export default function MetasSemanal() {
             </div>
             <Escala lbl="Avaliação da semana (1 = ruim, 5 = excelente)" v={co.ritmo} on={(n) => setCo({ ...co, ritmo: n })} />
           </Card>
+          {mesSR && cad && <StatusReportCiclo cadeira={cad} competencia={mesSR} ciclo={sem} podeEditar={podeEditar} userId={b.user?.id}
+            userNome={b.perfis.find((p) => p.user_id === b.user?.id)?.display_name ?? b.user?.email ?? null} onResumo={setResumoSR} />}
         </TabsContent>
 
         <TabsContent value="checkin" className="space-y-4">
@@ -568,6 +574,7 @@ export default function MetasSemanal() {
         { aba: "checkout", id: "bloco-entregas", txt: `Entregas: ${entregasAtuais.filter((e) => e.status === "entregue").length} de ${entregasAtuais.length}${co.entregas.length > entregasAtuais.length ? ` · ${co.entregas.length - entregasAtuais.length} de semanas anteriores` : ""}` },
         { aba: "checkout", id: "bloco-riscos", txt: `Riscos/impedimentos abertos: ${abertos.length}` },
         { aba: "checkout", id: "bloco-atas", txt: `Pendências de atas com seu status: ${(co.atas ?? []).filter((a) => a.status).length} · ${(co.atas ?? []).filter((a) => a.status === "entregue").length} aguardando baixa` },
+        ...(mesSR ? [{ aba: "checkout" as Tipo, id: "bloco-status-report", txt: `Status report: ${resumoSR.completos} de ${resumoSR.total} projeto(s) completos${resumoSR.pendentes.length ? ` · pendente (não bloqueia o envio): ${resumoSR.pendentes.join(", ")}` : ""}` }] : []),
         { aba: "checkin", id: "bloco-prioridades", txt: `Prioridades: ${ci.prioridades.filter((p) => p.titulo.trim()).length}` },
         { aba: "checkin", id: "bloco-apoio", txt: `Apoio: ${ci.apoio.trim() ? "preenchido" : "—"} · Confiança ${ci.confianca}/5` },
       ]} />
