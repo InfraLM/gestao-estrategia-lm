@@ -4225,10 +4225,22 @@ export type Database = {
         }
         Returns: number
       }
+      portfolio_iniciar_job: {
+        Args: { _id: string; _novo: boolean; _tipo: string; _usuario: string }
+        Returns: string
+      }
+      portfolio_permissoes: {
+        Args: never
+        Returns: {
+          fonte_id: string
+          fonte_tipo: string
+        }[]
+      }
       portfolio_pode_editar: {
         Args: { _id: string; _tipo: string }
         Returns: boolean
       }
+      portfolio_retomar_ia: { Args: never; Returns: undefined }
       portfolio_revisar: {
         Args: { _acao: string; _itens: Json }
         Returns: number
