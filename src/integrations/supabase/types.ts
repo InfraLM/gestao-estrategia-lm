@@ -2702,11 +2702,14 @@ export type Database = {
           fonte_id: string
           fonte_tipo: string
           id: string
+          impacto: string | null
           justificativa: string
           origem: string
           proposto_nome: string | null
           proposto_por: string | null
           ref_id: string
+          revisar: boolean
+          revisar_motivo: string | null
           status: string
           tipo: string
           updated_at: string
@@ -2720,11 +2723,14 @@ export type Database = {
           fonte_id: string
           fonte_tipo: string
           id?: string
+          impacto?: string | null
           justificativa?: string
           origem?: string
           proposto_nome?: string | null
           proposto_por?: string | null
           ref_id: string
+          revisar?: boolean
+          revisar_motivo?: string | null
           status?: string
           tipo: string
           updated_at?: string
@@ -2738,11 +2744,14 @@ export type Database = {
           fonte_id?: string
           fonte_tipo?: string
           id?: string
+          impacto?: string | null
           justificativa?: string
           origem?: string
           proposto_nome?: string | null
           proposto_por?: string | null
           ref_id?: string
+          revisar?: boolean
+          revisar_motivo?: string | null
           status?: string
           tipo?: string
           updated_at?: string
@@ -4212,6 +4221,10 @@ export type Database = {
       planejamento_aprovar: { Args: { _id: string }; Returns: undefined }
       pmo_atualizar_status: { Args: { _itens: Json }; Returns: number }
       pmo_pode_atualizar: { Args: never; Returns: boolean }
+      portfolio_definir_impacto: {
+        Args: { _id: string; _impacto: string }
+        Returns: undefined
+      }
       portfolio_fonte_visivel: {
         Args: { _id: string; _tipo: string }
         Returns: boolean
@@ -4224,6 +4237,16 @@ export type Database = {
           _usuario: string
         }
         Returns: number
+      }
+      portfolio_gravar_revisao: {
+        Args: {
+          _fonte_id: string
+          _fonte_tipo: string
+          _novos: Json
+          _revisar: Json
+          _usuario: string
+        }
+        Returns: Json
       }
       portfolio_iniciar_job: {
         Args: { _id: string; _novo: boolean; _tipo: string; _usuario: string }

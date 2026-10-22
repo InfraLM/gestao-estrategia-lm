@@ -13,3 +13,4 @@ Area rules live in nested AGENTS.md files; read the one for the folder before ch
 - Administrator invitations are stored in `usuario_convites` and applied by an Auth lifecycle trigger only after email verification; email sending validates the caller server-side, and Google uses the managed Lovable helper to avoid impersonation and preserve preview support.
 - Shared invitation links use the public auth page; acceptance validates the signed-in verified email server-side and is idempotent for the same user, so existing accounts can accept without granting access to link holders.
 - Cadastro screens live inside the list they feed (query-param tabs via AbasPagina); old routes redirect instead of being deleted, so bookmarks keep working.
+- Portfolio link reviews only add 'ia_revisao' proposals and flag unsupported ones as 'revisar' (never delete/validate); each source keeps at most one 'principal' impact, enforced server-side.
