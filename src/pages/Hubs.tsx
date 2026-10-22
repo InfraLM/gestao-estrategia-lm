@@ -1,3 +1,4 @@
+import { useMetasBase } from "@/hooks/useMetasBase";
 import AbasPagina from "@/components/AbasPagina";
 import VinculadosPorIndicador from "@/components/VinculadosPorIndicador";
 import Okrs from "./Okrs";
@@ -24,10 +25,12 @@ export function CestaHub() {
 }
 
 export function LancamentosHub() {
+  const b = useMetasBase();
+  const ceo = !!b.minhaCadeira && b.cadeiras.find((c) => c.id === b.minhaCadeira)?.nome.trim().toUpperCase() === "CEO";
   return <AbasPagina abas={[
     { id: "matriz", label: "Matriz de apontamentos", conteudo: <MatrizApontamentos /> },
     { id: "lancar", label: "Lançar mês", conteudo: <MetasLancamento /> },
-    { id: "painel", label: "Painel e configuração", conteudo: <MetasPainel /> },
+    ...(b.isGovernanca || ceo ? [{ id: "painel", label: "Painel e configuração", conteudo: <MetasPainel /> }] : []),
   ]} />;
 }
 
