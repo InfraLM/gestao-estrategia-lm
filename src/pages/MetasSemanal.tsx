@@ -21,7 +21,8 @@ import {
   normalizarCheckin, normalizarCheckout, novoId, pendenciasCheckin, pendenciasCheckout, periodoSemana, prioridadesHerdadas,
   respostaVazia, riscoAberto, semEmail, cicloPadrao, ciclosDisponiveis, semanaCheckout, competenciaDaSemana, ultimaSituacao,
 } from "@/lib/rotinaSemanal";
-import { avaliarBsc, AVALIACAO_LBL } from "@/lib/avaliacaoBsc";
+import { avaliarKpiBsc, AVALIACAO_LBL } from "@/lib/avaliacaoBsc";
+import { useAvaliacoesBsc } from "@/hooks/useAvaliacoesBsc";
 import rev02 from "@/data/bscRev02.json";
 
 const db = supabase as any;
@@ -80,6 +81,7 @@ export default function MetasSemanal() {
   const podeEditar = access.canWrite("rotina") && (b.isGovernanca || (!!cad && b.minhaCadeira === cad));
   const comp = competenciaDaSemana(semOut);
   const competencia = MESES_2S26.includes(comp) ? comp : null;
+  const avalCad = useAvaliacoesBsc(competencia, cad ? [cad] : []);
 
   const flushRef = useRef<() => void>(() => {});
   const rowsRef = useRef<any[]>([]); rowsRef.current = rows;
@@ -471,7 +473,8 @@ export default function MetasSemanal() {
                 const r = resp(k.indicador_id); const cand = reaproveitaveis[k.indicador_id] ?? [];
                 const ult = ultimaSituacao(k.indicador_id, arvore.mapa[k.nome.trim()] ? { valor: arvore.mapa[k.nome.trim()], data: arvore.data } : null, hist.filter((h) => h.tipo === "checkout"), semOut);
                 const semMeta = k.meta_mes == null && (k.origem !== "bsc" || (k.meta_semestre == null && !k.meta_texto));
-                const aval = k.origem === "bsc" ? avaliarBsc({ sentido: k.sentido ?? "maior", competencia: k.competencia, meta_mes: k.meta_mes, meta_semestre: k.meta_semestre ?? null, meta_texto: k.meta_texto ?? null, realizado: k.realizado, situacao: r.situacao_atual || ult?.valor }) : null;
+                const avR = k.origem === "bsc" ? (avalCad.porCadeira[cad]?.itens.find((x) => x.id === k.indicador_id) ?? avaliarKpiBsc({ indicador_id: k.indicador_id, sentido: k.sentido ?? "maior", competencia: k.competencia, meta_mes: k.meta_mes, meta_semestre: k.meta_semestre ?? null, meta_texto: k.meta_texto ?? null, realizado: k.realizado }, arvore.mapa[k.nome.trim()] ? { valor: arvore.mapa[k.nome.trim()], data: arvore.data } : null, hist.filter((h) => h.tipo === "checkout"))) : null;
+                const aval = avR?.aval ?? null;
                 return (
                   <div key={k.indicador_id} className="rounded border p-3 space-y-2">
                     <div className="flex flex-wrap items-start justify-between gap-2">
@@ -479,7 +482,7 @@ export default function MetasSemanal() {
                         <p className="text-xs text-muted-foreground">Última situação atual apontada: {ult ? <><b className="text-foreground">{ult.valor}</b> · {ult.fonte}{ult.data && ult.fonte === "Árvore de KPIs" ? ` · ${new Date(ult.data).toLocaleDateString("pt-BR")}` : ult.fonte === "Árvore de KPIs" ? " · Rev.02" : ""}</> : "—"}</p></div>
                       <div className="flex gap-1"><Badge variant="outline">{ORIGEM_LBL[k.origem]}{k.origem === "cesta" ? ` · peso ${fmtNum(k.peso)}` : ""}</Badge>{k.faixa && <Badge variant="secondary">{k.faixa}</Badge>}{aval && <Badge variant={aval === "off" ? "destructive" : aval === "on" ? "default" : "outline"}>{AVALIACAO_LBL[aval]}</Badge>}</div>
                     </div>
-                    <div className="grid grid-cols-3 gap-2 text-xs"><div><p className="text-muted-foreground">Meta do mês</p><p>{k.meta_mes != null ? fmtNum(k.meta_mes) : k.origem === "bsc" && (k.meta_semestre != null || k.meta_texto) ? `Período: ${k.meta_texto || fmtNum(k.meta_semestre)}` : "Sem meta registrada"}</p></div><div><p className="text-muted-foreground">Realizado</p><p>{fmtNum(k.realizado)}</p></div><div><p className="text-muted-foreground">{k.origem === "bsc" ? "Avaliação" : "Atingimento"}</p><p>{k.origem === "bsc" ? (aval ? AVALIACAO_LBL[aval] : "—") : semMeta ? "Sem meta registrada" : pct(k.atingimento)}</p></div></div>
+                    <div className="grid grid-cols-3 gap-2 text-xs"><div><p className="text-muted-foreground">Meta do mês</p><p>{k.meta_mes != null ? fmtNum(k.meta_mes) : k.origem === "bsc" && (k.meta_semestre != null || k.meta_texto) ? `Período: ${k.meta_texto || fmtNum(k.meta_semestre)}` : "Sem meta registrada"}</p></div><div><p className="text-muted-foreground">Realizado</p><p>{fmtNum(k.realizado)}</p></div><div><p className="text-muted-foreground">{k.origem === "bsc" ? "Avaliação" : "Atingimento"}</p><p>{k.origem === "bsc" ? (aval ? <>{AVALIACAO_LBL[aval]}{avR?.origem && <span className="block text-muted-foreground">{avR.origem}</span>}</> : "—") : semMeta ? "Sem meta registrada" : pct(k.atingimento)}</p></div></div>
                     <Input placeholder="Situação atual (opcional)" maxLength={200} value={r.situacao_atual ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { situacao_atual: e.target.value })} />
                     <div className="flex gap-2">
                       <Button size="sm" variant={r.ok === true ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, true) })}>Sim</Button>
