@@ -70,5 +70,6 @@
 - [x] Taxa de conformidade (painel, visão semanal, cartão do diretor, IA)
 - [x] Regras finais da conformidade aplicadas (todos os diretores veem, ≥90%, status report conta, desde 26/10)
 
-- [ ] Integração Gestão Processos (Zeev): espelhos, sincronização horária e correspondência de KPIs — aguarda função de exportação no outro app, token e decisões 4–8 do plano
-- [ ] Processos e melhorias no desdobramento do objetivo — depende da integração acima
+- [x] Lado deste app da integração de processos (espelhos, correspondências, log, sincronização desligada)
+- [ ] Ligar a integração de processos — aguarda exportação no app Zeev, endereço e token
+- [x] Processos (lista local) no desdobramento do objetivo
