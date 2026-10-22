@@ -323,6 +323,13 @@
       "when": 1792709408843,
       "tag": "0045_frequencia_leituras_validacao",
       "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1792709492846,
+      "tag": "0046_frequencia_autorizacao_null_segura",
+      "breakpoints": true
     }
   ]
 }
