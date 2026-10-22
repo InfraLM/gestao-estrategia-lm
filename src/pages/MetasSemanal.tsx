@@ -32,6 +32,7 @@ import { calcularCompletude } from "@/lib/conformidade";
 import { avaliarPorTipo, apontamentoMaisRecente, TIPO_LBL, STATUS_ENTREGA_LBL } from "@/lib/avaliacaoBsc";
 import StatusReportCiclo, { ResumoSR } from "@/components/StatusReportCiclo";
 import { ultimoCicloDoMes } from "@/lib/projetosGestao";
+import EntregasExtras from '@/components/EntregasExtras';
 
 const db = supabase as any;
 export type Prioridade = PrioridadeV2;
@@ -556,11 +557,7 @@ export default function MetasSemanal() {
           </div>
 
           <Card className="p-4 space-y-3" id="bloco-extras">
-            <div className="grid gap-3 md:grid-cols-3">
-              <div className="space-y-1"><Label>Entregas fora do planejado</Label><Textarea rows={3} value={co.extras} disabled={!podeEditar} onChange={(e) => setCo({ ...co, extras: e.target.value })} /></div>
-              <div className="space-y-1"><Label>Aprendizados</Label><Textarea rows={3} value={co.aprendizados} disabled={!podeEditar} onChange={(e) => setCo({ ...co, aprendizados: e.target.value })} /></div>
-              <div className="space-y-1"><Label>Foco da próxima semana</Label><Textarea rows={3} value={co.proxima} disabled={!podeEditar} onChange={(e) => setCo({ ...co, proxima: e.target.value })} /></div>
-            </div>
+            <EntregasExtras lista={co.extras_lista ?? []} onChange={extras_lista => setCo({ ...co, extras_lista })} disabled={!podeEditar} legado={co} governanca={b.isGovernanca} />
             <Escala lbl="Avaliação da semana (1 = ruim, 5 = excelente)" v={co.ritmo} on={(n) => setCo({ ...co, ritmo: n })} />
           </Card>
           {mesSR && cad && <StatusReportCiclo cadeira={cad} competencia={mesSR} ciclo={sem} podeEditar={podeEditar} userId={b.user?.id}
@@ -613,7 +610,7 @@ export default function MetasSemanal() {
       ]} />
 
       {podeEditar && <div className="fixed bottom-2 right-4 z-40 rounded-full border bg-background px-3 py-1 text-xs shadow">
-        {salvo.estado === "salvando" ? "Salvando…" : salvo.estado === "salvo" ? `Salvo às ${salvo.em!.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`
+        {salvo.estado === "salvando" ? "Salvando…" : salvo.estado === "salvo" ? `Salvo às ${salvo.em?.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) ?? "—"}`
           : salvo.estado === "erro" ? <span className="text-destructive">Não foi possível salvar — suas alterações estão guardadas neste aparelho. <button className="underline" onClick={() => flush()}>Tentar de novo</button></span> : "Salvamento automático"}
       </div>}
     </div>

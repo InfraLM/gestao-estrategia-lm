@@ -12,6 +12,7 @@ import { normalizarCheckout, riscoAberto, idadeSemanas, cicloPadrao, ciclosDispo
 import { useTransparencia, AvisoTransparencia, InterruptorTransparencia } from "@/hooks/useTransparencia";
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 import { useConformidade, pctC } from "@/components/Conformidade";
+import { ExtrasLeitura, ResumoExtras } from '@/components/EntregasExtras';
 
 const db = supabase as any;
 const fmtSem = (s: string) => new Date(s + "T12:00").toLocaleDateString("pt-BR");
@@ -72,6 +73,7 @@ export default function SemanalVisao() {
         </div>
       </Card>
 
+      {b.isGovernanca && <ResumoExtras mes={competenciaDaSemana(semOut)} cadeiras={cads} />}
       <div className="grid gap-4 lg:grid-cols-2">
         {cads.map((c) => {
           const ci = get(c.id, "checkin"); const co = get(c.id, "checkout");
@@ -127,6 +129,7 @@ export default function SemanalVisao() {
                 </div>); })()}
               {(() => { const n = normalizarCheckout(co?.conteudo).atas?.filter((a) => a.status === "entregue").length ?? 0; return n > 0 && enviado(co) ? <p className="text-xs text-muted-foreground">{n} pendência(s) de ata marcadas como entregues, aguardando baixa na Governança</p> : null; })()}
               {atrasadas > 0 && <p className="text-xs text-destructive">{atrasadas} iniciativa(s) atrasada(s)</p>}
+              {co && !co.soStatus && <div><h3 className="text-sm font-medium">Entregas fora do planejado</h3><ExtrasLeitura conteudo={co.conteudo} /></div>}
             </Card>
           );
         })}

@@ -17,6 +17,7 @@ import { cicloPadrao, semanaCheckout, seloCiclo } from "@/lib/rotinaSemanal";
 import { srPendentesPorCadeira } from "@/lib/projetosGestao";
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 import { useConformidade, pctC } from "@/components/Conformidade";
+import { ExtrasLeitura, ResumoExtras } from '@/components/EntregasExtras';
 
 const db = supabase as any;
 const ORIGENS = ["bsc", "okr", "cesta"];
@@ -131,9 +132,8 @@ export default function MetasPainel() {
             <div className="space-y-3 text-sm">
               <ul className="space-y-1">{(ver.conteudo.entregas ?? []).map((e: any, i: number) => (
                 <li key={i}><Badge variant={e.status === "entregue" ? "default" : e.status === "parcial" ? "secondary" : "destructive"}>{ENTREGA_LBL[e.status] ?? "—"}</Badge> {e.titulo}{e.motivo && <p className="text-muted-foreground pl-2">{e.motivo}</p>}</li>))}</ul>
-              <p><b>Entregas fora do planejado:</b> {ver.conteudo.extras || "—"}</p>
-              <p><b>Aprendizados:</b> {ver.conteudo.aprendizados || "—"}</p>
-              <p><b>Foco da próxima semana:</b> {ver.conteudo.proxima || "—"}</p>
+              <h3 className="font-medium">Entregas fora do planejado</h3>
+              <ExtrasLeitura conteudo={ver.conteudo} historico />
               <p><b>Avaliação da semana:</b> {ver.conteudo.ritmo}/5</p>
             </div>
           )}
@@ -206,6 +206,7 @@ export default function MetasPainel() {
         <Button asChild variant="link" className="px-0"><Link to="/lancamentos?aba=lancar">Abrir formulário mensal</Link></Button>
       </Card>
 
+      {b.isGovernanca && <ResumoExtras mes={comp} cadeiras={cadeiras} />}
       <Card className="p-4">
         <h2 className="font-semibold mb-3">Avisos de mudanças em dados já enviados</h2>
         {avisos.length === 0 && reaberturas.length === 0 && <p className="text-sm text-muted-foreground">Nenhuma alteração após envio nesta competência.</p>}
