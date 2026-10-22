@@ -258,6 +258,7 @@ export default function MetasSemanal() {
         } else resp.push(k);
       }
       out.kpis_resposta = resp.map(k=>({...k,periodo_apontado:out.kpis_retrato?.find((r:KpiRetrato)=>r.indicador_id===k.indicador_id)?.competencia}));
+      if(sem>=INICIO_FREQUENCIA)out.kpis_resposta=out.kpis_resposta.filter(k=>out.kpis_retrato?.some((r:KpiRetrato)=>r.indicador_id===k.indicador_id));
       for (const e of out.entregas as EntregaV2[]) {
         if (e.iniciativa_id && e.novo_status_ini) await db.from("mt_iniciativas").update({ status: e.novo_status_ini }).eq("id", e.iniciativa_id);
       }

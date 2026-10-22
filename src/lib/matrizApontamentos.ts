@@ -46,6 +46,7 @@ const hojeIso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padS
 export function marcarCriticos(celulas: Celula[]): Celula[] {
   let seguidos = 0, decl = 0;
   return celulas.map((c) => {
+    if(c.foraCalendario)return {...c,critico:false,alertaDeclarado:false};
     seguidos = c.aval === "off" ? seguidos + 1 : 0;
     decl = c.aval === "off" && c.fonte === "declarado" ? decl + 1 : 0;
     if (c.aval !== "off") return { ...c, critico: false, alertaDeclarado: false };
