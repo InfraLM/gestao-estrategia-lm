@@ -1912,6 +1912,7 @@ export type Database = {
           codigo: string
           created_at: string
           id: string
+          meta_2030: string | null
           meta_semestre: number | null
           meta_texto: string | null
           nivel: string | null
@@ -1937,6 +1938,7 @@ export type Database = {
           codigo: string
           created_at?: string
           id?: string
+          meta_2030?: string | null
           meta_semestre?: number | null
           meta_texto?: string | null
           nivel?: string | null
@@ -1962,6 +1964,7 @@ export type Database = {
           codigo?: string
           created_at?: string
           id?: string
+          meta_2030?: string | null
           meta_semestre?: number | null
           meta_texto?: string | null
           nivel?: string | null
@@ -2579,6 +2582,196 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      orc_auditoria: {
+        Row: {
+          anterior: Json | null
+          criado_em: string
+          entidade: string
+          id: string
+          novo: Json | null
+          ref_id: string | null
+          usuario_id: string | null
+        }
+        Insert: {
+          anterior?: Json | null
+          criado_em?: string
+          entidade: string
+          id?: string
+          novo?: Json | null
+          ref_id?: string | null
+          usuario_id?: string | null
+        }
+        Update: {
+          anterior?: Json | null
+          criado_em?: string
+          entidade?: string
+          id?: string
+          novo?: Json | null
+          ref_id?: string | null
+          usuario_id?: string | null
+        }
+        Relationships: []
+      }
+      orc_integracao_config: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          atualizado_por: string | null
+          desde: string | null
+          id: boolean
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          atualizado_por?: string | null
+          desde?: string | null
+          id?: boolean
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          atualizado_por?: string | null
+          desde?: string | null
+          id?: boolean
+        }
+        Relationships: []
+      }
+      orc_projeto_budget: {
+        Row: {
+          atualizado_em: string
+          atualizado_por: string | null
+          budget_liberado: number | null
+          fonte: string
+          projeto_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          atualizado_por?: string | null
+          budget_liberado?: number | null
+          fonte?: string
+          projeto_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          atualizado_por?: string | null
+          budget_liberado?: number | null
+          fonte?: string
+          projeto_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orc_projeto_budget_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: true
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orc_projeto_centros: {
+        Row: {
+          centro_custo: string
+          confirmado_em: string | null
+          confirmado_por: string | null
+          editado_em: string
+          editado_por: string | null
+          id: string
+          projeto_id: string
+          status: string
+        }
+        Insert: {
+          centro_custo: string
+          confirmado_em?: string | null
+          confirmado_por?: string | null
+          editado_em?: string
+          editado_por?: string | null
+          id?: string
+          projeto_id: string
+          status?: string
+        }
+        Update: {
+          centro_custo?: string
+          confirmado_em?: string | null
+          confirmado_por?: string | null
+          editado_em?: string
+          editado_por?: string | null
+          id?: string
+          projeto_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orc_projeto_centros_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orc_realizado_espelho: {
+        Row: {
+          centro_custo: string
+          competencia: string
+          orcado: number | null
+          origem: string
+          realizado: number
+          sincronizado_em: string
+        }
+        Insert: {
+          centro_custo: string
+          competencia: string
+          orcado?: number | null
+          origem?: string
+          realizado: number
+          sincronizado_em?: string
+        }
+        Update: {
+          centro_custo?: string
+          competencia?: string
+          orcado?: number | null
+          origem?: string
+          realizado?: number
+          sincronizado_em?: string
+        }
+        Relationships: []
+      }
+      orc_sync_log: {
+        Row: {
+          arquivo: string | null
+          concluido_em: string | null
+          id: string
+          iniciado_em: string
+          mensagem: string | null
+          modo: string
+          ok: boolean
+          registros: number
+          usuario_id: string | null
+        }
+        Insert: {
+          arquivo?: string | null
+          concluido_em?: string | null
+          id?: string
+          iniciado_em?: string
+          mensagem?: string | null
+          modo: string
+          ok?: boolean
+          registros?: number
+          usuario_id?: string | null
+        }
+        Update: {
+          arquivo?: string | null
+          concluido_em?: string | null
+          id?: string
+          iniciado_em?: string
+          mensagem?: string | null
+          modo?: string
+          ok?: boolean
+          registros?: number
+          usuario_id?: string | null
+        }
+        Relationships: []
       }
       org_cadeiras: {
         Row: {
@@ -4378,6 +4571,23 @@ export type Database = {
         Returns: boolean
       }
       mt_reabrir: { Args: { _comp: string }; Returns: undefined }
+      orc_budget_salvar: {
+        Args: { _fonte: string; _projeto: string; _valor: number }
+        Returns: undefined
+      }
+      orc_centro_salvar: {
+        Args: { _acao: string; _centro: string; _projeto: string }
+        Returns: undefined
+      }
+      orc_importar: {
+        Args: { _arquivo: string; _itens: Json; _modo?: string }
+        Returns: number
+      }
+      orc_meta_salvar: {
+        Args: { _id: string; _meta: string }
+        Returns: undefined
+      }
+      orc_pode_ler: { Args: never; Returns: boolean }
       planejamento_aprovar: { Args: { _id: string }; Returns: undefined }
       pmo_atualizar_status: { Args: { _itens: Json }; Returns: number }
       pmo_pode_atualizar: { Args: never; Returns: boolean }
