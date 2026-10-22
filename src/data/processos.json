@@ -102,7 +102,7 @@
     "nivel": "Gerencial",
     "revisao": null,
     "diretor": "Naira",
-    "dono": "Yuri Ribeiro, Renato Mesquita",
+    "dono": "Yuri Garcia, Renato Mesquita",
     "status": "BACKLOG",
     "fornecedores": [
       "01.01.01 - Definir e Governar a Estratégia do Ecossistema"
@@ -120,7 +120,7 @@
     "nivel": "Gerencial",
     "revisao": null,
     "diretor": "Yuri",
-    "dono": "Yuri Ribeiro",
+    "dono": "Yuri Garcia",
     "status": "BACKLOG",
     "fornecedores": [
       "01.04.01 - Desdobrar Estratégia em Objetivos e Indicadores",
@@ -210,7 +210,7 @@
     "nivel": "Gerencial",
     "revisao": null,
     "diretor": "Yuri",
-    "dono": "Yuri Ribeiro, Naira Yurie",
+    "dono": "Yuri Garcia, Naira Yurie",
     "status": "BACKLOG",
     "fornecedores": [
       "01.04.02 - Monitorar Performance e Resultados"
