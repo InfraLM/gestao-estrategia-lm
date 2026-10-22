@@ -1,6 +1,7 @@
 # Pedidos da Naira · 22/10
-- [ ] Preparar PROC_EXPORT_URL e orientar cadastro seguro de PROC_EXPORT_TOKEN; manter integração desligada
-- [ ] Página compartilhável de atualização direta: filtros, edição autorizada, auditoria e aviso no farol; testar sem dados reais
+- [x] PROC_EXPORT_URL salvo; integração mantida desligada e orientações preparadas
+- [ ] PROC_EXPORT_TOKEN — Naira deve colar o valor do outro app em Configurações → Segredos
+- [x] Página compartilhável de atualização direta: filtros, edição autorizada, auditoria e aviso no farol; 260 testes aprovados, Naira no computador/celular, sem salvar dados reais
 - [x] Sugestões de vínculo: fila privada, geração manual (20 fontes/lotes de 10), revisão/aprovação em massa e auditoria; testes PostgreSQL isolado; tela Naira e confirmação conferidas sem geração real
 - [x] Etapa 0 · Yuri Ribeiro → Yuri Garcia (30 projetos + textos fixos)
 - [x] Etapa 1 · Vinculados em KR/Cesta; status reports pendentes no Painel; AGENTS.md por pasta
@@ -74,5 +75,5 @@
 - [x] Regras finais da conformidade aplicadas (todos os diretores veem, ≥90%, status report conta, desde 26/10)
 
 - [x] Lado deste app da integração de processos (espelhos, correspondências, log, sincronização desligada)
-- [ ] Ligar a integração de processos — aguarda exportação no app Zeev, endereço e token
+- [ ] Ligar a integração de processos — ação da Naira após cadastrar PROC_EXPORT_TOKEN; não ligar nem sincronizar por ela
 - [x] Processos (lista local) no desdobramento do objetivo
