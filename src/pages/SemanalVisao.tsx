@@ -11,6 +11,7 @@ import { SITUACAO_LBL, ENTREGA_LBL } from "./MetasSemanal";
 import { normalizarCheckout, riscoAberto, idadeSemanas, cicloPadrao, ciclosDisponiveis, semanaCheckout, periodoSemana, competenciaDaSemana, seloCiclo, prazoCiclo } from "@/lib/rotinaSemanal";
 import { useTransparencia, AvisoTransparencia, InterruptorTransparencia } from "@/hooks/useTransparencia";
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
+import { useConformidade, pctC } from "@/components/Conformidade";
 
 const db = supabase as any;
 const fmtSem = (s: string) => new Date(s + "T12:00").toLocaleDateString("pt-BR");
@@ -24,6 +25,7 @@ export default function SemanalVisao() {
   const semanas = useMemo(() => ciclosDisponiveis(), []);
   const [riscos, setRiscos] = useState<any[]>([]);
   const t = useTransparencia();
+  const conf = useConformidade();
   useEffect(() => {
     Promise.all([db.from("mt_checkins").select("*").in("semana", [sem, semOut]), db.rpc("rotina_status_ciclos", { _semanas: [sem, semOut] })]).then(([c, st]: any[]) => {
       const cheios = c.data ?? [];
@@ -81,7 +83,7 @@ export default function SemanalVisao() {
             <Card key={c.id} className="p-4 space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div><h2 className="font-semibold">{c.nome}</h2><p className="text-xs text-muted-foreground">{c.diretor_nome ?? "Sem diretor"}</p></div>
-                <div className="flex gap-1 items-center text-xs">Ciclo <Selo c={c.id} /></div>
+                <div className="flex gap-2 items-center text-xs">{conf.carregado && conf.regs.some((r) => r.cadeira_id === c.id) || b.isGovernanca ? <span>Conformidade <b>{pctC(conf.de(c.id).acumulado.taxa)}</b></span> : null}Ciclo <Selo c={c.id} /></div>
               </div>
               {(ci?.soStatus || co?.soStatus) && <p className="text-xs text-muted-foreground">Conteúdo desta cadeira visível só com a transparência entre diretores ligada.</p>}
               {pri.length === 0 ? <p className="text-sm text-muted-foreground">Sem prioridades registradas.</p> : (
