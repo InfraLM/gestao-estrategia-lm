@@ -316,6 +316,13 @@
       "when": 1792709318246,
       "tag": "0044_frequencia_avisos_contagem",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1792709408843,
+      "tag": "0045_frequencia_leituras_validacao",
+      "breakpoints": true
     }
   ]
 }

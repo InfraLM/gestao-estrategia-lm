@@ -4801,6 +4801,10 @@ export type Database = {
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       modulo_conteudo: { Args: { _chave: string }; Returns: string }
       mt_cadeira_do_usuario: { Args: { _uid: string }; Returns: string }
+      mt_desvio_normal: {
+        Args: { _indicador: string; _periodo: string; _resposta: Json }
+        Returns: boolean
+      }
       mt_email_corporativo: { Args: never; Returns: boolean }
       mt_fechar: { Args: { _comp: string }; Returns: undefined }
       mt_frequencia_devida: {
@@ -4814,6 +4818,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      mt_frequencia_numero: { Args: { _texto: string }; Returns: number }
       mt_frequencia_salvar: {
         Args: { _dados: Json; _id: string }
         Returns: undefined
