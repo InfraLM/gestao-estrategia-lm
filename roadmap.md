@@ -1,4 +1,5 @@
 # Pedidos da Naira · 22/10
+- [ ] Avisos do ciclo por e-mail: configuração desligada, horários São Paulo, destinatários/pendências, histórico e reenvio; domínio próprio ainda precisa ser configurado pela Naira para concluir envio Lovable Cloud.
 - [x] Impacto por objetivo: budget comprovado separado dos zeros legados, soma só principal; centros múltiplos/confirmados, espelho/importação prévia/log e integração desligada; 16 metas 2030 recuperadas da planilha, 27 faltantes; KPI V/S/E e observação datada; 319 testes, tela Naira e prévia CSV sem salvar, contrato disponível.
 - [ ] ORC_EXPORT_URL / ORC_EXPORT_TOKEN e valores financeiros reais — responsável pelo orçamento fornece exportação/token; Governança informa budgets liberados e confirma centros. Nenhum espelho/budget/centro/log de teste gravado.
 - [x] Checkout: aprendizados/foco somente histórico; extras opcionais com motivos geridos pela Governança, leitura/IA/resumo mensal atualizados; 309 testes e inclusão/salvamento/leitura/remoção no computador/celular conferidos, registro temporário removido; fora da completude.
