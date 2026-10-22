@@ -75,7 +75,7 @@ describe("Avisos em banco isolado", () => {
   it("status report só conta no último ciclo do mês", async () => {
     await pg.exec(`INSERT INTO projetos VALUES('${chair}','Em Andamento','P001');`);
     const de = async (s: string) => (await pg.query<any>("select rotina_avisos_destinatarios($1::date) as d", [s])).rows[0].d.find((x: any) => x.cadeira_id === chair).pendencias.status_reports;
-    expect(await de("2026-10-26")).toBe(0); expect(await de("2026-11-02")).toBe(1);
+    expect(await de("2026-10-26")).toBe(1); expect(await de("2026-11-02")).toBe(0);
   });
   it("só Governança consulta, configura ou solicita envios", async () => {
     await pg.exec("CREATE OR REPLACE FUNCTION mt_is_governanca(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT false$$");
