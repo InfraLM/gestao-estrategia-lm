@@ -1,57 +1,68 @@
-# Formulário semanal: vínculos múltiplos, visões separadas, responsáveis e pendências acumuladas
+# Formulário semanal: envio único, vínculos múltiplos, responsáveis e pendências acumuladas
 
 ## O que foi verificado no app hoje
-- **Iniciativas** (`mt_iniciativas`): um único `indicador_id`, além de `okr_id` e `objetivo_id`. As iniciativas criadas pelo checkout passam por `rotina_criar_iniciativa`, que exige um indicador da própria cadeira.
-- **Portfólio** (`projetos`, 152 projetos): os vínculos são `objetivos` (códigos BSC, ex. A.02, F.01) e `krs` (lista de textos, quase sempre vazia). **Não há campo de KPI no projeto.**
-- **OKRs**: todos os 4 cadastrados são 2026/2, e os KRs estão em `mt_indicadores` (origem okr).
-- **Organograma**: `org_organograma_cargos` tem 145 cargos com hierarquia (`parent_id`). Só existe o nome do ocupante, sem usuário nem e-mail, e **sem ligação com a cadeira do formulário** (`mt_cadeiras`). Na tabela `org_cadeiras`, 8 das 11 cadeiras estão ligadas a `mt_cadeiras`, mas essa tabela não tem os líderes abaixo do diretor.
-- **Pendências de atas**: vêm da Governança só para os comitês **CEA, CES e MBX** (182 ações). Não vêm todas as atas. A atribuição é pelo **nome do responsável na ata**, mapeado para uma ou mais cadeiras, e não pelo usuário do diretor. Ações concluídas ou canceladas na origem somem. A integração é só leitura: o app não grava status de volta na Governança.
-- **Prioridades herdadas**: já se acumulam por todas as semanas anteriores não entregues, mas só dentro da janela carregada (8 semanas). Uma prioridade mais antiga que isso some sem ter sido resolvida.
+- **Iniciativas:** guardam um único vínculo (indicador, além de OKR e objetivo). As iniciativas criadas pelo checkout exigem um indicador da própria cadeira.
+- **Portfólio:** 152 projetos, com vínculo a objetivos BSC por código (ex. A.02, F.01). Os KRs estão quase sempre vazios e **não há campo de KPI**.
+- **OKRs:** todos os 4 cadastrados são 2026/2.
+- **Organograma:** 145 cargos com hierarquia e nome do ocupante, sem usuário nem e-mail, e **sem ligação com a cadeira do formulário**.
+- **Pendências de atas:** hoje chegam 182 ações, só dos comitês CEA, CES e MBX. **Este app não filtra por comitê:** a sincronização grava tudo o que a Governança exporta, então a limitação está no que a Governança envia. A atribuição é pelo **nome do responsável na ata**, mapeado para as cadeiras.
+- **Deliberações:** **a área já existe.** É a tela "Contexto e Decisões", e cada sincronização já publica as deliberações lá com código GOV. Hoje são 12, só de CEA e CES.
+- **Prioridades herdadas:** já se acumulam por todas as semanas, mas só dentro da janela carregada (8 semanas).
 
-## Etapa 1 — Separar as duas visões (renomear, sem mudar dados)
-- **Conflito:** a regra atual (igual ao sistema antigo e registrada no AGENTS.md) chama a retrospectiva de "Checkout da semana anterior" (prazo sexta 18h) e as prioridades de "Check-in da semana" (prazo segunda 12h). A Naira pede os nomes invertidos.
-- **Proposta:** trocar **só os rótulos** nas telas.
-  - "Check-in" = perguntas 1–4: KPIs, entregas, riscos e reuniões.
-  - "Checkout" = prioridades da semana seguinte.
-  - Os registros continuam gravados como hoje (o tipo `checkout` guarda a retrospectiva, o tipo `checkin` guarda as prioridades), sem migrar nada. Assim, painéis antigos, envio sem duplicar, retrato dos KPIs e pendências de comitês continuam funcionando.
-- **O que muda:** abas e cabeçalho do formulário; colunas e selos da Visão semanal e do Painel de Metas; textos de prazo; frase do AGENTS.md (passa a separar o nome na tela do tipo gravado).
-- **Prazos:** os horários ficam como estão até haver confirmação. Com a inversão, a tela mostraria "Check-in vence sexta 18h" e "Checkout vence segunda 12h". **Decisão:** manter assim ou trocar os horários. O selo "fora do prazo" segue o horário escolhido.
+## Etapa 1 — Nomes, visões separadas e envio único
+- **Nomes:** Checkout = perguntas 1–4 (KPIs, entregas, riscos, reuniões), a retrospectiva da semana que passou. Check-in = prioridades da semana seguinte. Coincide com o que está gravado hoje (tipo `checkout` = retrospectiva, tipo `checkin` = prioridades), então **nenhum dado muda** e não há inversão.
+- **Tela:** as duas visões ficam em abas separadas. A Revisão passa a ser uma só, com as pendências dos dois blocos, e um único botão "Enviar ciclo" (ou "Reenviar ciclo").
+- **Envio sem duplicar:** o botão grava os dois registros juntos, com o mesmo código de envio e o mesmo horário. Se um falhar, nenhum aparece como enviado e o diretor pode tentar de novo sem criar iniciativas repetidas (o código é reaproveitado no reenvio). O retrato dos KPIs congela nesse mesmo momento.
+- **Selo único do ciclo:**
+  - "Enviado" quando os dois registros foram enviados.
+  - "Enviado · fora do prazo" se o primeiro envio do ciclo passou do prazo único.
+  - "Parcial" para ciclos antigos em que só um dos dois foi enviado.
+  - Visão semanal e Painel de Metas passam a mostrar um selo por cadeira e ciclo, no lugar dos dois atuais.
+- **Opções de prazo único (a Naira escolhe):**
+  - **A. Sexta 18h da semana retratada.** Atenção: o ciclo novo abre na sexta 00h, então haveria só 18 horas para preencher.
+  - **B. Segunda 12h da semana do check-in.** Dá cerca de 3,5 dias depois da abertura, e as prioridades são declaradas no início da semana.
+- **AGENTS.md:** a regra do ciclo passa a dizer "envio único por ciclo, um prazo, dois registros gravados".
 
 ## Etapa 2 — Vínculos múltiplos em cada ação
-- **Nova tabela de vínculos** (ação → tipo + item): tipos `bsc` (KPI da árvore), `kr` (KR 2026/2), `cesta` e `projeto`. O acesso de leitura e gravação segue o do registro semanal ou da iniciativa ligada.
-- **No formulário:** quatro listas de seleção múltipla com busca em cada entrega, plano de KPI "Não" e prioridade.
-  - BSC: todos os KPIs ativos de todas as cadeiras.
+- Cada entrega, plano de KPI "Não" e prioridade ganha quatro listas de seleção múltipla com busca:
+  - BSC: todos os KPIs, de todas as cadeiras.
   - KRs: todos os de 2026/2.
   - Cesta: só a da cadeira que está preenchendo.
-  - Projetos: lista do portfólio.
-- **Escolher um projeto** preenche os objetivos e KRs dele, e o diretor pode ajustar. **Conflito:** projeto não tem vínculo de KPI e os KRs dele estão quase todos vazios. Na prática, só os objetivos BSC viriam preenchidos. **Decisão:** a partir do objetivo do projeto, sugerir os KPIs de BSC desse objetivo, ou não sugerir KPI.
-- **Compatibilidade com o vínculo único:** `indicador_id`, `okr_id` e `objetivo_id` continuam sendo preenchidos com o **vínculo principal** (o primeiro, ou o KPI do "Não"). Por isso, painel de Governança, iniciativas em Metas e pendências de comitês não mudam. Os dados atuais ficam como estão e são copiados para a nova tabela como vínculo principal.
-- **Conflito:** a função que cria a iniciativa exige que o indicador principal seja da própria cadeira. Vincular KPI de BSC de outra cadeira exige permitir isso apenas como vínculo **secundário**, nunca como principal.
+  - Projetos do portfólio.
+- **Escolher um projeto** preenche os objetivos dele e **sugere os KPIs de BSC desses objetivos**, e o diretor pode ajustar.
+- **Compatibilidade:** o vínculo principal continua sendo gravado no campo único de hoje. Por isso, painel de Governança, iniciativas em Metas e pendências de comitês não mudam. Os vínculos atuais são copiados como vínculo principal.
+- **KPI de outra cadeira:** só como vínculo secundário.
 
 ## Etapa 3 — Responsáveis
-- **"Diretor responsável"**: fixo, preenchido com o diretor da cadeira, sem edição.
-- **"Responsável pela entrega"**: lista com o diretor e os cargos **um nível abaixo** dele no organograma.
-- **Conflito / falta de fonte:** o organograma não tem ligação entre o cargo do diretor e a cadeira do formulário. **Decisão:** cadastrar essa ligação, com um campo opcional no cargo indicando a cadeira, preenchido pela Governança na tela da Estrutura. Até isso existir, a lista mostra só o diretor. Os líderes aparecem por nome (sem usuário ou e-mail).
-- **Convivência com o "Responsável" atual** (Eu / cadeira / pessoa de fora com e-mail): **decisão** entre substituir pelo novo campo, mantendo a leitura dos registros antigos, ou manter os dois. Recomendação: o novo campo substitui "Eu"; "outra cadeira" e "pessoa de fora" continuam como opções extras na mesma lista, e o e-mail externo continua protegido como hoje.
+- **"Diretor responsável":** automático, sem edição.
+- **"Responsável pela entrega":** substitui "Eu". A lista traz o diretor e os líderes um nível abaixo dele no organograma, e mantém "outra cadeira" e "pessoa de fora" (com e-mail protegido como hoje). Registros antigos com "Eu" passam a mostrar o diretor.
+- **Ligação cargo ↔ cadeira:** cadastrada pela Governança na Estrutura Organizacional. Até lá, a lista mostra só o diretor.
 
 ## Etapa 4 — Pendências acumuladas no Check-in
-- **Prioridades de semanas anteriores:** passar a buscar todas as semanas com prioridade aberta, não só as últimas 8, para não sumir nada. Cada uma mostra "prioridade da semana de dd/mm" e as opções Entregue / Em andamento / Não entregue, sem duplicar (já é assim pela chave semana + prioridade).
-- **Pendências das atas:** mostrar a origem (comitê, reunião e data) e as mesmas opções.
-- **Conflito:** a marcação vale só neste app, e a pendência continua aparecendo até ser concluída na Governança, porque o app não grava de volta. **Decisão:** esconder depois de marcada como "Entregue" aqui, ou continuar mostrando com o selo "entregue, aguardando baixa na Governança".
-- **Limitação:** só aparecem atas dos comitês exportados (CEA, CES, MBX) e de responsáveis já mapeados para a cadeira. Outras atas exigem mudança no app de Governança.
+- **Prioridades em aberto:** de **todas** as semanas anteriores, sem o limite de 8. Cada uma mostra "prioridade da semana de dd/mm" e as opções Entregue / Em andamento / Não entregue, sem duplicar.
+- **Pendências de atas:** mostram a origem (comitê ou reunião, título e data da ata) e ficam no empilhamento **até a baixa na Governança**.
+- **Status do diretor até a baixa:** o diretor registra "Entregue", "Em andamento" ou "Não entregue", com comentário opcional.
+  - O status fica guardado por pendência e é carregado para os ciclos seguintes, sem precisar marcar de novo.
+  - Com "Entregue", o item vai para o fim da lista com o selo "Entregue · aguardando baixa na Governança".
+  - Quando a Governança dá baixa, o item some na sincronização seguinte (de hora em hora).
+  - A Visão semanal mostra quantas estão aguardando baixa por cadeira, para a Governança cobrar.
+- **Deliberações:** nada muda neste app. Todas as que a Governança exportar entram automaticamente em "Contexto e Decisões".
+
+### Pedido para o App Governança (não alterado daqui)
+1. Exportar ações de **todas as atas**, não só CEA, CES e MBX. Para cada ação: tipo e nome da reunião, título e data da ata, responsável, prazo e status.
+2. Exportar as **deliberações de todas as atas**, com o mesmo formato atual.
+3. Para atribuir por diretor: incluir o **e-mail do responsável** em cada ação. Com isso, este app liga a ação direto ao diretor da cadeira, e o mapeamento por nome fica como reserva.
+4. Opcional, para o futuro: receber o status registrado pelo diretor. Hoje a integração é só de leitura e continuaria assim até haver aprovação.
 
 ## Decisões necessárias
-1. Prazos depois da inversão dos nomes: manter os horários atuais ou trocar.
-2. Projeto sem KPI: sugerir KPIs de BSC pelo objetivo do projeto, ou não sugerir.
-3. Ligação cargo do organograma ↔ cadeira: aprovar o cadastro manual pela Governança.
-4. Responsável: o novo campo substitui "Eu" e mantém "outra cadeira" e "pessoa de fora"?
-5. Pendência de ata marcada "Entregue": esconder ou manter com o selo de aguardando baixa.
-6. Vínculo de KPI de outra cadeira permitido só como secundário: confirmar.
+1. Prazo único do ciclo: **A** (sexta 18h) ou **B** (segunda 12h).
+2. Quando a Governança passar a enviar o e-mail do responsável: atribuir pelo e-mail ou manter o nome como regra principal.
 
 ## Detalhes técnicos
-- Nova tabela `mt_acao_vinculos` (id, `origem_tipo`: entrega | prioridade | kpi_plano | iniciativa, `checkin_id`, `item_ref`, `iniciativa_id` opcional, `tipo_vinculo`, `ref_id`, `principal` booleano). Inclui permissões de acesso, RLS igual a `mt_checkins` (leitura conforme a regra atual; escrita pela própria cadeira ou pela Governança) e cópia inicial de `mt_iniciativas.indicador_id` como principal.
-- No JSON semanal, cada ação ganha `vinculos[]` e `responsavel_entrega`, com leitura retrocompatível em `normalizarCheckin` e `normalizarCheckout`.
-- `rotina_criar_iniciativa` ganha um parâmetro opcional de vínculos secundários, mantendo a chave idempotente atual.
-- Coluna opcional `org_organograma_cargos.mt_cadeira_id` para a ligação do diretor.
-- `prioridadesHerdadas` passa a ler todos os check-ins anteriores da cadeira, com consulta separada só das semanas que têm prioridades.
-- Testes: vínculos legados lidos como principal; empilhamento de mais de 8 semanas; ausência de duplicata ao reenviar; rótulos novos com os tipos gravados inalterados.
+- Envio do ciclo: uma função no servidor, `rotina_enviar_ciclo(cadeira, semana, token, conteudo_checkin, conteudo_checkout)`, grava os dois `mt_checkins` na mesma transação e cria as iniciativas pelo `rotina_criar_iniciativa` existente, que continua idempotente por token + indicador. A RLS atual é mantida (própria cadeira ou Governança).
+- `prazoDe` vira `prazoCiclo(semana)` com o horário escolhido. O selo é calculado na leitura pelo menor `primeiro_envio_em` dos dois registros, com compatibilidade para os registros antigos.
+- Nova tabela `mt_acao_vinculos` (origem da ação, tipo de vínculo, referência, `principal`), com GRANTs e RLS iguais a `mt_checkins`, e cópia inicial dos vínculos únicos. `rotina_criar_iniciativa` ganha um parâmetro opcional de vínculos secundários.
+- `org_organograma_cargos` ganha a coluna opcional `mt_cadeira_id`, editada só pela Governança.
+- Status do diretor nas atas: entra no JSON do checkout por `gov_acao_id` e é carregado do último checkout enviado. A remoção da lista segue `gov_acoes_da_cadeira`, sem alteração.
+- `prioridadesHerdadas` passa a ler todos os check-ins anteriores da cadeira.
+- Testes: ciclo enviado de uma vez, reenvio sem duplicar, selo único com registros antigos, empilhamento de mais de 8 semanas, ata "entregue" que continua na lista até a baixa.
