@@ -51,7 +51,7 @@ export default function DashboardPortfolioExtras() {
       <Card className="p-5 shadow-card">
         <div className="flex items-center justify-between mb-3"><h3 className="font-semibold">Atualizações diretas recentes</h3><Link to="/pmo/atualizar-status" className="text-xs text-primary underline">Atualizar status</Link></div>
         {audit.length === 0 ? <p className="text-sm text-muted-foreground">Nenhuma atualização direta registrada.</p> :
-          <ul className="space-y-2 text-sm">{audit.map((a) => <li key={a.id} className="border-t pt-2"><p className="font-medium truncate">{nomeProj(a.projeto_id)}</p><p className="text-xs text-muted-foreground">{a.campo ?? "status"}: {String(a.valor_anterior ?? "—")} → {String(a.valor_novo ?? "—")} · {a.usuario_nome ?? a.alterado_por_nome ?? "Usuário"} · {new Date(a.created_at).toLocaleDateString("pt-BR")}</p></li>)}</ul>}
+          <ul className="space-y-2 text-sm">{audit.map((a) => <li key={a.id} className="border-t pt-2"><p className="font-medium truncate">{nomeProj(a.projeto_id)}</p><p className="text-xs text-muted-foreground">Status: {a.anterior?.status ?? "—"} → {a.novo?.status ?? "—"} · {a.usuario_nome ?? "Usuário"} · {new Date(a.created_at).toLocaleDateString("pt-BR")}</p></li>)}</ul>}
       </Card>
     </div>
   );

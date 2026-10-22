@@ -45,3 +45,10 @@ describe("Desejos dos Sócios · acesso fechado por padrão", () => {
     expect(canAccessSocios(naira, "/socios/consolidado")).toBe(true);
   });
 });
+
+import { destinoInicio, moduleForPath as mfp } from "@/lib/moduleAccess";
+describe("dashboard do portfólio no PMO", () => {
+  it("link antigo preserva filtros e vai ao PMO", () => { expect(destinoInicio("?x=1", true)).toBe("/pmo/dashboard?x=1"); });
+  it("sem acesso ao PMO vai à Estratégia", () => { expect(destinoInicio("?x=1", false)).toBe("/estrategia"); });
+  it("novo dashboard segue o módulo PMO", () => { expect(mfp("/pmo/dashboard")).toBe("pmo"); });
+});

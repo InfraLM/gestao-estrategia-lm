@@ -22,7 +22,6 @@ const navGroups: NavGroup[] = [
     label: "Estratégia",
     icon: Target,
     children: [
-      { to: "/", label: "Dashboard Estratégico", icon: LayoutDashboard },
       { to: "/diagnostico", label: "Diagnóstico Estratégico", icon: Compass },
       { to: "/estrategia", label: "Estratégia LM", icon: Target },
       { to: "/backlog-estrategico", label: "Backlog Estratégico", icon: ListChecks },
@@ -46,6 +45,7 @@ const navGroups: NavGroup[] = [
     label: "PMO",
     icon: Briefcase,
     children: [
+      { to: "/pmo/dashboard", label: "Dashboard do Portfólio Estratégico", icon: LayoutDashboard },
       { to: "/portfolio", label: "Portfólio Estratégico", icon: LayoutGrid },
       { to: "/pmo/business-case", label: "Business Case · ScoreCard LM", icon: FileCheck2 },
       { to: "/status-report", label: "Status Report de Projetos", icon: LineChart },
@@ -109,7 +109,7 @@ const titles: Record<string, string> = {
   "/cesta-metas/insights": "OKRs · Insights",
   "/lancamentos": "OKRs · Lançamentos",
   "/planejamento/revisoes": "Relatório de planejamento e diagnóstico · Revisões",
-  "/": "Dashboard Estratégico",
+  "/pmo/dashboard": "PMO · Dashboard do Portfólio Estratégico",
   "/diagnostico": "Diagnóstico Estratégico LM",
   "/okrs": "OKRs · 2026/2",
   "/cesta-metas": "Cesta de Metas · 2026/2",
