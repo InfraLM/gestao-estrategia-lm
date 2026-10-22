@@ -4,7 +4,7 @@ import { avaliarKpiBsc, contarAvaliacoes, mapaArvore, Avaliacao, CheckoutReg } f
 import rev02 from "@/data/bscRev02.json";
 
 /** Situações numéricas dos checkouts ENVIADOS, só os números (sem o resto do formulário), via função autorizada. */
-export async function carregarSituacoesKpi(): Promise<{ data: CheckoutReg[] }> {
+export async function carregarSituacoesKpi(): Promise<{ data: CheckoutReg[]; alertas: Set<string> }> {
   const { data } = await (supabase as any).rpc("rotina_situacoes_kpi");
   const m = new Map<string, CheckoutReg & { cadeira_id: string }>();
   for (const r of (data ?? []) as any[]) {
@@ -12,7 +12,10 @@ export async function carregarSituacoesKpi(): Promise<{ data: CheckoutReg[] }> {
     if (!m.has(k)) m.set(k, { cadeira_id: r.cadeira_id, semana: r.semana, status: "enviado", enviado_em: r.enviado_em, conteudo: { kpis_resposta: [] } });
     m.get(k)!.conteudo.kpis_resposta.push({ indicador_id: r.indicador_id, situacao_atual: r.situacao_atual });
   }
-  return { data: [...m.values()] };
+  const ultimo = new Map<string, any>();
+  for (const r of (data ?? []) as any[]) { const u = ultimo.get(r.indicador_id); if (!u || r.semana > u.semana) ultimo.set(r.indicador_id, r); }
+  const alertas = new Set([...ultimo.values()].filter((r) => r.plano_sem_iniciativa).map((r) => r.indicador_id as string));
+  return { data: [...m.values()], alertas };
 }
 
 export type ItemBsc = { id: string; nome: string; cadeira_id: string; aval: Avaliacao; origem: string | null };
