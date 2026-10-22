@@ -777,6 +777,45 @@ export type Database = {
           },
         ]
       }
+      estrategia_ia_execucoes: {
+        Row: {
+          analisados: number
+          bloqueio: string | null
+          created_at: string
+          criado_por: string
+          erro: string | null
+          fontes: string[]
+          id: string
+          run_id: string | null
+          status: string
+          sugestoes: number
+        }
+        Insert: {
+          analisados?: number
+          bloqueio?: string | null
+          created_at?: string
+          criado_por: string
+          erro?: string | null
+          fontes?: string[]
+          id?: string
+          run_id?: string | null
+          status?: string
+          sugestoes?: number
+        }
+        Update: {
+          analisados?: number
+          bloqueio?: string | null
+          created_at?: string
+          criado_por?: string
+          erro?: string | null
+          fontes?: string[]
+          id?: string
+          run_id?: string | null
+          status?: string
+          sugestoes?: number
+        }
+        Relationships: []
+      }
       estrategia_insights: {
         Row: {
           arquivo_nome: string | null
@@ -821,6 +860,106 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      estrategia_sugestoes: {
+        Row: {
+          aprovado_ref_id: string | null
+          aprovado_tipo: string | null
+          confianca: string
+          created_at: string
+          execucao_id: string | null
+          id: string
+          justificativa: string
+          origem_id: string
+          origem_tipo: string
+          ref_id: string
+          revisado_em: string | null
+          revisado_por: string | null
+          status: string
+          tipo: string
+          trecho: string
+        }
+        Insert: {
+          aprovado_ref_id?: string | null
+          aprovado_tipo?: string | null
+          confianca: string
+          created_at?: string
+          execucao_id?: string | null
+          id?: string
+          justificativa: string
+          origem_id: string
+          origem_tipo: string
+          ref_id: string
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          tipo: string
+          trecho: string
+        }
+        Update: {
+          aprovado_ref_id?: string | null
+          aprovado_tipo?: string | null
+          confianca?: string
+          created_at?: string
+          execucao_id?: string | null
+          id?: string
+          justificativa?: string
+          origem_id?: string
+          origem_tipo?: string
+          ref_id?: string
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          tipo?: string
+          trecho?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estrategia_sugestoes_execucao_id_fkey"
+            columns: ["execucao_id"]
+            isOneToOne: false
+            referencedRelation: "estrategia_ia_execucoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estrategia_sugestoes_auditoria: {
+        Row: {
+          acao: string
+          created_at: string
+          id: string
+          ref_id: string | null
+          sugestao_id: string
+          tipo: string | null
+          usuario_id: string
+        }
+        Insert: {
+          acao: string
+          created_at?: string
+          id?: string
+          ref_id?: string | null
+          sugestao_id: string
+          tipo?: string | null
+          usuario_id: string
+        }
+        Update: {
+          acao?: string
+          created_at?: string
+          id?: string
+          ref_id?: string | null
+          sugestao_id?: string
+          tipo?: string | null
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estrategia_sugestoes_auditoria_sugestao_id_fkey"
+            columns: ["sugestao_id"]
+            isOneToOne: false
+            referencedRelation: "estrategia_sugestoes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       estrategia_vinculos_gov: {
         Row: {
@@ -3790,6 +3929,18 @@ export type Database = {
       editor_modulo: {
         Args: { _modulo: string; _uid: string }
         Returns: boolean
+      }
+      estrategia_alvo_ativo: {
+        Args: { _id: string; _tipo: string }
+        Returns: boolean
+      }
+      estrategia_fonte_visivel: {
+        Args: { _id: string; _tipo: string }
+        Returns: boolean
+      }
+      estrategia_revisar_sugestoes: {
+        Args: { _acao: string; _itens: Json }
+        Returns: number
       }
       fase1_acesso: {
         Args: { _editar?: boolean; _modulo: string }

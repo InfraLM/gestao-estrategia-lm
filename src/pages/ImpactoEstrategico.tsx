@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,23 +16,38 @@ import { useSearchParams } from "react-router-dom";
 import PmoVinculos from "./PmoVinculos";
 import { CadastroIniciativas } from "./Hubs";
 import IntegracaoProcessos from "@/components/IntegracaoProcessos";
+import SugestoesVinculo from "@/components/SugestoesVinculo";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 /** Impacto Estratégico: objetivos com drill-down, visão por vínculo e cadastro de iniciativas. */
 export default function ImpactoEstrategico() {
   const [sp, setSp] = useSearchParams();
-  const aba = ["vinculos", "cadastro", "processos"].includes(sp.get("aba") ?? "") ? sp.get("aba")! : "objetivos";
+  const { user } = useAuth();
+  const [podeSugerir, setPodeSugerir] = useState(false);
+  useEffect(() => {
+    setPodeSugerir(false);
+    if (!user) return;
+    let atual = true;
+    supabase.rpc("proj_gov_ou_ceo", { _uid: user.id }).then(({ data }) => { if (atual) setPodeSugerir(data === true); });
+    return () => { atual = false; };
+  }, [user]);
+  const pedida = sp.get("aba") ?? "objetivos";
+  const aba = ["vinculos", "cadastro", "processos"].includes(pedida) || (pedida === "sugestoes" && podeSugerir) ? pedida : "objetivos";
   return (
     <Tabs value={aba} onValueChange={(v) => { const n = new URLSearchParams(sp); if (v === "objetivos") n.delete("aba"); else n.set("aba", v); setSp(n, { replace: true }); }} className="space-y-4">
-      <TabsList>
+      <TabsList className="flex h-auto flex-wrap justify-start">
         <TabsTrigger value="objetivos">Objetivos</TabsTrigger>
         <TabsTrigger value="vinculos">Por vínculo</TabsTrigger>
         <TabsTrigger value="cadastro">Cadastro de iniciativas</TabsTrigger>
         <TabsTrigger value="processos">Integração processos</TabsTrigger>
+        {podeSugerir && <TabsTrigger value="sugestoes">Sugestões de vínculo</TabsTrigger>}
       </TabsList>
       <TabsContent value="objetivos"><ImpactoObjetivos /></TabsContent>
       <TabsContent value="vinculos"><PmoVinculos /></TabsContent>
       <TabsContent value="cadastro"><CadastroIniciativas /></TabsContent>
       <TabsContent value="processos"><IntegracaoProcessos /></TabsContent>
+      {podeSugerir && <TabsContent value="sugestoes"><SugestoesVinculo /></TabsContent>}
     </Tabs>
   );
 }

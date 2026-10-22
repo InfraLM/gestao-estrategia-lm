@@ -1,4 +1,5 @@
 # Pedidos da Naira · 22/10
+- [x] Sugestões de vínculo: fila privada, geração manual (20 fontes/lotes de 10), revisão/aprovação em massa e auditoria; testes PostgreSQL isolado; tela Naira e confirmação conferidas sem geração real
 - [x] Etapa 0 · Yuri Ribeiro → Yuri Garcia (30 projetos + textos fixos)
 - [x] Etapa 1 · Vinculados em KR/Cesta; status reports pendentes no Painel; AGENTS.md por pasta
 - [x] Etapa 2 · Espaço OKRs com 4 listas e redirecionamentos
