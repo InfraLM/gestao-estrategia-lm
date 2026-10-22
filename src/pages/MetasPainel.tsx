@@ -215,7 +215,7 @@ export default function MetasPainel() {
         </div>
         <p className="mt-2 text-xs text-muted-foreground">Ciclo de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}: checkout da semana de {new Date(semOut + "T12:00").toLocaleDateString("pt-BR")} e check-in da semana de {new Date(ciclo + "T12:00").toLocaleDateString("pt-BR")}. A nota conta só KRs e cesta. Use "ver checkout/check-in" para o conteúdo. Envio único do ciclo; prazo segunda 23h59 (São Paulo).</p>
         <p className="text-xs"><Link className="underline" to="/metas/semanal">Abrir formulário semanal</Link></p>
-        <Button asChild variant="link" className="px-0"><Link to="/metas/lancamento">Abrir formulário mensal</Link></Button>
+        <Button asChild variant="link" className="px-0"><Link to="/lancamentos?aba=lancar">Abrir formulário mensal</Link></Button>
       </Card>
 
       <Card className="p-4">
