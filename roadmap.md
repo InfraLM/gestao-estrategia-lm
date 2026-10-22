@@ -1,5 +1,6 @@
 # Pedidos da Naira · 22/10
-- [ ] Impacto por objetivo: budgets sem duplicação, realizado/centros/importação/integração desligada, metas 2030/situação KPI, diagnóstico acessos, contrato e testes sem dados persistentes.
+- [x] Impacto por objetivo: budget comprovado separado dos zeros legados, soma só principal; centros múltiplos/confirmados, espelho/importação prévia/log e integração desligada; 16 metas 2030 recuperadas da planilha, 27 faltantes; KPI V/S/E e observação datada; 319 testes, tela Naira e prévia CSV sem salvar, contrato disponível.
+- [ ] ORC_EXPORT_URL / ORC_EXPORT_TOKEN e valores financeiros reais — responsável pelo orçamento fornece exportação/token; Governança informa budgets liberados e confirma centros. Nenhum espelho/budget/centro/log de teste gravado.
 - [x] Checkout: aprendizados/foco somente histórico; extras opcionais com motivos geridos pela Governança, leitura/IA/resumo mensal atualizados; 309 testes e inclusão/salvamento/leitura/remoção no computador/celular conferidos, registro temporário removido; fora da completude.
 - [x] Revisões documentais: baseline Rev.01 preservada e v2 com 19 itens pendentes; aprovação/publicação auditada, conteúdo versionável, histórico/CSV/filtros; 301 testes e conferência com Naira no computador/celular, sem aprovar/publicar reais.
 - [x] Vínculos automáticos do portfólio/iniciativas: propostas, edição/validação auditada, geração limitada e novos cadastros; 273 testes, prévia/seleção com Naira e celular; sem gerar/validar reais. Novos cadastros aguardam sessão do criador para processar.
