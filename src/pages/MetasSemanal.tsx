@@ -33,6 +33,7 @@ import { avaliarPorTipo, apontamentoMaisRecente, TIPO_LBL, STATUS_ENTREGA_LBL } 
 import StatusReportCiclo, { ResumoSR } from "@/components/StatusReportCiclo";
 import { ultimoCicloDoMes } from "@/lib/projetosGestao";
 import EntregasExtras from '@/components/EntregasExtras';
+import { semanaLink } from '@/lib/avisosCiclo';
 
 const db = supabase as any;
 export type Prioridade = PrioridadeV2;
@@ -65,7 +66,7 @@ export default function MetasSemanal() {
   const b = useMetasBase();
   const access = useModuleAccess();
   const [cad, setCad] = useState<string>("");
-  const [sem, setSem] = useState(cicloPadrao());
+  const [sem, setSem] = useState(() => semanaLink(new URLSearchParams(window.location.search).get("semana")) ?? cicloPadrao());
   const semOut = semanaCheckout(sem);
   const semDe = (t: Tipo) => (t === "checkin" ? sem : semOut);
   const [cinOut, setCinOut] = useState<CheckinV2>(normalizarCheckin(null));
@@ -378,7 +379,7 @@ export default function MetasSemanal() {
           </div>
           <div className="w-64 space-y-1"><Label>Ciclo</Label>
             <Select value={sem} onValueChange={(v) => { flush(); setSem(v); }}><SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{ciclosDisponiveis().map((s) => <SelectItem key={s} value={s}>{fmtSem(s)} (checkout {fmtSem(semanaCheckout(s))})</SelectItem>)}</SelectContent></Select>
+              <SelectContent>{[...new Set([sem, ...ciclosDisponiveis()])].sort().reverse().map((s) => <SelectItem key={s} value={s}>{fmtSem(s)} (checkout {fmtSem(semanaCheckout(s))})</SelectItem>)}</SelectContent></Select>
           </div>
         </div>
       </Card>

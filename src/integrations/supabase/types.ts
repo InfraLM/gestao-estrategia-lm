@@ -4013,6 +4013,107 @@ export type Database = {
         }
         Relationships: []
       }
+      rotina_avisos_config: {
+        Row: {
+          abertura_dia: number
+          abertura_hora: string
+          ativo: boolean
+          atualizado_em: string
+          atualizado_por: string | null
+          id: boolean
+          lembrete_dia: number
+          lembrete_hora: string
+          remetente_pronto: boolean
+        }
+        Insert: {
+          abertura_dia?: number
+          abertura_hora?: string
+          ativo?: boolean
+          atualizado_em?: string
+          atualizado_por?: string | null
+          id?: boolean
+          lembrete_dia?: number
+          lembrete_hora?: string
+          remetente_pronto?: boolean
+        }
+        Update: {
+          abertura_dia?: number
+          abertura_hora?: string
+          ativo?: boolean
+          atualizado_em?: string
+          atualizado_por?: string | null
+          id?: boolean
+          lembrete_dia?: number
+          lembrete_hora?: string
+          remetente_pronto?: boolean
+        }
+        Relationships: []
+      }
+      rotina_avisos_envios: {
+        Row: {
+          abriu_em: string | null
+          cadeira_id: string
+          canal: string
+          ciclo: string
+          criado_em: string
+          destinatario: string
+          enviado_em: string | null
+          erro: string | null
+          id: string
+          nome: string
+          pendencias: Json
+          provedor_id: string | null
+          solicitado_por: string | null
+          status: string
+          tipo: string
+          usuario_id: string
+        }
+        Insert: {
+          abriu_em?: string | null
+          cadeira_id: string
+          canal?: string
+          ciclo: string
+          criado_em?: string
+          destinatario: string
+          enviado_em?: string | null
+          erro?: string | null
+          id?: string
+          nome: string
+          pendencias: Json
+          provedor_id?: string | null
+          solicitado_por?: string | null
+          status?: string
+          tipo: string
+          usuario_id: string
+        }
+        Update: {
+          abriu_em?: string | null
+          cadeira_id?: string
+          canal?: string
+          ciclo?: string
+          criado_em?: string
+          destinatario?: string
+          enviado_em?: string | null
+          erro?: string | null
+          id?: string
+          nome?: string
+          pendencias?: Json
+          provedor_id?: string | null
+          solicitado_por?: string | null
+          status?: string
+          tipo?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rotina_avisos_envios_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rotina_transparencia: {
         Row: {
           alterado_em: string | null
@@ -4686,6 +4787,22 @@ export type Database = {
       revisao_sugerir: {
         Args: { _chave: string; _secao: string; _valor: Json }
         Returns: string
+      }
+      rotina_avisos_agendar: { Args: { _tipo: string }; Returns: undefined }
+      rotina_avisos_destinatarios: { Args: { _ciclo: string }; Returns: Json }
+      rotina_avisos_preparar: {
+        Args: { _cadeira?: string; _ciclo: string; _tipo: string }
+        Returns: number
+      }
+      rotina_avisos_salvar: {
+        Args: {
+          _abertura_dia: number
+          _abertura_hora: string
+          _ativo: boolean
+          _lembrete_dia: number
+          _lembrete_hora: string
+        }
+        Returns: undefined
       }
       rotina_conformidade: {
         Args: { _ate: string; _de: string }
