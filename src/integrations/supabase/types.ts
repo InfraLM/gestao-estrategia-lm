@@ -2699,6 +2699,9 @@ export type Database = {
         Row: {
           confianca: string | null
           created_at: string
+          editado_em: string | null
+          editado_nome: string | null
+          editado_por: string | null
           fonte_id: string
           fonte_tipo: string
           id: string
@@ -2720,6 +2723,9 @@ export type Database = {
         Insert: {
           confianca?: string | null
           created_at?: string
+          editado_em?: string | null
+          editado_nome?: string | null
+          editado_por?: string | null
           fonte_id: string
           fonte_tipo: string
           id?: string
@@ -2741,6 +2747,9 @@ export type Database = {
         Update: {
           confianca?: string | null
           created_at?: string
+          editado_em?: string | null
+          editado_nome?: string | null
+          editado_por?: string | null
           fonte_id?: string
           fonte_tipo?: string
           id?: string
