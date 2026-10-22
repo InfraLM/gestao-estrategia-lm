@@ -1,4 +1,5 @@
 # Pedidos da Naira · 22/10
+- [ ] Impedimentos atribuídos: campos, envio/outbox sem e-mail real, resposta/completude, empilhamento, dashboard privado e auditoria; testes isolados e tela sem gravações reais.
 - [x] Frequência KPI: 43 BSC casados sem mudar responsáveis, 13 KRs/23 Cesta propostos; cadastro/calendário, seleção semanal/completude/e-mails, pauta e desvio mensal auditado, avaliação/matriz; início 26/10, conferência Naira sem gravações reais de teste.
 - [x] Preparação dos avisos: controles desligados no Painel, horários/cron SQL, destinatários e contagens, prévias, histórico/reenvio bloqueados sem remetente, link semanal/login preservado; testes isolados e tela Naira computador/celular, zero envios/registros de teste reais.
 - [ ] Concluir envio Lovable Cloud — Naira configura domínio próprio em Mais → E-mails; depois criar envio transacional pelo assistente oficial e conectar processamento ao enfileirar com tentativas limitadas. Não há remetente conectado nem cron ativo; não habilitar antes dessa conclusão. Seis cadeiras precisam vínculo de usuário.
