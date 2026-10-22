@@ -57,11 +57,11 @@ export default function PmoFarol() {
           <thead className="bg-muted/50 text-left text-xs"><tr><th className="p-2">Projeto</th><th className="p-2">Cadeira</th><th className="p-2">Escopo</th><th className="p-2">Custo</th><th className="p-2">Cronograma</th><th className="p-2">Último apontamento</th><th className="p-2">Anexo</th><th className="p-2">Decisão</th></tr></thead>
           <tbody>{linhas.map(({ p, r, ds, pend }) => (
             <tr key={p.id} className="border-t align-top">
-              <td className="p-2"><p className="font-medium">{p.codigo}</p><p className="text-xs text-muted-foreground max-w-xs">{p.nome} · {p.status}</p></td>
+              <td className="p-2"><p className="font-medium">{p.codigo}</p><p className="text-xs text-muted-foreground max-w-xs">{p.nome} · {p.status}</p>{p.atualizacao_direta_em && <p className="text-xs text-warning">Status alterado por atualização direta em {new Date(p.atualizacao_direta_em).toLocaleDateString("pt-BR")} por {p.atualizacao_direta_nome ?? "Usuário"}.</p>}</td>
               <td className="p-2 text-xs">{nomeCad(p.cadeira_id)}</td>
               <td className="p-2"><Luz f={r?.farol_escopo} /></td><td className="p-2"><Luz f={r?.farol_custo} /></td><td className="p-2"><Luz f={r?.farol_cronograma} /></td>
               <td className="p-2 text-xs">{r ? `${compLabel(r.competencia)} · ${r.enviado_por_nome ?? "—"}` : "—"}</td>
-              <td className="p-2">{r?.arquivo_path && <Button size="sm" variant="ghost" onClick={async () => { if (!(await abrirArquivoStatus(r.arquivo_path!))) toast.error("Você não tem acesso a este anexo."); }}><Paperclip className="h-4 w-4" /></Button>}</td>
+              <td className="p-2">{r?.arquivo_path && <Button size="sm" variant="ghost" onClick={async () => { const path = r?.arquivo_path; if (path && !(await abrirArquivoStatus(path))) toast.error("Você não tem acesso a este anexo."); }}><Paperclip className="h-4 w-4" /></Button>}</td>
               <td className="p-2 text-xs space-y-1">
                 {pend && <Badge variant="destructive">Decisão pendente</Badge>}
                 {ds[0] && <p>{ds[0].codigo} · {DECISOES[ds[0].decisao]}</p>}

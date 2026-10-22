@@ -12,6 +12,7 @@ import Portfolio from "./pages/Portfolio";
 import StatusReport from "./pages/StatusReport";
 import PmoResponsaveis from "./pages/PmoResponsaveis";
 import PmoFarol from "./pages/PmoFarol";
+import PmoAtualizarStatus from "./pages/PmoAtualizarStatus";
 import Gestao from "./pages/Gestao";
 import GestaoProjeto from "./pages/GestaoProjeto";
 import Melhorias from "./pages/Melhorias";
@@ -69,6 +70,7 @@ const App = () => (
               <Route path="/status-report" element={<StatusReport />} />
               <Route path="/pmo/responsaveis" element={<PmoResponsaveis />} />
               <Route path="/pmo/farol" element={<PmoFarol />} />
+              <Route path="/pmo/atualizar-status" element={<PmoAtualizarStatus />} />
               <Route path="/pmo/vinculos" element={<Navigate to="/impacto-estrategico?aba=vinculos" replace />} />
               <Route path="/gestao" element={<Gestao />} />
               <Route path="/gestao/:id" element={<GestaoProjeto />} />
