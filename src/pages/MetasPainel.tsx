@@ -14,6 +14,7 @@ import { useMetasBase, MESES_2S26, statusEfetivo } from "@/hooks/useMetasBase";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ENTREGA_LBL } from "@/pages/MetasSemanal";
 import { cicloPadrao, semanaCheckout, seloCiclo } from "@/lib/rotinaSemanal";
+import { srPendentesPorCadeira } from "@/lib/projetosGestao";
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 
 const db = supabase as any;
@@ -60,6 +61,13 @@ export default function MetasPainel() {
   const [regua, setRegua] = useState<Regua | null>(null);
   const [edReg, setEdReg] = useState<Regua | null>(null);
   const [ver, setVer] = useState<any>(null);
+  const [srProj, setSrProj] = useState<any[]>([]);
+  const [srRegs, setSrRegs] = useState<any[]>([]);
+  useEffect(() => {
+    db.from("projetos").select("codigo,status,cadeira_id").then(({ data }: any) => setSrProj(data ?? []));
+    db.from("mt_status_projetos").select("projeto_codigo,arquivo_path,farol_escopo,farol_custo,farol_cronograma").eq("competencia", comp).then(({ data }: any) => setSrRegs(data ?? []));
+  }, [comp]);
+  const srPend = useMemo(() => srPendentesPorCadeira(srProj, srRegs), [srProj, srRegs]);
 
   const load = async () => {
     const [c, e, l, a, k, p] = await Promise.all([
@@ -174,7 +182,7 @@ export default function MetasPainel() {
                 <th className="py-2 pr-3">Cadeira</th><th className="pr-3">Nota</th><th className="pr-3">Faixa</th>
                 <th className="pr-3">Form. mensal de OKRs/metas</th>
                 <th className="pr-3">BSC (não entra na nota)</th><th className="pr-3">Ciclo semanal (checkout + check-in)</th>
-                <th className="pr-3">Iniciativas atrasadas</th>
+                <th className="pr-3">Iniciativas atrasadas</th><th className="pr-3">Status reports pendentes no mês</th>
               </tr>
             </thead>
             <tbody>
@@ -198,6 +206,7 @@ export default function MetasPainel() {
                       <div className="flex gap-2 text-xs">{co && <button className="underline" onClick={() => setVer({ ...co, nome: c.nome })}>ver checkout</button>}{ci && <button className="underline" onClick={() => setVer({ ...ci, nome: c.nome })}>ver check-in</button>}</div>
                     </div>; })()}</td>
                     <td className="pr-3">{atrasadas ? <Badge variant="destructive">{atrasadas}</Badge> : "0"}</td>
+                    <td className="pr-3 text-xs">{(() => { const s = srPend[c.id]; if (!s) return "—"; return s.pendentes.length ? <span title={s.pendentes.join(", ")}><Badge variant="destructive">{s.pendentes.length}</Badge> de {s.total}</span> : <span className="text-success">0 de {s.total}</span>; })()}</td>
                   </tr>
                 );
               })}

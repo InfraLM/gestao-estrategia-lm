@@ -68,3 +68,15 @@ export function iniciativasDoItem<T extends { id: string; indicador_id?: string 
 }
 
 export const podeDecidir = (p: { governanca: boolean; ceo: boolean }) => p.governanca || p.ceo;
+
+/** Status reports pendentes no mês por cadeira principal: projeto em aberto sem anexo ou sem os três faróis. */
+export function srPendentesPorCadeira(projetos: { codigo: string; status: string | null; cadeira_id: string | null }[], regs: { projeto_codigo: string; arquivo_path?: string | null; farol_escopo?: string | null; farol_custo?: string | null; farol_cronograma?: string | null }[]) {
+  const out: Record<string, { total: number; pendentes: string[] }> = {};
+  for (const p of projetos) {
+    if (!p.cadeira_id || !projetoEmAberto(p.status)) continue;
+    const r = regs.find((x) => x.projeto_codigo === p.codigo);
+    const o = (out[p.cadeira_id] ??= { total: 0, pendentes: [] }); o.total++;
+    if (!r?.arquivo_path || !r?.farol_escopo || !r?.farol_custo || !r?.farol_cronograma) o.pendentes.push(p.codigo);
+  }
+  return out;
+}
