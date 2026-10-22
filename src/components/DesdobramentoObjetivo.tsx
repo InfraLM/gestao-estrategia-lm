@@ -13,6 +13,8 @@ import { statusEfetivo, STATUS_INI, fmtData } from "@/hooks/useMetasBase";
 import { useAvaliacoesBsc } from "@/hooks/useAvaliacoesBsc";
 import { melhoriaRelevante, rotuloMaturidade, rotuloGrau, codigoDoNome } from "@/lib/processosImpacto";
 import { estaAtrasado, resumoImpacto, ItemImpacto, ROTULO_ORIGEM, OrigemImpacto } from "@/lib/impactoObjetivo";
+import FinanceiroObjetivo from '@/components/FinanceiroObjetivo';
+import KpisObjetivo from '@/components/KpisObjetivo';
 
 const db = supabase as any;
 const AVAL: Record<string, { t: string; v: "default" | "destructive" | "outline" | "secondary" }> = {
@@ -122,6 +124,8 @@ export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodi
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        <FinanceiroObjetivo codigo={objetivoCodigo} />
+        <KpisObjetivo codigo={objetivoCodigo} />
         <Bloco titulo="Direto no objetivo" itens={diretos} vincular={podeVincular ? { tipo: "objetivo", ref: obj.id } : null} gov={gov} onMudou={carregarGov} />
         {(["bsc", "okr", "cesta"] as const).map((g) => {
           const lista = doObj.filter((i) => i.origem === g);

@@ -274,6 +274,20 @@
       "when": 1792679932452,
       "tag": "0038_checkout_entregas_motivos",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1792680511734,
+      "tag": "0039_impacto_financeiro_orcamento",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1792680668421,
+      "tag": "0040_orcamento_validacao_lotes",
+      "breakpoints": true
     }
   ]
 }

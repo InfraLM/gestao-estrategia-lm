@@ -19,6 +19,10 @@ import IntegracaoProcessos from "@/components/IntegracaoProcessos";
 import SugestoesVinculo from "@/components/SugestoesVinculo";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import IntegracaoOrcamento from '@/components/IntegracaoOrcamento';
+import { useImpactoFinanceiro } from '@/hooks/useImpactoFinanceiro';
+import { ResumoFinanceiroObjetivo } from '@/components/FinanceiroObjetivo';
+import { useKpisObjetivo } from '@/hooks/useKpisObjetivo';
 
 /** Impacto Estratégico: objetivos com drill-down, visão por vínculo e cadastro de iniciativas. */
 export default function ImpactoEstrategico() {
@@ -33,7 +37,7 @@ export default function ImpactoEstrategico() {
     return () => { atual = false; };
   }, [user]);
   const pedida = sp.get("aba") ?? "objetivos";
-  const aba = ["vinculos", "cadastro", "processos"].includes(pedida) || (pedida === "sugestoes" && podeSugerir) ? pedida : "objetivos";
+  const aba = ["vinculos", "cadastro", "processos"].includes(pedida) || (["sugestoes","orcamento"].includes(pedida) && podeSugerir) ? pedida : "objetivos";
   return (
     <Tabs value={aba} onValueChange={(v) => { const n = new URLSearchParams(sp); if (v === "objetivos") n.delete("aba"); else n.set("aba", v); setSp(n, { replace: true }); }} className="space-y-4">
       <TabsList className="flex h-auto flex-wrap justify-start">
@@ -41,12 +45,14 @@ export default function ImpactoEstrategico() {
         <TabsTrigger value="vinculos">Por vínculo</TabsTrigger>
         <TabsTrigger value="cadastro">Cadastro de iniciativas</TabsTrigger>
         <TabsTrigger value="processos">Integração processos</TabsTrigger>
+        {podeSugerir && <TabsTrigger value="orcamento">Integração orçamento</TabsTrigger>}
         {podeSugerir && <TabsTrigger value="sugestoes">Sugestões de vínculo</TabsTrigger>}
       </TabsList>
       <TabsContent value="objetivos"><ImpactoObjetivos /></TabsContent>
       <TabsContent value="vinculos"><PmoVinculos /></TabsContent>
       <TabsContent value="cadastro"><CadastroIniciativas /></TabsContent>
       <TabsContent value="processos"><IntegracaoProcessos /></TabsContent>
+      {podeSugerir && <TabsContent value="orcamento"><IntegracaoOrcamento /></TabsContent>}
       {podeSugerir && <TabsContent value="sugestoes"><SugestoesVinculo /></TabsContent>}
     </Tabs>
   );
@@ -70,6 +76,8 @@ function brl(n: number) {
 }
 
 function ImpactoObjetivos() {
+  const financeiro = useImpactoFinanceiro();
+  const kpis = useKpisObjetivo();
   const { data: projetos } = useProjetosDB();
   const { data: processos } = useProcessosDB();
   const { data: riscos } = useRiscosInstitucionaisDB();
@@ -162,9 +170,9 @@ function ImpactoObjetivos() {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               <KpiCard icon={FolderKanban} label="Iniciativas" value={consolidado.totalProjs} sub={`${consolidado.emAndamento} ativas · ${consolidado.concluidos} concluídas`} />
               <KpiCard icon={Activity} label="Avanço médio" value={`${consolidado.avancoMedio}%`} sub="ponderado por status" progress={consolidado.avancoMedio} />
-              <KpiCard icon={DollarSign} label="Budget" value={brl(consolidado.budgetTotal)} sub={`Realizado ${brl(consolidado.realizadoTotal)}`} />
+              <KpiCard icon={Target} label="KPIs de BSC" value={kpis.itens.length} sub={`${kpis.itens.filter((i:any)=>!i.meta2030).length} sem meta 2030`} />
               <KpiCard icon={Workflow} label="Maturidade processos" value={consolidado.maturidadeMedia.toFixed(1)} sub={`${processos.length} processos mapeados`} />
-              <KpiCard icon={AlertTriangle} label="Riscos críticos" value={consolidado.riscosCriticos} sub={brl(consolidado.exposicaoFinanceira)} tone="warning" />
+              <KpiCard icon={AlertTriangle} label="Riscos críticos" value={consolidado.riscosCriticos} tone="warning" />
             </div>
 
             {perspectivas.map(persp => {
@@ -185,7 +193,7 @@ function ImpactoObjetivos() {
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {grupo.map(o => (
-                      <ObjetivoRow key={o.id} o={o} onClick={() => { setAba(o.id); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+                      <div key={o.id} className="border-b pb-3"><ObjetivoRow o={o} onClick={() => { setAba(o.id); window.scrollTo({ top: 0, behavior: "smooth" }); }} /><ResumoFinanceiroObjetivo codigo={o.id} dados={financeiro} /><div className="text-xs mt-2 text-muted-foreground">{(() => { const c=kpis.contar(kpis.porObjetivo(o.id).map((i:any)=>i.aval));return `${c.on} on · ${c.off} off · ${c.pendente} pendentes · ${c.acomp} em acompanhamento`; })()}</div></div>
                     ))}
                   </CardContent>
                 </Card>
@@ -212,7 +220,7 @@ function ImpactoObjetivos() {
                 <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <KpiCard icon={FolderKanban} label="Iniciativas vinculadas" value={o.total} sub={`${o.emAndamento} em curso · ${o.concluidos} concluídas`} />
                   <KpiCard icon={Activity} label="Avanço médio" value={`${o.avancoMedio}%`} progress={o.avancoMedio} sub={o.offTrack ? `${o.offTrack} off-track` : "Sem desvios críticos"} tone={o.offTrack ? "warning" : undefined} />
-                  <KpiCard icon={DollarSign} label="Investimento" value={brl(o.budget)} sub={`Realizado ${brl(o.realizado)}`} />
+                  <KpiCard icon={Target} label="KPIs estratégicos / táticos" value={kpis.porObjetivo(o.id).length} sub={`${kpis.porObjetivo(o.id).filter((i:any)=>!i.meta2030).length} sem meta 2030`} />
                   <KpiCard icon={Workflow} label="Processos suportando" value={o.procsLigados.length} sub={o.procsLigados.length ? `Maturidade média ${o.maturidadeMedia.toFixed(1)}` : "Sem processo vinculado"} />
                 </CardContent>
               </Card>
@@ -300,7 +308,6 @@ function ImpactoObjetivos() {
                                 <span className="text-muted-foreground hidden md:inline">{p.diretor}</span>
                                 <Badge variant="outline" className="text-[10px]">{p.wave}</Badge>
                                 <Badge variant="outline" className="text-[10px]">{p.status}</Badge>
-                                {p.budget > 0 && <span className="text-muted-foreground">{brl(p.budget)}</span>}
                               </div>
                             </Link>
                           ))}
@@ -355,7 +362,7 @@ function ObjetivoRow({ o, onClick }: { o: any; onClick: () => void }) {
             <div className="text-xs font-medium truncate">{o.nome}</div>
             <Progress value={o.avancoMedio} className="h-1 mt-1" />
           </div>
-          <div className="text-right text-[11px] shrink-0 grid grid-cols-3 gap-3 items-center">
+          <div className="text-right text-[11px] shrink-0 grid grid-cols-2 gap-3 items-center">
             <div>
               <div className="text-muted-foreground">Inic.</div>
               <div className="font-semibold">{o.total}</div>
@@ -363,10 +370,6 @@ function ObjetivoRow({ o, onClick }: { o: any; onClick: () => void }) {
             <div>
               <div className="text-muted-foreground">Avanço</div>
               <div className="font-semibold">{o.avancoMedio}%</div>
-            </div>
-            <div>
-              <div className="text-muted-foreground">Budget</div>
-              <div className="font-semibold">{brl(o.budget)}</div>
             </div>
           </div>
           <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground" />

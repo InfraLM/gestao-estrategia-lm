@@ -28,6 +28,7 @@ import { StatusReportTab, useStatusProjeto, compLabel } from "@/components/Statu
 import PortfolioVinculos from "@/components/PortfolioVinculos";
 import EmpilhadosVinculo from "@/components/EmpilhadosVinculo";
 import { PredecessoraDialog, PredecessorBadge, isEntregaBloqueada } from "@/components/PredecessoraDialog";
+import { CentrosProjeto } from '@/components/FinanceiroObjetivo';
 
 const tooltipStyle = {
   background: "hsl(var(--card))",
@@ -172,6 +173,7 @@ function GestaoProjetoInner({ projeto: pj }: { projeto?: Projeto }) {
         </div>
       </div>
 
+      <CentrosProjeto codigo={projeto.id} />
       {/* Dashboard do projeto */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Custo: BC × Orçado × Realizado */}
