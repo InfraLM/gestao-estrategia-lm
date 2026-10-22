@@ -1,6 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
-import { streamText, Output, APICallError } from 'npm:ai@5';
+import { streamText, Output, APICallError } from 'npm:ai@6';
 import { z } from 'npm:zod@3';
 import { createLovableAiGatewayProvider, getLovableAiGatewayResponseHeaders } from './gateway-helpers.ts';
 import { Fonte, Alvo, validarPropostas, LIMITE_GERACAO, TAMANHO_LOTE } from './domain.ts';
@@ -52,7 +52,7 @@ Deno.serve(async req => {
     if (runsError) return resposta({ error: 'Não foi possível ler o histórico da geração.' }, 500);
     const analisadas = new Set((runs ?? []).filter(r => r.status === 'concluido').flatMap(r => r.fontes));
     const candidatos = livres.filter(f => novamente ? !sugestoes.some((s: any) => s.origem_tipo === f.origem_tipo && s.origem_id === f.origem_id && s.status === 'pendente') : !temSug(f) && !analisadas.has(f.chave));
-    if (modo === 'resumo') return resposta({ fontes: livres.map(f => ({ ...f, texto: undefined, situacao: temSug(f) ? 'com_sugestao' : analisadas.has(f.chave) ? 'analisado_sem_sugestao' : 'sem_sugestao' })), candidatos: candidatos.map(f => f.chave), alvos, limite: LIMITE_GERACAO, lote: TAMANHO_LOTE, semestre });
+    if (modo === 'resumo') return resposta({ fontes: f.map(f => ({ ...f, texto: undefined, situacao: temSug(f) ? 'com_sugestao' : analisadas.has(f.chave) ? 'analisado_sem_sugestao' : 'sem_sugestao' })), candidatos: candidatos.map(f => f.chave), alvos, limite: LIMITE_GERACAO, lote: TAMANHO_LOTE, semestre });
     if ((runs ?? []).some(r => r.bloqueio === 'provider_denied')) return resposta({ error: 'Acesso ao provedor bloqueado. A geração permanece pausada até o acesso ser restabelecido.' }, 403);
     const escolhidas = solicitadas.length ? candidatos.filter(f => solicitadas.includes(f.chave)) : candidatos.slice(0, LIMITE_GERACAO);
     if (!escolhidas.length || (solicitadas.length && escolhidas.length !== new Set(solicitadas).size)) return resposta({ error: 'Não há fontes elegíveis nessa seleção.' }, 400);
