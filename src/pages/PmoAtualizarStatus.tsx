@@ -17,7 +17,7 @@ export default function PmoAtualizarStatus() {
   const [sp, setSp] = useSearchParams(); const [items, setItems] = useState<Item[]>([]);
   const [cadeiras, setCadeiras] = useState<string[]>([]); const [edit, setEdit] = useState(false);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({}); const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false); const [busy, setBusy] = useState(false); const [audit, setAudit] = useState<any[] | null>(null);
+  const [error, setError] = useState(false); const [mirrorError, setMirrorError] = useState(false); const [busy, setBusy] = useState(false); const [audit, setAudit] = useState<any[] | null>(null);
   const carregar = async () => {
     setLoading(true); setError(false);
     const [p, c, m, perm] = await Promise.all([
@@ -27,6 +27,7 @@ export default function PmoAtualizarStatus() {
       supabase.rpc("pmo_pode_atualizar"),
     ]);
     if (p.error || perm.error) { setError(true); setLoading(false); return; }
+    setMirrorError(!!m.error);
     const nomes = new Map((c.data ?? []).map(x => [x.id, x.nome])); setCadeiras([...nomes.values()]);
     setItems([...(p.data ?? []).map(x => ({ ...x, cadeira: nomes.get(x.cadeira_id ?? "") ?? "Sem cadeira", tipo: x.classificacao.startsWith("Melhoria") ? "melhoria" : "projeto", origem: "Portfólio", comentario: x.atualizacao_comentario ?? "" })),
       ...(m.data ?? []).map(x => ({ id: x.origem_id, codigo: x.processo_codigo ?? "—", nome: x.titulo, status: x.status ?? "", cadeira: "", diretor: x.responsavel, tipo: "melhoria", origem: "Gestão Processos · somente leitura", termino: x.previsao, avanco_pct: null, updated_at: x.sincronizado_em, espelho: true }))]);
@@ -34,7 +35,7 @@ export default function PmoAtualizarStatus() {
   };
   useEffect(() => { void carregar(); }, []);
   const filtro = (key: string, value: string) => { const n = new URLSearchParams(sp); if (value === "todos") n.delete(key); else n.set(key, value); if (!n.has("status")) n.set("status", "aberto"); setSp(n, { replace: true }); };
-  const mudar = (item: Item, patch: Partial<Draft>) => setDrafts(d => ({ ...d, [item.id]: { ...(d[item.id] ?? { status: item.status, termino: /^\d{4}-\d{2}-\d{2}$/.test(item.termino ?? "") ? item.termino ?? "" : "", avanco_pct: item.avanco_pct, comentario: "" }), ...patch } }));
+  const mudar = (item: Item, patch: Partial<Draft>) => setDrafts(d => ({ ...d, [item.id]: { ...(d[item.id] ?? { status: item.status, termino: item.termino ?? "", avanco_pct: item.avanco_pct, comentario: "" }), ...patch } }));
   const salvar = async (ids: string[]) => {
     const alterados = ids.map(id => ({ ...drafts[id], id, updated_at: items.find(i => i.id === id)?.updated_at }));
     if (alterados.some(i => !i.comentario?.trim())) return toast.error("Informe o comentário de cada atualização.");
@@ -58,6 +59,7 @@ export default function PmoAtualizarStatus() {
       <Input aria-label="Diretor" placeholder="Diretor / responsável" className="w-full sm:w-60" value={sp.get("diretor") ?? ""} onChange={e => filtro("diretor", e.target.value || "todos")} />
     </div>
     {mErroAviso()}
+    {mirrorError && <p className="text-sm text-muted-foreground">Melhorias do app de processos indisponíveis para este acesso.</p>}
     {["projeto", "melhoria"].filter(t => !sp.get("tipo") || sp.get("tipo") === "todos" || sp.get("tipo") === t).map(tipo => <section key={tipo} className="space-y-3"><h2 className="text-lg font-semibold">{tipo === "projeto" ? "Projetos estratégicos" : "Melhorias estratégicas"} ({lista.filter(i => i.tipo === tipo).length})</h2>
       {!lista.some(i => i.tipo === tipo) && <p className="text-sm text-muted-foreground">Nenhum item nos filtros selecionados.</p>}
       {lista.filter(i => i.tipo === tipo).map(i => { const d = drafts[i.id]; const pode = edit && !i.espelho && STATUS_DIRETOS.includes(i.status); return <article key={`${i.origem}:${i.id}`} className="border rounded-md p-4 space-y-3 bg-card">
