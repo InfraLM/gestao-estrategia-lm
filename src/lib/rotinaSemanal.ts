@@ -1,5 +1,6 @@
 /** Regras puras do formulário semanal (check-in / checkout). Lê registros antigos (sem `v`) sem perder dados. */
 import type { PrioridadeSemanal } from "@/lib/governancaPendencias";
+import { EntregaExtra, normalizarExtras, errosExtras } from "@/lib/entregasExtras";
 
 export type Responsavel = { tipo: "" | "eu" | "lider" | "cadeira" | "externo"; cadeira_id?: string; nome?: string; email?: string; contato_id?: string; cargo_id?: string };
 /** Vínculos múltiplos de uma ação (ids de mt_indicadores / projetos). */
@@ -32,7 +33,7 @@ export type KpiResposta = {
 };
 export type KpiLegado = { indicador_id: string; valor: string; situacao: string; comentario: string };
 export type CheckoutV2 = {
-  v: 2; entregas: Entrega[]; extras: string; aprendizados: string; proxima: string; ritmo: number;
+  v: 2; entregas: Entrega[]; extras: string; extras_lista?: EntregaExtra[]; aprendizados: string; proxima: string; ritmo: number;
   kpis?: KpiLegado[]; kpis_retrato?: KpiRetrato[]; kpis_resposta: KpiResposta[]; envio_token?: string; primeiro_envio_em?: string; atas?: AtaStatus[];
   /** Gravada no primeiro envio: itens obrigatórios preenchidos (taxa de conformidade). */
   completude?: { feitos: number; total: number; faltando: string[] };
@@ -69,6 +70,7 @@ export function normalizarCheckout(c: any): CheckoutV2 {
     v: 2,
     entregas: (Array.isArray(c?.entregas) ? c.entregas : []).map((e: any) => ({ ...e, titulo: e.titulo ?? "", status: e.status ?? "", motivo: e.motivo ?? "", responsavel: normalizarResponsavel(e.responsavel), vinculos: normalizarVinculos(e.vinculos) })),
     extras: c?.extras ?? "", aprendizados: c?.aprendizados ?? "", proxima: c?.proxima ?? "", ritmo: c?.ritmo ?? 3,
+    extras_lista: normalizarExtras(c?.extras_lista),
     kpis: Array.isArray(c?.kpis) ? c.kpis : [],
     kpis_retrato: Array.isArray(c?.kpis_retrato) ? c.kpis_retrato : undefined,
     kpis_resposta: Array.isArray(c?.kpis_resposta) ? c.kpis_resposta.map((k: any) => ({ ...respostaVazia(k.indicador_id), ...k, responsavel: normalizarResponsavel(k.responsavel), vinculos: normalizarVinculos(k.vinculos) })) : [],
@@ -190,7 +192,7 @@ export function pendenciasCheckin(c: CheckinV2): Pendencia[] {
   return p;
 }
 export function pendenciasCheckout(c: CheckoutV2, reaproveitaveis: Record<string, unknown[]> = {}): Pendencia[] {
-  const p: Pendencia[] = [];
+  const p: Pendencia[] = errosExtras(c.extras_lista ?? []);
   c.entregas.forEach((e, i) => {
     if (e.herdada_de) return;
     if (!e.status) p.push({ campo: `ent-${i}`, texto: `Marque o resultado de "${e.titulo}".` });
