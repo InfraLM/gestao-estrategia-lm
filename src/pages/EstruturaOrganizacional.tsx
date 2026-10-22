@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { CadastroCadeiras } from "./Hubs";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Search, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,7 +55,7 @@ export default function EstruturaOrganizacional() {
   const texto = (valor: string | null) => <EstruturaTexto texto={valor} acessoSocios={acessoSocios} />;
   return <div className="min-w-0 space-y-6">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">Estrutura Organizacional</h2><span role="status" className="text-sm text-muted-foreground">{filtradas.length} cadeiras</span></div>
-    <Tabs defaultValue="organograma" className="min-w-0"><TabsList className="mb-4"><TabsTrigger value="organograma">Organograma atualizado</TabsTrigger><TabsTrigger value="fichas">Fichas estratégicas</TabsTrigger></TabsList><TabsContent value="organograma"><OrganogramaAtual canEdit={canEdit} /></TabsContent><TabsContent value="fichas">
+    <Tabs defaultValue={new URLSearchParams(window.location.search).get("aba") === "cadeiras" ? "cadeiras" : "organograma"} className="min-w-0"><TabsList className="mb-4 h-auto flex-wrap"><TabsTrigger value="organograma">Organograma atualizado</TabsTrigger><TabsTrigger value="fichas">Fichas estratégicas</TabsTrigger><TabsTrigger value="cadeiras">Cadeiras (metas e rotina)</TabsTrigger></TabsList><TabsContent value="cadeiras"><CadastroCadeiras /></TabsContent><TabsContent value="organograma"><OrganogramaAtual canEdit={canEdit} /></TabsContent><TabsContent value="fichas">
     {query.isPending ? <div role="status" className="flex items-center justify-center gap-2 py-16"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />Carregando estrutura…</div>
       : query.isError ? <div role="alert" className="space-y-3 py-12 text-center"><p className="text-destructive">Não foi possível carregar a estrutura organizacional.</p><Button variant="outline" onClick={() => query.refetch()}>Tentar novamente</Button></div>
       : <>
