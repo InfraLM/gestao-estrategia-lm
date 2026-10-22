@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI } from "@/hooks/useMetasBase";
 import { SITUACAO_LBL, ENTREGA_LBL } from "./MetasSemanal";
 import { normalizarCheckout, riscoAberto, idadeSemanas, cicloPadrao, ciclosDisponiveis, semanaCheckout, periodoSemana, competenciaDaSemana, seloCiclo, prazoCiclo } from "@/lib/rotinaSemanal";
+import { useTransparencia, AvisoTransparencia, InterruptorTransparencia } from "@/hooks/useTransparencia";
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 
 const db = supabase as any;
@@ -22,7 +23,15 @@ export default function SemanalVisao() {
   const [rows, setRows] = useState<any[]>([]);
   const semanas = useMemo(() => ciclosDisponiveis(), []);
   const [riscos, setRiscos] = useState<any[]>([]);
-  useEffect(() => { db.from("mt_checkins").select("*").in("semana", [sem, semOut]).then(({ data }: any) => setRows(data ?? [])); }, [sem]);
+  const t = useTransparencia();
+  useEffect(() => {
+    Promise.all([db.from("mt_checkins").select("*").in("semana", [sem, semOut]), db.rpc("rotina_status_ciclos", { _semanas: [sem, semOut] })]).then(([c, st]: any[]) => {
+      const cheios = c.data ?? [];
+      const so = (st.data ?? []).filter((r: any) => !cheios.some((x: any) => x.cadeira_id === r.cadeira_id && x.semana === r.semana && x.tipo === r.tipo))
+        .map((r: any) => ({ ...r, conteudo: { primeiro_envio_em: r.primeiro_envio_em }, soStatus: true }));
+      setRows([...cheios, ...so]);
+    });
+  }, [sem]);
   useEffect(() => { db.from("mt_rotina_riscos").select("*").lte("semana_criada", sem).then(({ data }: any) => setRiscos((data ?? []).filter(riscoAberto))); }, [sem]);
 
   if (b.loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
@@ -44,6 +53,8 @@ export default function SemanalVisao() {
 
   return (
     <div className="space-y-4">
+      <AvisoTransparencia ativo={t.ativo} />
+      {b.isGovernanca && <Card className="p-3"><InterruptorTransparencia t={t} /><p className="text-xs text-muted-foreground mt-1">Desligado: os diretores veem só o status do ciclo das outras cadeiras. Ligado: veem também o conteúdo (sem contatos de fora e sem anexos).</p></Card>}
       <Card className="p-4 sm:p-5 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Rotina semanal dos diretores</p>
@@ -72,6 +83,7 @@ export default function SemanalVisao() {
                 <div><h2 className="font-semibold">{c.nome}</h2><p className="text-xs text-muted-foreground">{c.diretor_nome ?? "Sem diretor"}</p></div>
                 <div className="flex gap-1 items-center text-xs">Ciclo <Selo c={c.id} /></div>
               </div>
+              {(ci?.soStatus || co?.soStatus) && <p className="text-xs text-muted-foreground">Conteúdo desta cadeira visível só com a transparência entre diretores ligada.</p>}
               {pri.length === 0 ? <p className="text-sm text-muted-foreground">Sem prioridades registradas.</p> : (
                 <ul className="space-y-1 text-sm">
                   {pri.map((p: any, i: number) => {

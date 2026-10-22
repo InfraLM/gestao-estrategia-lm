@@ -42,10 +42,11 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
   return <label className="block space-y-1"><span className="text-xs font-medium">{label}</span>{children}</label>;
 }
 
-export default function MetasCadastros() {
+export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: string[]; origemFixa?: string; embutido?: boolean } = {}) {
+  const mostra = (a: string) => !abas || abas.includes(a);
   const b = useMetasBase();
   const [edit, setEdit] = useState<{ tipo: string; row: any } | null>(null);
-  const [origemF, setOrigemF] = useState<string>("todas");
+  const [origemF, setOrigemF] = useState<string>(origemFixa ?? "todas");
   const [cadF, setCadF] = useState<string>("todas");
   const [statusF, setStatusF] = useState<string>("ativo");
 
@@ -143,7 +144,7 @@ export default function MetasCadastros() {
 
   return (
     <div className="space-y-4 max-w-[1400px]">
-      <div className="flex items-start justify-between gap-3 flex-wrap">
+      {!embutido && <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <h2 className="text-lg font-semibold tracking-tight">Cadastros · Sistema de Metas 2S26</h2>
           <p className="text-sm text-muted-foreground">Base compartilhada pelo Lançamento Mensal de Metas e pelo Check-in semanal.</p>
@@ -151,22 +152,23 @@ export default function MetasCadastros() {
         <Badge variant={b.isGov ? "default" : "outline"} className="gap-1">
           <ShieldCheck className="h-3 w-3" /> {b.isGov ? "Governança · pode editar" : "Diretor · somente leitura"}
         </Badge>
-      </div>
+      </div>}
+      {embutido && <p className="text-xs text-muted-foreground">{b.isGov ? "Governança · pode editar" : "Somente leitura · edição pela Governança"}</p>}
 
-      <Tabs defaultValue="indicadores">
+      <Tabs defaultValue={abas?.[0] ?? "indicadores"}>
         <div className="overflow-x-auto"><TabsList className="flex-wrap h-auto">
-          <TabsTrigger value="indicadores">Indicadores ({b.indicadores.length})</TabsTrigger>
-          <TabsTrigger value="iniciativas">Iniciativas ({b.iniciativas.length})</TabsTrigger>
-          <TabsTrigger value="okrs">OKRs ({b.okrs.length})</TabsTrigger>
-          <TabsTrigger value="objetivos">Objetivos BSC ({b.objetivos.length})</TabsTrigger>
-          <TabsTrigger value="cadeiras">Cadeiras ({b.cadeiras.length})</TabsTrigger>
-          {b.isGov && <TabsTrigger value="usuarios">Usuários e perfis</TabsTrigger>}
+          {mostra("indicadores") && <TabsTrigger value="indicadores">Indicadores ({b.indicadores.length})</TabsTrigger>}
+          {mostra("iniciativas") && <TabsTrigger value="iniciativas">Iniciativas ({b.iniciativas.length})</TabsTrigger>}
+          {mostra("okrs") && <TabsTrigger value="okrs">OKRs ({b.okrs.length})</TabsTrigger>}
+          {mostra("objetivos") && <TabsTrigger value="objetivos">Objetivos BSC ({b.objetivos.length})</TabsTrigger>}
+          {mostra("cadeiras") && <TabsTrigger value="cadeiras">Cadeiras ({b.cadeiras.length})</TabsTrigger>}
+          {b.isGov && mostra("usuarios") && <TabsTrigger value="usuarios">Usuários e perfis</TabsTrigger>}
         </TabsList></div>
 
         {/* INDICADORES */}
         <TabsContent value="indicadores" className="space-y-3">
           <div className="flex gap-2 flex-wrap items-end">
-            <div className="w-40"><Campo label="Origem"><Sel value={origemF} onChange={(v) => setOrigemF(v ?? "todas")} placeholder="Origem" items={[{ v: "todas", l: "Todas" }, { v: "bsc", l: "KPI do BSC" }, { v: "okr", l: "KR de OKR" }, { v: "cesta", l: "Cesta de metas" }]} /></Campo></div>
+            {!origemFixa && <div className="w-40"><Campo label="Origem"><Sel value={origemF} onChange={(v) => setOrigemF(v ?? "todas")} placeholder="Origem" items={[{ v: "todas", l: "Todas" }, { v: "bsc", l: "KPI do BSC" }, { v: "okr", l: "KR de OKR" }, { v: "cesta", l: "Cesta de metas" }]} /></Campo></div>}
             <div className="w-56"><Campo label="Cadeira"><Sel value={cadF} onChange={(v) => setCadF(v ?? "todas")} placeholder="Cadeira" items={[{ v: "todas", l: "Todas" }, ...cadItems]} /></Campo></div>
             <div className="w-36"><Campo label="Status"><Sel value={statusF} onChange={(v) => setStatusF(v ?? "todos")} placeholder="Status" items={[{ v: "todos", l: "Todos" }, { v: "ativo", l: "Ativos" }, { v: "arquivado", l: "Arquivados" }]} /></Campo></div>
             <div className="ml-auto"><BotaoNovo tipo="indicador" row={{}} label="Novo indicador" /></div>

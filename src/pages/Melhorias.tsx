@@ -85,7 +85,7 @@ interface MelhoriaEstrategica {
 // Mapeia diretor → área (aproximação para seed inicial)
 const DIRETOR_AREA: Record<string, Area> = {
   "Bruno Garcia": "Financeiro",
-  "Yuri Ribeiro": "Governança e Jurídico",
+  "Yuri Garcia": "Governança e Jurídico",
   "Iuri Eloi Franco": "Geração de Demanda",
   "Guilherme Vieira": "CX",
   "Naira Yurie": "BPMO",

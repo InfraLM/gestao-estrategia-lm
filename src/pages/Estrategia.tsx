@@ -1,4 +1,5 @@
 import { useConteudo } from "@/hooks/useConteudo";
+import { CadastroBsc } from "./Hubs";
 import { EditarConteudo } from "@/components/EditarConteudo";
 import BscArvoreKpis from "@/components/BscArvoreKpis";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -412,14 +413,16 @@ export default function Estrategia() {
         ))}
       </div>
 
-      <Tabs defaultValue="formulacao" className="w-full">
-        <TabsList className="grid grid-cols-3 w-full max-w-2xl">
+      <Tabs defaultValue={new URLSearchParams(window.location.search).get("aba") === "cadastro-bsc" ? "cadastro-bsc" : "formulacao"} className="w-full">
+        <TabsList className="grid grid-cols-2 sm:grid-cols-4 h-auto w-full max-w-3xl">
           <TabsTrigger value="formulacao">Formulação Estratégica</TabsTrigger>
           <TabsTrigger value="planejamento">Planejamento (BSC)</TabsTrigger>
           <TabsTrigger value="okrs">OKRs Semestrais</TabsTrigger>
+          <TabsTrigger value="cadastro-bsc">Cadastro BSC</TabsTrigger>
         </TabsList>
 
         {/* FORMULAÇÃO */}
+        <TabsContent value="cadastro-bsc" className="mt-6"><CadastroBsc /></TabsContent>
         <TabsContent value="formulacao" className="space-y-6 mt-6">
           {/* ICP */}
           <Card>
