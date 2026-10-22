@@ -10,7 +10,9 @@ export function usePortfolioVinculos() {
   const fail=results.find(r=>r.error)?.error;setErro(fail?.message??'');
   const [v,p,i,o,ind,okr,c,g]=results;setVinculos((v.data??[]) as VinculoPortfolio[]);
   const fs=[...(p.data??[]).map(x=>({...x,fonte_tipo:'projeto'})),...(i.data??[]).map(x=>({...x,nome:x.titulo,fonte_tipo:'iniciativa'}))];
-  const permissions=await Promise.all(fs.map(async f=>{const {data}=await supabase.rpc('portfolio_pode_editar',{_tipo:f.fonte_tipo,_id:f.id});return {...f,podeEditar:data===true};}));setFontes(permissions);
+  const {data:direitos}=await supabase.rpc('portfolio_permissoes');
+  const permitidos=new Set((direitos??[]).map((d:any)=>`${d.fonte_tipo}:${d.fonte_id}`));
+  setFontes(fs.map(f=>({...f,podeEditar:permitidos.has(`${f.fonte_tipo}:${f.id}`)})));
   const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).formatToParts(new Date());const sem=`${parts.find(p=>p.type==='year')?.value}/${Number(parts.find(p=>p.type==='month')?.value)<=6?1:2}`;
   const vig=new Set((okr.data??[]).filter(o=>o.semestre===sem).map(o=>o.id));
   setAlvos([...(o.data??[]).map(o=>({...o,nome:o.descricao,tipo:'objetivo'})),...(ind.data??[]).filter(i=>i.origem!=='okr'||vig.has(i.okr_id??'')).map(i=>({...i,tipo:'indicador'}))]);setCadeiras(c.data??[]);setPodeGerar(g.data===true);setLoading(false);

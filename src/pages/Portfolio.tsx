@@ -264,7 +264,7 @@ export default function Portfolio() {
       </Card>
 
       <PortfolioVinculos fonteTipo="projeto" projetoCodigos={filtered.map(p => p.id)} />
-      {/* View */
+      {/* View */}
       {view === "tabela" ? (
         <Card className="shadow-card overflow-hidden">
           <div className="overflow-x-auto">
