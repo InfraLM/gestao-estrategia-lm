@@ -41,6 +41,7 @@ Deno.serve(async req => {
     const [acoes, decisoes, vinculos, sugestoes, objetivos, indicadores, okrs] = resultados.map(r => r.data ?? []);
     const f: Fonte[] = [...acoes.map((a: any) => ({ chave: `acao:${a.id}`, origem_tipo: 'acao' as const, origem_id: a.id, codigo: a.comite_codigo ?? 'Ata', titulo: a.titulo, texto: `${a.titulo}\n${a.descricao ?? ''}`, comite: a.comite_codigo ?? '' })), ...decisoes.map((d: any) => ({ chave: `decisao:${d.id}`, origem_tipo: 'decisao' as const, origem_id: d.id, codigo: d.codigo, titulo: d.titulo, texto: `${d.titulo}\n${d.decisao ?? ''}\n${d.racional ?? ''}`, comite: d.comite_codigo ?? '' }))];
     const livres = f.filter(f => !vinculos.some((v: any) => v.origem_tipo === f.origem_tipo && v.origem_id === f.origem_id));
+    for (const fonte of f) fonte.texto = fonte.texto.slice(0, 4000);
     const temSug = (f: Fonte) => sugestoes.some((s: any) => s.origem_tipo === f.origem_tipo && s.origem_id === f.origem_id);
     const dataSP = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit' }).formatToParts(new Date());
     const ano = dataSP.find(p => p.type === 'year')?.value; const mes = Number(dataSP.find(p => p.type === 'month')?.value);
@@ -52,7 +53,7 @@ Deno.serve(async req => {
     if (runsError) return resposta({ error: 'Não foi possível ler o histórico da geração.' }, 500);
     const analisadas = new Set((runs ?? []).filter(r => r.status === 'concluido').flatMap(r => r.fontes));
     const candidatos = livres.filter(f => novamente ? !sugestoes.some((s: any) => s.origem_tipo === f.origem_tipo && s.origem_id === f.origem_id && s.status === 'pendente') : !temSug(f) && !analisadas.has(f.chave));
-    if (modo === 'resumo') return resposta({ fontes: f.map(f => ({ ...f, texto: undefined, situacao: temSug(f) ? 'com_sugestao' : analisadas.has(f.chave) ? 'analisado_sem_sugestao' : 'sem_sugestao' })), candidatos: candidatos.map(f => f.chave), alvos, limite: LIMITE_GERACAO, lote: TAMANHO_LOTE, semestre });
+    if (modo === 'resumo') return resposta({ fontes: f.map(f => ({ ...f, texto: undefined, situacao: !livres.includes(f) ? 'vinculado' : temSug(f) ? 'com_sugestao' : analisadas.has(f.chave) ? 'analisado_sem_sugestao' : 'sem_sugestao' })), candidatos: candidatos.map(f => f.chave), alvos, limite: LIMITE_GERACAO, lote: TAMANHO_LOTE, semestre });
     if ((runs ?? []).some(r => r.bloqueio === 'provider_denied')) return resposta({ error: 'Acesso ao provedor bloqueado. A geração permanece pausada até o acesso ser restabelecido.' }, 403);
     const escolhidas = solicitadas.length ? candidatos.filter(f => solicitadas.includes(f.chave)) : candidatos.slice(0, LIMITE_GERACAO);
     if (!escolhidas.length || (solicitadas.length && escolhidas.length !== new Set(solicitadas).size)) return resposta({ error: 'Não há fontes elegíveis nessa seleção.' }, 400);

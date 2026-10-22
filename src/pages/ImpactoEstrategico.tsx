@@ -36,7 +36,7 @@ export default function ImpactoEstrategico() {
   const aba = ["vinculos", "cadastro", "processos"].includes(pedida) || (pedida === "sugestoes" && podeSugerir) ? pedida : "objetivos";
   return (
     <Tabs value={aba} onValueChange={(v) => { const n = new URLSearchParams(sp); if (v === "objetivos") n.delete("aba"); else n.set("aba", v); setSp(n, { replace: true }); }} className="space-y-4">
-      <TabsList>
+      <TabsList className="flex h-auto flex-wrap justify-start">
         <TabsTrigger value="objetivos">Objetivos</TabsTrigger>
         <TabsTrigger value="vinculos">Por vínculo</TabsTrigger>
         <TabsTrigger value="cadastro">Cadastro de iniciativas</TabsTrigger>
