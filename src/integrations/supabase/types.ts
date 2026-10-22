@@ -4987,6 +4987,18 @@ export type Database = {
         }
         Returns: string
       }
+      rotina_dashboard_kpis: {
+        Args: { _semanas: string[] }
+        Returns: {
+          cadeira_id: string
+          completude: Json
+          enviado_em: string
+          kpis: Json
+          primeiro_envio_em: string
+          semana: string
+          status: string
+        }[]
+      }
       rotina_pode_ler_checkin: { Args: { _cadeira: string }; Returns: boolean }
       rotina_retrato: {
         Args: { _cadeira: string; _comp: string }

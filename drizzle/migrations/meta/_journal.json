@@ -344,6 +344,13 @@
       "when": 1792709661991,
       "tag": "0048_frequencia_piso_fonte",
       "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1792711186138,
+      "tag": "0049_rotina_dashboard_kpis",
+      "breakpoints": true
     }
   ]
 }
