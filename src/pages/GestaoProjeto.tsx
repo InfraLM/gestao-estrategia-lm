@@ -25,6 +25,7 @@ import { SubmissaoProjetoDialog } from "@/components/SubmissaoProjetoDialog";
 import { Upload } from "lucide-react";
 import { useColumnWidths, ResizeHandle } from "@/hooks/useColumnWidths";
 import { StatusReportTab, useStatusProjeto, compLabel } from "@/components/StatusReportProjeto";
+import PortfolioVinculos from "@/components/PortfolioVinculos";
 import EmpilhadosVinculo from "@/components/EmpilhadosVinculo";
 import { PredecessoraDialog, PredecessorBadge, isEntregaBloqueada } from "@/components/PredecessoraDialog";
 
@@ -300,6 +301,7 @@ function GestaoProjetoInner({ projeto: pj }: { projeto?: Projeto }) {
         </TabsContent>
 
         <TabsContent value="iniciativas" className="mt-5">
+          <PortfolioVinculos fonteTipo="projeto" projetoCodigo={projeto.id} />
           <EmpilhadosVinculo projetoCodigo={projeto.id} />
         </TabsContent>
 

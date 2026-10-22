@@ -1,3 +1,4 @@
+import PortfolioVinculos from "@/components/PortfolioVinculos";
 import { TIPO_LBL } from "@/lib/avaliacaoBsc";
 import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -214,6 +215,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
 
         {/* INICIATIVAS */}
         <TabsContent value="iniciativas" className="space-y-3">
+          <PortfolioVinculos fonteTipo="iniciativa" />
           <div className="flex justify-end">{podeCriarIniciativa && <Button size="sm" onClick={() => abrir("iniciativa", { status: "a_iniciar", cadeira_id: b.minhaCadeira })}><Plus className="h-4 w-4 mr-1" />Nova iniciativa</Button>}</div>
           <Card className="overflow-x-auto">
             <table className="w-full text-sm">

@@ -4,7 +4,7 @@ export const ROTULO_ORIGEM: Record<OrigemImpacto, string> = {
 };
 export type ItemImpacto = {
   id: string; titulo: string; origem: OrigemImpacto; status: string | null; prazo: string | null;
-  responsavel: string | null; cadeira: string | null; codigo?: string | null; link?: string | null;
+  responsavel: string | null; cadeira: string | null; codigo?: string | null; link?: string | null; aValidar?: boolean; selos?: string[];
 };
 
 const ENCERRADO = /conclu|cancel|encerr|implantad|realizad|feito|done/i;
