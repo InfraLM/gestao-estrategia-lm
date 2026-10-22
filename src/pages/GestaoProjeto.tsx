@@ -25,6 +25,7 @@ import { SubmissaoProjetoDialog } from "@/components/SubmissaoProjetoDialog";
 import { Upload } from "lucide-react";
 import { useColumnWidths, ResizeHandle } from "@/hooks/useColumnWidths";
 import { StatusReportTab, useStatusProjeto, compLabel } from "@/components/StatusReportProjeto";
+import EmpilhadosVinculo from "@/components/EmpilhadosVinculo";
 import { PredecessoraDialog, PredecessorBadge, isEntregaBloqueada } from "@/components/PredecessoraDialog";
 
 const tooltipStyle = {
@@ -280,6 +281,7 @@ function GestaoProjetoInner({ projeto: pj }: { projeto?: Projeto }) {
           <TabsTrigger value="stakeholders" className="gap-1.5"><Users className="h-3.5 w-3.5" /> Stakeholders</TabsTrigger>
           <TabsTrigger value="submissoes" className="gap-1.5"><Upload className="h-3.5 w-3.5" /> Submissões</TabsTrigger>
           <TabsTrigger value="statusreport" className="gap-1.5"><FileText className="h-3.5 w-3.5" /> Status Report</TabsTrigger>
+          <TabsTrigger value="iniciativas" className="gap-1.5"><ListChecks className="h-3.5 w-3.5" /> Iniciativas</TabsTrigger>
           <TabsTrigger value="historico" className="gap-1.5"><History className="h-3.5 w-3.5" /> Histórico</TabsTrigger>
         </TabsList>
 
@@ -295,6 +297,10 @@ function GestaoProjetoInner({ projeto: pj }: { projeto?: Projeto }) {
 
         <TabsContent value="statusreport" className="mt-5">
           <StatusReportTab lista={statusReports} />
+        </TabsContent>
+
+        <TabsContent value="iniciativas" className="mt-5">
+          <EmpilhadosVinculo projetoCodigo={projeto.id} />
         </TabsContent>
 
         {/* SUBMISSÕES — visão consolidada */}
