@@ -1,4 +1,3 @@
-import { lerMeta } from '@/lib/avaliacaoBsc';
 export const dinheiro = (n: number | null) => n == null ? 'Sem budget informado' : n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 export type Principal = { objetivo: string | null; validado: boolean; conflito: boolean };
 export function principalProjeto(id: string, vs: any[], inds: any[]): Principal {
@@ -40,7 +39,7 @@ export function atingimentoMeta(valor: number | null, meta: unknown, sentido: st
   if (valor == null) return null;
   const escalar = valorEscalar(meta);
   const m = escalar == null ? null : { tipo: 'valor' as const, v: escalar, sentido: undefined as 'maior' | 'menor' | undefined };
-  if (!m || m.tipo === 'faixa' || m.v === 0) return null;
+  if (!m || m.v === 0) return null;
   const menor = (m.sentido ?? sentido) === 'menor' || typeof meta === 'string' && /^[<≤]/.test(meta.trim());
   return menor ? valor === 0 ? null : m.v / valor * 100 : valor / m.v * 100;
 }
