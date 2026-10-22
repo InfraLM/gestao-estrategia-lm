@@ -1882,6 +1882,30 @@ export type Database = {
           },
         ]
       }
+      mt_extra_motivos: {
+        Row: {
+          ativo: boolean
+          exige_detalhe: boolean
+          id: string
+          nome: string
+          ordem: number
+        }
+        Insert: {
+          ativo?: boolean
+          exige_detalhe?: boolean
+          id?: string
+          nome: string
+          ordem?: number
+        }
+        Update: {
+          ativo?: boolean
+          exige_detalhe?: boolean
+          id?: string
+          nome?: string
+          ordem?: number
+        }
+        Relationships: []
+      }
       mt_indicadores: {
         Row: {
           cadeira_id: string | null
