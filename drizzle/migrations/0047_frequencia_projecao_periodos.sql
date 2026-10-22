@@ -1,0 +1,6 @@
+CREATE OR REPLACE FUNCTION public.rotina_situacoes_kpi_frequencia() RETURNS jsonb LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$
+ SELECT coalesce(jsonb_agg(to_jsonb(s)||jsonb_build_object('periodo_apontado',k.resposta->>'periodo_apontado','desvio_critico',coalesce((k.resposta->>'desvio_critico')::boolean,false))), '[]') FROM public.rotina_situacoes_kpi() s
+ LEFT JOIN LATERAL(SELECT r AS resposta FROM public.mt_checkins c CROSS JOIN LATERAL jsonb_array_elements(coalesce(c.conteudo->'kpis_resposta','[]')) r WHERE c.cadeira_id=s.cadeira_id AND c.semana=s.semana AND c.tipo='checkout' AND c.status='enviado' AND r->>'indicador_id'=s.indicador_id LIMIT 1) k ON true;
+$$;
+REVOKE ALL ON FUNCTION public.rotina_situacoes_kpi_frequencia() FROM PUBLIC,anon; GRANT EXECUTE ON FUNCTION public.rotina_situacoes_kpi_frequencia() TO authenticated;
+COMMENT ON FUNCTION public.rotina_situacoes_kpi_frequencia() IS 'Adds only reporting-period and exception metadata to rows already authorized by rotina_situacoes_kpi; never returns cause/impact/action or private checkout content.';

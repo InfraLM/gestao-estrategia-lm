@@ -19,6 +19,7 @@ import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc"
 import { useConformidade, pctC } from "@/components/Conformidade";
 import { ExtrasLeitura, ResumoExtras } from '@/components/EntregasExtras';
 import AvisosCiclo from '@/components/AvisosCiclo';
+import DesviosKpiPauta from '@/components/DesviosKpiPauta';
 
 const db = supabase as any;
 const ORIGENS = ["bsc", "okr", "cesta"];
@@ -209,6 +210,7 @@ export default function MetasPainel() {
 
       {b.isGovernanca && <ResumoExtras mes={comp} cadeiras={cadeiras} />}
       {b.isGovernanca && <AvisosCiclo />}
+      {(b.isGovernanca || b.cadeiras.some(c=>c.nome==='CEO'&&c.id===b.minhaCadeira)) && <DesviosKpiPauta indicadores={b.indicadores} cadeiras={b.cadeiras}/>}
       <Card className="p-4">
         <h2 className="font-semibold mb-3">Avisos de mudanças em dados já enviados</h2>
         {avisos.length === 0 && reaberturas.length === 0 && <p className="text-sm text-muted-foreground">Nenhuma alteração após envio nesta competência.</p>}

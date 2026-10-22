@@ -12,6 +12,8 @@ import { competenciaDaSemana } from "@/lib/rotinaSemanal";
 import { celulaMes, marcarCriticos, grupoDo, GRUPO_LBL, type Grupo, type Celula } from "@/lib/matrizApontamentos";
 import { cn } from "@/lib/utils";
 import rev02 from "@/data/bscRev02.json";
+import { devidoNoCiclo, previstoNoMes } from '@/lib/frequenciaApontamento';
+import { addDias } from '@/lib/rotinaSemanal';
 
 const db = supabase as any;
 const COR: Record<string, string> = { on: "bg-success/15 text-success", off: "bg-destructive/15 text-destructive", acomp: "bg-muted text-muted-foreground", sem_meta: "bg-muted/50 text-muted-foreground", pendente: "bg-warning/15 text-warning", encerrada: "bg-muted/50 text-muted-foreground" };
@@ -51,8 +53,9 @@ export default function MatrizApontamentos() {
     return inds.map((i: any) => {
       const ck = cks.filter((c) => c.cadeira_id === i.cadeira_id);
       const sit = arv.m[String(i.nome).trim()]; const arvore = sit ? { valor: sit, data: arv.d } : null;
-      const realizado = (comp: string) => lancs.filter((x) => x.indicador_id === i.id && x.competencia === comp && !x.sem_medicao).sort((a, z) => z.revisao - a.revisao)[0]?.valor ?? null;
-      const lancDe = (comp: string) => lancs.filter((x) => x.indicador_id === i.id && x.competencia === comp).sort((a, z) => z.revisao - a.revisao)[0] ?? null;
+      const fora=(comp:string)=>!!i.frequencia&&(!previstoNoMes(i,comp)||['trimestral','semestral'].includes(i.frequencia));
+      const realizado = (comp: string) => lancs.filter((x) => x.indicador_id === i.id && (fora(comp)?x.competencia<=comp:x.competencia===comp) && !x.sem_medicao).sort((a,z)=>z.competencia.localeCompare(a.competencia)||z.revisao-a.revisao)[0]?.valor ?? null;
+      const lancDe = (comp: string) => lancs.filter((x) => x.indicador_id === i.id && (fora(comp)?x.competencia<=comp:x.competencia===comp)).sort((a,z)=>z.competencia.localeCompare(a.competencia)||z.revisao-a.revisao)[0] ?? null;
       const metaMes = (comp: string) => metas.find((x) => x.indicador_id === i.id && x.competencia === comp)?.meta_mes ?? null;
       const mensais = marcarCriticos(MESES_2S26.map((comp) => celulaMes(i, comp, metaMes(comp), realizado(comp) == null ? null : Number(realizado(comp)), arvore, ck, new Date(), lancDe(comp))));
       const porMes = Object.fromEntries(MESES_2S26.map((m, k) => [m, mensais[k]]));
@@ -61,7 +64,7 @@ export default function MatrizApontamentos() {
         const k = ck.find((c) => c.semana === s)?.conteudo?.kpis_resposta?.find((x: any) => x.indicador_id === i.id && x.situacao_atual);
         const base = porMes[competenciaDaSemana(s)];
         const kk = ck.find((c) => c.semana === s)?.conteudo?.kpis_resposta?.find((x: any) => x.indicador_id === i.id && (x.situacao_atual || x.declaracao || x.status_entrega));
-        semanais[s] = { ...(base ?? { aval: "acomp", origem: null, ating: null, meta: null }), valor: k ? numeroBr(k.situacao_atual) : null, origem: kk ? `checkout de ${dm(s)}` : null, status_entrega: kk?.status_entrega ?? base?.status_entrega ?? null } as Celula;
+        semanais[s] = { ...(base ?? { aval: "acomp", origem: null, ating: null, meta: null }), foraCalendario: !!i.frequencia&&!devidoNoCiclo(i,addDias(s,7))&&!kk?.desvio_critico, valor: k ? numeroBr(k.situacao_atual) : base?.valor??null, origem: kk ? `checkout de ${dm(s)}` : base?.origem??null, status_entrega: kk?.status_entrega ?? base?.status_entrega ?? null } as Celula;
       }
       return { i, g: grupoDo(i) as Grupo, porMes, semanais, alerta: alertas.has(i.id) };
     });
@@ -116,6 +119,7 @@ export default function MatrizApontamentos() {
                   return (
                     <td key={c} className="p-1" title={`${AVALIACAO_LBL[x.aval]}${x.origem ? ` · ${x.origem}` : ""}`}>
                       <div className={cn("rounded p-1 text-center", x.critico ? "bg-destructive text-destructive-foreground" : COR[x.aval], x.alertaDeclarado && "ring-1 ring-destructive")}>
+                        {x.foraCalendario&&<p className="text-muted-foreground">Fora do calendário</p>}
                         {x.fonte === "entrega" ? <>
                           <div className="font-semibold">{x.status_entrega ? STATUS_ENTREGA_LBL[x.status_entrega] : AVALIACAO_LBL[x.aval]}</div>
                           <div className="opacity-80">{x.prazoVencido ? "prazo vencido" : l.i.prazo_entrega ? `prazo ${dm(l.i.prazo_entrega)}` : "status de entrega"}</div>

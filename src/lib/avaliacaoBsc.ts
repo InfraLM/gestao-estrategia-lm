@@ -1,4 +1,5 @@
 /** Avaliação dos KPIs de BSC (fora da nota): On track / Off track só depois do fim do mês ou do período da meta. Calculada na leitura, nunca gravada. */
+import { previstoNoMes, type CalendarioKpi } from '@/lib/frequenciaApontamento';
 export type MetaLida = { tipo: "valor"; v: number; sentido?: "maior" | "menor" } | { tipo: "faixa"; min: number; max: number };
 export type Avaliacao = "on" | "off" | "acomp" | "sem_meta" | "pendente" | "encerrada";
 export const AVALIACAO_LBL: Record<Avaliacao, string> = { on: "On track", off: "Off track", acomp: "Em acompanhamento", sem_meta: "Sem meta registrada", pendente: "Pendente de apontamento", encerrada: "Encerrada" };
@@ -71,7 +72,7 @@ const dmBr = (iso: string) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
 /** Última situação atual NUMÉRICA: checkout ENVIADO (até a competência) ou árvore de KPIs, valendo a mais recente. Texto livre é ignorado. */
 export function situacaoNumerica(indicador_id: string, arvore: ArvoreSit, checkouts: CheckoutReg[], competencia: string | null) {
   let ck: { valor: number; fonte: string; data: string } | null = null;
-  const enviados = checkouts.filter((r) => r.status === "enviado" && (!competencia || competenciaDaSemana(r.semana) <= competencia)).sort((a, b) => b.semana.localeCompare(a.semana));
+  const enviados = checkouts.filter((r) => r.status === "enviado" && (!competencia || (r.conteudo?.kpis_resposta?.find((k:any)=>k.indicador_id===indicador_id)?.periodo_apontado ?? competenciaDaSemana(r.semana)) <= competencia)).sort((a, b) => b.semana.localeCompare(a.semana));
   for (const r of enviados) {
     const k = normalizarCheckout(r.conteudo).kpis_resposta.find((x) => x.indicador_id === indicador_id && x.situacao_atual?.trim() && numeroBr(x.situacao_atual) != null);
     if (k) { ck = { valor: numeroBr(k.situacao_atual!)!, fonte: `checkout de ${dmBr(r.semana)}`, data: r.enviado_em ?? r.semana }; break; }
@@ -82,11 +83,14 @@ export function situacaoNumerica(indicador_id: string, arvore: ArvoreSit, checko
   return (av.data || "") > ck.data ? av : ck;
 }
 
-export type EntradaKpiBsc = Omit<EntradaBsc, "situacao"> & { indicador_id: string };
+export type EntradaKpiBsc = Omit<EntradaBsc, "situacao"> & CalendarioKpi & { indicador_id: string; fora_calendario?: boolean };
 /** Apontamento: (1) realizado lançado no mês; (2) situação numérica mais recente. Devolve a origem quando vem da situação. */
 export function avaliarKpiBsc(e: EntradaKpiBsc, arvore: ArvoreSit, checkouts: CheckoutReg[], hoje = new Date()): { aval: Avaliacao; origem: string | null } {
   const sit = e.realizado == null ? situacaoNumerica(e.indicador_id, arvore, checkouts, e.competencia) : null;
-  const aval = avaliarBsc({ ...e, realizado: e.realizado ?? sit?.valor ?? null }, hoje);
+  const fora = e.fora_calendario ?? (!!e.competencia && !!e.frequencia && !previstoNoMes(e,e.competencia));
+  const valor = e.realizado ?? sit?.valor ?? null;
+  const meta = lerMeta(e.meta_mes ?? e.meta_semestre ?? e.meta_texto);
+  const aval = fora ? (valor!=null && meta ? (cumpre(valor,meta,e.sentido)?'on':'off') : 'acomp') : avaliarBsc({ ...e, realizado: valor }, hoje);
   const origem = sit && (aval === "on" || aval === "off") ? `pela situação apontada no ${sit.fonte === "Árvore de KPIs" ? "Árvore de KPIs" : sit.fonte}` : null;
   return { aval, origem: origem?.replace("no Árvore", "na Árvore") ?? null };
 }
@@ -113,8 +117,9 @@ export function apontamentoMaisRecente(indicador_id: string, competencia: string
   const cand: Apontamento[] = [];
   if (lanc && (lanc.declaracao || lanc.status_entrega)) cand.push({ declaracao: (lanc.declaracao as any) ?? null, justificativa: lanc.justificativa ?? null, status_entrega: (lanc.status_entrega as any) ?? null, avanco_pct: lanc.avanco_pct ?? null, data: lanc.updated_at ?? "", origem: "Lançar mês" });
   for (const r of checkouts) {
-    if (r.status !== "enviado" || (competencia && competenciaDaSemana(r.semana) !== competencia)) continue;
+    if (r.status !== "enviado") continue;
     const k = (r.conteudo?.kpis_resposta ?? []).find((x: any) => x.indicador_id === indicador_id && (x.declaracao || x.status_entrega));
+    if (competencia && (k?.periodo_apontado ?? competenciaDaSemana(r.semana)) !== competencia) continue;
     if (k) cand.push({ declaracao: k.declaracao ?? null, justificativa: k.justificativa ?? null, status_entrega: k.status_entrega ?? null, avanco_pct: k.avanco_pct != null && k.avanco_pct !== "" ? Number(k.avanco_pct) : null, data: r.enviado_em ?? r.semana, origem: `checkout de ${dmBr(r.semana)}` });
   }
   return cand.sort((a, b) => b.data.localeCompare(a.data))[0] ?? null;
@@ -135,12 +140,13 @@ export type ResultadoTipo = { aval: Avaliacao; origem: string | null; fonte: Fon
 /** Regra única por tipo. V: automático após o fim do mês. S: declaração do diretor no mês; automático só no fim do período. E: status × prazo. */
 export function avaliarPorTipo(e: EntradaTipo, arvore: ArvoreSit, checkouts: CheckoutReg[], hoje = new Date()): ResultadoTipo {
   const tipo = e.tipo ?? "valor_mensal";
+  const fora = e.fora_calendario ?? (!!e.competencia && !!e.frequencia && !previstoNoMes(e,e.competencia));
   const h = hojeIso(hoje);
   const mesFechado = !!e.competencia && h > fimDoMes(e.competencia);
   const ap = e.apontamento ?? null;
   if (tipo === "entrega") {
     const aval = farolEntrega(ap?.status_entrega ?? null, e.prazo_entrega ?? null, hoje);
-    return { aval: aval === "pendente" && !mesFechado ? "acomp" : aval, origem: ap?.status_entrega ? `status de entrega · ${ap.origem}` : null, fonte: "entrega" };
+    return { aval: aval === "pendente" && (!mesFechado || fora) ? "acomp" : aval, origem: ap?.status_entrega ? `status de entrega · ${ap.origem}` : null, fonte: "entrega" };
   }
   if (tipo === "valor_periodo") {
     if (h > FIM_PERIODO) {
@@ -148,8 +154,8 @@ export function avaliarPorTipo(e: EntradaTipo, arvore: ArvoreSit, checkouts: Che
       return { ...r, aval: r.aval === "acomp" ? "pendente" : r.aval, fonte: "calculado" };
     }
     if (ap?.declaracao) return { aval: ap.declaracao, origem: `declarado pelo diretor · ${ap.origem}`, fonte: "declarado" };
-    return { aval: mesFechado ? "pendente" : "acomp", origem: null, fonte: "declarado" };
+    return { aval: mesFechado && !fora ? "pendente" : "acomp", origem: null, fonte: "declarado" };
   }
   const r = avaliarKpiBsc(e, arvore, checkouts, hoje);
-  return { ...r, aval: r.aval === "acomp" && mesFechado ? "pendente" : r.aval, fonte: "calculado" };
+  return { ...r, aval: r.aval === "acomp" && mesFechado && !fora ? "pendente" : r.aval, fonte: "calculado" };
 }

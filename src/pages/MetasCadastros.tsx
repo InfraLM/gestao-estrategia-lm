@@ -1,4 +1,5 @@
 import PortfolioVinculos from "@/components/PortfolioVinculos";
+import FrequenciaKpi, { CalendarioApontamento } from '@/components/FrequenciaKpi';
 import { TIPO_LBL } from "@/lib/avaliacaoBsc";
 import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -67,6 +68,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
 
   if (b.loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
   const ro = !b.isGov;
+  const editaFrequencia = b.isGovernanca || b.cadeiras.some(c => c.nome === 'CEO' && c.id === b.minhaCadeira);
   const abrir = (tipo: string, row: any) => setEdit({ tipo, row: { ...row } });
   const set = (k: string, v: any) => setEdit((e) => e && { ...e, row: { ...e.row, [k]: v } });
   const remover = async (tabela: string, id: string) => {
@@ -181,7 +183,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
               <thead className="bg-muted/50 text-xs text-muted-foreground"><tr>
                 <th className="text-left p-2 freeze-col-1 bg-muted">Código</th><th className="text-left p-2">Nome</th><th className="p-2">Origem</th>
                 <th className="text-left p-2">Objetivo</th><th className="text-left p-2">Cadeira</th><th className="p-2">Sentido</th>
-                <th className="p-2">Tipo de apontamento</th><th className="text-left p-2">Meta semestral/anual</th><th className="p-2">Curva</th><th className="p-2">Status</th><th className="p-2" />
+                <th className="p-2">Tipo de apontamento</th><th className="p-2">Frequência de apontamento</th><th className="text-left p-2">Meta semestral/anual</th><th className="p-2">Curva</th><th className="p-2">Status</th><th className="p-2" />
               </tr></thead>
               <tbody>
                 {indicadores.map((i) => {
@@ -196,6 +198,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
                       <td className="p-2">{nomeCad(i.cadeira_id)}</td>
                       <td className="p-2 text-center text-xs">{i.sentido === "maior" ? "↑ maior" : "↓ menor"}</td>
                       <td className="p-2 text-center text-xs"><Badge variant="secondary" className="text-[10px]">{TIPO_LBL[i.tipo_apontamento ?? "valor_mensal"]}</Badge>{i.tipo_apontamento === "entrega" && i.prazo_entrega && <div className="text-[11px] text-muted-foreground">prazo {new Date(i.prazo_entrega + "T12:00:00").toLocaleDateString("pt-BR")}</div>}{i.status_implantacao_medicao && <div><Badge variant="outline" className="text-[10px] mt-1" title="Status de implantação da medição (planilha rev. 17.09.26)">medição: {i.status_implantacao_medicao}</Badge></div>}</td>
+                      <td className="p-2"><FrequenciaKpi kpi={i} podeEditar={editaFrequencia} reload={b.reload}/></td>
                       <td className="p-2 text-xs">{i.meta_semestre != null ? `${fmtNum(i.meta_semestre)} ${i.unidade ?? ""}` : i.meta_texto ?? "—"}</td>
                       <td className="p-2 text-center text-xs">{nMetas ? `${nMetas}/6` : <span className="text-warning">pendente</span>}</td>
                       <td className="p-2 text-center"><Badge variant={i.status === "ativo" ? "default" : "secondary"} className="text-[10px]">{i.status}</Badge></td>
@@ -210,6 +213,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
               </tbody>
             </table>
           </Card>
+          <CalendarioApontamento indicadores={indicadores.filter(i=>!i.parent_id)} cadeiras={b.cadeiras.filter(c=>c.ativo)}/>
           <p className="text-xs text-muted-foreground">Arquivados saem dos lançamentos, mas o histórico é preservado. Peso 0 aparece em seção própria e não entra na nota.</p>
         </TabsContent>
 

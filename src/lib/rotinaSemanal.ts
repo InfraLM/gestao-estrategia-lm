@@ -1,6 +1,7 @@
 /** Regras puras do formulário semanal (check-in / checkout). Lê registros antigos (sem `v`) sem perder dados. */
 import type { PrioridadeSemanal } from "@/lib/governancaPendencias";
 import { EntregaExtra, normalizarExtras, errosExtras } from "@/lib/entregasExtras";
+import type { CalendarioKpi } from '@/lib/frequenciaApontamento';
 
 export type Responsavel = { tipo: "" | "eu" | "lider" | "cadeira" | "externo"; cadeira_id?: string; nome?: string; email?: string; contato_id?: string; cargo_id?: string };
 /** Vínculos múltiplos de uma ação (ids de mt_indicadores / projetos). */
@@ -18,11 +19,12 @@ export type Entrega = {
   titulo: string; status: "entregue" | "parcial" | "nao_entregue" | ""; motivo: string; iniciativa_id?: string; novo_status_ini?: string;
   gov_acao_id?: string; gov_comite_codigo?: string; prioridade_id?: string; responsavel?: Responsavel; herdada_de?: string; vinculos?: Vinculos;
 };
-export type KpiRetrato = {
+export type KpiRetrato = CalendarioKpi & {
   indicador_id: string; codigo: string; nome: string; origem: "bsc" | "okr" | "cesta"; peso: number; unidade: string | null;
   competencia: string | null; meta_mes: number | null; realizado: number | null; atingimento: number | null; faixa: string | null; congelado_em: string;
   sentido?: "maior" | "menor"; nivel?: string | null; meta_semestre?: number | null; meta_texto?: string | null;
   tipo_apontamento?: "valor_mensal" | "valor_periodo" | "entrega"; prazo_entrega?: string | null;
+  periodo_inicio?: string; periodo_fim?: string; periodo_label?: string; desvio_critico?: boolean; desvio_id?: string;
 };
 export type KpiResposta = {
   indicador_id: string; ok: boolean | null; impacto: string; plano: string; vira_iniciativa: boolean; prazo: string;
@@ -30,6 +32,7 @@ export type KpiResposta = {
   situacao_atual?: string; vinculos?: Vinculos;
   /** Tipo S: declaração do diretor no mês. Tipo E: status de entrega. */
   declaracao?: "on" | "off" | null; justificativa?: string; status_entrega?: "" | "nao_iniciada" | "em_implantacao" | "implantada" | "atrasada" | "cancelada"; avanco_pct?: string; evidencia?: string;
+  desvio_critico?: boolean; causa?: string; periodo_apontado?: string;
 };
 export type KpiLegado = { indicador_id: string; valor: string; situacao: string; comentario: string };
 export type CheckoutV2 = {
@@ -123,10 +126,12 @@ export function montarRetrato(base: any[], competencia: string | null, faixas: F
     const at = competencia ? atingir(b.realizado ?? null, b.meta_mes ?? null, b.sentido) : null;
     return {
       indicador_id: b.indicador_id, codigo: b.codigo, nome: b.nome, origem: b.origem, peso: Number(b.peso ?? 0), unidade: b.unidade ?? null,
-      competencia, meta_mes: competencia ? b.meta_mes ?? null : null, realizado: competencia ? b.realizado ?? null : null,
+      competencia: b.competencia ?? competencia, meta_mes: (b.competencia ?? competencia) ? b.meta_mes ?? null : null, realizado: (b.competencia ?? competencia) ? b.realizado ?? null : null,
       atingimento: b.origem === "bsc" || (b.tipo_apontamento ?? "valor_mensal") !== "valor_mensal" ? null : at, faixa: null, congelado_em: agora,
       sentido: b.sentido, nivel: b.nivel ?? null, meta_semestre: b.meta_semestre ?? null, meta_texto: b.meta_texto ?? null,
       tipo_apontamento: b.tipo_apontamento ?? "valor_mensal", prazo_entrega: b.prazo_entrega ?? null,
+      frequencia: b.frequencia, mes_ciclo: b.mes_ciclo, semana_mes: b.semana_mes, tratamento: b.tratamento, origem_frequencia: b.origem_frequencia,
+      periodo_inicio: b.periodo_inicio, periodo_fim: b.periodo_fim, periodo_label: b.periodo_label, desvio_critico: b.desvio_critico, desvio_id: b.desvio_id,
     };
   });
 }
@@ -200,6 +205,9 @@ export function pendenciasCheckout(c: CheckoutV2, reaproveitaveis: Record<string
     if (!responsavelOk(e.responsavel)) p.push({ campo: `ent-${i}-resp`, texto: `"${e.titulo}": responsável incompleto.` });
   });
   for (const k of c.kpis_resposta) {
+    if (c.kpis_retrato && !c.kpis_retrato.some(r => r.indicador_id === k.indicador_id)) continue;
+    if (k.desvio_critico && (!k.situacao_atual?.trim() || !k.causa?.trim() || !k.impacto?.trim() || !k.plano?.trim()))
+      p.push({ campo: `kpi-${k.indicador_id}-desvio`, texto: "Desvio crítico: preencha valor, causa, impacto e ação." });
     const ret = c.kpis_retrato?.find((r) => r.indicador_id === k.indicador_id);
     if (ret?.tipo_apontamento === "valor_periodo" && k.declaracao === "off" && !k.justificativa?.trim())
       p.push({ campo: `kpi-${k.indicador_id}-just`, texto: `${ret.codigo}: justifique o Off track declarado.` });

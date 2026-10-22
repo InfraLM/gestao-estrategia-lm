@@ -1,0 +1,8 @@
+DO $$ DECLARE f record; definition text; BEGIN FOR f IN SELECT oid,proname FROM pg_proc WHERE pronamespace='public'::regnamespace AND proname IN ('mt_frequencia_guard','mt_frequencia_salvar','rotina_retrato_ciclo','mt_desvio_checkout') LOOP
+ definition:=pg_get_functiondef(f.oid);
+ definition:=replace(definition,'NOT(public.mt_is_governanca(auth.uid()) OR public.proj_eh_ceo(auth.uid()) OR public.mt_cadeira_do_usuario(auth.uid())=NEW.cadeira_id)','NOT coalesce((public.mt_is_governanca(auth.uid()) OR public.proj_eh_ceo(auth.uid()) OR public.mt_cadeira_do_usuario(auth.uid())=NEW.cadeira_id),false)');
+ definition:=replace(definition,'NOT(public.mt_is_governanca(auth.uid()) OR public.proj_eh_ceo(auth.uid()) OR public.mt_cadeira_do_usuario(auth.uid())=_cadeira)','NOT coalesce((public.mt_is_governanca(auth.uid()) OR public.proj_eh_ceo(auth.uid()) OR public.mt_cadeira_do_usuario(auth.uid())=_cadeira),false)');
+ definition:=replace(definition,'NOT(public.mt_is_governanca(auth.uid()) OR public.proj_eh_ceo(auth.uid()) OR auth.role()=''service_role'')','NOT coalesce((public.mt_is_governanca(auth.uid()) OR public.proj_eh_ceo(auth.uid()) OR auth.role()=''service_role''),false)');
+ definition:=replace(definition,'NOT(public.mt_is_governanca(auth.uid()) OR public.proj_eh_ceo(auth.uid()))','NOT coalesce((public.mt_is_governanca(auth.uid()) OR public.proj_eh_ceo(auth.uid())),false)');
+ EXECUTE definition;
+ END LOOP; END $$;

@@ -302,6 +302,48 @@
       "when": 1792708443359,
       "tag": "0042_rotina_avisos_contexto_agendamento",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1792709126368,
+      "tag": "0043_frequencia_kpi_calendario_desvios",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1792709318246,
+      "tag": "0044_frequencia_avisos_contagem",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1792709408843,
+      "tag": "0045_frequencia_leituras_validacao",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1792709492846,
+      "tag": "0046_frequencia_autorizacao_null_segura",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1792709611181,
+      "tag": "0047_frequencia_projecao_periodos",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1792709661991,
+      "tag": "0048_frequencia_piso_fonte",
+      "breakpoints": true
     }
   ]
 }

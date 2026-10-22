@@ -1911,7 +1911,13 @@ export type Database = {
           cadeira_id: string | null
           codigo: string
           created_at: string
+          frequencia: string | null
+          frequencia_editado_em: string | null
+          frequencia_editado_por: string | null
+          frequencia_inicio: string | null
+          frequencia_justificativa: string | null
           id: string
+          mes_ciclo: number | null
           meta_2030: string | null
           meta_semestre: number | null
           meta_texto: string | null
@@ -1921,23 +1927,34 @@ export type Database = {
           observacoes: string | null
           okr_id: string | null
           origem: string
+          origem_frequencia: string | null
           parent_id: string | null
           peso: number
           peso_componente: number | null
           prazo_entrega: string | null
           regra_consolidacao: string
+          semana_mes: number | null
           sentido: string
           status: string
           status_implantacao_medicao: string | null
           tipo_apontamento: string
+          tratamento: string | null
           unidade: string | null
           updated_at: string
+          velocidade_mudanca: string | null
+          velocidade_reacao: string | null
         }
         Insert: {
           cadeira_id?: string | null
           codigo: string
           created_at?: string
+          frequencia?: string | null
+          frequencia_editado_em?: string | null
+          frequencia_editado_por?: string | null
+          frequencia_inicio?: string | null
+          frequencia_justificativa?: string | null
           id?: string
+          mes_ciclo?: number | null
           meta_2030?: string | null
           meta_semestre?: number | null
           meta_texto?: string | null
@@ -1947,23 +1964,34 @@ export type Database = {
           observacoes?: string | null
           okr_id?: string | null
           origem: string
+          origem_frequencia?: string | null
           parent_id?: string | null
           peso?: number
           peso_componente?: number | null
           prazo_entrega?: string | null
           regra_consolidacao?: string
+          semana_mes?: number | null
           sentido?: string
           status?: string
           status_implantacao_medicao?: string | null
           tipo_apontamento?: string
+          tratamento?: string | null
           unidade?: string | null
           updated_at?: string
+          velocidade_mudanca?: string | null
+          velocidade_reacao?: string | null
         }
         Update: {
           cadeira_id?: string | null
           codigo?: string
           created_at?: string
+          frequencia?: string | null
+          frequencia_editado_em?: string | null
+          frequencia_editado_por?: string | null
+          frequencia_inicio?: string | null
+          frequencia_justificativa?: string | null
           id?: string
+          mes_ciclo?: number | null
           meta_2030?: string | null
           meta_semestre?: number | null
           meta_texto?: string | null
@@ -1973,17 +2001,22 @@ export type Database = {
           observacoes?: string | null
           okr_id?: string | null
           origem?: string
+          origem_frequencia?: string | null
           parent_id?: string | null
           peso?: number
           peso_componente?: number | null
           prazo_entrega?: string | null
           regra_consolidacao?: string
+          semana_mes?: number | null
           sentido?: string
           status?: string
           status_implantacao_medicao?: string | null
           tipo_apontamento?: string
+          tratamento?: string | null
           unidade?: string | null
           updated_at?: string
+          velocidade_mudanca?: string | null
+          velocidade_reacao?: string | null
         }
         Relationships: [
           {
@@ -2098,6 +2131,110 @@ export type Database = {
             columns: ["okr_id"]
             isOneToOne: false
             referencedRelation: "mt_okrs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_kpi_desvio_leituras: {
+        Row: {
+          desvio_id: string
+          id: string
+          normal: boolean
+          periodo: string
+          registrado_em: string
+          registrado_por: string | null
+          valor: string | null
+        }
+        Insert: {
+          desvio_id: string
+          id?: string
+          normal: boolean
+          periodo: string
+          registrado_em?: string
+          registrado_por?: string | null
+          valor?: string | null
+        }
+        Update: {
+          desvio_id?: string
+          id?: string
+          normal?: boolean
+          periodo?: string
+          registrado_em?: string
+          registrado_por?: string | null
+          valor?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_kpi_desvio_leituras_desvio_id_fkey"
+            columns: ["desvio_id"]
+            isOneToOne: false
+            referencedRelation: "mt_kpi_desvios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_kpi_desvios: {
+        Row: {
+          acao: string
+          ativo: boolean
+          cadeira_id: string
+          causa: string
+          ciclo: string
+          criado_em: string
+          criado_por: string | null
+          id: string
+          impacto: string
+          indicador_id: string
+          normais: number
+          resolvido_em: string | null
+          ultimo_periodo: string | null
+          valor: string
+        }
+        Insert: {
+          acao: string
+          ativo?: boolean
+          cadeira_id: string
+          causa: string
+          ciclo: string
+          criado_em?: string
+          criado_por?: string | null
+          id?: string
+          impacto: string
+          indicador_id: string
+          normais?: number
+          resolvido_em?: string | null
+          ultimo_periodo?: string | null
+          valor: string
+        }
+        Update: {
+          acao?: string
+          ativo?: boolean
+          cadeira_id?: string
+          causa?: string
+          ciclo?: string
+          criado_em?: string
+          criado_por?: string | null
+          id?: string
+          impacto?: string
+          indicador_id?: string
+          normais?: number
+          resolvido_em?: string | null
+          ultimo_periodo?: string | null
+          valor?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_kpi_desvios_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_kpi_desvios_indicador_id_fkey"
+            columns: ["indicador_id"]
+            isOneToOne: false
+            referencedRelation: "mt_indicadores"
             referencedColumns: ["id"]
           },
         ]
@@ -4664,8 +4801,28 @@ export type Database = {
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       modulo_conteudo: { Args: { _chave: string }; Returns: string }
       mt_cadeira_do_usuario: { Args: { _uid: string }; Returns: string }
+      mt_desvio_normal: {
+        Args: { _indicador: string; _periodo: string; _resposta: Json }
+        Returns: boolean
+      }
       mt_email_corporativo: { Args: never; Returns: boolean }
       mt_fechar: { Args: { _comp: string }; Returns: undefined }
+      mt_frequencia_devida: {
+        Args: {
+          _ciclo: string
+          _critico?: boolean
+          _frequencia: string
+          _inicio: string
+          _mes: number
+          _semana: number
+        }
+        Returns: boolean
+      }
+      mt_frequencia_numero: { Args: { _texto: string }; Returns: number }
+      mt_frequencia_salvar: {
+        Args: { _dados: Json; _id: string }
+        Returns: undefined
+      }
       mt_is_governanca: { Args: { _uid: string }; Returns: boolean }
       mt_pode_lancar: {
         Args: { _comp: string; _ind: string }
@@ -4835,6 +4992,10 @@ export type Database = {
         Args: { _cadeira: string; _comp: string }
         Returns: Json
       }
+      rotina_retrato_ciclo: {
+        Args: { _cadeira: string; _ciclo: string; _incluir_fora?: boolean }
+        Returns: Json
+      }
       rotina_situacoes_kpi: {
         Args: never
         Returns: {
@@ -4851,6 +5012,7 @@ export type Database = {
           status_entrega: string
         }[]
       }
+      rotina_situacoes_kpi_frequencia: { Args: never; Returns: Json }
       rotina_status_ciclos: {
         Args: { _semanas: string[] }
         Returns: {
