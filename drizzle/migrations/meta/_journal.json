@@ -358,6 +358,13 @@
       "when": 1792712565303,
       "tag": "0050_impedimentos_atribuicao_respostas",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1792712745943,
+      "tag": "0051_impedimentos_atividades_projecao",
+      "breakpoints": true
     }
   ]
 }
