@@ -218,6 +218,13 @@
       "when": 1792664021772,
       "tag": "0030_sugestoes_vinculo_ia",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1792664346363,
+      "tag": "0031_sugestoes_aprovacao_lote_ampliado",
+      "breakpoints": true
     }
   ]
 }
