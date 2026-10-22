@@ -17,6 +17,7 @@ import {
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import AderenciaOkrs from "@/components/AderenciaOkrs";
 import DashboardPortfolioExtras from "@/components/DashboardPortfolioExtras";
 
 const fmtBRL = (n: number) => `R$ ${(n / 1_000_000).toFixed(2)}M`;
@@ -988,23 +989,6 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        <Card className="p-5 shadow-card xl:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Cobertura dos Objetivos Estratégicos</h3>
-            <span className="text-xs text-muted-foreground">Top 8 — iniciativas vinculadas</span>
-          </div>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={objCobertura} layout="vertical" margin={{ left: 8, right: 40 }}>
-              <CartesianGrid horizontal={false} stroke="hsl(var(--border))" />
-              <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-              <YAxis dataKey="obj" type="category" tick={{ fontSize: 11 }} width={50} stroke="hsl(var(--muted-foreground))" />
-              <Tooltip shared={false} contentStyle={tooltipStyle} cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }} />
-              <Bar dataKey="n" fill="hsl(var(--primary))" radius={[0, 6, 6, 0]}>
-                <LabelList dataKey="n" position="right" style={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 600 }} />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </Card>
 
         {/* NOVO: Status BC × Andamento — destaca projetos iniciados sem BC finalizado */}
         <Card className="p-5 shadow-card xl:col-span-2">
@@ -1214,68 +1198,7 @@ export default function Dashboard() {
           </div>
         </Card>
       </div>
-      <Card className="p-5 shadow-card">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Aderência aos OKRs 2026/1</h3>
-          <span className="text-xs text-muted-foreground">Iniciativas vinculadas por KR</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {okrs.map(okr => (
-            <div key={okr.id}>
-              <div className="mb-3">
-                <div className="text-xs font-semibold text-primary tracking-wide">{okr.id}</div>
-                <div className="flex items-center gap-1.5">
-                  <div className="text-sm font-semibold">{okr.nome}</div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button className="h-5 w-5 grid place-items-center rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10" aria-label="Saiba mais">
-                        <Info className="h-3.5 w-3.5" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80 text-xs leading-relaxed bg-popover">
-                      <div className="font-semibold text-sm mb-1">{okr.id} · {okr.nome}</div>
-                      <div className="text-muted-foreground mb-2">{okr.subtitulo}</div>
-                      <p>{okr.descricao}</p>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="text-xs text-muted-foreground">{okr.subtitulo}</div>
-              </div>
-              <ul className="space-y-2.5">
-                {okr.krs.map(kr => {
-                  const max = 12;
-                  const w = Math.min(100, (kr.iniciativas / max) * 100);
-                  const baixa = kr.iniciativas <= 2;
-                  return (
-                    <li key={kr.id}>
-                      <div className="flex items-center justify-between text-xs mb-1">
-                        <span className="font-medium flex items-center gap-1">
-                          {kr.id} <span className="text-muted-foreground font-normal">— {kr.nome}</span>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <button className="h-4 w-4 grid place-items-center rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10" aria-label="Saiba mais">
-                                <Info className="h-3 w-3" />
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-72 text-xs leading-relaxed bg-popover">
-                              <div className="font-semibold text-sm mb-1">{kr.id} · {kr.nome}</div>
-                              <p>{kr.descricao}</p>
-                            </PopoverContent>
-                          </Popover>
-                        </span>
-                        <span className={`tabular-nums font-semibold ${baixa ? "text-destructive" : "text-foreground"}`}>{kr.iniciativas}</span>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                        <div className={`h-full ${baixa ? "bg-destructive" : "bg-primary"}`} style={{ width: `${w}%` }} />
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </Card>
+      <AderenciaOkrs />
 
       {/* Painel financeiro */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
