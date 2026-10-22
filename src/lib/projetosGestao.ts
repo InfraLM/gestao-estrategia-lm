@@ -37,7 +37,7 @@ export const decisaoPendente = (ultimo: any, decisoes: { competencia: string }[]
 
 const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const CARGO: [RegExp, string][] = [
-  [/\bceo\b/, "CEO"], [/\bcfo\b/, "CFO"], [/\bcmo\b/, "CMO"], [/\bcoo\b|operac/, "COO"], [/\bcro\b/, "CRO"],
+  [/\bceo\b/, "CEO"], [/\bcfo\b/, "CFO"], [/\bcmo\b/, "CMO"], [/\bcoo\b|operac/, "COO"], [/\bcro\b|\bcpto\b/, "CPTO"], [/\bcppo\b/, "CPPO (Processos e Pessoas)"],
   [/comercial|novos negocios/, "Comercial"], [/governanca/, "Governança"], [/juridico|institucional/, "Institucional"],
 ];
 /** Sugere cadeiras (principal primeiro) a partir do texto livre do diretor. Nunca grava: é só sugestão. */

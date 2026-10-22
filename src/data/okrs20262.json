@@ -434,10 +434,10 @@
     }
    ],
    "nome": "Guilherme",
-   "cargo": "CRO"
+   "cargo": "CPTO"
   },
   {
-   "titulo": "4.6 Naira — Diretora de Governança e Eficiência Operacional",
+   "titulo": "4.6 Naira — CPPO (Processos e Pessoas)",
    "metas": [
     {
      "indicador": "Saving auditado de eficiência (validação financeira do Bruno)",
@@ -482,7 +482,7 @@
     }
    ],
    "nome": "Naira",
-   "cargo": "Diretora de Governança e Eficiência Operacional"
+   "cargo": "CPPO (Processos e Pessoas)"
   },
   {
    "titulo": "4.7 Iuri Franco — CMO / BU Certificações",
@@ -597,7 +597,7 @@
   },
   {
    "diretor": "Guilherme",
-   "cadeira": "CRO",
+   "cadeira": "CPTO",
    "OKR1": 0.7,
    "OKR2": 0.1,
    "OKR3": 0.1,
