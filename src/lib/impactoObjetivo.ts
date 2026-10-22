@@ -1,6 +1,6 @@
-export type OrigemImpacto = "rotina" | "metas" | "projeto" | "ata" | "decisao";
+export type OrigemImpacto = "rotina" | "metas" | "projeto" | "ata" | "decisao" | "processo";
 export const ROTULO_ORIGEM: Record<OrigemImpacto, string> = {
-  rotina: "Check-in/checkout", metas: "Metas", projeto: "Portfólio", ata: "Ata (Governança)", decisao: "Decisão D/GOV",
+  rotina: "Check-in/checkout", metas: "Metas", projeto: "Portfólio", ata: "Ata (Governança)", decisao: "Decisão D/GOV", processo: "Melhoria de processo",
 };
 export type ItemImpacto = {
   id: string; titulo: string; origem: OrigemImpacto; status: string | null; prazo: string | null;
