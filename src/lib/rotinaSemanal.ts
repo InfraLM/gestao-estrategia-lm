@@ -21,16 +21,21 @@ export type KpiRetrato = {
   indicador_id: string; codigo: string; nome: string; origem: "bsc" | "okr" | "cesta"; peso: number; unidade: string | null;
   competencia: string | null; meta_mes: number | null; realizado: number | null; atingimento: number | null; faixa: string | null; congelado_em: string;
   sentido?: "maior" | "menor"; nivel?: string | null; meta_semestre?: number | null; meta_texto?: string | null;
+  tipo_apontamento?: "valor_mensal" | "valor_periodo" | "entrega"; prazo_entrega?: string | null;
 };
 export type KpiResposta = {
   indicador_id: string; ok: boolean | null; impacto: string; plano: string; vira_iniciativa: boolean; prazo: string;
   responsavel: Responsavel; status_ini: string; reaproveitar: "" | "sim" | "nova"; iniciativa_alvo_id?: string; iniciativa_criada_id?: string;
   situacao_atual?: string; vinculos?: Vinculos;
+  /** Tipo S: declaração do diretor no mês. Tipo E: status de entrega. */
+  declaracao?: "on" | "off" | null; justificativa?: string; status_entrega?: "" | "nao_iniciada" | "em_implantacao" | "implantada" | "atrasada" | "cancelada"; avanco_pct?: string; evidencia?: string;
 };
 export type KpiLegado = { indicador_id: string; valor: string; situacao: string; comentario: string };
 export type CheckoutV2 = {
   v: 2; entregas: Entrega[]; extras: string; aprendizados: string; proxima: string; ritmo: number;
   kpis?: KpiLegado[]; kpis_retrato?: KpiRetrato[]; kpis_resposta: KpiResposta[]; envio_token?: string; primeiro_envio_em?: string; atas?: AtaStatus[];
+  /** Gravada no primeiro envio: itens obrigatórios preenchidos (taxa de conformidade). */
+  completude?: { feitos: number; total: number; faltando: string[] };
 };
 
 export const LIMITE_TEXTO = 4000;
@@ -68,6 +73,7 @@ export function normalizarCheckout(c: any): CheckoutV2 {
     kpis_retrato: Array.isArray(c?.kpis_retrato) ? c.kpis_retrato : undefined,
     kpis_resposta: Array.isArray(c?.kpis_resposta) ? c.kpis_resposta.map((k: any) => ({ ...respostaVazia(k.indicador_id), ...k, responsavel: normalizarResponsavel(k.responsavel), vinculos: normalizarVinculos(k.vinculos) })) : [],
     envio_token: c?.envio_token, primeiro_envio_em: c?.primeiro_envio_em,
+    ...(c?.completude ? { completude: c.completude } : {}),
     atas: Array.isArray(c?.atas) ? c.atas.filter((a: any) => a?.gov_acao_id).map((a: any) => ({ gov_acao_id: a.gov_acao_id, titulo: a.titulo ?? "", status: a.status ?? "", comentario: a.comentario ?? "" })) : [],
   };
 }
@@ -107,6 +113,8 @@ export function faixaDe(at: number | null, faixas: Faixa[] | undefined) {
   return [...faixas].sort((a, b) => b.min - a.min).find((f) => at * 100 >= f.min)?.nome ?? null;
 }
 export const NO_ALVO = ["No alvo", "Superado"];
+/** No alvo = KR/cesta de valor mensal com atingimento ≥ 100% (substitui a faixa da régua). */
+export const noAlvoKpi = (k: KpiRetrato) => k.origem !== "bsc" && (k.tipo_apontamento ?? "valor_mensal") === "valor_mensal" && k.atingimento != null && k.atingimento >= 1;
 
 export function montarRetrato(base: any[], competencia: string | null, faixas: Faixa[] | undefined, agora = new Date().toISOString()): KpiRetrato[] {
   return base.map((b) => {
@@ -114,15 +122,16 @@ export function montarRetrato(base: any[], competencia: string | null, faixas: F
     return {
       indicador_id: b.indicador_id, codigo: b.codigo, nome: b.nome, origem: b.origem, peso: Number(b.peso ?? 0), unidade: b.unidade ?? null,
       competencia, meta_mes: competencia ? b.meta_mes ?? null : null, realizado: competencia ? b.realizado ?? null : null,
-      atingimento: b.origem === "bsc" ? null : at, faixa: b.origem === "bsc" ? null : faixaDe(at, faixas), congelado_em: agora,
+      atingimento: b.origem === "bsc" || (b.tipo_apontamento ?? "valor_mensal") !== "valor_mensal" ? null : at, faixa: null, congelado_em: agora,
       sentido: b.sentido, nivel: b.nivel ?? null, meta_semestre: b.meta_semestre ?? null, meta_texto: b.meta_texto ?? null,
+      tipo_apontamento: b.tipo_apontamento ?? "valor_mensal", prazo_entrega: b.prazo_entrega ?? null,
     };
   });
 }
 
 /** Atalho: marca Sim nos KPIs no alvo/superados ainda sem resposta. */
 export function confirmarNoAlvo(ret: KpiRetrato[], resp: KpiResposta[], sem: string): KpiResposta[] {
-  const alvo = ret.filter((k) => k.faixa && NO_ALVO.includes(k.faixa)).map((k) => k.indicador_id);
+  const alvo = ret.filter(noAlvoKpi).map((k) => k.indicador_id);
   const out = [...resp];
   for (const id of alvo) {
     const i = out.findIndex((r) => r.indicador_id === id);
@@ -189,6 +198,9 @@ export function pendenciasCheckout(c: CheckoutV2, reaproveitaveis: Record<string
     if (!responsavelOk(e.responsavel)) p.push({ campo: `ent-${i}-resp`, texto: `"${e.titulo}": responsável incompleto.` });
   });
   for (const k of c.kpis_resposta) {
+    const ret = c.kpis_retrato?.find((r) => r.indicador_id === k.indicador_id);
+    if (ret?.tipo_apontamento === "valor_periodo" && k.declaracao === "off" && !k.justificativa?.trim())
+      p.push({ campo: `kpi-${k.indicador_id}-just`, texto: `${ret.codigo}: justifique o Off track declarado.` });
     if (k.ok !== false || !k.plano.trim() || !k.vira_iniciativa) continue;
     const nome = c.kpis_retrato?.find((r) => r.indicador_id === k.indicador_id)?.codigo ?? "KPI";
     if (!k.prazo) p.push({ campo: `kpi-${k.indicador_id}-prazo`, texto: `${nome}: plano sem prazo.` });

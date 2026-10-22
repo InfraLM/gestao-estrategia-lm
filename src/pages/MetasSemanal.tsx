@@ -18,7 +18,7 @@ import PendenciasComites from "@/components/PendenciasComites";
 import { puxarAcao } from "@/lib/governancaPendencias";
 import {
   CheckinV2, CheckoutV2, Entrega as EntregaV2, KpiResposta, KpiRetrato, Pendencia, Prioridade as PrioridadeV2, Responsavel,
-  LIMITE_TEXTO, addDias, alternar, confirmarNoAlvo, entregasDePrioridades, idadeSemanas, mesclarHerdadas, montarRetrato, NO_ALVO,
+  LIMITE_TEXTO, addDias, alternar, confirmarNoAlvo, entregasDePrioridades, idadeSemanas, mesclarHerdadas, montarRetrato, NO_ALVO, noAlvoKpi,
   normalizarCheckin, normalizarCheckout, novoId, pendenciasCheckin, pendenciasCheckout, periodoSemana, prioridadesHerdadas,
   respostaVazia, riscoAberto, semEmail, cicloPadrao, ciclosDisponiveis, semanaCheckout, competenciaDaSemana, ultimaSituacao,
 } from "@/lib/rotinaSemanal";
@@ -27,6 +27,9 @@ import VinculosAcao, { ProjetoLite } from "@/components/VinculosAcao";
 import { prazoCiclo, seloCiclo, atasAnteriores, AtaStatus, vinculosParaGravar } from "@/lib/rotinaSemanal";
 import { useAvaliacoesBsc } from "@/hooks/useAvaliacoesBsc";
 import rev02 from "@/data/bscRev02.json";
+import { CartaoConformidade } from "@/components/Conformidade";
+import { calcularCompletude } from "@/lib/conformidade";
+import { avaliarPorTipo, apontamentoMaisRecente, TIPO_LBL, STATUS_ENTREGA_LBL } from "@/lib/avaliacaoBsc";
 import StatusReportCiclo, { ResumoSR } from "@/components/StatusReportCiclo";
 import { ultimoCicloDoMes } from "@/lib/projetosGestao";
 
@@ -216,7 +219,10 @@ export default function MetasSemanal() {
       const nome = b.perfis.find((p) => p.user_id === b.user?.id)?.display_name ?? b.user?.email ?? null;
       const agora = new Date().toISOString();
       const out: any = { ...coRef.current }; const inn: any = { ...ciRef.current };
-      if (!out.primeiro_envio_em) out.kpis_retrato = (out.kpis_retrato ?? []).map((k: KpiRetrato) => ({ ...k, congelado_em: agora }));
+      if (!out.primeiro_envio_em) {
+        out.kpis_retrato = (out.kpis_retrato ?? []).map((k: KpiRetrato) => ({ ...k, congelado_em: agora }));
+        out.completude = calcularCompletude(out, inn, mesSR ? resumoSR : null);
+      }
       out.primeiro_envio_em ??= agora; inn.primeiro_envio_em ??= agora; inn.envio_token = out.envio_token;
       const resp: KpiResposta[] = [];
       for (const k of out.kpis_resposta as KpiResposta[]) {
@@ -344,7 +350,7 @@ export default function MetasSemanal() {
     const atual = resp(id); const lista = co.kpis_resposta.filter((k) => k.indicador_id !== id);
     setCo({ ...co, kpis_resposta: [...lista, { ...atual, ...x }] });
   };
-  const noAlvo = retrato.filter((k) => k.faixa && NO_ALVO.includes(k.faixa));
+  const noAlvo = retrato.filter(noAlvoKpi);
   const inis = b.iniciativas.filter((i) => i.cadeira_id === cad && !["concluida", "cancelada"].includes(i.status));
   const vinc = (id?: string) => {
     const x = b.iniciativas.find((i) => i.id === id); if (!x) return null;
@@ -376,6 +382,7 @@ export default function MetasSemanal() {
         </div>
       </Card>
       <AvisoTransparencia ativo={transp.ativo} />
+      {cad && <CartaoConformidade cadeira={cad} />}
 
       <Tabs value={aba} onValueChange={(v) => setAba(v as Tipo)}>
         <TabsList className="h-auto flex-wrap"><TabsTrigger value="checkout">Checkout · semana de {fmtSem(semOut)}</TabsTrigger><TabsTrigger value="checkin">Check-in · semana de {fmtSem(sem)}</TabsTrigger></TabsList>
@@ -387,25 +394,48 @@ export default function MetasSemanal() {
               <h2 className="font-semibold">1. Seus KPIs estão performando dentro do esperado?</h2>
               {podeEditar && noAlvo.length > 0 && <Button size="sm" variant="outline" onClick={() => setCo({ ...co, kpis_resposta: confirmarNoAlvo(retrato, co.kpis_resposta, sem) })}>Confirmar Sim nos {noAlvo.length} no alvo</Button>}
             </div>
-            <p className="text-xs text-muted-foreground">Resposta opcional. {co.primeiro_envio_em ? `Números gravados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}` : "Números ao vivo até o envio"}{competencia ? ` · competência ${competencia.slice(5)}/${competencia.slice(0, 4)}` : " · semana sem competência mensal"}. Não altera a nota nem o lançamento mensal.</p>
-            {retrato.some((k) => k.origem === "bsc") && <p className="text-sm rounded bg-muted p-2">KPIs de BSC não entram na nota; são avaliados como on track / off track ao fim do mês ou do período da meta.</p>}
+            <p className="text-xs text-muted-foreground">Resposta opcional. {co.primeiro_envio_em ? `Números gravados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}` : "Números ao vivo até o envio"}{competencia ? ` · competência ${competencia.slice(5)}/${competencia.slice(0, 4)}` : " · semana sem competência mensal"}. Não altera o lançamento mensal.</p>
+            <p className="text-sm rounded bg-muted p-2">Cada KPI pede um apontamento conforme o tipo: <b>valor mensal</b> (On/Off calculado após o fim do mês), <b>meta semestral/anual</b> (você declara On/Off no mês; justificativa se Off) ou <b>entrega</b> (status de implantação × prazo).</p>
             {retrato.length === 0 && <p className="text-sm text-muted-foreground">Nenhum KPI sob responsabilidade desta cadeira.</p>}
             <div className="grid gap-3 lg:grid-cols-2">
               {retrato.map((k) => {
                 const r = resp(k.indicador_id); const cand = reaproveitaveis[k.indicador_id] ?? [];
                 const ult = ultimaSituacao(k.indicador_id, arvore.mapa[k.nome.trim()] ? { valor: arvore.mapa[k.nome.trim()], data: arvore.data } : null, hist.filter((h) => h.tipo === "checkout"), semOut);
                 const semMeta = k.meta_mes == null && (k.origem !== "bsc" || (k.meta_semestre == null && !k.meta_texto));
-                const avR = k.origem === "bsc" ? (avalCad.porCadeira[cad]?.itens.find((x) => x.id === k.indicador_id) ?? avaliarKpiBsc({ indicador_id: k.indicador_id, sentido: k.sentido ?? "maior", competencia: k.competencia, meta_mes: k.meta_mes, meta_semestre: k.meta_semestre ?? null, meta_texto: k.meta_texto ?? null, realizado: k.realizado }, arvore.mapa[k.nome.trim()] ? { valor: arvore.mapa[k.nome.trim()], data: arvore.data } : null, hist.filter((h) => h.tipo === "checkout"))) : null;
-                const aval = avR?.aval ?? null;
+                const tipo = k.tipo_apontamento ?? "valor_mensal";
+                const cks = hist.filter((h) => h.tipo === "checkout");
+                const avR = avaliarPorTipo({ indicador_id: k.indicador_id, sentido: k.sentido ?? "maior", competencia: k.competencia, meta_mes: tipo === "valor_mensal" ? k.meta_mes : null, meta_semestre: k.meta_semestre ?? null, meta_texto: k.meta_texto ?? null, realizado: k.realizado,
+                  tipo, prazo_entrega: k.prazo_entrega ?? null, apontamento: apontamentoMaisRecente(k.indicador_id, k.competencia, null, cks) }, arvore.mapa[k.nome.trim()] ? { valor: arvore.mapa[k.nome.trim()], data: arvore.data } : null, cks);
+                const aval = avR.aval;
                 return (
                   <div key={k.indicador_id} className="rounded border p-3 space-y-2">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div><p className="font-medium text-sm">{k.codigo} · {k.nome}</p>
                         <p className="text-xs text-muted-foreground">Última situação atual apontada: {ult ? <><b className="text-foreground">{ult.valor}</b> · {ult.fonte}{ult.data && ult.fonte === "Árvore de KPIs" ? ` · ${new Date(ult.data).toLocaleDateString("pt-BR")}` : ult.fonte === "Árvore de KPIs" ? " · Rev.02" : ""}</> : "—"}</p></div>
-                      <div className="flex gap-1"><Badge variant="outline">{ORIGEM_LBL[k.origem]}{k.origem === "cesta" ? ` · peso ${fmtNum(k.peso)}` : ""}</Badge>{k.faixa && <Badge variant="secondary">{k.faixa}</Badge>}{aval && <Badge variant={aval === "off" ? "destructive" : aval === "on" ? "default" : "outline"}>{AVALIACAO_LBL[aval]}</Badge>}</div>
+                      <div className="flex gap-1"><Badge variant="outline">{ORIGEM_LBL[k.origem]}</Badge><Badge variant="secondary">{TIPO_LBL[tipo]}</Badge>{aval && <Badge variant={aval === "off" ? "destructive" : aval === "on" ? "default" : "outline"}>{AVALIACAO_LBL[aval]}</Badge>}</div>
                     </div>
-                    <div className="grid grid-cols-3 gap-2 text-xs"><div><p className="text-muted-foreground">Meta do mês</p><p>{k.meta_mes != null ? fmtNum(k.meta_mes) : k.origem === "bsc" && (k.meta_semestre != null || k.meta_texto) ? `Período: ${k.meta_texto || fmtNum(k.meta_semestre)}` : "Sem meta registrada"}</p></div><div><p className="text-muted-foreground">Realizado</p><p>{fmtNum(k.realizado)}</p></div><div><p className="text-muted-foreground">{k.origem === "bsc" ? "Avaliação" : "Atingimento"}</p><p>{k.origem === "bsc" ? (aval ? <>{AVALIACAO_LBL[aval]}{avR?.origem && <span className="block text-muted-foreground">{avR.origem}</span>}</> : "—") : semMeta ? "Sem meta registrada" : pct(k.atingimento)}</p></div></div>
-                    <Input placeholder="Situação atual (opcional)" maxLength={200} value={r.situacao_atual ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { situacao_atual: e.target.value })} />
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      <div><p className="text-muted-foreground">{tipo === "valor_mensal" ? "Meta mensal" : tipo === "entrega" ? "Prazo da entrega" : "Meta semestral/anual"}</p>
+                        <p>{tipo === "entrega" ? (k.prazo_entrega ? new Date(k.prazo_entrega + "T12:00:00").toLocaleDateString("pt-BR") : "Sem prazo") : tipo === "valor_periodo" ? (k.meta_texto || fmtNum(k.meta_semestre ?? null) || "Sem meta registrada") : k.meta_mes != null ? fmtNum(k.meta_mes) : "Sem meta registrada"}</p>
+                        {tipo === "valor_periodo" && k.meta_mes != null && <p className="text-muted-foreground">meta de referência do mês: {fmtNum(k.meta_mes)}</p>}</div>
+                      <div><p className="text-muted-foreground">Valor apontado no mês</p><p>{tipo === "entrega" ? "—" : fmtNum(k.realizado)}</p></div>
+                      <div><p className="text-muted-foreground">Avaliação</p><p>{AVALIACAO_LBL[aval]}{avR.origem && <span className="block text-muted-foreground">{avR.origem}</span>}{tipo === "valor_mensal" && k.origem !== "bsc" && !semMeta && k.atingimento != null && <span className="block text-muted-foreground">atingimento {pct(k.atingimento)}</span>}</p></div></div>
+                    {tipo !== "entrega" && <Input placeholder={tipo === "valor_mensal" ? "Valor apontado — situação atual (número)" : "Valor apontado — situação atual (opcional)"} maxLength={200} value={r.situacao_atual ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { situacao_atual: e.target.value })} />}
+                    {tipo === "valor_periodo" && <div className="space-y-2 rounded bg-muted/40 p-2">
+                      <p className="text-xs font-medium">Declaração do diretor para o mês</p>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant={r.declaracao === "on" ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "on" ? null : "on" })}>On track</Button>
+                        <Button size="sm" variant={r.declaracao === "off" ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "off" ? null : "off" })}>Off track</Button>
+                      </div>
+                      {r.declaracao === "off" && <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-just`}>Justificativa (obrigatória)</Label><Textarea id={`kpi-${k.indicador_id}-just`} rows={2} maxLength={LIMITE_TEXTO} value={r.justificativa ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { justificativa: e.target.value })} /></div>}
+                    </div>}
+                    {tipo === "entrega" && <div className="grid gap-2 sm:grid-cols-3 rounded bg-muted/40 p-2">
+                      <div className="space-y-1"><Label>Status de entrega</Label>
+                        <Select value={r.status_entrega || ""} disabled={!podeEditar} onValueChange={(v) => setResp(k.indicador_id, { status_entrega: v as any })}><SelectTrigger><SelectValue placeholder="Escolha" /></SelectTrigger>
+                          <SelectContent>{(Object.keys(STATUS_ENTREGA_LBL) as (keyof typeof STATUS_ENTREGA_LBL)[]).map((x) => <SelectItem key={x} value={x}>{STATUS_ENTREGA_LBL[x]}</SelectItem>)}</SelectContent></Select></div>
+                      <div className="space-y-1"><Label>% de avanço (opcional)</Label><Input type="number" min={0} max={100} value={r.avanco_pct ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { avanco_pct: e.target.value })} /></div>
+                      <div className="space-y-1"><Label>Evidência / comentário</Label><Input maxLength={400} value={r.evidencia ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { evidencia: e.target.value })} /></div>
+                    </div>}
                     <div className="flex gap-2">
                       <Button size="sm" variant={r.ok === true ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, true) })}>Sim</Button>
                       <Button size="sm" variant={r.ok === false ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, false) })}>Não</Button>

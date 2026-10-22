@@ -28,14 +28,16 @@ Deno.serve(async (req) => {
     const { count } = await sb.from("planejamento_revisoes").select("id", { count: "exact", head: true }).eq("tipo", tipo).gte("gerado_em", inicioMes.toISOString());
     if ((count ?? 0) >= 3) return json({ error: "Limite de 3 gerações neste mês para este tipo." }, 429);
 
-    const [dec, pdec, lanc, ind, sit, sr, vig] = await Promise.all([
+    const [dec, pdec, lanc, ind, sit, sr, vig, conf, cads] = await Promise.all([
       sb.from("decisoes_estrategicas").select("codigo,titulo,data_decisao,decisao,racional,impacto_bsc").eq("acesso_reservado", false).order("data_decisao", { ascending: false }).limit(150),
       sb.from("projeto_decisoes").select("codigo,competencia,decisao,desfecho,justificativa").order("created_at", { ascending: false }).limit(80),
-      sb.from("mt_lancamentos").select("indicador_id,competencia,valor,revisao"),
-      sb.from("mt_indicadores").select("id,codigo,nome,origem,meta_semestre,meta_texto").eq("status", "ativo"),
+      sb.from("mt_lancamentos").select("indicador_id,competencia,valor,revisao,declaracao,justificativa,status_entrega,avanco_pct"),
+      sb.from("mt_indicadores").select("id,codigo,nome,origem,meta_semestre,meta_texto,tipo_apontamento,prazo_entrega").eq("status", "ativo"),
       sb.rpc("rotina_situacoes_kpi"),
       sb.from("mt_status_projetos").select("projeto_codigo,competencia,saude,farol_escopo,farol_custo,farol_cronograma,avancos,desvios").order("competencia", { ascending: false }).limit(200),
       sb.from("planejamento_revisoes").select("numero,conteudo").eq("tipo", tipo).eq("status", "aprovado").maybeSingle(),
+      sb.rpc("rotina_conformidade", { _de: "2026-10-19", _ate: new Date().toISOString().slice(0, 10) }),
+      sb.from("mt_cadeiras").select("id,nome,diretor_user_id").eq("ativo", true),
     ]);
     const inds = new Map((ind.data ?? []).map((i: any) => [i.id, i]));
     const fontes = new Set<string>();
@@ -45,9 +47,32 @@ Deno.serve(async (req) => {
     L.push("## Decisões de projeto (SR)");
     for (const d of pdec.data ?? []) { if (!d.codigo) continue; fontes.add(String(d.codigo).toUpperCase()); L.push(`- ${d.codigo} (${d.competencia}): ${d.decisao} → ${d.desfecho ?? ""}. ${d.justificativa ?? ""}`); }
     L.push("## Lançamentos mensais (código do indicador@mês)");
-    for (const l of lanc.data ?? []) { const i: any = inds.get(l.indicador_id); if (!i || l.valor == null) continue; const c = `${i.codigo}@${l.competencia}`.toUpperCase(); fontes.add(c); L.push(`- ${c}: ${i.nome} = ${l.valor} (meta semestre ${i.meta_semestre ?? i.meta_texto ?? "—"})`); }
+    for (const l of lanc.data ?? []) {
+      const i: any = inds.get(l.indicador_id); if (!i) continue; const tipo = i.tipo_apontamento ?? "valor_mensal";
+      const c = `${i.codigo}@${l.competencia}`.toUpperCase();
+      if (tipo === "entrega") { if (!l.status_entrega) continue; fontes.add(c); L.push(`- ${c}: ${i.nome} — ENTREGA, status ${l.status_entrega}${l.avanco_pct != null ? ` (${l.avanco_pct}%)` : ""}, prazo ${i.prazo_entrega ?? "—"}`); continue; }
+      if (tipo === "valor_periodo") { if (!l.declaracao && l.valor == null) continue; fontes.add(c); L.push(`- ${c}: ${i.nome} — meta semestral/anual ${i.meta_semestre ?? i.meta_texto ?? "—"}; declaração do diretor: ${l.declaracao ?? "—"}${l.justificativa ? ` (justificativa: ${l.justificativa})` : ""}${l.valor != null ? `; valor apontado ${l.valor}` : ""} (DECLARADO, não calculado)`); continue; }
+      if (l.valor == null) continue; fontes.add(c); L.push(`- ${c}: ${i.nome} = ${l.valor} (valor mensal; meta semestre ${i.meta_semestre ?? i.meta_texto ?? "—"})`);
+    }
     L.push("## Situações apontadas em checkouts enviados (código@semana)");
     for (const s of (sit.data ?? []).slice(0, 300)) { const i: any = inds.get(s.indicador_id); if (!i || !s.situacao_atual) continue; const c = `${i.codigo}@${s.semana}`.toUpperCase(); fontes.add(c); L.push(`- ${c}: ${i.nome} situação "${s.situacao_atual}"`); }
+    L.push("## Taxa de conformidade do ciclo semanal por cadeira (CONF-cadeira) — substitui a nota mensal");
+    {
+      const add = (iso: string, n: number) => { const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+      const prazo = (s: string) => new Date(`${add(s, 7)}T23:59:59-03:00`);
+      const sems: string[] = []; for (let s = "2026-10-19"; prazo(s) < new Date(); s = add(s, 7)) sems.push(s);
+      for (const c of (cads.data ?? []).filter((x: any) => x.diretor_user_id)) {
+        if (!sems.length) break;
+        let conf_ = 0, pont = 0;
+        for (const s of sems) {
+          const r: any = (conf.data ?? []).find((x: any) => x.cadeira_id === c.id && String(x.semana).slice(0, 10) === s && x.status === "enviado");
+          if (!r) continue; const ok = new Date(r.primeiro_envio_em ?? r.enviado_em) <= prazo(s) && new Date(r.enviado_em) <= prazo(s);
+          if (ok) pont++; const comp = r.completude; if (ok && comp && comp.total > 0 && comp.feitos >= comp.total) conf_++;
+        }
+        const cod = `CONF-${c.nome}`.toUpperCase(); fontes.add(cod);
+        L.push(`- ${cod}: conformidade ${Math.round(conf_ / sems.length * 100)}% (${conf_}/${sems.length} ciclos), pontualidade ${Math.round(pont / sems.length * 100)}%`);
+      }
+    }
     L.push("## Status reports (projeto@mês)");
     for (const r of sr.data ?? []) { const c = `${r.projeto_codigo}@${r.competencia}`.toUpperCase(); fontes.add(c); L.push(`- ${c}: saúde ${r.saude ?? "—"}; faróis escopo ${r.farol_escopo ?? "—"}, custo ${r.farol_custo ?? "—"}, cronograma ${r.farol_cronograma ?? "—"}. Avanços: ${r.avancos ?? ""} Desvios: ${r.desvios ?? ""}`); }
     if (vig.data) { fontes.add(`REV-${vig.data.numero}`); L.push(`## Versão vigente (REV-${vig.data.numero})\n${vig.data.conteudo}`); }

@@ -1603,9 +1603,12 @@ export type Database = {
           parent_id: string | null
           peso: number
           peso_componente: number | null
+          prazo_entrega: string | null
           regra_consolidacao: string
           sentido: string
           status: string
+          status_implantacao_medicao: string | null
+          tipo_apontamento: string
           unidade: string | null
           updated_at: string
         }
@@ -1625,9 +1628,12 @@ export type Database = {
           parent_id?: string | null
           peso?: number
           peso_componente?: number | null
+          prazo_entrega?: string | null
           regra_consolidacao?: string
           sentido?: string
           status?: string
+          status_implantacao_medicao?: string | null
+          tipo_apontamento?: string
           unidade?: string | null
           updated_at?: string
         }
@@ -1647,9 +1653,12 @@ export type Database = {
           parent_id?: string | null
           peso?: number
           peso_componente?: number | null
+          prazo_entrega?: string | null
           regra_consolidacao?: string
           sentido?: string
           status?: string
+          status_implantacao_medicao?: string | null
+          tipo_apontamento?: string
           unidade?: string | null
           updated_at?: string
         }
@@ -1772,37 +1781,52 @@ export type Database = {
       }
       mt_lancamentos: {
         Row: {
+          avanco_pct: number | null
           comentario: string | null
           competencia: string
           created_at: string
+          declaracao: string | null
+          evidencia: string | null
           id: string
           indicador_id: string
+          justificativa: string | null
           revisao: number
           sem_medicao: boolean
+          status_entrega: string | null
           updated_at: string
           updated_by: string | null
           valor: number | null
         }
         Insert: {
+          avanco_pct?: number | null
           comentario?: string | null
           competencia: string
           created_at?: string
+          declaracao?: string | null
+          evidencia?: string | null
           id?: string
           indicador_id: string
+          justificativa?: string | null
           revisao?: number
           sem_medicao?: boolean
+          status_entrega?: string | null
           updated_at?: string
           updated_by?: string | null
           valor?: number | null
         }
         Update: {
+          avanco_pct?: number | null
           comentario?: string | null
           competencia?: string
           created_at?: string
+          declaracao?: string | null
+          evidencia?: string | null
           id?: string
           indicador_id?: string
+          justificativa?: string | null
           revisao?: number
           sem_medicao?: boolean
+          status_entrega?: string | null
           updated_at?: string
           updated_by?: string | null
           valor?: number | null
@@ -3551,6 +3575,17 @@ export type Database = {
         }
         Returns: string
       }
+      rotina_conformidade: {
+        Args: { _ate: string; _de: string }
+        Returns: {
+          cadeira_id: string
+          completude: Json
+          enviado_em: string
+          primeiro_envio_em: string
+          semana: string
+          status: string
+        }[]
+      }
       rotina_criar_iniciativa: {
         Args: {
           _cadeira: string
@@ -3574,13 +3609,17 @@ export type Database = {
       rotina_situacoes_kpi: {
         Args: never
         Returns: {
+          avanco_pct: number
           cadeira_id: string
+          declaracao: string
           enviado_em: string
           indicador_id: string
+          justificativa: string
           ok: boolean
           plano_sem_iniciativa: boolean
           semana: string
           situacao_atual: string
+          status_entrega: string
         }[]
       }
       rotina_status_ciclos: {

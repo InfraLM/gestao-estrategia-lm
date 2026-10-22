@@ -11,6 +11,7 @@ export type Indicador = {
   id: string; codigo: string; nome: string; origem: "bsc" | "okr" | "cesta"; objetivo_id: string | null; okr_id: string | null;
   cadeira_id: string | null; unidade: string | null; sentido: "maior" | "menor"; peso: number; status: "ativo" | "arquivado";
   meta_semestre: number | null; meta_texto: string | null; parent_id: string | null; regra_consolidacao: "pior" | "media_ponderada";
+  tipo_apontamento?: "valor_mensal" | "valor_periodo" | "entrega"; prazo_entrega?: string | null; status_implantacao_medicao?: string | null;
   peso_componente: number | null; observacoes: string | null;
 };
 export type MetaMensal = { id: string; indicador_id: string; competencia: string; meta_mes: number | null; meta_acumulada: number | null };
