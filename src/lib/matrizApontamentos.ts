@@ -33,7 +33,7 @@ export function celulaMes(ind: { id: string; sentido: "maior" | "menor"; meta_se
 export function marcarCriticos(celulas: Celula[]): Celula[] {
   let seguidos = 0;
   return celulas.map((c) => {
-    seguidos = c.aval === "off" ? seguidos + 1 : c.aval === "acomp" || c.aval === "sem_meta" ? seguidos : 0;
+    seguidos = c.aval === "off" ? seguidos + 1 : 0;
     if (c.aval !== "off") return { ...c, critico: false };
     return { ...c, critico: seguidos >= 2 && c.ating != null && c.ating < LIMITE_CRITICO };
   });
