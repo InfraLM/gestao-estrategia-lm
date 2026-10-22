@@ -7,7 +7,7 @@ import { conformidadeCadeira, INICIO_CONFORMIDADE, type RegCiclo } from "@/lib/c
 const db = supabase as any;
 export const pctC = (v: number | null) => (v == null ? "—" : `${Math.round(v * 100)}%`);
 
-/** Registros de checkout para a conformidade. A função do banco só devolve as cadeiras que o usuário pode ver (Governança, CEO ou a própria). */
+/** Registros de checkout para a conformidade. Governança, CEO e todos os diretores veem todas as cadeiras (só status e contagens, nunca conteúdo). */
 export function useConformidade() {
   const [regs, setRegs] = useState<RegCiclo[]>([]);
   const [ok, setOk] = useState(false);
@@ -32,7 +32,7 @@ export function CartaoConformidade({ cadeira }: { cadeira: string }) {
         <p className="text-xs text-muted-foreground">{r.acumulado.conformes} de {r.acumulado.devidos} ciclos no prazo e completos</p></div>
       <div className="text-sm space-y-0.5"><p>Pontualidade: <b>{pctC(r.acumulado.pontualidade)}</b></p><p>Completude média: <b>{pctC(r.acumulado.completudeMedia)}</b></p></div>
       {r.tendencia != null && <Badge variant={r.tendencia < 0 ? "destructive" : "secondary"}>{r.tendencia >= 0 ? "▲" : "▼"} {Math.abs(Math.round(r.tendencia * 100))} p.p. no mês</Badge>}
-      <p className="text-xs text-muted-foreground basis-full">Conta a partir do checkout de 19/10/2026. Ciclo conforme = enviado até segunda 23h59 com todos os itens obrigatórios. Ciclo não enviado conta como não conforme.</p>
+      <p className="text-xs text-muted-foreground basis-full">Conta a partir do ciclo de 26/10/2026. Ciclo conforme = enviado até segunda 23h59 (São Paulo) com 90% ou mais dos itens obrigatórios. Ciclo não enviado conta como não conforme.</p>
     </Card>
   );
 }

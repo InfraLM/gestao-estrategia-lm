@@ -68,4 +68,4 @@
 - [x] Tipo por indicador gravado (39 V, 35 S, 5 E), prazos das entregas, selo de medição no cadastro
 - [x] Regra única por tipo no checkout, Lançar mês, matriz, painel e relatório de IA; nota e régua fora das telas
 - [x] Taxa de conformidade (painel, visão semanal, cartão do diretor, IA)
-- [ ] Confirmar regras provisórias da conformidade com a Naira: quem vê outras cadeiras, tolerância de completude, status report sem anexo, início da contagem
+- [x] Regras finais da conformidade aplicadas (todos os diretores veem, ≥90%, status report conta, desde 26/10)

@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
         for (const s of sems) {
           const r: any = (conf.data ?? []).find((x: any) => x.cadeira_id === c.id && String(x.semana).slice(0, 10) === s && x.status === "enviado");
           if (!r) continue; const ok = new Date(r.primeiro_envio_em ?? r.enviado_em) <= prazo(s) && new Date(r.enviado_em) <= prazo(s);
-          if (ok) pont++; const comp = r.completude; if (ok && comp && comp.total > 0 && comp.feitos >= comp.total) conf_++;
+          if (ok) pont++; const comp = r.completude; if (ok && comp && comp.total > 0 && comp.feitos / comp.total >= 0.9) conf_++;
         }
         const cod = `CONF-${c.nome}`.toUpperCase(); fontes.add(cod);
         L.push(`- ${cod}: conformidade ${Math.round(conf_ / sems.length * 100)}% (${conf_}/${sems.length} ciclos), pontualidade ${Math.round(pont / sems.length * 100)}%`);

@@ -1,11 +1,11 @@
 /** Taxa de conformidade do preenchimento do ciclo semanal (substitui a nota mensal na tela).
- *  Regras provisórias até a Naira decidir: completude exige 100%; contagem a partir do ciclo de 26/10/2026. */
+ *  Regras da Naira: conforme = no prazo E completude ≥ 90%; conta a partir do ciclo de 26/10/2026 (checkout da semana de 19/10); todos os diretores, Governança e CEO veem todas as cadeiras. */
 import type { CheckoutV2, CheckinV2 } from "@/lib/rotinaSemanal";
 import { addDias } from "@/lib/rotinaSemanal";
 
-/** Primeiro checkout devido: semana de 19/10 (enviada no ciclo de 26/10). */
+/** Primeiro ciclo devido: 26/10/2026 = checkout da semana de 19/10. */
 export const INICIO_CONFORMIDADE = "2026-10-19";
-export const COMPLETUDE_MINIMA = 1;
+export const COMPLETUDE_MINIMA = 0.9;
 
 export type Completude = { feitos: number; total: number; faltando: string[] };
 

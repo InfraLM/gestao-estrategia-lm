@@ -70,13 +70,15 @@ describe("Apontamento mais recente e alertas", () => {
 
 describe("Taxa de conformidade", () => {
   const reg = (semana: string, enviado: string, feitos: number, total = 4) => ({ cadeira_id: "c", semana, status: "enviado", enviado_em: enviado, primeiro_envio_em: enviado, completude: { feitos, total, faltando: [] } });
-  it("conforme = no prazo (segunda 23h59) e 100% completo; não enviado = não conforme", () => {
+  it("conforme = no prazo (segunda 23h59) e completude ≥ 90%; não enviado = não conforme", () => {
     expect(avaliarCiclo("2026-10-19", reg("2026-10-19", "2026-10-26T23:00:00-03:00", 4)).conforme).toBe(true);
     expect(avaliarCiclo("2026-10-19", reg("2026-10-19", "2026-10-27T00:30:00-03:00", 4))).toMatchObject({ conforme: false, noPrazo: false });
     expect(avaliarCiclo("2026-10-19", reg("2026-10-19", "2026-10-26T10:00:00-03:00", 3)).conforme).toBe(false);
+    expect(avaliarCiclo("2026-10-19", reg("2026-10-19", "2026-10-26T10:00:00-03:00", 9, 10)).conforme).toBe(true);
+    expect(avaliarCiclo("2026-10-19", reg("2026-10-19", "2026-10-26T10:00:00-03:00", 8, 10)).conforme).toBe(false);
     expect(avaliarCiclo("2026-10-19", undefined).conforme).toBe(false);
   });
-  it("ciclos devidos começam no checkout de 19/10 e só contam depois do prazo", () => {
+  it("ciclos devidos começam no ciclo de 26/10 (checkout de 19/10) e só contam depois do prazo", () => {
     expect(semanasDevidas("2026-10-19", new Date("2026-10-26T20:00:00-03:00"))).toEqual([]);
     expect(semanasDevidas("2026-10-19", new Date("2026-11-03T10:00:00-03:00"))).toEqual(["2026-10-19", "2026-10-26"]);
   });
@@ -92,5 +94,8 @@ describe("Taxa de conformidade", () => {
     const ci = normalizarCheckin({ prioridades: [{ titulo: "P" }] });
     const c = calcularCompletude(co, ci, null);
     expect({ feitos: c.feitos, total: c.total }).toEqual({ feitos: 3, total: 5 });
+    // status report: 1 item por projeto em aberto da cadeira principal; sem anexo/faróis = incompleto
+    const c2 = calcularCompletude(co, ci, { total: 2, completos: 1 });
+    expect({ feitos: c2.feitos, total: c2.total }).toEqual({ feitos: 4, total: 7 });
   });
 });

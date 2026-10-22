@@ -2,7 +2,7 @@
 
 - Metas 2S26 and weekly check-ins share `mt_*` via `useMetasBase`.
 - KPIs, KRs and Cesta share `mt_indicadores` by `origem`; each has `tipo_apontamento` (valor_mensal/valor_periodo/entrega, Governança-only, audited trigger). Evaluation is computed on read only via `avaliarPorTipo` (wraps `avaliarKpiBsc`; latest declaration/status from Lançar mês or sent checkout wins) so form, Lançar mês, Painel, Visão, Matriz and AI report never diverge.
-- No weighted monthly score on screen: `mt_envios.nota` and `mt_pesos_vigencia` are kept only as history. Per-director metric is weekly-cycle conformity (`src/lib/conformidade.ts`, completude stored in checkout JSON at first send, read via `rotina_conformidade` scoped to Governança/CEO/own chair).
+- No weighted monthly score on screen: `mt_envios.nota` and `mt_pesos_vigencia` are kept only as history. Per-director metric is weekly-cycle conformity (`src/lib/conformidade.ts`, completude stored in checkout JSON at first send, read via `rotina_conformidade` visible to Governança, CEO and every chair holder). Conforme = sent by Monday 23:59 São Paulo AND completude ≥ 90%; due cycles start at cycle 2026-10-26; status report counts one item per open principal-chair project (file + three lights), never blocking send.
 - Iniciativa "atrasada" is computed on read (`statusEfetivo`), never stored.
 - Metas: reads need login (`mt_email_corporativo`); cadastro writes need `mt_is_governanca`, enforced in RLS.
 - Monthly launch: values in `mt_lancamentos` keyed by indicador+competência+revisão; reopening (`mt_reabrir`) copies into a new revisão — never overwrites a closed month. Monthly notes (`mt_envios`) are visible only to Governança, CEO and the own chair.
