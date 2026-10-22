@@ -1,0 +1,36 @@
+// @vitest-environment node
+import { PGlite } from '@electric-sql/pglite';
+import { readFileSync } from 'node:fs';
+import { beforeEach,afterEach,describe,it,expect } from 'vitest';
+const u='00000000-0000-4000-8000-000000000001',c='00000000-0000-4000-8000-000000000010',k='00000000-0000-4000-8000-000000000020';
+describe('Frequência e desvios em banco isolado',()=>{
+ let pg:PGlite;
+ beforeEach(async()=>{pg=new PGlite();await pg.exec(`CREATE ROLE anon;CREATE ROLE authenticated;CREATE ROLE service_role;CREATE SCHEMA auth;
+ CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$SELECT '${u}'::uuid$$;
+ CREATE FUNCTION auth.role() RETURNS text LANGUAGE sql AS $$SELECT 'authenticated'::text$$;
+ CREATE FUNCTION mt_is_governanca(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT true$$;
+ CREATE FUNCTION proj_eh_ceo(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT false$$;
+ CREATE FUNCTION mt_cadeira_do_usuario(uuid) RETURNS uuid LANGUAGE sql AS $$SELECT '${c}'::uuid$$;
+ CREATE FUNCTION acesso_modulo(uuid,text,boolean) RETURNS boolean LANGUAGE sql AS $$SELECT true$$;
+ CREATE TABLE mt_cadeiras(id uuid PRIMARY KEY);
+ CREATE TABLE mt_indicadores(id uuid PRIMARY KEY,codigo text,nome text,cadeira_id uuid,origem text,peso numeric,sentido text,unidade text,nivel text,meta_semestre numeric,meta_texto text,tipo_apontamento text,prazo_entrega date,status text,parent_id uuid);
+ CREATE TABLE mt_metas_mensais(indicador_id uuid,competencia text,meta_mes numeric);
+ CREATE TABLE mt_lancamentos(indicador_id uuid,competencia text,valor numeric,sem_medicao boolean,revisao integer);
+ CREATE TABLE mt_checkins(cadeira_id uuid,semana date,tipo text,status text,conteudo jsonb);
+ CREATE TABLE mt_auditoria(tabela text,registro_id text,campo text,valor_anterior text,valor_novo text,alterado_por uuid);
+ INSERT INTO mt_cadeiras VALUES('${c}');
+ INSERT INTO mt_indicadores(id,codigo,nome,cadeira_id,origem,sentido,tipo_apontamento,meta_semestre,status,nivel) VALUES('${k}','K1','KPI','${c}','bsc','maior','valor_mensal',10,'ativo','Tático');`);
+ await pg.exec(readFileSync('drizzle/migrations/0043_frequencia_kpi_calendario_desvios.sql','utf8'));
+ await pg.exec(readFileSync('drizzle/migrations/0045_frequencia_leituras_validacao.sql','utf8'));
+ });
+ afterEach(async()=>{await pg.close();});
+ const freq=()=>pg.query("select mt_frequencia_salvar($1::uuid,$2::jsonb)",[k,JSON.stringify({frequencia:'trimestral',mes_ciclo:2,semana_mes:3})]);
+ const submit=(sem:string,resposta:any,ret=true)=>pg.query("insert into mt_checkins values($1::uuid,$2::date,'checkout','enviado',$3::jsonb)",[c,sem,JSON.stringify({kpis_retrato:ret?[{indicador_id:k}]:[],kpis_resposta:[{indicador_id:k,...resposta}]})]);
+ it('Gov confirma, audita e diretor não altera frequência',async()=>{await freq();expect((await pg.query<any>('select origem_frequencia from mt_indicadores')).rows[0].origem_frequencia).toBe('editado');expect((await pg.query('select * from mt_auditoria')).rows).toHaveLength(1);await pg.exec("CREATE OR REPLACE FUNCTION mt_is_governanca(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT false$$");await expect(freq()).rejects.toThrow('Somente Governança/CEO');});
+ it('semanas 1/3 e 5 são iguais no banco e calendário',async()=>{const r=await pg.query<any>("select mt_frequencia_devida('quinzenal',NULL,NULL,'2026-10-26',d::date,false) as devido from unnest(ARRAY['2026-11-02','2026-11-09','2026-11-16','2026-11-23','2026-11-30']) d");expect(r.rows.map(x=>x.devido)).toEqual([true,false,true,false,false]);});
+ it('retrata só devidos com último trimestre fechado',async()=>{await freq();const r=await pg.query<any>("select rotina_retrato_ciclo($1,'2026-11-16') as r",[c]);expect(r.rows[0].r[0]).toMatchObject({periodo_inicio:'2026-07-01',periodo_fim:'2026-09-30',competencia:'2026-09'});expect((await pg.query<any>("select rotina_retrato_ciclo($1,'2026-12-21') as r",[c])).rows[0].r).toEqual([]);});
+ it('desvio exige valor/causa/impacto/ação e só própria cadeira',async()=>{await freq();await expect(submit('2026-10-19',{desvio_critico:true,situacao_atual:'5'})).rejects.toThrow();await pg.exec(`CREATE OR REPLACE FUNCTION mt_is_governanca(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT false$$;CREATE OR REPLACE FUNCTION mt_cadeira_do_usuario(uuid) RETURNS uuid LANGUAGE sql AS $$SELECT NULL::uuid$$;`);await expect(submit('2026-10-19',{desvio_critico:true,situacao_atual:'5',causa:'c',impacto:'i',plano:'a'})).rejects.toThrow('Sem permissão');});
+ it('duas leituras mensais distintas retomam frequência sem duplicar reenvio',async()=>{await freq();await submit('2026-10-19',{desvio_critico:true,situacao_atual:'5',causa:'c',impacto:'i',plano:'a'});await submit('2026-11-09',{situacao_atual:'12'});await submit('2026-11-09',{situacao_atual:'12'});expect((await pg.query<any>('select ativo,normais from mt_kpi_desvios')).rows[0]).toEqual({ativo:true,normais:1});await submit('2026-12-14',{situacao_atual:'12'});expect((await pg.query<any>('select ativo,normais from mt_kpi_desvios')).rows[0]).toEqual({ativo:false,normais:2});expect((await pg.query("select * from mt_auditoria where campo='retorno_frequencia'")).rows).toHaveLength(1);expect((await pg.query('select * from mt_kpi_desvio_leituras')).rows).toHaveLength(2);});
+ it('normalização numérica não transforma 1.5 em 15',async()=>{const r=await pg.query<any>("select mt_frequencia_numero('1.5') as n,mt_frequencia_numero('1.500,25') as br");expect(Number(r.rows[0].n)).toBe(1.5);expect(Number(r.rows[0].br)).toBe(1500.25);});
+ it('histórico do retrato não pode ser trocado após primeiro envio',async()=>{await pg.exec(`INSERT INTO mt_checkins VALUES('${c}','2026-10-19','checkout','rascunho','{"primeiro_envio_em":"2026-10-26","kpis_retrato":[]}');`);await expect(pg.exec("UPDATE mt_checkins SET conteudo=jsonb_set(conteudo,'{kpis_retrato}','[{}]')")).rejects.toThrow('histórico');});
+});
