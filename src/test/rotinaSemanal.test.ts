@@ -12,15 +12,15 @@ describe("Rotina semanal", () => {
     const l = kpisDaCadeira([ind("b", "bsc"), ind("k", "okr"), ind("c0", "cesta", "A", { peso: 0 }), ind("x", "bsc", "B"), ind("p", "cesta", "A", { parent_id: "c0" }), ind("arq", "bsc", "A", { status: "arquivado" })], "A");
     expect(l.map((i) => i.id)).toEqual(["b", "k", "c0"]);
   });
-  it("retrato calcula atingimento e faixa; sem competência fica vazio", () => {
+  it("retrato calcula atingimento sem faixa (régua retirada); sem competência fica vazio", () => {
     const r = montarRetrato([{ indicador_id: "a", codigo: "A", nome: "A", origem: "cesta", peso: 0, sentido: "maior", meta_mes: 100, realizado: 95 }], "2026-10", faixas, "t");
-    expect(r[0]).toMatchObject({ atingimento: 0.95, faixa: "No alvo", peso: 0, congelado_em: "t" });
+    expect(r[0]).toMatchObject({ atingimento: 0.95, faixa: null, peso: 0, congelado_em: "t" });
     expect(montarRetrato([{ indicador_id: "a", sentido: "maior", meta_mes: 100, realizado: 95 }], null, faixas)[0].atingimento).toBeNull();
   });
-  it("Sim/Não podem ser desmarcados e o atalho só marca os no alvo/superados sem resposta", () => {
+  it("Sim/Não podem ser desmarcados e o atalho só marca KRs/cesta de valor mensal com atingimento ≥ 100% sem resposta", () => {
     expect(alternar(true, true)).toBeNull();
     expect(alternar(null, false)).toBe(false);
-    const ret: any[] = [{ indicador_id: "a", faixa: "No alvo" }, { indicador_id: "b", faixa: "Superado" }, { indicador_id: "c", faixa: "Crítico" }];
+    const ret: any[] = [{ indicador_id: "a", origem: "cesta", atingimento: 1 }, { indicador_id: "b", origem: "okr", atingimento: 1.2 }, { indicador_id: "c", origem: "cesta", atingimento: 0.8 }];
     const out = confirmarNoAlvo(ret, [{ ...respostaVazia("b"), ok: false }], "2026-10-19");
     expect(out.find((k) => k.indicador_id === "a")?.ok).toBe(true);
     expect(out.find((k) => k.indicador_id === "b")?.ok).toBe(false);
