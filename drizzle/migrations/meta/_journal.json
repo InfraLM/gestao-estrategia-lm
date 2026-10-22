@@ -260,6 +260,13 @@
       "when": 1792675915457,
       "tag": "0036_portfolio_edicao_sem_validar",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1792679320028,
+      "tag": "0037_conteudo_revisoes_aprovacao",
+      "breakpoints": true
     }
   ]
 }

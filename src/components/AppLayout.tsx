@@ -82,6 +82,7 @@ const navGroups: NavGroup[] = [
     children: [
       { to: "/historico/projetos", label: "Histórico de Projetos", icon: FolderKanban },
       { to: "/historico/estrategia", label: "Histórico de Estratégia", icon: Compass },
+      { to: "/historico/diagnostico", label: "Histórico de Diagnóstico", icon: History },
       { to: "/historico/okrs", label: "Histórico de OKRs", icon: Target },
       { to: "/historico/cesta-metas", label: "Histórico de Cesta de Metas", icon: ListChecks },
     ],
@@ -133,6 +134,7 @@ const titles: Record<string, string> = {
   "/metas/semanal": "Rotina Semanal · Check-in e Checkout",
   "/semanal/visao": "Rotina Semanal · Visão da semana",
   "/historico/estrategia": "Histórico de Estratégia",
+  "/historico/diagnostico": "Histórico de Diagnóstico",
   "/historico/okrs": "Histórico de OKRs",
   "/historico/cesta-metas": "Histórico de Cesta de Metas",
   "/historico/projetos": "Histórico de Projetos · Versões de Documentos",

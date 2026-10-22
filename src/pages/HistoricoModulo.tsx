@@ -5,21 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Download, FileText, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import ConteudoRevisoesHistorico from "@/components/ConteudoRevisoesHistorico";
+import { NOMES_CONTEUDO, DocumentoConteudo } from "@/lib/conteudoRevisoes";
 
 type Sub = { id: string; titulo: string; descricao: string | null; arquivo_nome: string; arquivo_path: string; status: string; resumo_ia: string | null; submitted_by_nome: string | null; created_at: string };
 type Edit = { chave: string; atualizado_por_nome: string | null; updated_at: string };
 
-const NOMES: Record<string, string> = {
-  "diag.proposito": "Diagnóstico · Propósito, BHAG e Valores", "diag.pestel": "Diagnóstico · PESTEL", "diag.porter": "Diagnóstico · 5 Forças",
-  "diag.rbv": "Diagnóstico · RBV/VRIN", "diag.swot": "Diagnóstico · SWOT", "diag.ansoff": "Diagnóstico · Ansoff", "diag.errc": "Diagnóstico · Oceano Azul",
-  "estr.icp": "Estratégia · ICP", "estr.playtowin": "Estratégia · Play to Win", "estr.ansoff": "Estratégia · Ansoff", "estr.errc": "Estratégia · Oceano Azul",
-  "estr.vrin": "Estratégia · VRIN", "estr.swot": "Estratégia · SWOT", "estr.hipoteses": "Estratégia · Hipóteses TOWS",
-  "bsc.rev02": "BSC Rev.02 · Objetivos e KPIs", "estr.okrs-semestrais": "OKRs Semestrais",
-};
+const NOMES = NOMES_CONTEUDO;
 
 const fmt = (d: string) => new Date(d).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
-export default function HistoricoModulo({ titulo, descricao, modulo, prefixos }: { titulo: string; descricao: string; modulo: string; prefixos: string[] }) {
+export default function HistoricoModulo({ titulo, descricao, modulo, prefixos, documento }: { titulo: string; descricao: string; modulo: string; prefixos: string[]; documento?: DocumentoConteudo }) {
   const [subs, setSubs] = useState<Sub[]>([]);
   const [edits, setEdits] = useState<Edit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,6 +46,8 @@ export default function HistoricoModulo({ titulo, descricao, modulo, prefixos }:
         <h2 className="text-lg font-semibold tracking-tight">{titulo}</h2>
         <p className="text-sm text-muted-foreground">{descricao}</p>
       </div>
+
+      {modulo === "estrategia" && <ConteudoRevisoesHistorico documentoInicial={documento} />}
 
       <Card className="p-4 space-y-3">
         <h3 className="font-semibold text-sm flex items-center gap-2"><FileText className="h-4 w-4 text-primary" /> Arquivos enviados ({subs.length})</h3>

@@ -449,6 +449,133 @@ export type Database = {
         }
         Relationships: []
       }
+      conteudo_revisao_itens: {
+        Row: {
+          chave: string
+          decidido_em: string | null
+          decidido_por: string | null
+          decidido_por_nome: string | null
+          id: string
+          justificativa: string | null
+          motivo_rejeicao: string | null
+          observacao: string | null
+          origem: string
+          referencias: string | null
+          revisao_id: string
+          secao: string
+          status: string
+          valor_anterior: Json
+          valor_final: Json | null
+          valor_proposto: Json
+        }
+        Insert: {
+          chave: string
+          decidido_em?: string | null
+          decidido_por?: string | null
+          decidido_por_nome?: string | null
+          id?: string
+          justificativa?: string | null
+          motivo_rejeicao?: string | null
+          observacao?: string | null
+          origem?: string
+          referencias?: string | null
+          revisao_id: string
+          secao: string
+          status?: string
+          valor_anterior: Json
+          valor_final?: Json | null
+          valor_proposto: Json
+        }
+        Update: {
+          chave?: string
+          decidido_em?: string | null
+          decidido_por?: string | null
+          decidido_por_nome?: string | null
+          id?: string
+          justificativa?: string | null
+          motivo_rejeicao?: string | null
+          observacao?: string | null
+          origem?: string
+          referencias?: string | null
+          revisao_id?: string
+          secao?: string
+          status?: string
+          valor_anterior?: Json
+          valor_final?: Json | null
+          valor_proposto?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conteudo_revisao_itens_revisao_id_fkey"
+            columns: ["revisao_id"]
+            isOneToOne: false
+            referencedRelation: "conteudo_revisoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conteudo_revisoes: {
+        Row: {
+          criado_em: string
+          criado_por: string | null
+          documento: string
+          fonte: string | null
+          fonte_submissao_id: string | null
+          id: string
+          numero: number
+          publicado_em: string | null
+          publicado_por: string | null
+          publicado_por_nome: string | null
+          resumo_mudancas: string | null
+          snapshot: Json
+          status: string
+          substituido_em: string | null
+          titulo: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string | null
+          documento: string
+          fonte?: string | null
+          fonte_submissao_id?: string | null
+          id?: string
+          numero: number
+          publicado_em?: string | null
+          publicado_por?: string | null
+          publicado_por_nome?: string | null
+          resumo_mudancas?: string | null
+          snapshot?: Json
+          status?: string
+          substituido_em?: string | null
+          titulo: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string | null
+          documento?: string
+          fonte?: string | null
+          fonte_submissao_id?: string | null
+          id?: string
+          numero?: number
+          publicado_em?: string | null
+          publicado_por?: string | null
+          publicado_por_nome?: string | null
+          resumo_mudancas?: string | null
+          snapshot?: Json
+          status?: string
+          substituido_em?: string | null
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conteudo_revisoes_fonte_submissao_id_fkey"
+            columns: ["fonte_submissao_id"]
+            isOneToOne: false
+            referencedRelation: "base_submissoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cronograma_itens: {
         Row: {
           created_at: string
@@ -4300,6 +4427,26 @@ export type Database = {
           _projecoes: string
           _projeto: string
         }
+        Returns: string
+      }
+      revisao_aprovar_pendentes: {
+        Args: { _revisao_id: string }
+        Returns: number
+      }
+      revisao_chave_documento: { Args: { _chave: string }; Returns: string }
+      revisao_decidir_item: {
+        Args: {
+          _id: string
+          _motivo?: string
+          _status: string
+          _valor_final?: Json
+        }
+        Returns: undefined
+      }
+      revisao_permissoes: { Args: never; Returns: Json }
+      revisao_publicar: { Args: { _revisao_id: string }; Returns: undefined }
+      revisao_sugerir: {
+        Args: { _chave: string; _secao: string; _valor: Json }
         Returns: string
       }
       rotina_conformidade: {

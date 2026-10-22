@@ -86,6 +86,7 @@ const App = () => (
               {/* Histórico de Documentações — versões de todos os uploads do app */}
               <Route path="/historico/projetos" element={<PlaceholderDoc titulo="Histórico de Projetos" descricao="Versões de todos os documentos enviados ao app vinculados a projetos: BCs, atas, entregas, status reports, anexos e gravações." bullets={["Listagem cronológica de uploads por projeto", "Versionamento automático ao re-submeter", "Filtros por projeto, autor, tipo de arquivo e período", "Download de qualquer versão histórica", "Visível a todos os usuários autenticados"]} />} />
               <Route path="/historico/estrategia" element={<HistoricoModulo titulo="Histórico de Estratégia" descricao="Arquivos enviados para atualizar o BSC/Árvore de KPIs e edições feitas no Diagnóstico e na Estratégia." modulo="estrategia" prefixos={["diag.", "estr.", "bsc."]} />} />
+              <Route path="/historico/diagnostico" element={<HistoricoModulo titulo="Histórico de Diagnóstico" descricao="Revisões do Diagnóstico, propostas e decisões da Governança." modulo="estrategia" prefixos={["diag."]} documento="diagnostico" />} />
               <Route path="/historico/okrs" element={<HistoricoModulo titulo="Histórico de OKRs" descricao="Arquivos enviados para atualizar os OKRs do semestre." modulo="okrs" prefixos={[]} />} />
               <Route path="/historico/cesta-metas" element={<HistoricoModulo titulo="Histórico de Cesta de Metas" descricao="Arquivos enviados para atualizar a Cesta de Metas por diretoria." modulo="cesta" prefixos={[]} />} />
 
