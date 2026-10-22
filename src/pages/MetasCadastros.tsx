@@ -1,3 +1,4 @@
+import { TIPO_LBL } from "@/lib/avaliacaoBsc";
 import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -114,6 +115,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
           cadeira_id: r.cadeira_id, unidade: r.unidade || null, sentido: r.sentido, peso: r.peso ?? 0, status: r.status,
           meta_semestre: r.meta_semestre, meta_texto: r.meta_texto || null, parent_id: r.parent_id, regra_consolidacao: r.regra_consolidacao,
           peso_componente: r.peso_componente, observacoes: r.observacoes || null,
+          tipo_apontamento: r.tipo_apontamento ?? "valor_mensal", prazo_entrega: r.tipo_apontamento === "entrega" ? r.prazo_entrega || null : r.prazo_entrega ?? null,
         };
         const { data, error } = r.id ? await db.from("mt_indicadores").update(row).eq("id", r.id).select().single() : await db.from("mt_indicadores").insert(row).select().single();
         if (error) { toast.error(error.message); break; }
@@ -178,7 +180,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
               <thead className="bg-muted/50 text-xs text-muted-foreground"><tr>
                 <th className="text-left p-2 freeze-col-1 bg-muted">Código</th><th className="text-left p-2">Nome</th><th className="p-2">Origem</th>
                 <th className="text-left p-2">Objetivo</th><th className="text-left p-2">Cadeira</th><th className="p-2">Sentido</th>
-                <th className="p-2">Peso</th><th className="text-left p-2">Meta</th><th className="p-2">Curva</th><th className="p-2">Status</th><th className="p-2" />
+                <th className="p-2">Tipo de apontamento</th><th className="text-left p-2">Meta semestral/anual</th><th className="p-2">Curva</th><th className="p-2">Status</th><th className="p-2" />
               </tr></thead>
               <tbody>
                 {indicadores.map((i) => {
@@ -192,7 +194,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
                       <td className="p-2">{nomeObj(i.objetivo_id)}{i.okr_id && <div className="text-[11px] text-muted-foreground">{nomeOkr(i.okr_id)}</div>}</td>
                       <td className="p-2">{nomeCad(i.cadeira_id)}</td>
                       <td className="p-2 text-center text-xs">{i.sentido === "maior" ? "↑ maior" : "↓ menor"}</td>
-                      <td className="p-2 text-center">{Number(i.peso) === 0 ? <Badge variant="secondary" className="text-[10px]">peso 0</Badge> : fmtNum(Number(i.peso))}</td>
+                      <td className="p-2 text-center text-xs"><Badge variant="secondary" className="text-[10px]">{TIPO_LBL[i.tipo_apontamento ?? "valor_mensal"]}</Badge>{i.tipo_apontamento === "entrega" && i.prazo_entrega && <div className="text-[11px] text-muted-foreground">prazo {new Date(i.prazo_entrega + "T12:00:00").toLocaleDateString("pt-BR")}</div>}{i.status_implantacao_medicao && <div><Badge variant="outline" className="text-[10px] mt-1" title="Status de implantação da medição (planilha rev. 17.09.26)">medição: {i.status_implantacao_medicao}</Badge></div>}</td>
                       <td className="p-2 text-xs">{i.meta_semestre != null ? `${fmtNum(i.meta_semestre)} ${i.unidade ?? ""}` : i.meta_texto ?? "—"}</td>
                       <td className="p-2 text-center text-xs">{nMetas ? `${nMetas}/6` : <span className="text-warning">pendente</span>}</td>
                       <td className="p-2 text-center"><Badge variant={i.status === "ativo" ? "default" : "secondary"} className="text-[10px]">{i.status}</Badge></td>
@@ -369,9 +371,10 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <Campo label="Unidade"><Input value={r.unidade ?? ""} onChange={(e) => set("unidade", e.target.value)} placeholder="%, R$, dias" /></Campo>
                   <Campo label="Sentido"><Sel value={r.sentido} onChange={(v) => set("sentido", v)} placeholder="Sentido" items={[{ v: "maior", l: "Quanto maior melhor" }, { v: "menor", l: "Quanto menor melhor" }]} /></Campo>
-                  <Campo label="Peso"><Input inputMode="decimal" value={txtNum(r.peso)} onChange={(e) => set("peso", num(e.target.value) ?? 0)} /></Campo>
-                  <Campo label="Meta do semestre"><Input inputMode="decimal" value={txtNum(r.meta_semestre)} onChange={(e) => set("meta_semestre", num(e.target.value))} /></Campo>
+                  <Campo label="Tipo de apontamento (só Governança)"><Sel value={r.tipo_apontamento ?? "valor_mensal"} onChange={(v) => set("tipo_apontamento", v)} placeholder="Tipo" items={Object.entries(TIPO_LBL).map(([v, l]) => ({ v, l }))} /></Campo>
+                  <Campo label="Meta semestral/anual"><Input inputMode="decimal" value={txtNum(r.meta_semestre)} onChange={(e) => set("meta_semestre", num(e.target.value))} /></Campo>
                 </div>
+                {r.tipo_apontamento === "entrega" && <Campo label="Prazo da entrega"><Input type="date" value={r.prazo_entrega ?? ""} onChange={(e) => set("prazo_entrega", e.target.value)} /></Campo>}
                 <Campo label="Meta (texto de referência)"><Input value={r.meta_texto ?? ""} onChange={(e) => set("meta_texto", e.target.value)} /></Campo>
                 <Campo label="Curva de metas mensais (2º semestre)">
                   <div className="overflow-x-auto"><table className="text-xs w-full">
