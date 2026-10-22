@@ -71,6 +71,7 @@ const navGroups: NavGroup[] = [
     icon: Repeat,
     children: [
       { to: "/metas/semanal", label: "Check-in e Checkout", icon: ListChecks },
+      { to: "/semanal/dashboard", label: "Dashboard da rotina", icon: TrendingUp },
       { to: "/semanal/visao", label: "Visão semanal", icon: LayoutGrid },
       { to: "/lancamentos", label: "Lançamentos", icon: Settings2 },
     ],
@@ -133,6 +134,7 @@ const titles: Record<string, string> = {
   "/metas/lancamento": "Sistema de Metas 2S26 · Lançamento mensal",
   "/metas/semanal": "Rotina Semanal · Check-in e Checkout",
   "/semanal/visao": "Rotina Semanal · Visão da semana",
+  "/semanal/dashboard": "Rotina Semanal · Dashboard consolidado",
   "/historico/estrategia": "Histórico de Estratégia",
   "/historico/diagnostico": "Histórico de Diagnóstico",
   "/historico/okrs": "Histórico de OKRs",

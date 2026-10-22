@@ -23,6 +23,7 @@ import PlaceholderDoc from "./pages/PlaceholderDoc";
 import HistoricoModulo from "./pages/HistoricoModulo";
 import MetasSemanal from "./pages/MetasSemanal";
 import SemanalVisao from "./pages/SemanalVisao";
+import SemanalDashboard from "./pages/SemanalDashboard";
 import Diagnostico from "./pages/Diagnostico";
 import Estrategia from "./pages/Estrategia";
 import BacklogEstrategico from "./pages/BacklogEstrategico";
@@ -102,6 +103,7 @@ const App = () => (
               <Route path="/metas/painel" element={<Navigate to="/lancamentos?aba=painel" replace />} />
               <Route path="/metas/semanal" element={<MetasSemanal />} />
               <Route path="/semanal/visao" element={<SemanalVisao />} />
+              <Route path="/semanal/dashboard" element={<SemanalDashboard />} />
               <Route path="/backlog-estrategico" element={<BacklogEstrategico />} />
               <Route path="/impacto-estrategico" element={<ImpactoEstrategico />} />
               <Route path="/matriz-processos" element={<MatrizProcessos />} />
