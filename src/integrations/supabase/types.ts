@@ -2656,6 +2656,141 @@ export type Database = {
           },
         ]
       }
+      portfolio_vinculacao_jobs: {
+        Row: {
+          bloqueio: string | null
+          created_at: string
+          criado_por: string | null
+          erro: string | null
+          fonte_id: string
+          fonte_tipo: string
+          id: string
+          run_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          bloqueio?: string | null
+          created_at?: string
+          criado_por?: string | null
+          erro?: string | null
+          fonte_id: string
+          fonte_tipo: string
+          id?: string
+          run_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          bloqueio?: string | null
+          created_at?: string
+          criado_por?: string | null
+          erro?: string | null
+          fonte_id?: string
+          fonte_tipo?: string
+          id?: string
+          run_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      portfolio_vinculos: {
+        Row: {
+          confianca: string | null
+          created_at: string
+          fonte_id: string
+          fonte_tipo: string
+          id: string
+          justificativa: string
+          origem: string
+          proposto_nome: string | null
+          proposto_por: string | null
+          ref_id: string
+          status: string
+          tipo: string
+          updated_at: string
+          validado_em: string | null
+          validado_nome: string | null
+          validado_por: string | null
+        }
+        Insert: {
+          confianca?: string | null
+          created_at?: string
+          fonte_id: string
+          fonte_tipo: string
+          id?: string
+          justificativa?: string
+          origem?: string
+          proposto_nome?: string | null
+          proposto_por?: string | null
+          ref_id: string
+          status?: string
+          tipo: string
+          updated_at?: string
+          validado_em?: string | null
+          validado_nome?: string | null
+          validado_por?: string | null
+        }
+        Update: {
+          confianca?: string | null
+          created_at?: string
+          fonte_id?: string
+          fonte_tipo?: string
+          id?: string
+          justificativa?: string
+          origem?: string
+          proposto_nome?: string | null
+          proposto_por?: string | null
+          ref_id?: string
+          status?: string
+          tipo?: string
+          updated_at?: string
+          validado_em?: string | null
+          validado_nome?: string | null
+          validado_por?: string | null
+        }
+        Relationships: []
+      }
+      portfolio_vinculos_auditoria: {
+        Row: {
+          acao: string
+          antes: Json | null
+          created_at: string
+          depois: Json | null
+          fonte_id: string
+          fonte_tipo: string
+          id: string
+          usuario_id: string | null
+          usuario_nome: string | null
+          vinculo_id: string | null
+        }
+        Insert: {
+          acao: string
+          antes?: Json | null
+          created_at?: string
+          depois?: Json | null
+          fonte_id: string
+          fonte_tipo: string
+          id?: string
+          usuario_id?: string | null
+          usuario_nome?: string | null
+          vinculo_id?: string | null
+        }
+        Update: {
+          acao?: string
+          antes?: Json | null
+          created_at?: string
+          depois?: Json | null
+          fonte_id?: string
+          fonte_tipo?: string
+          id?: string
+          usuario_id?: string | null
+          usuario_nome?: string | null
+          vinculo_id?: string | null
+        }
+        Relationships: []
+      }
       proc_diretoria_cadeira: {
         Row: {
           cadeira_id: string | null
@@ -4077,6 +4212,27 @@ export type Database = {
       planejamento_aprovar: { Args: { _id: string }; Returns: undefined }
       pmo_atualizar_status: { Args: { _itens: Json }; Returns: number }
       pmo_pode_atualizar: { Args: never; Returns: boolean }
+      portfolio_fonte_visivel: {
+        Args: { _id: string; _tipo: string }
+        Returns: boolean
+      }
+      portfolio_gravar_propostas: {
+        Args: {
+          _fonte_id: string
+          _fonte_tipo: string
+          _propostas: Json
+          _usuario: string
+        }
+        Returns: number
+      }
+      portfolio_pode_editar: {
+        Args: { _id: string; _tipo: string }
+        Returns: boolean
+      }
+      portfolio_revisar: {
+        Args: { _acao: string; _itens: Json }
+        Returns: number
+      }
       proj_eh_ceo: { Args: { _uid: string }; Returns: boolean }
       proj_gov_ou_ceo: { Args: { _uid: string }; Returns: boolean }
       proj_principal: {
