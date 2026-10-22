@@ -6,7 +6,7 @@
 - Read subdirectory AGENTS.md rules before editing there, including src/components/estrutura.
 
 - Metas 2S26 and weekly check-ins share `mt_*` via `useMetasBase`.
-- KPIs, KRs and Cesta share `mt_indicadores` by `origem`; monthly score = KRs + cesta with peso vigente (`mt_pesos_vigencia`, never recomputing closed months); BSC is outside the score, evaluated on/off track on read (`src/lib/avaliacaoBsc.ts`).
+- KPIs, KRs and Cesta share `mt_indicadores` by `origem`; monthly score = KRs + cesta with peso vigente (`mt_pesos_vigencia`, never recomputing closed months); BSC is outside the score, evaluated on/off track on read only via `avaliarKpiBsc` (launched value, else latest numeric situation from sent checkouts or KPI tree) so form, Painel and Visão never diverge.
 - Iniciativa "atrasada" is computed on read (`statusEfetivo`), never stored.
 - Metas: reads need login (`mt_email_corporativo`); cadastro writes need `mt_is_governanca`, enforced in RLS.
 - Editable static content is JSON per key in `conteudo_editavel` via `useConteudo`, static defaults as fallback.
