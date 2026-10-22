@@ -183,6 +183,13 @@
       "when": 1792659926258,
       "tag": "0025_retrato_com_tipo_apontamento",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1792660101979,
+      "tag": "0026_reabrir_copia_apontamentos",
+      "breakpoints": true
     }
   ]
 }
