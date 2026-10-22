@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI } from "@/hooks/useMetasBase";
 import { segunda, prazoDe, SITUACAO_LBL, ENTREGA_LBL } from "./MetasSemanal";
 import { normalizarCheckout, riscoAberto, idadeSemanas, cicloPadrao, ciclosDisponiveis, semanaCheckout, periodoSemana, competenciaDaSemana } from "@/lib/rotinaSemanal";
-import { useAvaliacoesBsc } from "@/hooks/useAvaliacoesBsc";
+import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 
 const db = supabase as any;
 const fmtSem = (s: string) => new Date(s + "T12:00").toLocaleDateString("pt-BR");
@@ -18,7 +18,7 @@ export default function SemanalVisao() {
   const b = useMetasBase();
   const [sem, setSem] = useState(cicloPadrao());
   const semOut = semanaCheckout(sem);
-  const aval = useAvaliacoesBsc(competenciaDaSemana(semOut));
+  const aval = useAvaliacoesBsc(b.loading ? null : competenciaDaSemana(semOut), cadeirasVisiveisBsc(b));
   const [rows, setRows] = useState<any[]>([]);
   const semanas = useMemo(() => ciclosDisponiveis(), []);
   const [riscos, setRiscos] = useState<any[]>([]);
@@ -110,7 +110,7 @@ export default function SemanalVisao() {
               )}
               {(() => { const a = aval.porCadeira[c.id]; if (!a) return null; return (
                 <div className="space-y-1 text-sm"><p className="font-medium">BSC · {a.cont.on} on track · {a.cont.off} off track · {a.cont.acomp} em acompanhamento{a.cont.sem_meta ? ` · ${a.cont.sem_meta} sem meta` : ""}</p>
-                  {a.off.map((i) => <p key={i.id} className="text-destructive text-xs">Off track: {i.nome}</p>)}
+                  {a.off.map((i) => <p key={i.id} className="text-destructive text-xs">Off track: {i.nome}{i.origem ? ` (${i.origem})` : ""}</p>)}
                 </div>); })()}
               {atrasadas > 0 && <p className="text-xs text-destructive">{atrasadas} iniciativa(s) atrasada(s)</p>}
             </Card>

@@ -14,7 +14,7 @@ import { useMetasBase, MESES_2S26, statusEfetivo } from "@/hooks/useMetasBase";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { prazoDe, ENTREGA_LBL } from "@/pages/MetasSemanal";
 import { cicloPadrao, semanaCheckout } from "@/lib/rotinaSemanal";
-import { useAvaliacoesBsc } from "@/hooks/useAvaliacoesBsc";
+import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 
 const db = supabase as any;
 const MES_LONGO: Record<string, string> = { "07": "Julho", "08": "Agosto", "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro" };
@@ -52,7 +52,7 @@ export default function MetasPainel() {
   const b = useMetasBase();
   const [comp, setComp] = useState(mesAtual());
   const [comps, setComps] = useState<any[]>([]);
-  const avalBsc = useAvaliacoesBsc(comp);
+  const avalBsc = useAvaliacoesBsc(b.loading ? null : comp, cadeirasVisiveisBsc(b));
   const [envios, setEnvios] = useState<any[]>([]);
   const [lancs, setLancs] = useState<any[]>([]);
   const [audit, setAudit] = useState<any[]>([]);
@@ -198,7 +198,7 @@ export default function MetasPainel() {
                         : e ? <span className="inline-flex items-center gap-1 text-warning"><Clock className="h-4 w-4" /> Rascunho</span>
                         : <span className="inline-flex items-center gap-1 text-destructive"><AlertTriangle className="h-4 w-4" /> Não atualizada</span>}
                     </td>
-                    <td className="pr-3 text-xs">{(() => { const a = avalBsc.porCadeira[c.id]; return a ? <span><b className="text-success">{a.cont.on}</b> on · <b className="text-destructive">{a.cont.off}</b> off · {a.cont.acomp} acomp.{a.cont.sem_meta ? ` · ${a.cont.sem_meta} s/ meta` : ""}</span> : "—"; })()}</td>
+                    <td className="pr-3 text-xs">{(() => { const a = avalBsc.porCadeira[c.id]; return a ? <span><b className="text-success">{a.cont.on}</b> on · <b className="text-destructive">{a.cont.off}</b> off · {a.cont.acomp} acomp.{a.cont.sem_meta ? ` · ${a.cont.sem_meta} s/ meta` : ""}{a.itens.filter((x) => x.origem).map((x) => <span key={x.id} className="block text-muted-foreground">{x.nome}: {x.origem}</span>)}</span> : "—"; })()}</td>
                     <td className="pr-3"><Sem k={co} tipo="checkout" nome={c.nome} /></td>
                     <td className="pr-3"><Sem k={ci} tipo="checkin" nome={c.nome} /></td>
                     <td className="pr-3">{atrasadas ? <Badge variant="destructive">{atrasadas}</Badge> : "0"}</td>
