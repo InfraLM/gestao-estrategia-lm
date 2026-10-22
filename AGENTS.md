@@ -2,7 +2,7 @@
 
 - Phase 1 spaces use six isolated tables and additive `fase1_*` auth helpers; new modules default closed, with owner/director read exceptions enforced server-side without changing legacy module access.
 - Strategic reference URLs use linksEstrategicos; Contexto and Insights select sheets from the codigo query parameter using replace navigation and only RLS-visible records, preserving filters and existing access gates.
-- Strategic spaces use RLS reads; Contexto, Insights Sócios and Incentivos are read-only. Incentivos reads active shared-goal indicators or incentivo_metas; CestaInsights updates only adherence/observation/date/evaluator with incentivos editors/admin and RLS. Text uses Contexto parsing; DS links require socios insights access. No AI or general exports.
+- Strategic spaces read via RLS; Contexto, Insights Sócios, Incentivos read-only; CestaInsights edits only adherence fields (incentivos editors/admin). No AI or general exports.
 - Read subdirectory AGENTS.md rules before editing there, including src/components/estrutura.
 
 - Metas 2S26 and weekly check-ins share `mt_*` via `useMetasBase`.
@@ -29,6 +29,4 @@
 - Desktop/mobile share AppLayout's permission-filtered sidebar; mobile uses a left Sheet closing on navigation.
 - Checkout KPI numbers are live until first send, then stored in `kpis_retrato`; `src/lib/rotinaSemanal.ts` normalizes old/new JSON. Plans → initiatives only via idempotent `rotina_criar_iniciativa`; risks in `mt_rotina_riscos` (immutable text); outside e-mails only in `mt_rotina_contatos`, never in weekly JSON.
 
-- Projects get a confirmed principal chair (`projetos.cadeira_id`, set only via Governança RPC `projeto_definir_cadeira`; text `diretor` is only a suggestion) plus support chairs; impact links live in `projeto_vinculos` (legacy `objetivos`/`krs` are read-only history).
-- Monthly project status reports are requested only in the checkout of the last cycle of the month (`ultimoCicloDoMes`), to the principal chair, for open statuses; missing attachment is a pending item, never a send blocker. Edits version into `mt_status_projetos_versoes`; files are readable only by principal chair, Governança and CEO.
-- Project status changes only via `projeto_confirmar_situacao` (director) or `projeto_registrar_decisao` (Governança/CEO, SR codes shown in Contexto e Decisões).
+- Projects: principal chair `projetos.cadeira_id` set only via Governança RPC (text `diretor` is a suggestion) + support chairs; impact links in `projeto_vinculos` (legacy objetivos/krs read-only). Status reports only in last-cycle-of-month checkout (`ultimoCicloDoMes`), principal chair, open statuses; missing file is pending, not a blocker; edits versioned; files: chair/Governança/CEO. Status changes only via `projeto_confirmar_situacao` or `projeto_registrar_decisao` (Gov/CEO, SR codes in Contexto).
