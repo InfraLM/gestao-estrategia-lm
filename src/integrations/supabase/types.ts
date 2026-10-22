@@ -2377,6 +2377,54 @@ export type Database = {
           },
         ]
       }
+      planejamento_revisoes: {
+        Row: {
+          aprovado_em: string | null
+          aprovado_por: string | null
+          aprovado_por_nome: string | null
+          competencia: string | null
+          conteudo: string
+          fontes: Json
+          gerado_em: string
+          gerado_por: string | null
+          id: string
+          numero: number
+          status: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          aprovado_em?: string | null
+          aprovado_por?: string | null
+          aprovado_por_nome?: string | null
+          competencia?: string | null
+          conteudo?: string
+          fontes?: Json
+          gerado_em?: string
+          gerado_por?: string | null
+          id?: string
+          numero: number
+          status?: string
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          aprovado_em?: string | null
+          aprovado_por?: string | null
+          aprovado_por_nome?: string | null
+          competencia?: string | null
+          conteudo?: string
+          fontes?: Json
+          gerado_em?: string
+          gerado_por?: string | null
+          id?: string
+          numero?: number
+          status?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       processos: {
         Row: {
           area: string | null
@@ -2931,6 +2979,27 @@ export type Database = {
         }
         Relationships: []
       }
+      rotina_transparencia: {
+        Row: {
+          alterado_em: string | null
+          alterado_por: string | null
+          ativo: boolean
+          id: boolean
+        }
+        Insert: {
+          alterado_em?: string | null
+          alterado_por?: string | null
+          ativo?: boolean
+          id?: boolean
+        }
+        Update: {
+          alterado_em?: string | null
+          alterado_por?: string | null
+          ativo?: boolean
+          id?: boolean
+        }
+        Relationships: []
+      }
       socios_insights: {
         Row: {
           codigo: string | null
@@ -3456,6 +3525,7 @@ export type Database = {
         Returns: boolean
       }
       mt_reabrir: { Args: { _comp: string }; Returns: undefined }
+      planejamento_aprovar: { Args: { _id: string }; Returns: undefined }
       proj_eh_ceo: { Args: { _uid: string }; Returns: boolean }
       proj_gov_ou_ceo: { Args: { _uid: string }; Returns: boolean }
       proj_principal: {
@@ -3496,10 +3566,33 @@ export type Database = {
         }
         Returns: string
       }
+      rotina_pode_ler_checkin: { Args: { _cadeira: string }; Returns: boolean }
       rotina_retrato: {
         Args: { _cadeira: string; _comp: string }
         Returns: Json
       }
+      rotina_situacoes_kpi: {
+        Args: never
+        Returns: {
+          cadeira_id: string
+          enviado_em: string
+          indicador_id: string
+          semana: string
+          situacao_atual: string
+        }[]
+      }
+      rotina_status_ciclos: {
+        Args: { _semanas: string[] }
+        Returns: {
+          cadeira_id: string
+          enviado_em: string
+          primeiro_envio_em: string
+          semana: string
+          status: string
+          tipo: string
+        }[]
+      }
+      rotina_ve_todas: { Args: { _uid: string }; Returns: boolean }
       rotina_vincular_iniciativa: {
         Args: { _iniciativa: string; _vinculos: Json }
         Returns: undefined
