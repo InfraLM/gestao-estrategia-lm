@@ -1,84 +1,105 @@
 # Iniciativas e projetos empilhados, status report mensal, farol e atualização do portfólio
 
+Plano aprovado pela Naira com as decisões finais. Ordem: Etapa 1 → Etapa 3 (prontas antes do ciclo que vence segunda 26/10) → Etapas 2, 4 e 5.
+
 ## Situação hoje (conferida no banco)
-- 152 projetos. 128 têm algum texto em "diretor", mas em 18 grafias diferentes, que misturam nome de pessoa ("Yuri Ribeiro", "Bruno Garcia") com cargo ("CTO", "Dir. Operações", "CTO + Dir. Acadêmica"). 24 não têm diretor nenhum.
-- Nenhum projeto está ligado a uma cadeira: o vínculo é só pelo nome. Das 8 cadeiras, apenas CEO (Ian) e Governança (Naira) têm diretor vinculado. As demais 6 estão sem usuário, e isso continua pendente.
-- Vínculos dos projetos: 10 têm objetivo BSC, 0 têm KR, nenhum tem KPI ou cesta.
-- Vínculos múltiplos das iniciativas: 0 registros até agora. O formulário novo ainda não foi enviado.
-- Status report: 0 registros. Hoje ele fica no lançamento mensal (Metas), com saúde geral, % do cronograma e custo, mas não tem farol de escopo/custo/cronograma.
-- Onde as iniciativas aparecem hoje: em lugar nenhum por vínculo. Na ficha do projeto existe a aba Status Report, mas sem iniciativas. OKRs, Cesta e a árvore do BSC não listam iniciativas.
+- O portfólio tem 152 projetos.
+  - 128 têm algum texto de diretor, escrito de 18 jeitos diferentes, misturando nome e cargo.
+  - 24 não têm diretor.
+  - Nenhum projeto está ligado a uma cadeira.
+- Das 8 cadeiras, só CEO e Governança têm diretor vinculado. As outras 6 seguem pendentes e ficam fora do escopo.
+- Nos projetos, 10 têm objetivo BSC e 0 têm KR. Nenhum tem KPI ou cesta.
+- Ainda não existe vínculo múltiplo de iniciativa nem status report registrado.
 
-## Etapas (5)
+## Decisões finais
+1. Falta de anexo gera só pendência, visível na Revisão e no Painel. Não bloqueia o envio.
+2. O status report sai do formulário mensal de Metas. Os registros antigos continuam legíveis.
+3. Decisões possíveis: Manter com aceite de desvios e projeções; Manter com ajustes; Suspender; Replanejar (nova linha de base); Encerrar. "Encerrar" pergunta se o projeto foi Concluído ou Cancelado e grava esse status.
+4. Governança e CEO registram as decisões. O diretor vê as decisões dos projetos dele.
+5. Em dupla responsabilidade, há uma cadeira principal e uma ou mais de apoio. O status report é pedido só à principal.
+6. Contam como "em aberto": Em Andamento, Atrasado, Pausado e A Iniciar. Ficam fora: Backlog, Concluído e Cancelado.
+7. As listas antigas de vínculos do projeto viram histórico somente leitura. O novo modelo de vínculos passa a ser a referência.
+8. Nenhuma cadeira ou status de projeto é gravado sem confirmação. O texto do campo "diretor" serve apenas como sugestão.
 
-### Etapa 1 – Responsável e vínculos de impacto do projeto (base para o resto)
-- Cada projeto ganha uma **cadeira responsável** e **vínculos de impacto múltiplos** (objetivo BSC, KPI BSC, KR 2026/2, item de cesta), no mesmo formato dos vínculos de ação.
-- **Uso dos dados atuais:** os 10 objetivos existentes viram vínculos. O "diretor" em texto é só uma *sugestão* de cadeira e não é gravado automaticamente.
-- **Fila da Governança:** projetos sem cadeira confirmada ficam numa lista. A Naira atribui a cadeira e o diretor confirma no primeiro status report.
-- **Quem preenche os vínculos:** o diretor da cadeira (nos projetos dele) e a Governança (em todos).
+## Etapa 1 – Cadeira responsável e vínculos de impacto do projeto (prioridade)
+- Cada projeto passa a ter uma cadeira principal, cadeiras de apoio (opcional) e vínculos de impacto múltiplos: objetivo BSC, KPI BSC, KR 2026/2 e cesta.
+- Os 10 objetivos BSC já cadastrados entram como vínculos, pois apenas mudam de formato.
+- **Conferência em lote (Naira):** uma tela lista os 152 projetos.
+  - Cada linha mostra a sugestão de cadeira, deduzida do texto do diretor.
+  - Ela pode confirmar uma linha ou várias de uma vez, trocar a cadeira, marcar cadeiras de apoio ou deixar o projeto na fila.
+  - Projetos sem sugestão aparecem na fila "Sem responsável".
+- **Quem edita:**
+  - Governança: cadeira e vínculos de qualquer projeto.
+  - Diretor da cadeira principal: vínculos dos projetos dele.
+- Na ficha do projeto, os vínculos antigos aparecem como "Histórico", só para leitura.
 
-### Etapa 2 – Empilhamento de iniciativas e projetos
-Um único bloco reaproveitável, "Iniciativas e projetos vinculados", mostra: status, prazo, responsável pela entrega, cadeira, origem ("checkout de 12/10", "Metas") e atrasadas em destaque (atraso calculado na leitura). Ele aparece em:
-- Ficha do projeto (nova aba "Iniciativas").
-- OKRs do semestre, ao abrir um KR.
-- Cesta de metas, ao abrir um item.
-- Árvore BSC / Impacto Estratégico: no objetivo e no KPI. O objetivo junta os vínculos dos seus KPIs.
+## Etapa 3 – Status report no último ciclo do mês (prioridade)
+- **Regra:** o último apontamento do mês M é o ciclo cujo checkout retrata a última semana com domingo em M.
+  - Outubro/2026: checkout de 19 a 25/10, check-in de 26/10. Abre sexta 23/10 e vence segunda 26/10 às 23h59.
+  - Novembro/2026: checkout de 23 a 29/11, check-in de 30/11. Abre sexta 27/11 e vence segunda 30/11.
+- **Nova etapa no checkout desse ciclo:** "Status report dos projetos". Ela lista os projetos em aberto em que a cadeira é a principal.
+- Para cada projeto, o diretor informa:
+  - o anexo;
+  - o farol de escopo, custo e cronograma (verde, amarelo ou vermelho);
+  - um comentário;
+  - no primeiro report, a confirmação da situação: em andamento, concluído, suspenso, cancelado ou "não é meu".
+- **Efeito das confirmações:**
+  - "Não é meu" devolve o projeto à fila da Governança.
+  - A confirmação de situação é o único caminho, além da decisão da Etapa 4, que altera o status no portfólio, e fica registrado quem confirmou.
+- **Revisão antes do envio:** mostra os projetos sem anexo ou sem farol como pendência, sem bloquear o envio.
+- **Arquivos:** ficam no cofre privado já existente. Só a própria cadeira principal, a Governança e o CEO podem abrir. Fica um registro por projeto por mês; reenvio no mesmo mês substitui e guarda a versão anterior no histórico.
+- **Em Metas:** o bloco de status report sai do lançamento mensal. A aba "Status Report" do projeto continua lendo os registros antigos e os novos.
+- **Painel da Governança:** passa a mostrar, por cadeira, quantos projetos têm status report pendente no mês.
 
-Os projetos aparecem empilhados no KR, na cesta, no KPI e no objetivo pelos vínculos da Etapa 1.
+## Etapa 2 – Empilhamento de iniciativas e projetos
+- Um único bloco, "Iniciativas e projetos vinculados", mostra para cada item:
+  - status, prazo, responsável pela entrega, cadeira e origem (ex.: "checkout de 12/10", "Metas");
+  - as atrasadas em destaque.
+- O bloco aparece em:
+  - Ficha do projeto, na nova aba "Iniciativas".
+  - OKRs do semestre, no KR.
+  - Cesta de metas, no item.
+  - Árvore BSC / Impacto Estratégico, no KPI e no objetivo. O objetivo também soma o que está vinculado aos KPIs dele.
+- Os projetos aparecem nos mesmos lugares, a partir dos vínculos da Etapa 1.
+- O texto dos checkouts não é exibido: aparecem só iniciativas e projetos.
 
-### Etapa 3 – Status report no último ciclo do mês
-- **Definição proposta:** o último apontamento do mês M é o ciclo cujo checkout retrata a última semana com domingo em M.
-  - Outubro/2026: o último domingo é 25/10. O ciclo do check-in de 26/10 tem checkout de 19 a 25/10. Abre na sexta 23/10 e vence na segunda 26/10 às 23h59.
-  - Novembro/2026: o último domingo é 29/11. O ciclo do check-in de 30/11 tem checkout de 23 a 29/11. Abre na sexta 27/11 e vence na segunda 30/11.
-- Nesse ciclo, o checkout ganha a etapa "Status report dos projetos". Ela lista os projetos **em aberto** da cadeira (sem Concluído e Cancelado) e pede, para cada um:
-  - anexo;
-  - farol de escopo, custo e cronograma;
-  - comentário;
-  - no primeiro report, a confirmação de situação: em andamento / concluído / suspenso / cancelado / "não é meu".
-- **Proposta para o anexo:** a falta de anexo vira pendência visível na Revisão e no Painel, mas **não bloqueia** o envio, para não travar KPIs e prioridades. A alternativa é bloquear. Precisa de decisão.
-- **Onde guardar:** no mesmo cofre privado de arquivos que já existe para status report, com acesso restrito à própria cadeira, à Governança e ao CEO. O histórico fica um por projeto por mês; reenvio no mesmo mês substitui e guarda o anterior.
-- O formulário mensal de Metas deixa de pedir o status report, para não ser pedido em dobro. Precisa de decisão.
+## Etapa 4 – Farol "Status Report" e tomada de decisão
+- **Nova tela no PMO** com todos os projetos:
+  - farol de escopo, custo e cronograma (ou "sem apontamento"), mês do último apontamento, cadeira e diretor, e link para o anexo (só para quem pode abrir);
+  - filtros por cadeira, farol, "com desvio" e "decisão pendente".
+- **Desvio:** qualquer amarelo ou vermelho marca o projeto como "Decisão pendente", até haver decisão registrada para aquele mês.
+- **Registro da decisão** (Governança e CEO): uma das 5 opções, mais justificativa e projeções/ajustes aceitos. O registro guarda quem decidiu e quando.
+  - "Encerrar" pergunta se foi Concluído ou Cancelado e muda o status do projeto.
+  - "Suspender" muda o status para Pausado.
+- **Em "Contexto e Decisões":** as decisões de projeto aparecem com código `SR-AAAAMM-<projeto>`, ao lado dos D-NNN e GOV, somente leitura. A base de decisões estratégicas atual não é alterada.
 
-### Etapa 4 – Farol "Status Report" e tomada de decisão
-- Nova tela com todos os 152 projetos, nas colunas escopo / custo / cronograma (verde, amarelo, vermelho ou sem apontamento), mais mês do último apontamento, cadeira/diretor e link para o anexo. Tem filtros por cadeira, farol e "com desvio".
-- Projetos com algum amarelo ou vermelho recebem a marcação "Decisão pendente".
-- Opções de decisão:
-  - Manter com aceite de desvios e projeções.
-  - Manter com ajustes.
-  - Encerrar.
-  - **Sugestões para decidir (não serão incluídas sem aprovação):** "Suspender" e "Replanejar (nova linha de base)".
-- Cada decisão registra quem decidiu, quando, justificativa e as projeções/ajustes aceitos. Ela entra em "Contexto e Decisões" com código próprio (proposta: `SR-AAAAMM-<projeto>`), separado dos D-NNN e GOV.
-- "Encerrar" muda o status do projeto para Cancelado ou Concluído (qual dos dois precisa de decisão), com registro de quem mudou.
-- **Quem decide (proposta):** Governança e CEO. O diretor vê a decisão dos seus projetos.
-
-### Etapa 5 – Primeira atualização do portfólio
-- Lista de conferência inicial para a Naira: os 128 projetos com nome sugerido de cadeira (ela confirma em lote) e os 24 sem diretor (fila).
-- O status só muda pela confirmação do diretor no status report (Etapa 3) ou por decisão (Etapa 4), nunca de forma automática.
-
-## Decisões necessárias
-1. Falta de anexo: bloqueia o envio ou só gera pendência (proposta: pendência).
-2. Tirar o status report do formulário mensal de Metas (proposta: sim).
-3. Incluir "Suspender" e/ou "Replanejar" nas decisões.
-4. "Encerrar" grava o projeto como Cancelado ou Concluído.
-5. Quem registra decisões (proposta: Governança e CEO).
-6. Projetos "CTO + Dir. Acadêmica" (dupla responsabilidade): uma cadeira principal e outra como apoio, ou só uma.
-7. Projetos "Pausado/Backlog/A Iniciar" contam como "em aberto" e exigem status report (proposta: Em Andamento, Atrasado, Pausado e A Iniciar sim; Backlog não).
-8. Vínculos atuais dos projetos (listas de texto): continuam sendo atualizados ou viram somente leitura (proposta: o novo modelo vira a referência e os antigos ficam como histórico).
-
-## Conflitos com regras atuais
-- O status report já existe no lançamento mensal (regra registrada). A mudança desloca o pedido para o checkout.
-- Diretores sem usuário vinculado (6 cadeiras): sem isso, apenas a Governança e o CEO conseguem enviar. Isso continua pendente.
-- Os checkouts são lidos por qualquer usuário logado. O empilhamento vai mostrar só iniciativas e projetos, não o texto dos checkouts, para não ampliar o que cada um já vê hoje.
+## Etapa 5 – Primeira atualização do portfólio
+- A atualização segue a conferência da Etapa 1 e o primeiro status report da Etapa 3.
+- **Indicador de progresso para a Naira:**
+  - projetos com cadeira confirmada;
+  - projetos com situação confirmada pelo diretor;
+  - projetos na fila "Sem responsável".
 
 ## Riscos
-- **Acesso aos anexos:** o cofre de arquivos precisa de regras por cadeira; hoje o acesso é pelo caminho do projeto. Será revisado para cadeira + Governança + CEO.
-- **Volume (152 projetos):** a conferência inicial precisa ser feita em lote. No ciclo de outubro, um diretor pode ter até 30 projetos, o que pede um formulário compacto, com cada projeto recolhido por padrão.
-- **Nomes inconsistentes:** "Yuri Ribeiro" e "Iuri Eloi Franco" podem confundir a sugestão. Por isso nada é gravado sem confirmação.
-- **Prazo:** o ciclo de outubro vence em 26/10. As Etapas 1 e 3 precisam estar prontas antes, senão o primeiro status report fica para novembro.
+- **Prazo de 26/10:** se as cadeiras não forem confirmadas a tempo, o diretor não vê os projetos dele no ciclo de outubro. A conferência em lote existe para isso.
+- **Seis cadeiras sem diretor vinculado:** nelas, só a Governança e o CEO conseguem preencher.
+- **Volume:** um diretor pode ter até cerca de 30 projetos. Cada projeto aparece recolhido e há um resumo de pendências.
+- **Nomes parecidos** (ex.: "Yuri Ribeiro" e "Iuri Eloi Franco"): a sugestão nunca é gravada sem confirmação.
 
 ## Detalhes técnicos
-- Nova tabela de vínculos do projeto (projeto, tipo, ref_id) com RLS: escreve a Governança ou a cadeira do projeto; lê qualquer usuário logado. Adiciona a coluna de cadeira responsável em `projetos`, sem ser obrigatória e sem preenchimento automático.
-- Leitura do empilhamento: o vínculo principal da iniciativa (`indicador_id`/`okr_id`/`objetivo_id`) junto com `mt_acao_vinculos`, mais os vínculos de projeto. Tudo numa função compartilhada, com teste.
-- `mt_status_projetos` ganha as colunas farol_escopo, farol_custo, farol_cronograma, comentario, confirmacao_status e o ciclo de origem, sem mudança que quebre o que já existe. Os reenvios vão para um histórico.
-- Função `ultimoCicloDoMes(semana)` em `rotinaSemanal.ts`, com testes para out/nov 2026.
-- Tabela de decisões de projeto com RLS (registram Governança e CEO). "Contexto e Decisões" passa a ler essas decisões também, sem alterar `decisoes_estrategicas`.
-- Testes: definição do último ciclo, quais projetos contam como "em aberto", farol com desvio, atraso calculado e permissão para decidir.
+- **Projetos:**
+  - `projetos` ganha a coluna `cadeira_id` (pode ficar vazia), mais quem confirmou e quando.
+  - Nova tabela `projeto_cadeiras_apoio`.
+  - Nova tabela `projeto_vinculos` (projeto, tipo bsc_objetivo/bsc_kpi/kr/cesta, ref_id) com RLS: escreve a Governança ou a cadeira principal; lê qualquer usuário logado.
+  - Uma carga inicial copia só os 10 objetivos já cadastrados.
+  - As listas antigas `objetivos`/`krs` são marcadas como descontinuadas e passam a ser só leitura na interface.
+- **Status report:**
+  - `mt_status_projetos` ganha as colunas farol_escopo, farol_custo, farol_cronograma, comentario, confirmacao_status, semana_ciclo e revisão. Nada muda de forma que quebre o existente.
+  - Os reenvios vão para a nova tabela `mt_status_projetos_versoes`.
+  - Regras de acesso de leitura e escrita, inclusive dos arquivos: cadeira principal, Governança e CEO.
+- **Confirmação de situação e decisão:** gravadas por funções no servidor que validam o perfil e registram a auditoria. Nada é alterado pelo navegador direto em `projetos`.
+- **Decisões:** nova tabela `projeto_decisoes`; quem grava é Governança ou CEO. "Contexto e Decisões" junta essa leitura à atual.
+- **Lógica compartilhada:**
+  - `ultimoCicloDoMes`, `projetoEmAberto`, `temDesvio` e o empilhamento de vínculos viram funções puras, com testes.
+  - Casos testados: out/nov 2026, as regras de status, desvio, atraso calculado na leitura e quem pode decidir.
+- **AGENTS.md:** registrar o modelo de vínculos do projeto, a regra do último ciclo e o fluxo de decisão.
