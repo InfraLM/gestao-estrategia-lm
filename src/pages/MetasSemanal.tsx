@@ -88,6 +88,10 @@ export default function MetasSemanal() {
     setErroImpedimentos(!!error); setImpedimentos(data ?? []);
   };
   useEffect(() => { void carregarImpedimentos(); }, [cad, sem]);
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("impedimento");
+    if (id && impedimentos.some(r=>r.id===id)) document.getElementById(`impedimento-${id}`)?.scrollIntoView({block:"center"});
+  }, [impedimentos]);
   const [contatos, setContatos] = useState<any[]>([]);
   const [projetos, setProjetos] = useState<ProjetoLite[]>([]);
   const [todosKpis, setTodosKpis] = useState<KpiRetrato[]>([]);
@@ -586,12 +590,12 @@ export default function MetasSemanal() {
                   {podeEditar && <Button size="sm" variant="ghost" onClick={() => mudarRisco(r, false)}>Reabrir</Button>}
                 </div>))}
             </details>}
-            {podeEditar && <div className="grid gap-2 sm:grid-cols-[180px_1fr_auto]">
+            {podeEditar && <div className="grid gap-3 sm:grid-cols-2">
               <Select value={novoRisco.tipo} onValueChange={(v) => setNovoRisco({ ...novoRisco, tipo: v })}><SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>{Object.entries(TIPO_RISCO).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent></Select>
-              <Input aria-label="Descrição do risco ou impedimento" placeholder="Descrição (não poderá ser editada depois)" value={novoRisco.descricao} onChange={(e) => setNovoRisco({ ...novoRisco, descricao: e.target.value })} />
-              <Input aria-label="Impacto do risco ou impedimento" placeholder="Impacto" value={novoRisco.impacto} onChange={e=>setNovoRisco({...novoRisco,impacto:e.target.value})} maxLength={4000}/>
-              <Select value={novoRisco.atribuido_cadeira_id || "nenhum"} onValueChange={v=>setNovoRisco({...novoRisco,atribuido_cadeira_id:v==="nenhum"?"":v})}><SelectTrigger aria-label="Diretor atribuído"><SelectValue placeholder="Diretor atribuído (opcional)"/></SelectTrigger><SelectContent><SelectItem value="nenhum">Sem atribuição</SelectItem>{b.cadeiras.filter(c=>c.ativo).map(c=><SelectItem key={c.id} value={c.id}>{c.nome} · {c.diretor_nome || "Sem diretor vinculado"}</SelectItem>)}</SelectContent></Select>
+              <div className="space-y-1"><Label htmlFor="risco-descricao">Descrição</Label><Textarea id="risco-descricao" aria-label="Descrição do risco ou impedimento" placeholder="Descrição" maxLength={4000} value={novoRisco.descricao} onChange={(e) => setNovoRisco({ ...novoRisco, descricao: e.target.value })} /></div>
+              <div className="space-y-1"><Label htmlFor="risco-impacto">Impacto</Label><Textarea id="risco-impacto" aria-label="Impacto do risco ou impedimento" value={novoRisco.impacto} onChange={e=>setNovoRisco({...novoRisco,impacto:e.target.value})} maxLength={4000}/></div>
+              <div className="space-y-1"><Label>Diretor atribuído (opcional)</Label><Select value={novoRisco.atribuido_cadeira_id || "nenhum"} onValueChange={v=>setNovoRisco({...novoRisco,atribuido_cadeira_id:v==="nenhum"?"":v})}><SelectTrigger aria-label="Diretor atribuído"><SelectValue placeholder="Diretor atribuído (opcional)"/></SelectTrigger><SelectContent><SelectItem value="nenhum">Sem atribuição</SelectItem>{b.cadeiras.filter(c=>c.ativo).map(c=><SelectItem key={c.id} value={c.id}>{c.nome} · {c.diretor_nome || "Sem diretor vinculado"}</SelectItem>)}</SelectContent></Select></div>
               <div className="space-y-1"><Label htmlFor="risco-prazo">Prazo desejado (opcional)</Label><Input id="risco-prazo" type="date" value={novoRisco.prazo_desejado} onChange={e=>setNovoRisco({...novoRisco,prazo_desejado:e.target.value})}/></div>
               <Button variant="outline" disabled={!novoRisco.descricao.trim()} onClick={registrarRisco}>Registrar</Button>
             </div>}
