@@ -425,6 +425,45 @@ export type Database = {
           },
         ]
       }
+      ciclo_preparacao_execucoes: {
+        Row: {
+          analisados: number
+          concluido_em: string | null
+          criado_em: string
+          erro: string | null
+          id: string
+          propostos: number
+          run_id: string | null
+          status: string
+          tipo: string
+          usuario_id: string | null
+        }
+        Insert: {
+          analisados?: number
+          concluido_em?: string | null
+          criado_em?: string
+          erro?: string | null
+          id?: string
+          propostos?: number
+          run_id?: string | null
+          status?: string
+          tipo: string
+          usuario_id?: string | null
+        }
+        Update: {
+          analisados?: number
+          concluido_em?: string | null
+          criado_em?: string
+          erro?: string | null
+          id?: string
+          propostos?: number
+          run_id?: string | null
+          status?: string
+          tipo?: string
+          usuario_id?: string | null
+        }
+        Relationships: []
+      }
       conteudo_editavel: {
         Row: {
           atualizado_por: string | null
@@ -1911,6 +1950,44 @@ export type Database = {
           ordem?: number
         }
         Relationships: []
+      }
+      mt_frequencia_propostas: {
+        Row: {
+          criado_em: string
+          criado_por: string | null
+          dados: Json
+          decidido_em: string | null
+          decidido_por: string | null
+          indicador_id: string
+          status: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string | null
+          dados: Json
+          decidido_em?: string | null
+          decidido_por?: string | null
+          indicador_id: string
+          status?: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string | null
+          dados?: Json
+          decidido_em?: string | null
+          decidido_por?: string | null
+          indicador_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_frequencia_propostas_indicador_id_fkey"
+            columns: ["indicador_id"]
+            isOneToOne: true
+            referencedRelation: "mt_indicadores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mt_impedimento_auditoria: {
         Row: {
@@ -3834,6 +3911,60 @@ export type Database = {
           },
         ]
       }
+      projeto_cadeira_sugestoes: {
+        Row: {
+          apoio: string[]
+          confianca: string
+          criado_em: string
+          criado_por: string | null
+          decidido_em: string | null
+          decidido_por: string | null
+          justificativa: string
+          principal: string | null
+          projeto_id: string
+          status: string
+        }
+        Insert: {
+          apoio?: string[]
+          confianca: string
+          criado_em?: string
+          criado_por?: string | null
+          decidido_em?: string | null
+          decidido_por?: string | null
+          justificativa: string
+          principal?: string | null
+          projeto_id: string
+          status?: string
+        }
+        Update: {
+          apoio?: string[]
+          confianca?: string
+          criado_em?: string
+          criado_por?: string | null
+          decidido_em?: string | null
+          decidido_por?: string | null
+          justificativa?: string
+          principal?: string | null
+          projeto_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projeto_cadeira_sugestoes_principal_fkey"
+            columns: ["principal"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projeto_cadeira_sugestoes_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: true
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projeto_cadeiras_apoio: {
         Row: {
           cadeira_id: string
@@ -4951,6 +5082,7 @@ export type Database = {
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       modulo_conteudo: { Args: { _chave: string }; Returns: string }
       mt_aceitar_meu_convite: { Args: never; Returns: boolean }
+      mt_aprovar_frequencias: { Args: { _ids: string[] }; Returns: number }
       mt_cadeira_do_usuario: { Args: { _uid: string }; Returns: string }
       mt_desvio_normal: {
         Args: { _indicador: string; _periodo: string; _resposta: Json }
@@ -4994,6 +5126,14 @@ export type Database = {
       }
       orc_importar: {
         Args: { _arquivo: string; _itens: Json; _modo?: string }
+        Returns: number
+      }
+      orc_importar_metas2030: {
+        Args: { _arquivo: string; _itens: Json }
+        Returns: number
+      }
+      orc_importar_modelo: {
+        Args: { _arquivo: string; _itens: Json }
         Returns: number
       }
       orc_meta_salvar: {
@@ -5061,6 +5201,7 @@ export type Database = {
         Args: { _projeto: string; _uid: string }
         Returns: boolean
       }
+      projeto_aprovar_sugestoes: { Args: { _itens: Json }; Returns: number }
       projeto_confirmar_situacao: {
         Args: { _projeto: string; _situacao: string }
         Returns: undefined

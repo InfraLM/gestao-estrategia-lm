@@ -386,6 +386,13 @@
       "when": 1792716600124,
       "tag": "0054_impedimentos_encerrados_sem_atraso",
       "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1792716678479,
+      "tag": "0055_preparacao_propostas_cadeiras_frequencia_importacoes",
+      "breakpoints": true
     }
   ]
 }
