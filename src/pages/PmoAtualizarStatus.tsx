@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { exclusiveAction } from "@/lib/exclusiveAction";
 import { FormField } from "@/components/FormField";
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
 import { Link, useSearchParams } from "react-router-dom";
 import { Copy, Save, ExternalLink, History } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +23,7 @@ export default function PmoAtualizarStatus() {
   const [error, setError] = useState(false); const [mirrorError, setMirrorError] = useState(false); const [busy, setBusy] = useState(false); const [audit, setAudit] = useState<any[] | null>(null);
   const runOnce = useRef(exclusiveAction());
   const [errosCampos, setErrosCampos] = useState<string[]>([]);
+  useUnsavedChanges(Object.keys(drafts).length>0);
   const carregar = async () => {
     setLoading(true); setError(false);
     const [p, c, m, perm] = await Promise.all([
