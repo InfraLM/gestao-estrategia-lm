@@ -98,9 +98,10 @@ const SelectContent = React.forwardRef<
         <div className="flex items-center gap-2 border-b px-2 py-1.5">
           <Search className="h-4 w-4 shrink-0 opacity-50" />
           <input
+            aria-label="Buscar opções"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            onKeyDown={(e) => { if (e.key !== "Escape") e.stopPropagation(); }}
+            onKeyDown={(e) => { if (!['Escape','ArrowDown','ArrowUp'].includes(e.key)) e.stopPropagation(); }}
             placeholder="Buscar..."
             className="h-7 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />

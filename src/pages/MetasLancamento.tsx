@@ -19,6 +19,7 @@ import {
 } from "@/hooks/useMetasBase";
 import { avaliarPorTipo, AVALIACAO_LBL, TIPO_LBL, STATUS_ENTREGA_LBL, type StatusEntrega } from "@/lib/avaliacaoBsc";
 import { exclusiveAction } from "@/lib/exclusiveAction";
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 
 const db = supabase as any;
@@ -65,6 +66,9 @@ export default function MetasLancamento() {
   const runOnce = useRef(exclusiveAction());
   const [feedback, setFeedback] = useState("");
   const [confirmar, setConfirmar] = useState<null | "fechar" | "reabrir">(null);
+  const baseline=useRef('');
+  const signature=JSON.stringify({rasc,ini});
+  const permitirDescarte=useUnsavedChanges(!!baseline.current&&signature!==baseline.current);
 
   const carregar = async () => {
     const [c, l, e] = await Promise.all([
@@ -105,6 +109,7 @@ export default function MetasLancamento() {
     const n: typeof ini = {};
     iniciativas.forEach((i) => { n[i.id] = { status: i.status, prazo: i.prazo ?? "", comentario: i.comentario ?? "" }; });
     setIni(n);
+    baseline.current=JSON.stringify({rasc:r,ini:n});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cadeira, comp, rev, lancs, b.indicadores, b.iniciativas]);
 
@@ -332,14 +337,14 @@ export default function MetasLancamento() {
         <div className="grid sm:grid-cols-2 gap-3 mt-4">
           <div className="space-y-1">
             <Label htmlFor="mensal-competencia">Competência</Label>
-            <Select value={comp} onValueChange={setComp}>
+            <Select value={comp} onValueChange={v=>{if(permitirDescarte())setComp(v);}}>
               <SelectTrigger id="mensal-competencia"><SelectValue /></SelectTrigger>
               <SelectContent>{MESES_2S26.map((m) => <SelectItem key={m} value={m}>{tituloComp(m)}{comps.find((c) => c.competencia === m)?.estado === "fechado" ? " · fechado" : ""}</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <div className="space-y-1">
             <Label htmlFor="mensal-cadeira">Cadeira</Label>
-            <Select value={cadeira ?? undefined} onValueChange={setCadeira}>
+            <Select value={cadeira ?? undefined} onValueChange={v=>{if(permitirDescarte())setCadeira(v);}}>
               <SelectTrigger id="mensal-cadeira"><SelectValue placeholder="Selecione" /></SelectTrigger>
               <SelectContent>{b.cadeiras.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}{c.diretor_nome ? ` · ${c.diretor_nome}` : ""}{c.id === b.minhaCadeira ? " (minha)" : ""}</SelectItem>)}</SelectContent>
             </Select>

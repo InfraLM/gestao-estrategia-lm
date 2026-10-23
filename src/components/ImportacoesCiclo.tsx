@@ -7,11 +7,14 @@ import { previewBudget,previewMetas2030, type ModeloBudget,type MetaPreview } fr
 import { dinheiro } from '@/lib/impactoFinanceiro';
 import { Download,Upload } from 'lucide-react';
 import { toast } from 'sonner';
+import { metas2030Arvore } from '@/data/metas2030';
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
 const db=supabase as any;
 async function lerArquivo(file:File){if(file.size>10*1024*1024)throw new Error('Arquivo excede 10 MB.');const wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:false});return wb.SheetNames.flatMap(n=>{const sheet=wb.Sheets[n];return sheet?XLSX.utils.sheet_to_json<Record<string,unknown>>(sheet,{defval:'',raw:false}):[];});}
 export default function ImportacoesCiclo({projetos,indicadores,gov,gestor,onSalvo}:{projetos:any[];indicadores:any[];gov:boolean;gestor:boolean;onSalvo:()=>void}){
  const budgetInput=useRef<HTMLInputElement>(null),metaInput=useRef<HTMLInputElement>(null);
  const [budgets,setBudgets]=useState<ModeloBudget[]>([]),[metas,setMetas]=useState<MetaPreview[]>([]),[sel,setSel]=useState<string[]>([]),[fileName,setFileName]=useState(''),[busy,setBusy]=useState(false);
+ useUnsavedChanges(budgets.length>0||metas.length>0);
  const modelo=()=>{const wb=XLSX.utils.book_new();const rows=projetos.map(p=>({'Código do projeto':p.codigo,'Nome':p.nome,'Budget liberado R$':'','Fonte da aprovação':'','Centro(s) de custo':''}));const sh=XLSX.utils.json_to_sheet(rows);sh['!cols']=[{wch:20},{wch:70},{wch:24},{wch:50},{wch:38}];sh['!autofilter']={ref:`A1:E${rows.length+1}`};XLSX.utils.book_append_sheet(wb,sh,'Budget e centros');const bytes=XLSX.write(wb,{type:'array',bookType:'xlsx'});const url=URL.createObjectURL(new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));const a=document.createElement('a');a.href=url;a.download='modelo-budget-centros-projetos.xlsx';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);};
  const ler=async(file:File,tipo:'budget'|'metas')=>{try{const rows=await lerArquivo(file);setFileName(file.name);if(tipo==='budget'){setBudgets(previewBudget(rows,projetos));setMetas([]);}else{const parsed=previewMetas2030(rows,indicadores);setMetas(parsed);setBudgets([]);setSel(parsed.filter(r=>r.id&&!r.erro).map(r=>String(r.id)));if(!parsed.length)toast.info('Nenhuma meta 2030 preenchida encontrada.');}}catch(e){toast.error(e instanceof Error?e.message:'Planilha inválida');}};
  const salvar=async(tipo:'budget'|'metas')=>{if(busy)return;setBusy(true);try{
@@ -19,7 +22,7 @@ export default function ImportacoesCiclo({projetos,indicadores,gov,gestor,onSalv
   const {data,error}=await db.rpc(tipo==='budget'?'orc_importar_modelo':'orc_importar_metas2030',{_itens:payload,_arquivo:fileName});if(error)throw error;
   toast.success(`${data} registros importados${tipo==='budget'?' · centros novos a confirmar':''}.`);setBudgets([]);setMetas([]);onSalvo();window.dispatchEvent(new Event('orc-atualizado'));
  }catch(e){toast.error(e instanceof Error?e.message:'Importação recusada');await db.rpc('orc_registrar_falha',{_modo:tipo==='budget'?'modelo_budget':'metas2030',_mensagem:'Importação recusada',_arquivo:fileName});onSalvo();}finally{setBusy(false);}};
- const faltantes=indicadores.filter(i=>i.origem==='bsc'&&i.status==='ativo'&&!i.parent_id&&!i.meta_2030);
+ const faltantes=indicadores.filter(i=>i.origem==='bsc'&&i.status==='ativo'&&!i.parent_id&&!i.meta_2030&&!metas2030Arvore[String(i.nome).trim()]);
  return <section className="space-y-4"><h3 className="font-semibold">Preparação de budgets e metas 2030</h3><div className="flex flex-wrap gap-2">
  {gov&&<><Button variant="outline" disabled={busy||!projetos.length} onClick={modelo}><Download className="mr-2 h-4 w-4"/>Modelo budget / centros ({projetos.length} projetos)</Button><Button variant="outline" disabled={busy} onClick={()=>budgetInput.current?.click()}><Upload className="mr-2 h-4 w-4"/>Importar modelo preenchido</Button></>}
  {gestor&&<Button className="h-auto whitespace-normal text-left" variant="outline" disabled={busy} onClick={()=>metaInput.current?.click()}><Upload className="mr-2 h-4 w-4 shrink-0"/>Importar metas 2030 da Árvore de KPIs (xlsx)</Button>}
