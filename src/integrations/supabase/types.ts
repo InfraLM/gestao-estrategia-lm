@@ -5159,6 +5159,10 @@ export type Database = {
           status: string
         }[]
       }
+      rotina_impedimento_atrasado: {
+        Args: { _hoje: string; _prazo: string; _status: string }
+        Returns: boolean
+      }
       rotina_impedimento_reabrir: {
         Args: { _id: string; _motivo: string }
         Returns: undefined
