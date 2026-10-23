@@ -24,9 +24,10 @@ describe('Impedimentos entre diretores', () => {
     expect(devidoImpedimento({...item,resposta_status:'resolvido'},'CFO','2026-11-09')).toBe(false);
     expect(devidoImpedimento({...item,resposta_status:'aberto',motivo_reabertura:'Não resolveu'},'CFO','2026-11-09')).toBe(true);
   });
-  it('atrasado é prazo do plano vencido sem Resolvido, inclusive Não procede', () => {
+  it('Não procede encerra o item e não gera alerta de atraso', () => {
     expect(impedimentoAtrasado('2026-11-01','aberto','2026-11-02')).toBe(true);
-    expect(impedimentoAtrasado('2026-11-01','nao_procede','2026-11-02')).toBe(true);
+    expect(impedimentoAtrasado('2026-11-01','nao_procede','2026-11-02')).toBe(false);
+    expect(devidoImpedimento({...item,resposta_status:'nao_procede'},'CFO','2026-11-09')).toBe(false);
     expect(impedimentoAtrasado('2026-11-01','resolvido','2026-11-02')).toBe(false);
     expect(impedimentoAtrasado('2026-11-02','aberto','2026-11-02')).toBe(false);
   });
