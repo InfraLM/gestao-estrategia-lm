@@ -13,8 +13,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, MESES_2S26, statusEfetivo } from "@/hooks/useMetasBase";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ENTREGA_LBL } from "@/pages/MetasSemanal";
-import { cicloPadrao, semanaCheckout, seloCiclo } from "@/lib/rotinaSemanal";
-import { srPendentesPorCadeira } from "@/lib/projetosGestao";
+import { cicloPadrao, semanaCheckout, seloCiclo,addDias } from "@/lib/rotinaSemanal";
+import { srPendentesPorCadeira,ultimoCicloDoMes } from "@/lib/projetosGestao";
+import { segundasMes } from '@/lib/frequenciaApontamento';
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 import { useConformidade, pctC } from "@/components/Conformidade";
 import { ExtrasLeitura, ResumoExtras } from '@/components/EntregasExtras';
@@ -72,6 +73,7 @@ export default function MetasPainel() {
     db.from("mt_status_projetos").select("projeto_codigo,arquivo_path,farol_escopo,farol_custo,farol_cronograma").eq("competencia", comp).then(({ data }: any) => setSrRegs(data ?? []));
   }, [comp]);
   const srPend = useMemo(() => srPendentesPorCadeira(srProj, srRegs), [srProj, srRegs]);
+  const cicloSR=[...segundasMes(comp),...segundasMes(addDias(`${comp}-15`,31).slice(0,7))].find(s=>ultimoCicloDoMes(s)===comp);
 
   const load = async () => {
     const [c, e, l, a, k] = await Promise.all([
@@ -196,7 +198,7 @@ export default function MetasPainel() {
                       <div className="flex gap-2 text-xs">{co && <button className="underline" onClick={() => setVer({ ...co, nome: c.nome })}>ver checkout</button>}{ci && <button className="underline" onClick={() => setVer({ ...ci, nome: c.nome })}>ver check-in</button>}</div>
                     </div>; })()}</td>
                     <td className="pr-3">{atrasadas ? <Badge variant="destructive">{atrasadas}</Badge> : "0"}</td>
-                    <td className="pr-3 text-xs">{(() => { const s = srPend[c.id]; if (!s) return "—"; return s.pendentes.length ? <span title={s.pendentes.join(", ")}><Badge variant="destructive">{s.pendentes.length}</Badge> de {s.total}</span> : <span className="text-success">0 de {s.total}</span>; })()}</td>
+                    <td className="pr-3 text-xs">{(() => { const s = srPend[c.id]; if (!s) return "—"; return <><span>{s.pendentes.length ? <Badge variant="destructive">{s.pendentes.length}</Badge> : <span className="text-success">0</span>} de {s.total}</span>{cicloSR&&<p className="text-muted-foreground">Ciclo {cicloSR.split('-').reverse().join('/')}</p>}{s.pendentes.length>0&&<details><summary className="cursor-pointer">Ver projetos pendentes</summary><ul>{s.pendentes.map(codigo=><li key={codigo}><Link className="text-primary underline" to={`/metas/semanal?semana=${cicloSR??ciclo}`}>{codigo}</Link></li>)}</ul></details>}</>; })()}</td>
                   </tr>
                 );
               })}
