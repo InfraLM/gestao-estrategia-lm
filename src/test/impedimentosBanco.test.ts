@@ -29,6 +29,7 @@ describe('Atribuição, envio e respostas em banco isolado',()=>{
     await pg.exec(baseline);
     await pg.exec(readFileSync('drizzle/migrations/0050_impedimentos_atribuicao_respostas.sql','utf8'));
     await pg.exec(readFileSync('drizzle/migrations/0051_impedimentos_atividades_projecao.sql','utf8'));
+    await pg.exec(readFileSync('drizzle/migrations/0054_impedimentos_encerrados_sem_atraso.sql','utf8'));
     risco=(await pg.query<{id:string}>(`INSERT INTO mt_rotina_riscos(cadeira_id,tipo,descricao,semana_criada,atribuido_cadeira_id,impacto) VALUES('${origem}','impedimento','Liberar acesso','2026-10-26','${destino}','Entrega bloqueada') RETURNING id`)).rows[0].id;
   },30000);
   afterAll(async()=>{await pg.close();});
@@ -70,5 +71,12 @@ describe('Atribuição, envio e respostas em banco isolado',()=>{
     expect((await pg.query<any>(`select resposta_status,motivo_reabertura from mt_rotina_riscos`)).rows[0]).toEqual({resposta_status:'aberto',motivo_reabertura:'Acesso ainda bloqueado'});
     expect((await pg.query<any>(`select rotina_impedimentos_ciclo('${origem}','2026-11-02') d`)).rows[0].d[0].resposta_ciclo).toBeNull();
     expect((await pg.query<any>(`select acao from mt_impedimento_auditoria order by criado_em`)).rows.map(x=>x.acao)).toEqual(['atribuição','envio','resposta/status','resposta/status','reabertura']);
+  });
+  it('Não procede encerra empilhamento e não é atrasado no dashboard',async()=>{
+    await pg.exec(`SELECT set_config('test.uid','${u2}',false)`);
+    await pg.query(`select rotina_impedimento_responder('${risco}','2026-11-09','Conferido','2026-11-01','nao_procede','Pedido duplicado')`);
+    expect((await pg.query<any>(`select rotina_impedimentos_ciclo('${destino}','2026-11-16') d`)).rows[0].d).toHaveLength(0);
+    const d=(await pg.query<any>(`select rotina_atividades_abertas('2026-11-16') d`)).rows[0].d;
+    expect(d.find((x:any)=>x.id===risco)).toMatchObject({status:'nao_procede',atrasado:false});
   });
 });
