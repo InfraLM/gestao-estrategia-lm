@@ -50,6 +50,7 @@ export default function StatusReport() {
   const [codigoToUuid, setCodigoToUuid] = useState<Record<string, string>>({});
   // Último status_report por projeto (chave: uuid)
   const [latestByUuid, setLatestByUuid] = useState<Record<string, LatestSR>>({});
+  const [historicoByUuid, setHistoricoByUuid] = useState<Record<string, LatestSR[]>>({});
   // Draft local por codigo
   const [drafts, setDrafts] = useState<Record<string, DraftSR>>({});
   const saveGuard = useRef(exclusiveAction());
@@ -77,10 +78,13 @@ export default function StatusReport() {
         .in("projeto_id", uuids)
         .order("created_at", { ascending: false });
       const latest: Record<string, LatestSR> = {};
+      const historico: Record<string, LatestSR[]> = {};
       (srs ?? []).forEach((r: any) => {
         if (!latest[r.projeto_id]) latest[r.projeto_id] = r;
+        (historico[r.projeto_id] ||= []).push(r);
       });
       setLatestByUuid(latest);
+      setHistoricoByUuid(historico);
     }
     setLoadingSR(false);
   };
@@ -320,7 +324,7 @@ export default function StatusReport() {
                   <div id={`report-${p.id}`} className="px-5 pb-5 pt-1 space-y-5 animate-fade-in border-t border-border">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <span className="text-xs text-muted-foreground">
-                        Cada salvamento gera um registro histórico visível em <strong>Gestão do Projeto → Status Reports</strong>.
+                        Cada salvamento gera um registro no histórico de atualizações abaixo.
                       </span>
                       <Link
                         to={`/gestao/${p.id}`}
@@ -351,6 +355,19 @@ export default function StatusReport() {
                       <FormField id={`sr-${p.id}-plano`} label="Plano de ação / recuperação"><Textarea rows={3} value={d.plano_acao} disabled={saving === p.id} onChange={e => setDraft(p.id, { plano_acao: e.target.value })} /></FormField>
                     </div>
                     {sr && <details className="text-xs"><summary className="cursor-pointer font-medium">Faróis do último report salvo</summary><div className="mt-2"><FaroisReportLeitura valor={sr.farois_dimensoes} /></div></details>}
+                    {uuid && (historicoByUuid[uuid]?.length ?? 0) > 0 && <details className="text-xs">
+                      <summary className="cursor-pointer font-medium">Histórico de atualizações ({historicoByUuid[uuid]?.length})</summary>
+                      <ol className="mt-2 space-y-3 border-l border-border pl-3">
+                        {historicoByUuid[uuid]?.map(report => <li key={report.id} className="space-y-1">
+                          <p className="font-medium">{report.periodo} · {new Date(report.created_at).toLocaleString("pt-BR")}</p>
+                          {report.avancos && <p>Avanços: {report.avancos}</p>}
+                          {report.desvios && <p>Desvios: {report.desvios}</p>}
+                          {report.causa_raiz && <p>Causa raiz: {report.causa_raiz}</p>}
+                          {report.plano_acao && <p>Plano de ação: {report.plano_acao}</p>}
+                          <FaroisReportLeitura valor={report.farois_dimensoes} />
+                        </li>)}
+                      </ol>
+                    </details>}
 
                     {/* Melhorias Estratégicas vinculadas ao projeto */}
                     {(() => {
