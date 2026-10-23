@@ -365,6 +365,13 @@
       "when": 1792712745943,
       "tag": "0051_impedimentos_atividades_projecao",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1792715006202,
+      "tag": "0052_status_reports_farois_auditados",
+      "breakpoints": true
     }
   ]
 }

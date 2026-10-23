@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,10 @@ import { toast } from "sonner";
 import { ParecerDialog } from "@/components/ParecerDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useMelhoriasEstrategicas } from "@/hooks/useMelhoriasEstrategicas";
+import { FormField } from "@/components/FormField";
+import { FaroisReportLeitura } from "@/components/FaroisReportLeitura";
+import { faroisParaEdicao, type FarolDimensao, type CorFarol } from "@/lib/statusReportFarois";
+import { exclusiveAction } from "@/lib/exclusiveAction";
 import { useRefetchOnFocus } from "@/hooks/useRefetchOnFocus";
 
 
@@ -19,6 +23,8 @@ const periodos = ["Semanal", "Quinzenal", "Mensal"] as const;
 type Periodo = typeof periodos[number];
 
 const farolColor = { verde: "bg-success", amarelo: "bg-warning", vermelho: "bg-destructive" } as const;
+
+type DraftSR = { avancos: string; desvios: string; causa_raiz: string; plano_acao: string; farois_dimensoes: FarolDimensao[] };
 
 type LatestSR = {
   id: string;
@@ -30,6 +36,7 @@ type LatestSR = {
   causa_raiz: string | null;
   plano_acao: string | null;
   created_at: string;
+  farois_dimensoes: unknown;
 };
 
 export default function StatusReport() {
@@ -43,8 +50,11 @@ export default function StatusReport() {
   const [codigoToUuid, setCodigoToUuid] = useState<Record<string, string>>({});
   // Último status_report por projeto (chave: uuid)
   const [latestByUuid, setLatestByUuid] = useState<Record<string, LatestSR>>({});
+  const [historicoByUuid, setHistoricoByUuid] = useState<Record<string, LatestSR[]>>({});
   // Draft local por codigo
-  const [drafts, setDrafts] = useState<Record<string, { avancos: string; desvios: string; causa_raiz: string; plano_acao: string }>>({});
+  const [drafts, setDrafts] = useState<Record<string, DraftSR>>({});
+  const saveGuard = useRef(exclusiveAction());
+  const [saveError, setSaveError] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState<string | null>(null);
   const [loadingSR, setLoadingSR] = useState(true);
 
@@ -64,14 +74,17 @@ export default function StatusReport() {
     if (uuids.length > 0) {
       const { data: srs } = await supabase
         .from("status_reports")
-        .select("id,projeto_id,periodo,avancos,desvios,saude,causa_raiz,plano_acao,created_at")
+        .select("id,projeto_id,periodo,avancos,desvios,saude,causa_raiz,plano_acao,created_at,farois_dimensoes")
         .in("projeto_id", uuids)
         .order("created_at", { ascending: false });
       const latest: Record<string, LatestSR> = {};
+      const historico: Record<string, LatestSR[]> = {};
       (srs ?? []).forEach((r: any) => {
         if (!latest[r.projeto_id]) latest[r.projeto_id] = r;
+        (historico[r.projeto_id] ||= []).push(r);
       });
       setLatestByUuid(latest);
+      setHistoricoByUuid(historico);
     }
     setLoadingSR(false);
   };
@@ -125,38 +138,43 @@ export default function StatusReport() {
       desvios: sr?.desvios ?? "",
       causa_raiz: sr?.causa_raiz ?? proj?.causaRaiz ?? "",
       plano_acao: sr?.plano_acao ?? proj?.planoAcao ?? "",
+      farois_dimensoes: faroisParaEdicao(sr?.farois_dimensoes, proj?.desvios),
     };
   };
 
-  const setDraft = (codigo: string, patch: Partial<{ avancos: string; desvios: string; causa_raiz: string; plano_acao: string }>) => {
+  const setDraft = (codigo: string, patch: Partial<DraftSR>) => {
     const current = draftOf(codigo);
+    setSaveError(prev => ({ ...prev, [codigo]: "" }));
     setDrafts(prev => ({ ...prev, [codigo]: { ...current, ...patch } }));
   };
 
-  const salvar = async (codigo: string) => {
+  const salvar = (codigo: string) => saveGuard.current(async () => {
     const uuid = codigoToUuid[codigo];
     if (!uuid) return toast.error("Projeto ainda não sincronizado no banco.");
     const proj = ativos.find(p => p.id === codigo);
     const d = draftOf(codigo);
     setSaving(codigo);
-    const { data: { user } } = await supabase.auth.getUser();
-    const periodoStr = `${periodo} · ${new Date().toLocaleDateString("pt-BR")}`;
-    const { error } = await supabase.from("status_reports").insert({
-      projeto_id: uuid,
-      periodo: periodoStr,
-      avancos: d.avancos || null,
-      desvios: d.desvios || null,
-      saude: proj?.saude ?? null,
-      causa_raiz: d.causa_raiz || null,
-      plano_acao: d.plano_acao || null,
-      reportado_por: user?.id ?? null,
-    });
-    setSaving(null);
-    if (error) return toast.error(error.message);
-    toast.success("Atualização vinculada à Gestão do Projeto");
-    setDrafts(prev => { const cp = { ...prev }; delete cp[codigo]; return cp; });
-    loadStatusReports();
-  };
+    setSaveError(prev => ({ ...prev, [codigo]: "" }));
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const periodoStr = `${periodo} · ${new Date().toLocaleDateString("pt-BR")}`;
+      const { error } = await supabase.from("status_reports").insert({
+        projeto_id: uuid, periodo: periodoStr,
+        avancos: d.avancos || null, desvios: d.desvios || null,
+        saude: proj?.saude ?? null, causa_raiz: d.causa_raiz || null,
+        plano_acao: d.plano_acao || null, farois_dimensoes: d.farois_dimensoes,
+        reportado_por: user?.id ?? null,
+      });
+      if (error) throw error;
+      toast.success("Atualização e faróis salvos no histórico do projeto");
+      setDrafts(prev => { const cp = { ...prev }; delete cp[codigo]; return cp; });
+      await loadStatusReports();
+    } catch (error) {
+      const mensagem = error instanceof Error ? error.message : "Não foi possível salvar a atualização.";
+      setSaveError(prev => ({ ...prev, [codigo]: mensagem }));
+      toast.error(mensagem);
+    } finally { setSaving(null); }
+  });
 
   const ultimaAtualizacaoGlobal = useMemo(() => {
     const datas = Object.values(latestByUuid).map(r => r.created_at).filter(Boolean);
@@ -176,10 +194,10 @@ export default function StatusReport() {
             </span>
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-md border border-border p-0.5 bg-background">
             {periodos.map(p => (
-              <button key={p} onClick={() => setPeriodo(p)} className={cn("h-8 px-3 text-sm rounded", periodo === p ? "bg-foreground text-background" : "text-muted-foreground")}>{p}</button>
+              <Button key={p} size="sm" variant={periodo === p ? "default" : "ghost"} aria-pressed={periodo === p} onClick={() => setPeriodo(p)}>{p}</Button>
             ))}
           </div>
           <Button onClick={() => setParecerOpen(true)} className="gap-2 bg-primary hover:bg-primary/90">
@@ -261,6 +279,7 @@ export default function StatusReport() {
                   )}
                 </div>
                 <Textarea
+                  aria-label={`Principais avanços · ${p.id}`}
                   rows={2}
                   className="text-sm"
                   placeholder="Principais avanços do período…"
@@ -285,8 +304,8 @@ export default function StatusReport() {
             const dirty = !!drafts[p.id];
             return (
               <Card key={p.id} className="shadow-card overflow-hidden">
-                <button onClick={() => setExpanded(isOpen ? null : p.id)} className="w-full flex items-center justify-between p-4 hover:bg-surface-muted/50 transition-colors">
-                  <div className="flex items-center gap-3 text-left">
+                <Button variant="ghost" aria-expanded={isOpen} aria-controls={`report-${p.id}`} onClick={() => setExpanded(isOpen ? null : p.id)} className="w-full h-auto whitespace-normal flex items-center justify-between p-4 hover:bg-surface-muted/50 transition-colors">
+                  <div className="flex min-w-0 flex-wrap items-center gap-3 text-left">
                     <div className="text-xs text-muted-foreground tabular-nums">{p.id}</div>
                     <div className="font-semibold">{p.nome}</div>
                     <SaudeBadge saude={p.saude} />
@@ -300,12 +319,12 @@ export default function StatusReport() {
                     )}
                   </div>
                   <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
-                </button>
+                </Button>
                 {isOpen && (
-                  <div className="px-5 pb-5 pt-1 space-y-5 animate-fade-in border-t border-border">
-                    <div className="flex items-center justify-between">
+                  <div id={`report-${p.id}`} className="px-5 pb-5 pt-1 space-y-5 animate-fade-in border-t border-border">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
                       <span className="text-xs text-muted-foreground">
-                        Cada salvamento gera um registro histórico visível em <strong>Gestão do Projeto → Status Reports</strong>.
+                        Cada salvamento gera um registro no histórico de atualizações abaixo.
                       </span>
                       <Link
                         to={`/gestao/${p.id}`}
@@ -315,51 +334,40 @@ export default function StatusReport() {
                       </Link>
                     </div>
 
-                    <div>
-                      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Principais Avanços do Período</label>
-                      <Textarea rows={2} className="mt-1.5" value={d.avancos} onChange={e => setDraft(p.id, { avancos: e.target.value })} />
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Desvios do Período</label>
-                      <Textarea rows={2} className="mt-1.5" placeholder="Descreva os desvios observados no período…" value={d.desvios} onChange={e => setDraft(p.id, { desvios: e.target.value })} />
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Desvios Críticos · Faróis</label>
-                      <div className="mt-2 rounded-md border border-border overflow-hidden">
-                        <table className="w-full text-sm">
-                          <thead className="bg-surface-muted text-xs">
-                            <tr><th className="text-left px-3 py-2 font-semibold">Dimensão</th><th className="text-left px-3 py-2 font-semibold w-24">Status</th><th className="text-left px-3 py-2 font-semibold">Observação</th></tr>
-                          </thead>
-                          <tbody>
-                            {(p.desvios ?? [
-                              { dimensao: "Escopo", status: "verde" as const, obs: "—" },
-                              { dimensao: "Cronograma", status: "verde" as const, obs: "—" },
-                              { dimensao: "Custo", status: "verde" as const, obs: "—" },
-                              { dimensao: "Riscos", status: "verde" as const, obs: "—" },
-                            ]).map(dd => (
-                              <tr key={dd.dimensao} className="border-t border-border">
-                                <td className="px-3 py-2 font-medium">{dd.dimensao}</td>
-                                <td className="px-3 py-2"><FarolPicker value={dd.status} /></td>
-                                <td className="px-3 py-2 text-muted-foreground">{dd.obs}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                    <FormField id={`sr-${p.id}-avancos`} label="Principais avanços do período">
+                      <Textarea rows={2} value={d.avancos} disabled={saving === p.id} onChange={e => setDraft(p.id, { avancos: e.target.value })} />
+                    </FormField>
+                    <FormField id={`sr-${p.id}-desvios`} label="Desvios do período">
+                      <Textarea rows={2} placeholder="Descreva os desvios observados no período…" value={d.desvios} disabled={saving === p.id} onChange={e => setDraft(p.id, { desvios: e.target.value })} />
+                    </FormField>
+                    <fieldset className="min-w-0 space-y-2" disabled={saving === p.id}>
+                      <legend className="text-xs font-semibold uppercase text-muted-foreground">Desvios críticos · Faróis</legend>
+                      <div className="divide-y divide-border rounded-md border border-border">
+                        {d.farois_dimensoes.map((dd, index) => <div key={dd.dimensao} className="grid gap-2 p-3 sm:grid-cols-[8rem_10rem_1fr] sm:items-center">
+                          <span className="text-sm font-medium">{dd.dimensao}</span>
+                          <FarolPicker dimensao={dd.dimensao} value={dd.status} disabled={saving === p.id} onChange={status => setDraft(p.id, { farois_dimensoes: d.farois_dimensoes.map((f, i) => i === index ? { ...f, status } : f) })} />
+                          <span className="break-words text-xs text-muted-foreground">{dd.obs}</span>
+                        </div>)}
                       </div>
-                    </div>
-
+                    </fieldset>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Causa Raiz do Desvio</label>
-                        <Textarea rows={3} className="mt-1.5" value={d.causa_raiz} onChange={e => setDraft(p.id, { causa_raiz: e.target.value })} />
-                      </div>
-                      <div>
-                        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Plano de Ação / Recuperação</label>
-                        <Textarea rows={3} className="mt-1.5" value={d.plano_acao} onChange={e => setDraft(p.id, { plano_acao: e.target.value })} />
-                      </div>
+                      <FormField id={`sr-${p.id}-causa`} label="Causa raiz do desvio"><Textarea rows={3} value={d.causa_raiz} disabled={saving === p.id} onChange={e => setDraft(p.id, { causa_raiz: e.target.value })} /></FormField>
+                      <FormField id={`sr-${p.id}-plano`} label="Plano de ação / recuperação"><Textarea rows={3} value={d.plano_acao} disabled={saving === p.id} onChange={e => setDraft(p.id, { plano_acao: e.target.value })} /></FormField>
                     </div>
+                    {sr && <details className="text-xs"><summary className="cursor-pointer font-medium">Faróis do último report salvo</summary><div className="mt-2"><FaroisReportLeitura valor={sr.farois_dimensoes} /></div></details>}
+                    {uuid && (historicoByUuid[uuid]?.length ?? 0) > 0 && <details className="text-xs">
+                      <summary className="cursor-pointer font-medium">Histórico de atualizações ({historicoByUuid[uuid]?.length})</summary>
+                      <ol className="mt-2 space-y-3 border-l border-border pl-3">
+                        {historicoByUuid[uuid]?.map(report => <li key={report.id} className="space-y-1">
+                          <p className="font-medium">{report.periodo} · {new Date(report.created_at).toLocaleString("pt-BR")}</p>
+                          {report.avancos && <p>Avanços: {report.avancos}</p>}
+                          {report.desvios && <p>Desvios: {report.desvios}</p>}
+                          {report.causa_raiz && <p>Causa raiz: {report.causa_raiz}</p>}
+                          {report.plano_acao && <p>Plano de ação: {report.plano_acao}</p>}
+                          <FaroisReportLeitura valor={report.farois_dimensoes} />
+                        </li>)}
+                      </ol>
+                    </details>}
 
                     {/* Melhorias Estratégicas vinculadas ao projeto */}
                     {(() => {
@@ -424,13 +432,13 @@ export default function StatusReport() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground">
-                        {dirty ? "Alterações não salvas" : sr ? `Sincronizado em ${new Date(sr.created_at).toLocaleString("pt-BR")}` : "Nenhuma atualização registrada ainda"}
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <span role={saveError[p.id] ? "alert" : "status"} className="text-[11px] text-muted-foreground">
+                        {saveError[p.id] ? `${saveError[p.id]} Alterações mantidas nesta tela.` : saving === p.id ? "Salvando atualização e faróis…" : dirty ? "Alterações não salvas" : sr ? `Sincronizado em ${new Date(sr.created_at).toLocaleString("pt-BR")}` : "Nenhuma atualização registrada ainda"}
                       </span>
                       <Button
                         onClick={() => salvar(p.id)}
-                        disabled={saving === p.id || !codigoToUuid[p.id]}
+                        disabled={saving !== null || !codigoToUuid[p.id]}
                         className="bg-success hover:bg-success/90 text-success-foreground gap-2"
                       >
                         {saving === p.id && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -494,13 +502,13 @@ function SemaforoCard({ icon: Icon, title, subtitle, value, tone }: any) {
   );
 }
 
-function FarolPicker({ value }: { value: "verde" | "amarelo" | "vermelho" }) {
-  const [v, setV] = useState(value);
-  return (
-    <div className="flex items-center gap-1">
-      {(["verde","amarelo","vermelho"] as const).map(c => (
-        <button key={c} onClick={() => setV(c)} className={cn("h-3.5 w-3.5 rounded-full border transition-all", farolColor[c], v === c ? "ring-2 ring-offset-1 ring-foreground/40 scale-110" : "opacity-30")} />
-      ))}
+function FarolPicker({ value, dimensao, onChange, disabled }: { value: CorFarol; dimensao: string; onChange: (cor: CorFarol) => void; disabled: boolean }) {
+  return <div className="space-y-1" role="group" aria-label={`Farol de ${dimensao}`}>
+    <div className="flex gap-1">
+      {(["verde", "amarelo", "vermelho"] as const).map(c => <Button key={c} type="button" variant="ghost" size="icon" disabled={disabled} aria-label={`${dimensao}: ${c}`} aria-pressed={value === c} onClick={() => onChange(c)} className="h-9 w-9">
+        <span aria-hidden="true" className={cn("h-4 w-4 rounded-full border", farolColor[c], value === c ? "ring-2 ring-offset-2 ring-foreground/40" : "opacity-40")} />
+      </Button>)}
     </div>
-  );
+    <span className="text-xs text-muted-foreground">{value}</span>
+  </div>;
 }
