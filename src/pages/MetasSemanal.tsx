@@ -438,7 +438,7 @@ export default function MetasSemanal() {
   const respostas = co.kpis_resposta.filter((k) => k.ok != null && retrato.some((r) => r.indicador_id === k.indicador_id));
 
   return (
-    <div className="space-y-4 min-w-0" onBlur={e => { if (e.target.id) setTocados(prev => new Set([...prev, e.target.id])); }}>
+    <div className="space-y-4 min-w-0" onBlur={e => { const id = e.target.id; if (id && e.target.matches("input, textarea") && !tocados.has(id)) setTocados(prev => new Set([...prev, id])); }}>
       <header className="flex flex-wrap items-end justify-between gap-4 border-b pb-5">
         <div>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Formulário semanal do diretor</p>
