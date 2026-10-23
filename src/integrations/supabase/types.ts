@@ -5088,6 +5088,10 @@ export type Database = {
         Args: { _indicador: string; _periodo: string; _resposta: Json }
         Returns: boolean
       }
+      mt_editar_proposta_frequencia: {
+        Args: { _dados: Json; _id: string }
+        Returns: undefined
+      }
       mt_email_corporativo: { Args: never; Returns: boolean }
       mt_fechar: { Args: { _comp: string }; Returns: undefined }
       mt_frequencia_devida: {

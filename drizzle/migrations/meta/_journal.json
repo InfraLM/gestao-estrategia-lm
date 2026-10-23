@@ -393,6 +393,13 @@
       "when": 1792716678479,
       "tag": "0055_preparacao_propostas_cadeiras_frequencia_importacoes",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1792717679934,
+      "tag": "0056_editar_propostas_frequencia_auditadas",
+      "breakpoints": true
     }
   ]
 }
