@@ -719,10 +719,10 @@ export default function MetasSemanal() {
         { aba: "checkin", id: "bloco-apoio", txt: `Apoio: ${ci.apoio.trim() ? "preenchido" : "—"} · Confiança ${ci.confianca}/5` },
       ]} />
 
-      {podeEditar && <div className="sticky bottom-0 z-30 border-t bg-background py-3 flex flex-wrap items-center justify-between gap-3">
+      {podeEditar && <div className="sticky bottom-0 z-30 border-t bg-background py-3 pr-12 sm:pr-14 flex flex-wrap items-center justify-between gap-3">
         <SaveFeedback state={salvo} onRetry={() => void flush()} />
         <div className="flex w-full flex-wrap gap-2 sm:w-auto">
-          <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => { setAba(aba === "checkout" ? "checkin" : "checkout"); setTimeout(() => irPara(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"), 50); }}><ArrowRight className="mr-1 h-4 w-4" />{aba === "checkout" ? "Check-in" : "Checkout"}</Button>
+          <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => { setAba(aba === "checkout" ? "checkin" : "checkout"); setSecao(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"); setTimeout(() => irPara(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"), 50); }}><ArrowRight className="mr-1 h-4 w-4" />{aba === "checkout" ? "Check-in" : "Checkout"}</Button>
           <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => navegar("revisao-ciclo")}><ListChecks className="mr-1 h-4 w-4" />Revisar{pendIn.length + pendOut.length > 0 ? ` (${pendIn.length + pendOut.length})` : ""}</Button>
           <Button className="flex-1 sm:flex-none" disabled={pendIn.length + pendOut.length > 0 || enviando || salvo.estado === "salvando"} onClick={enviarCiclo}><Send className="mr-1 h-4 w-4" />{enviando ? "Enviando…" : seloCiclo(rows.find(r => r.tipo === "checkin"), rows.find(r => r.tipo === "checkout"), sem).estado === "enviado" ? "Reenviar ciclo" : "Enviar ciclo"}</Button>
         </div>

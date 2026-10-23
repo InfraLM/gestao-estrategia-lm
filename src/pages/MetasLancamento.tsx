@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ import {
   useMetasBase, MESES_2S26, STATUS_INI, statusEfetivo, fmtNum, type Indicador,
 } from "@/hooks/useMetasBase";
 import { avaliarPorTipo, AVALIACAO_LBL, TIPO_LBL, STATUS_ENTREGA_LBL, type StatusEntrega } from "@/lib/avaliacaoBsc";
+import { exclusiveAction } from "@/lib/exclusiveAction";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 
 const db = supabase as any;
@@ -61,6 +62,8 @@ export default function MetasLancamento() {
   const [ini, setIni] = useState<Record<string, { status: string; prazo: string; comentario: string }>>({});
   const [erros, setErros] = useState<Record<string, string>>({});
   const [salvando, setSalvando] = useState(false);
+  const runOnce = useRef(exclusiveAction());
+  const [feedback, setFeedback] = useState("");
   const [confirmar, setConfirmar] = useState<null | "fechar" | "reabrir">(null);
 
   const carregar = async () => {
@@ -143,7 +146,7 @@ export default function MetasLancamento() {
 
   const envio = envios.find((e) => e.cadeira_id === cadeira && e.competencia === comp && e.revisao === rev);
 
-  const gravar = async (enviar: boolean) => {
+  const gravar = (enviar: boolean) => runOnce.current(async () => {
     if (!cadeira) return;
     if (enviar) {
       const er: Record<string, string> = {};
@@ -161,7 +164,8 @@ export default function MetasLancamento() {
       setErros(er);
       if (Object.keys(er).length) { toast.error(`${Object.keys(er).length} indicador(es) com pendência. Revise os campos destacados.`); return; }
     }
-    setSalvando(true);
+    setSalvando(true); setFeedback(enviar ? "Enviando…" : "Salvando rascunho…");
+    try {
     const rows = daCadeira.filter((i) => !filhos(i.id).length).map((i) => {
       const d = rasc[i.id]; const v = parseNum(d?.valor ?? "");
       const av = parseNum(d?.avanco ?? ""); const tipo = tipoDe(i);
@@ -170,12 +174,13 @@ export default function MetasLancamento() {
         status_entrega: tipo === "entrega" ? d?.status_entrega || null : null, avanco_pct: tipo === "entrega" && av != null && !Number.isNaN(av) ? Math.max(0, Math.min(100, av)) : null, evidencia: tipo === "entrega" ? d?.evidencia || null : null };
     });
     const r1 = rows.length ? await db.from("mt_lancamentos").upsert(rows, { onConflict: "indicador_id,competencia,revisao" }) : { error: null };
-    if (r1.error) { setSalvando(false); toast.error(r1.error.message); return; }
+    if (r1.error) { setSalvando(false); setFeedback("Não foi possível salvar os indicadores."); toast.error(r1.error.message); return; }
+    let falhas = 0;
     for (const i of iniciativas) {
       const n = ini[i.id];
       if (n && (n.status !== i.status || (n.prazo || null) !== i.prazo || (n.comentario || null) !== i.comentario)) {
         const { error } = await db.from("mt_iniciativas").update({ status: n.status, prazo: n.prazo || null, comentario: n.comentario || null }).eq("id", i.id);
-        if (error) toast.error(`Iniciativa “${i.titulo}”: ${error.message}`);
+        if (error) { toast.error(`Iniciativa “${i.titulo}”: ${error.message}`); falhas++; }
       }
     }
     const nome = b.perfis.find((p) => p.user_id === b.user?.id)?.display_name ?? b.user?.email ?? null;
@@ -186,10 +191,13 @@ export default function MetasLancamento() {
     };
     const r2 = await db.from("mt_envios").upsert(env, { onConflict: "cadeira_id,competencia,revisao" });
     setSalvando(false);
-    if (r2.error) { toast.error(r2.error.message); return; }
-    toast.success(enviar ? "Formulário enviado. Cadeira marcada como atualizada." : "Rascunho salvo.");
+    if (r2.error) { setFeedback("Indicadores salvos; não foi possível registrar o envio."); toast.error(r2.error.message); return; }
+    setFeedback(falhas ? `Indicadores salvos; ${falhas} iniciativa(s) não salva(s).` : enviar ? "Formulário enviado." : "Rascunho salvo.");
+    if (!falhas) toast.success(enviar ? "Formulário enviado. Cadeira marcada como atualizada." : "Rascunho salvo.");
     await Promise.all([carregar(), b.reload()]);
-  };
+    } catch (e: any) { setFeedback("Não foi possível concluir o salvamento."); toast.error(e?.message ?? "Não foi possível salvar"); }
+    finally { setSalvando(false); }
+  });
 
   const executar = async () => {
     const fn = confirmar === "fechar" ? "mt_fechar" : "mt_reabrir";
@@ -253,8 +261,8 @@ export default function MetasLancamento() {
             )}
             <div className="grid sm:grid-cols-[200px_1fr] gap-3">
               {tipo === "entrega" ? <div className="space-y-2">
-                <Label>Status de entrega</Label>
-                <Select value={d.status_entrega || ""} disabled={!podeEditar} onValueChange={(v) => set({ status_entrega: v as StatusEntrega })}><SelectTrigger><SelectValue placeholder="Escolha" /></SelectTrigger>
+                <Label htmlFor={`status-entrega-${i.id}`}>Status de entrega · obrigatório ao enviar</Label>
+                <Select value={d.status_entrega || ""} disabled={!podeEditar} onValueChange={(v) => set({ status_entrega: v as StatusEntrega })}><SelectTrigger id={`status-entrega-${i.id}`} aria-describedby={erros[i.id] ? `erro-${i.id}` : undefined} aria-invalid={!!erros[i.id]}><SelectValue placeholder="Escolha" /></SelectTrigger>
                   <SelectContent>{(Object.keys(STATUS_ENTREGA_LBL) as StatusEntrega[]).map((x) => <SelectItem key={x} value={x}>{STATUS_ENTREGA_LBL[x]}</SelectItem>)}</SelectContent></Select>
                 <Label htmlFor={`av-${i.id}`}>% de avanço (opcional)</Label>
                 <Input id={`av-${i.id}`} inputMode="decimal" disabled={!podeEditar} value={d.avanco} onChange={(e) => set({ avanco: e.target.value })} />
@@ -267,10 +275,10 @@ export default function MetasLancamento() {
                     <Button type="button" size="sm" variant={d.declaracao === "on" ? "default" : "outline"} disabled={!podeEditar} onClick={() => set({ declaracao: d.declaracao === "on" ? null : "on" })}>On track</Button>
                     <Button type="button" size="sm" variant={d.declaracao === "off" ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => set({ declaracao: d.declaracao === "off" ? null : "off" })}>Off track</Button>
                   </div>
-                  {d.declaracao === "off" && <><Label htmlFor={`j-${i.id}`}>Justificativa (obrigatória)</Label><Textarea id={`j-${i.id}`} rows={2} disabled={!podeEditar} value={d.justificativa} onChange={(e) => set({ justificativa: e.target.value })} /></>}
+                  {d.declaracao === "off" && <><Label htmlFor={`j-${i.id}`}>Justificativa (obrigatória)</Label><Textarea id={`j-${i.id}`} aria-required="true" aria-invalid={!!erros[i.id]} aria-describedby={erros[i.id] ? `erro-${i.id}` : undefined} rows={2} disabled={!podeEditar} value={d.justificativa} onChange={(e) => set({ justificativa: e.target.value })} /></>}
                 </>}
                 <Label htmlFor={`v-${i.id}`}>{tipo === "valor_mensal" ? "Valor apontado — realizado do mês" : "Valor apontado — situação atual (opcional)"}</Label>
-                <Input id={`v-${i.id}`} inputMode="decimal" placeholder="Ex.: 1.234,56" disabled={!podeEditar || d.sem}
+                <Input id={`v-${i.id}`} aria-describedby={erros[i.id] ? `erro-${i.id}` : undefined} aria-invalid={!!erros[i.id]} inputMode="decimal" placeholder="Ex.: 1.234,56" disabled={!podeEditar || d.sem}
                   value={d.sem ? "" : d.valor} onChange={(e) => set({ valor: e.target.value })} />
                 <div className="flex items-center gap-2">
                   <Checkbox id={`s-${i.id}`} checked={d.sem} disabled={!podeEditar} onCheckedChange={(v) => set({ sem: !!v })} />
@@ -285,7 +293,7 @@ export default function MetasLancamento() {
                 <Textarea id={`c-${i.id}`} rows={3} disabled={!podeEditar} value={d.comentario} onChange={(e) => set({ comentario: e.target.value })} />
               </div>
             </div>
-            {erros[i.id] && <p className="text-sm text-destructive">{erros[i.id]}</p>}
+            {erros[i.id] && <p id={`erro-${i.id}`} role="alert" className="text-sm text-destructive">{erros[i.id]}</p>}
           </>
         )}
         {kids.map((k) => <div key={k.id}>{Linha({ i: k, nivel: nivel + 1 })}</div>)}
@@ -323,16 +331,16 @@ export default function MetasLancamento() {
         </div>
         <div className="grid sm:grid-cols-2 gap-3 mt-4">
           <div className="space-y-1">
-            <Label>Competência</Label>
+            <Label htmlFor="mensal-competencia">Competência</Label>
             <Select value={comp} onValueChange={setComp}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="mensal-competencia"><SelectValue /></SelectTrigger>
               <SelectContent>{MESES_2S26.map((m) => <SelectItem key={m} value={m}>{tituloComp(m)}{comps.find((c) => c.competencia === m)?.estado === "fechado" ? " · fechado" : ""}</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <div className="space-y-1">
-            <Label>Cadeira</Label>
+            <Label htmlFor="mensal-cadeira">Cadeira</Label>
             <Select value={cadeira ?? undefined} onValueChange={setCadeira}>
-              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectTrigger id="mensal-cadeira"><SelectValue placeholder="Selecione" /></SelectTrigger>
               <SelectContent>{b.cadeiras.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}{c.diretor_nome ? ` · ${c.diretor_nome}` : ""}{c.id === b.minhaCadeira ? " (minha)" : ""}</SelectItem>)}</SelectContent>
             </Select>
           </div>
@@ -378,10 +386,10 @@ export default function MetasLancamento() {
       <p className="text-xs text-muted-foreground">O status report dos projetos agora é enviado no último checkout do mês (Rotina Semanal).</p>
 
       {podeEditar && (
-        <div className="fixed bottom-0 inset-x-0 z-30 border-t bg-background/95 backdrop-blur p-3">
+        <div className="sticky bottom-0 z-30 border-t bg-background p-3 pr-16">
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-end gap-2">
-            <span className="mr-auto" />
-            <Button variant="outline" disabled={salvando} onClick={() => gravar(false)}><Save className="h-4 w-4 mr-1" /> Salvar rascunho</Button>
+            <span className="mr-auto text-xs text-muted-foreground" role="status" aria-live="polite">{feedback || "Salvar rascunho não envia o formulário."}</span>
+            <Button variant="outline" disabled={salvando} onClick={() => gravar(false)}><Save className="h-4 w-4 mr-1" /> {salvando ? "Salvando…" : "Salvar rascunho"}</Button>
             <Button disabled={salvando} onClick={() => gravar(true)}><Send className="h-4 w-4 mr-1" /> Enviar</Button>
           </div>
         </div>
