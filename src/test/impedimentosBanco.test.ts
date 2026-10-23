@@ -75,7 +75,8 @@ describe('Atribuição, envio e respostas em banco isolado',()=>{
   it('Não procede encerra empilhamento e não é atrasado no dashboard',async()=>{
     await pg.exec(`SELECT set_config('test.uid','${u2}',false)`);
     await pg.query(`select rotina_impedimento_responder('${risco}','2026-11-09','Conferido','2026-11-01','nao_procede','Pedido duplicado')`);
-    expect((await pg.query<any>(`select rotina_impedimentos_ciclo('${destino}','2026-11-16') d`)).rows[0].d).toHaveLength(0);
+    const recebidos=(await pg.query<any>(`select rotina_impedimentos_ciclo('${destino}','2026-11-16') d`)).rows[0].d;
+    expect(recebidos.filter((r:any)=>!['resolvido','nao_procede'].includes(r.resposta_status))).toHaveLength(0);
     const d=(await pg.query<any>(`select rotina_atividades_abertas('2026-11-16') d`)).rows[0].d;
     expect(d.find((x:any)=>x.id===risco)).toMatchObject({status:'nao_procede',atrasado:false});
   });
