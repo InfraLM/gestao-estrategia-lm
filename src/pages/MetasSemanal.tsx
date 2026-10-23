@@ -13,6 +13,7 @@ import { Plus, Trash2, ArrowRight, Send, ListChecks } from "lucide-react";
 import { FormField } from "@/components/FormField";
 import { SaveFeedback, SaveState } from "@/components/SaveFeedback";
 import { exclusiveAction } from "@/lib/exclusiveAction";
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI, fmtNum, MESES_2S26 } from "@/hooks/useMetasBase";
@@ -110,6 +111,7 @@ export default function MetasSemanal() {
   const [outrosSel, setOutrosSel] = useState<string[]>([]);
   const [lideres, setLideres] = useState<{ id: string; nome: string; ocupante_nome: string | null }[]>([]);
   const [salvo, setSalvo] = useState<Salvo>({ estado: "ocioso" });
+  useUnsavedChanges(['alterado','salvando','erro'].includes(salvo.estado));
   const [enviando, setEnviando] = useState(false);
   const sendOnce = useRef(exclusiveAction());
   const riskOnce = useRef(exclusiveAction());

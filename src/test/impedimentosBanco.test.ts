@@ -2,6 +2,9 @@
 import { PGlite } from '@electric-sql/pglite';
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { normalizarCheckin,normalizarCheckout,pendenciasCheckin,pendenciasCheckout,respostaVazia } from '@/lib/rotinaSemanal';
+import { calcularCompletude,avaliarCiclo } from '@/lib/conformidade';
+import { contar } from '@/lib/dashboardRotina';
 const origem='00000000-0000-4000-8000-000000000010', destino='00000000-0000-4000-8000-000000000011', outro='00000000-0000-4000-8000-000000000012';
 const u1='00000000-0000-4000-8000-000000000001',u2='00000000-0000-4000-8000-000000000002',u3='00000000-0000-4000-8000-000000000003';
 describe('Atribuição, envio e respostas em banco isolado',()=>{
@@ -29,6 +32,7 @@ describe('Atribuição, envio e respostas em banco isolado',()=>{
     await pg.exec(baseline);
     await pg.exec(readFileSync('drizzle/migrations/0050_impedimentos_atribuicao_respostas.sql','utf8'));
     await pg.exec(readFileSync('drizzle/migrations/0051_impedimentos_atividades_projecao.sql','utf8'));
+    await pg.exec(readFileSync('drizzle/migrations/0054_impedimentos_encerrados_sem_atraso.sql','utf8'));
     risco=(await pg.query<{id:string}>(`INSERT INTO mt_rotina_riscos(cadeira_id,tipo,descricao,semana_criada,atribuido_cadeira_id,impacto) VALUES('${origem}','impedimento','Liberar acesso','2026-10-26','${destino}','Entrega bloqueada') RETURNING id`)).rows[0].id;
   },30000);
   afterAll(async()=>{await pg.close();});
@@ -70,5 +74,30 @@ describe('Atribuição, envio e respostas em banco isolado',()=>{
     expect((await pg.query<any>(`select resposta_status,motivo_reabertura from mt_rotina_riscos`)).rows[0]).toEqual({resposta_status:'aberto',motivo_reabertura:'Acesso ainda bloqueado'});
     expect((await pg.query<any>(`select rotina_impedimentos_ciclo('${origem}','2026-11-02') d`)).rows[0].d[0].resposta_ciclo).toBeNull();
     expect((await pg.query<any>(`select acao from mt_impedimento_auditoria order by criado_em`)).rows.map(x=>x.acao)).toEqual(['atribuição','envio','resposta/status','resposta/status','reabertura']);
+  });
+  it('Não procede encerra empilhamento e não é atrasado no dashboard',async()=>{
+    await pg.exec(`SELECT set_config('test.uid','${u2}',false)`);
+    await pg.query(`select rotina_impedimento_responder('${risco}','2026-11-09','Conferido','2026-11-01','nao_procede','Pedido duplicado')`);
+    const recebidos=(await pg.query<any>(`select rotina_impedimentos_ciclo('${destino}','2026-11-16') d`)).rows[0].d;
+    expect(recebidos.filter((r:any)=>!['resolvido','nao_procede'].includes(r.resposta_status))).toHaveLength(0);
+    const d=(await pg.query<any>(`select rotina_atividades_abertas('2026-11-16') d`)).rows[0].d;
+    expect(d.find((x:any)=>x.id===risco)).toMatchObject({status:'nao_procede',atrasado:false});
+  });
+  it('ciclo completo isolado: V/S/E, voluntário, crítico, prioridade e risco chegam à conformidade/dashboard/destinatário',async()=>{
+    await pg.exec(`SELECT set_config('test.uid','${u1}',false)`);
+    const ci=normalizarCheckin({prioridades:[{id:'p1',titulo:'Entregar planejamento',prazo:'2026-11-20',resultado:'Documento entregue',responsavel:{tipo:'eu'}}]});
+    const retratos=['v','s','e','outro','critico'].map((id,i)=>({indicador_id:id,codigo:id,nome:id,origem:'bsc',tipo_apontamento:i===1?'valor_periodo':i===2?'entrega':'valor_mensal',meta_mes:100,voluntario:id==='outro'}));
+    const respostas=retratos.map(k=>({...respostaVazia(k.indicador_id),situacao_atual:'100',...(k.indicador_id==='s'?{declaracao:'on'}:{}),...(k.indicador_id==='e'?{status_entrega:'implantada'}:{}),...(k.indicador_id==='outro'?{voluntario:true}:{}),...(k.indicador_id==='critico'?{desvio_critico:true,situacao_atual:'40',causa:'Falha operacional',impacto:'Entrega atrasada',plano:'Corrigir processo'}:{})}));
+    const co=normalizarCheckout({kpis_retrato:retratos,kpis_resposta:respostas,entregas:[{titulo:'Entrega anterior',status:'entregue',motivo:''}]});
+    expect(pendenciasCheckin(ci)).toEqual([]);expect(pendenciasCheckout(co)).toEqual([]);
+    const comp=calcularCompletude(co,ci,null);expect(comp).toEqual({total:5,feitos:5,faltando:[]});
+    expect(avaliarCiclo('2026-11-09',{cadeira_id:origem,semana:'2026-11-09',status:'enviado',enviado_em:'2026-11-16T12:00:00-03:00',primeiro_envio_em:'2026-11-16T12:00:00-03:00',completude:comp}).conforme).toBe(true);
+    const dashboard=contar(retratos.map(k=>({...k,...respostas.find(r=>r.indicador_id===k.indicador_id)})) as any);expect(dashboard).toMatchObject({total:5,on:3,off:1,fora:1,criticos:1,pendente:0});
+    const novo=(await pg.query<any>(`INSERT INTO mt_rotina_riscos(cadeira_id,tipo,descricao,semana_criada,atribuido_cadeira_id,impacto) VALUES('${origem}','impedimento','Revisar contrato','2026-11-16','${destino}','Prazo') RETURNING id`)).rows[0].id;
+    await pg.query(`INSERT INTO mt_checkins(cadeira_id,semana,tipo,status,conteudo) VALUES('${origem}','2026-11-16','checkin','enviado',$1::jsonb),('${origem}','2026-11-09','checkout','enviado',$2::jsonb)`,[JSON.stringify(ci),JSON.stringify({...co,completude:comp})]);
+    await pg.exec(`SELECT set_config('test.uid','${u2}',false)`);
+    expect((await pg.query<any>(`select rotina_impedimentos_ciclo('${destino}','2026-11-23') d`)).rows[0].d.some((r:any)=>r.id===novo)).toBe(true);
+    await pg.query(`select rotina_impedimento_responder('${novo}','2026-11-23','Revisar minuta','2026-11-27','em_andamento','')`);
+    expect((await pg.query<any>(`select rotina_atividades_abertas('2026-11-23') d`)).rows[0].d.find((r:any)=>r.id===novo)).toMatchObject({plano:'Revisar minuta',status:'em_andamento'});
   });
 });

@@ -1,0 +1,23 @@
+ALTER TABLE public.mt_convites ADD COLUMN IF NOT EXISTS aceito_por uuid, ADD COLUMN IF NOT EXISTS aceito_em timestamptz;
+CREATE OR REPLACE FUNCTION public.mt_vincular_convite_verificado(_uid uuid) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE u record; c record; anterior jsonb; BEGIN
+ SELECT id,email,email_confirmed_at INTO u FROM auth.users WHERE id=_uid; IF u.email_confirmed_at IS NULL THEN RETURN false; END IF;
+ SELECT * INTO c FROM public.mt_convites WHERE lower(email)=lower(u.email) AND perfil='diretor' FOR UPDATE; IF NOT FOUND THEN RETURN false; END IF;
+ PERFORM 1 FROM public.mt_cadeiras WHERE id=c.cadeira_id AND ativo FOR UPDATE; IF NOT FOUND THEN RETURN false; END IF;
+ IF EXISTS(SELECT 1 FROM public.mt_cadeiras WHERE id=c.cadeira_id AND diretor_user_id IS NOT NULL AND diretor_user_id<>_uid) OR EXISTS(SELECT 1 FROM public.mt_usuarios WHERE user_id=_uid AND (cadeira_id IS DISTINCT FROM c.cadeira_id OR perfil<>'diretor')) THEN RETURN false; END IF;
+ IF c.aceito_por=_uid AND EXISTS(SELECT 1 FROM public.mt_usuarios WHERE user_id=_uid AND cadeira_id=c.cadeira_id) THEN RETURN true; END IF;
+ SELECT to_jsonb(x) INTO anterior FROM public.mt_usuarios x WHERE user_id=_uid;
+ INSERT INTO public.mt_usuarios(user_id,perfil,cadeira_id) VALUES(_uid,'diretor',c.cadeira_id) ON CONFLICT(user_id) DO UPDATE SET cadeira_id=excluded.cadeira_id;
+ UPDATE public.mt_cadeiras SET diretor_user_id=_uid WHERE id=c.cadeira_id;
+ INSERT INTO public.usuario_acessos(user_id,modulo,nivel) VALUES(_uid,'rotina','edicao') ON CONFLICT(user_id,modulo) DO UPDATE SET nivel='edicao';
+ UPDATE public.mt_convites SET aceito_por=_uid,aceito_em=now() WHERE email=c.email;
+ INSERT INTO public.mt_auditoria(tabela,registro_id,campo,valor_anterior,valor_novo,alterado_por) VALUES('mt_usuarios',_uid::text,'vinculo_diretor',anterior::text,jsonb_build_object('cadeira_id',c.cadeira_id,'perfil','diretor','rotina','edicao')::text,_uid); RETURN true;
+ END $$;
+REVOKE ALL ON FUNCTION public.mt_vincular_convite_verificado(uuid) FROM PUBLIC,anon,authenticated; GRANT EXECUTE ON FUNCTION public.mt_vincular_convite_verificado(uuid) TO service_role;
+CREATE OR REPLACE FUNCTION public.mt_aplicar_convite() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ BEGIN PERFORM public.mt_vincular_convite_verificado(NEW.user_id); RETURN NEW; END $$;
+CREATE OR REPLACE FUNCTION public.mt_convite_auth_verificado() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ BEGIN IF NEW.email_confirmed_at IS NOT NULL THEN PERFORM public.mt_vincular_convite_verificado(NEW.id); END IF; RETURN NEW; END $$;
+CREATE TRIGGER zz_mt_convite_verificado AFTER INSERT OR UPDATE OF email_confirmed_at ON auth.users FOR EACH ROW EXECUTE FUNCTION public.mt_convite_auth_verificado();
+CREATE OR REPLACE FUNCTION public.mt_aceitar_meu_convite() RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ BEGIN IF auth.uid() IS NULL THEN RETURN false; END IF; RETURN public.mt_vincular_convite_verificado(auth.uid()); END $$;
+REVOKE ALL ON FUNCTION public.mt_aceitar_meu_convite() FROM PUBLIC,anon; GRANT EXECUTE ON FUNCTION public.mt_aceitar_meu_convite() TO authenticated;
+CREATE OR REPLACE FUNCTION public.rotina_pode_ler_checkin(_cadeira uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT auth.uid() IS NOT NULL AND coalesce(public.mt_is_governanca(auth.uid()) OR public.proj_eh_ceo(auth.uid()) OR (public.mt_cadeira_do_usuario(auth.uid()) IS NOT NULL AND (_cadeira=public.mt_cadeira_do_usuario(auth.uid()) OR coalesce((SELECT ativo FROM public.rotina_transparencia WHERE id),false))),false) $$;
+DROP POLICY IF EXISTS rotina_cadeira_obrigatoria ON public.mt_checkins;
+CREATE POLICY rotina_cadeira_obrigatoria ON public.mt_checkins AS RESTRICTIVE FOR SELECT TO authenticated USING(public.rotina_pode_ler_checkin(cadeira_id));

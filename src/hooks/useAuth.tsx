@@ -17,6 +17,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!user) return;
+    // Server resolves the verified email; the browser never supplies a chair or user ID.
+    void supabase.rpc('mt_aceitar_meu_convite');
+  }, [user?.id]);
+
+  useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_evt, sess) => {
       setSession(sess);
       setUser(sess?.user ?? null);

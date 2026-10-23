@@ -20,5 +20,5 @@ export function completudeImpedimentos(itens: Impedimento[], cadeira: string, ci
   return { total: devidos.length, feitos: devidos.filter(r => respostaCompleta(r.resposta_ciclo)).length };
 }
 export function impedimentoAtrasado(prazo: string | null, status: string, hoje: string) {
-  return !!prazo && prazo < hoje && status !== 'resolvido';
+  return !!prazo && prazo < hoje && !['resolvido', 'nao_procede'].includes(status);
 }

@@ -372,6 +372,34 @@
       "when": 1792715006202,
       "tag": "0052_status_reports_farois_auditados",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1792716522660,
+      "tag": "0053_ciclo_diretores_vinculo_verificado_seguranca",
+      "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1792716600124,
+      "tag": "0054_impedimentos_encerrados_sem_atraso",
+      "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1792716678479,
+      "tag": "0055_preparacao_propostas_cadeiras_frequencia_importacoes",
+      "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1792717679934,
+      "tag": "0056_editar_propostas_frequencia_auditadas",
+      "breakpoints": true
     }
   ]
 }

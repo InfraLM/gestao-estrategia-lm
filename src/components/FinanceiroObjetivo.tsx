@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useImpactoFinanceiro } from '@/hooks/useImpactoFinanceiro';
-import { dinheiro, financeiroObjetivo, principalProjeto, realizadoProjeto } from '@/lib/impactoFinanceiro';
+import { dinheiro, financeiroObjetivo, principalProjeto, realizadoProjeto, valorEscalar } from '@/lib/impactoFinanceiro';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -49,11 +49,11 @@ function CentrosProjetosDados({ codigo, compacto=false, dados: d }: { codigo: st
   useEffect(()=>{setValor(b?.budget_liberado==null?'':String(b.budget_liberado));setFonte(b?.fonte??'');},[b?.budget_liberado,b?.fonte]);
   if (!d.pode || !p) return null;
   const salvar = async (cc:string,acao:string) => {setBusy(true);const {error}=await db.rpc('orc_centro_salvar',{_projeto:p.id,_centro:cc,_acao:acao});setBusy(false);if(error)return toast.error(error.message.includes('orc_centro_unico')?'Este centro já está confirmado para outro projeto.':error.message);setCentro('');window.dispatchEvent(new Event('orc-atualizado'));toast.success('Correspondência salva.');};
-  const budget=async()=>{setBusy(true);const {error}=await db.rpc('orc_budget_salvar',{_projeto:p.id,_valor:valor===''?null:Number(valor),_fonte:fonte});setBusy(false);if(error)return toast.error(error.message);window.dispatchEvent(new Event('orc-atualizado'));toast.success('Budget registrado.');};
+  const budget=async()=>{setBusy(true);const {error}=await db.rpc('orc_budget_salvar',{_projeto:p.id,_valor:valor===''?null:valorEscalar(valor),_fonte:fonte});setBusy(false);if(error)return toast.error(error.message);window.dispatchEvent(new Event('orc-atualizado'));toast.success('Budget registrado.');};
   return <div className="space-y-2 mt-2">{compacto&&edita&&<Button variant="outline" size="sm" onClick={()=>setAberto(!aberto)}>Centros / budget</Button>}{aberto&&<div className="space-y-3 text-sm">
     {!compacto&&<h3 className="font-semibold">Budget liberado e centros de custo</h3>}
     {d.centros.filter((c:any)=>c.projeto_id===p.id).map((c:any)=><div key={c.id} className="flex flex-wrap gap-2 items-center"><span>{c.centro_custo}</span><Badge variant={c.status==='confirmado'?'default':'outline'}>{c.status==='confirmado'?'Confirmado':'A confirmar'}</Badge>{d.gov&&c.status!=='confirmado'&&<Button disabled={busy} size="sm" variant="outline" onClick={()=>salvar(c.centro_custo,'confirmar')}>Confirmar</Button>}{edita&&<Button disabled={busy} variant="ghost" size="icon" aria-label={`Remover centro ${c.centro_custo}`} onClick={()=>salvar(c.centro_custo,'remover')}><Trash2 className="h-4 w-4"/></Button>}</div>)}
     {edita&&<div className="flex flex-wrap gap-2"><Input className="flex-1 min-w-40" aria-label="Centro de custo" placeholder="Centro de custo" value={centro} onChange={e=>setCentro(e.target.value)}/><Button size="sm" disabled={busy||!centro.trim()} onClick={()=>salvar(centro,'propor')}><Plus className="h-4 w-4 mr-1"/>Adicionar centro</Button></div>}
-    {d.gestor&&<div className="grid gap-2"><Label htmlFor={`budget-${p.id}`}>Budget liberado/aprovado (R$)</Label><Input id={`budget-${p.id}`} type="number" min="0" value={valor} onChange={e=>setValor(e.target.value)}/><Label htmlFor={`budget-fonte-${p.id}`}>Fonte da aprovação (BC / decisão SR / documento)</Label><Input id={`budget-fonte-${p.id}`} value={fonte} onChange={e=>setFonte(e.target.value)}/><Button disabled={busy||valor!==''&&(!Number.isFinite(Number(valor))||Number(valor)<0||!fonte.trim())} size="sm" variant="outline" onClick={budget}>Salvar budget liberado</Button></div>}
+    {d.gestor&&<div className="grid gap-2"><Label htmlFor={`budget-${p.id}`}>Budget liberado/aprovado (R$)</Label><Input id={`budget-${p.id}`} inputMode="decimal" placeholder="0,00" value={valor} onChange={e=>setValor(e.target.value)} onBlur={()=>{const n=valorEscalar(valor);if(n!=null)setValor(n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}));}}/><Label htmlFor={`budget-fonte-${p.id}`}>Fonte da aprovação (BC / decisão SR / documento)</Label><Input id={`budget-fonte-${p.id}`} value={fonte} onChange={e=>setFonte(e.target.value)}/><Button disabled={busy||valor!==''&&(valorEscalar(valor)==null||(valorEscalar(valor)??0)<0||!fonte.trim())} size="sm" variant="outline" onClick={budget}>Salvar budget liberado</Button></div>}
   </div>}</div>;
 }
