@@ -9,7 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, ArrowRight, Send, ListChecks } from "lucide-react";
+import { FormField } from "@/components/FormField";
+import { SaveFeedback, SaveState } from "@/components/SaveFeedback";
+import { exclusiveAction } from "@/lib/exclusiveAction";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI, fmtNum, MESES_2S26 } from "@/hooks/useMetasBase";
@@ -61,9 +64,15 @@ export function prazoDe(semana: string, tipo: string) {
 const fmtSem = (s: string) => new Date(s + "T12:00").toLocaleDateString("pt-BR");
 const pct = (v: number | null) => (v == null ? "—" : `${(v * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%`);
 const novaPri = (): PrioridadeV2 => ({ id: novoId(), titulo: "", iniciativa_id: "", resultado: "", prazo: "", responsavel: { tipo: "eu" }, vinculos: { bsc: [], kr: [], cesta: [], projetos: [] } });
-const irPara = (id: string) => { const el = document.getElementById(id); el?.scrollIntoView({ behavior: "smooth", block: "center" }); (el as HTMLElement | null)?.focus?.(); };
+const irPara = (id: string) => {
+  const el = document.getElementById(id) ?? document.getElementById("bloco-prioridades");
+  if (!el) return;
+  el.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+  if (!el.matches("input, textarea, button, select")) el.tabIndex = -1;
+  el.focus({ preventScroll: true });
+};
 type Tipo = "checkin" | "checkout";
-type Salvo = { estado: "ocioso" | "salvando" | "salvo" | "erro"; em?: Date; erro?: string };
+type Salvo = SaveState;
 
 export default function MetasSemanal() {
   const transp = useTransparencia();
@@ -102,6 +111,13 @@ export default function MetasSemanal() {
   const [lideres, setLideres] = useState<{ id: string; nome: string; ocupante_nome: string | null }[]>([]);
   const [salvo, setSalvo] = useState<Salvo>({ estado: "ocioso" });
   const [enviando, setEnviando] = useState(false);
+  const sendOnce = useRef(exclusiveAction());
+  const riskOnce = useRef(exclusiveAction());
+  const [registrandoRisco, setRegistrandoRisco] = useState(false);
+  const [riscoBusy, setRiscoBusy] = useState<string | null>(null);
+  const riskStatusOnce = useRef(exclusiveAction());
+  const [tocados, setTocados] = useState<Set<string>>(() => new Set());
+  const [secao, setSecao] = useState("bloco-kpis");
   const [aba, setAba] = useState<Tipo>("checkout");
   const ciRef = useRef(ci); const coRef = useRef(co);
   const sujo = useRef<Record<Tipo, boolean>>({ checkin: false, checkout: false });
@@ -120,8 +136,8 @@ export default function MetasSemanal() {
   const flushRef = useRef<() => void>(() => {});
   const rowsRef = useRef<any[]>([]); rowsRef.current = rows;
   const agendar = () => { clearTimeout(timer.current); timer.current = setTimeout(() => flushRef.current(), 1000); };
-  const setCi = (x: CheckinV2) => { setCiRaw(x); ciRef.current = x; sujo.current.checkin = true; localStorage.setItem(chaveLocal("checkin"), JSON.stringify(x)); agendar(); };
-  const setCo = (x: CheckoutV2) => { setCoRaw(x); coRef.current = x; sujo.current.checkout = true; localStorage.setItem(chaveLocal("checkout"), JSON.stringify(x)); agendar(); };
+  const setCi = (x: CheckinV2) => { setCiRaw(x); ciRef.current = x; sujo.current.checkin = true; localStorage.setItem(chaveLocal("checkin"), JSON.stringify(x)); setSalvo({ estado: "alterado" }); agendar(); };
+  const setCo = (x: CheckoutV2) => { setCoRaw(x); coRef.current = x; sujo.current.checkout = true; localStorage.setItem(chaveLocal("checkout"), JSON.stringify(x)); setSalvo({ estado: "alterado" }); agendar(); };
 
   const load = async () => {
     if (!cad) return;
@@ -176,7 +192,7 @@ export default function MetasSemanal() {
     if (lin) sujo.current.checkin = true;
     if (lout) sujo.current.checkout = true;
     if (sujo.current.checkin || sujo.current.checkout) agendar();
-    setSalvo({ estado: "ocioso" });
+    setSalvo({ estado: "ocioso" }); setTocados(new Set());
   };
   useEffect(() => { load(); }, [cad, sem, podeEditar]);
 
@@ -247,7 +263,7 @@ export default function MetasSemanal() {
     : r.tipo === "externo" || r.tipo === "lider" ? r.nome ?? null : diretorNome || null;
 
   /** Envio único do ciclo: checkout (S−7) e check-in (S) gravados juntos, mesmo código e horário. */
-  const enviarCiclo = async () => {
+  const enviarCiclo = () => sendOnce.current(async () => {
     if (enviando || gravando.current) return;
     if (pendIn.length || pendOut.length) return toast.error("Resolva as pendências antes de enviar.");
     setEnviando(true); clearTimeout(timer.current);
@@ -301,22 +317,32 @@ export default function MetasSemanal() {
       toast.success("Ciclo enviado à Governança.");
     } catch (e: any) { toast.error(e?.message ?? "Falha ao enviar"); }
     finally { setEnviando(false); }
-  };
+  });
 
   // ---------- Riscos ----------
   const [novoRisco, setNovoRisco] = useState({ tipo: "risco", descricao: "", impacto: "", atribuido_cadeira_id: "", prazo_desejado: "" });
-  const registrarRisco = async () => {
+  const registrarRisco = () => riskOnce.current(async () => {
     if (!novoRisco.descricao.trim()) return;
-    const { data, error } = await db.from("mt_rotina_riscos").insert({ cadeira_id: cad, tipo: novoRisco.tipo, descricao: novoRisco.descricao.trim(), semana_criada: sem, criado_por: b.user?.id, impacto: novoRisco.impacto.trim(), atribuido_cadeira_id: novoRisco.atribuido_cadeira_id || null, prazo_desejado: novoRisco.prazo_desejado || null }).select().single();
-    if (error) return toast.error(error.message);
-    setRiscos([...riscos, data]); setNovoRisco({ tipo: novoRisco.tipo, descricao: "", impacto: "", atribuido_cadeira_id: "", prazo_desejado: "" }); void carregarImpedimentos();
-  };
-  const mudarRisco = async (r: any, resolver: boolean) => {
-    const upd = resolver ? { resolvido_em: new Date().toISOString(), resolvido_por: b.user?.id } : { reaberto_em: new Date().toISOString() };
-    const { data, error } = await db.from("mt_rotina_riscos").update(upd).eq("id", r.id).select().single();
-    if (error) return toast.error(error.message);
-    setRiscos(riscos.map((x) => (x.id === r.id ? data : x)));
-  };
+    setRegistrandoRisco(true);
+    try {
+      const { data, error } = await db.from("mt_rotina_riscos").insert({ cadeira_id: cad, tipo: novoRisco.tipo, descricao: novoRisco.descricao.trim(), semana_criada: sem, criado_por: b.user?.id, impacto: novoRisco.impacto.trim(), atribuido_cadeira_id: novoRisco.atribuido_cadeira_id || null, prazo_desejado: novoRisco.prazo_desejado || null }).select().single();
+      if (error) throw error;
+      setRiscos(prev => [...prev, data]); setNovoRisco({ tipo: novoRisco.tipo, descricao: "", impacto: "", atribuido_cadeira_id: "", prazo_desejado: "" }); void carregarImpedimentos();
+      toast.success("Item registrado. Atribuições serão notificadas no envio do ciclo.");
+    } catch (e: any) { toast.error(e?.message ?? "Não foi possível registrar o item"); }
+    finally { setRegistrandoRisco(false); }
+  });
+  const mudarRisco = (r: any, resolver: boolean) => riskStatusOnce.current(async () => {
+    setRiscoBusy(r.id);
+    try {
+      const upd = resolver ? { resolvido_em: new Date().toISOString(), resolvido_por: b.user?.id } : { reaberto_em: new Date().toISOString() };
+      const { data, error } = await db.from("mt_rotina_riscos").update(upd).eq("id", r.id).select().single();
+      if (error) throw error;
+      setRiscos(prev => prev.map(x => x.id === r.id ? data : x));
+      toast.success(resolver ? "Item resolvido" : "Item reaberto");
+    } catch (e: any) { toast.error(e?.message ?? "Não foi possível atualizar o item"); }
+    finally { setRiscoBusy(null); }
+  });
   const riscosVisiveis = riscos.filter((r) => r.semana_criada <= sem && !r.atribuido_cadeira_id);
   const abertos = riscosVisiveis.filter(riscoAberto); const resolvidos = riscosVisiveis.filter((r) => !riscoAberto(r));
 
@@ -341,8 +367,8 @@ export default function MetasSemanal() {
         </Select>
         {v.tipo === "externo" && (
           <div className="grid gap-2 sm:grid-cols-2">
-            <Input placeholder="Nome" value={v.nome ?? ""} disabled={!podeEditar} onChange={(e) => on({ ...v, nome: e.target.value })} />
-            {(podeEditar || v.email) && <Input type="email" placeholder="E-mail" value={v.email ?? ""} disabled={!podeEditar} onChange={(e) => on({ ...v, email: e.target.value })} />}
+            <FormField id={`${id}-nome`} label="Nome da pessoa de fora" required><Input value={v.nome ?? ""} disabled={!podeEditar} onChange={(e) => on({ ...v, nome: e.target.value })} /></FormField>
+            {(podeEditar || v.email) && <FormField id={`${id}-email`} label="E-mail da pessoa de fora" required><Input type="email" value={v.email ?? ""} disabled={!podeEditar} onChange={(e) => on({ ...v, email: e.target.value })} /></FormField>}
           </div>
         )}
       </div>
@@ -356,25 +382,25 @@ export default function MetasSemanal() {
     return <Badge variant={sc.atrasado ? "destructive" : "outline"}>{sc.estado === "parcial" ? "Parcial" : sc.estado === "rascunho" ? "Rascunho" : "Pendente"} · prazo {prazo}</Badge>;
   };
   const Escala = ({ v, on, lbl }: { v: number; on: (n: number) => void; lbl: string }) => (
-    <div className="space-y-1"><Label>{lbl}</Label>
-      <div className="flex gap-1">{[1, 2, 3, 4, 5].map((n) => <Button key={n} type="button" size="sm" variant={v === n ? "default" : "outline"} disabled={!podeEditar} onClick={() => on(n)}>{n}</Button>)}</div>
-    </div>
+    <fieldset className="space-y-1"><legend className="text-sm font-medium">{lbl}</legend>
+      <div className="flex gap-1">{[1, 2, 3, 4, 5].map((n) => <Button key={n} type="button" size="sm" variant={v === n ? "default" : "outline"} aria-pressed={v === n} aria-label={`${n} de 5`} disabled={!podeEditar} onClick={() => on(n)}>{n}</Button>)}</div>
+    </fieldset>
   );
 
   const Revisao = ({ blocos, pend }: { blocos: { id: string; txt: string; aba: Tipo }[]; pend: (Pendencia & { aba: Tipo })[] }) => {
     const enviado = seloCiclo(rows.find((r) => r.tipo === "checkin"), rows.find((r) => r.tipo === "checkout"), sem).estado === "enviado";
-    const ir = (a: Tipo, id: string) => { setAba(a); setTimeout(() => irPara(id), 50); };
+    const ir = (a: Tipo, id: string) => { setAba(a); setSecao(id); setTocados(prev => new Set([...prev, id])); setTimeout(() => irPara(id), 50); };
     return (
       <Card className="p-4 space-y-3 border-primary/40" id="revisao-ciclo">
         <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">Revisão do ciclo antes de enviar</h3><SeloDoCiclo /></div>
-        <ul className="space-y-1 text-sm">{blocos.map((x) => <li key={x.id} className="flex justify-between gap-2"><span><span className="text-muted-foreground">{x.aba === "checkout" ? "Checkout" : "Check-in"} · </span>{x.txt}</span><button type="button" className="text-primary underline" onClick={() => ir(x.aba, x.id)}>Ver</button></li>)}</ul>
+        <ul className="space-y-1 text-sm">{blocos.map((x) => <li key={x.id} className="flex justify-between gap-2"><span><span className="text-muted-foreground">{x.aba === "checkout" ? "Checkout" : "Check-in"} · </span>{x.txt}</span><Button type="button" size="sm" variant="link" onClick={() => ir(x.aba, x.id)} aria-label={`Ver ${x.txt}`}>Ver</Button></li>)}</ul>
         {pend.length > 0 && (
           <div className="space-y-1"><p className="text-sm font-medium text-destructive">Pendências</p>
-            <ul className="space-y-1 text-sm">{pend.map((p, i) => <li key={i}><button type="button" className="text-destructive underline text-left" onClick={() => ir(p.aba, p.campo)}>{p.aba === "checkout" ? "Checkout" : "Check-in"}: {p.texto}</button></li>)}</ul>
+            <ul className="space-y-1 text-sm">{pend.map((p, i) => <li key={i}><Button type="button" variant="link" className="h-auto whitespace-normal justify-start p-0 text-destructive text-left" onClick={() => ir(p.aba, p.campo)}>{p.aba === "checkout" ? "Checkout" : "Check-in"}: {p.texto}</Button></li>)}</ul>
           </div>
         )}
         {podeEditar && <div className="space-y-1">
-          <Button disabled={pend.length > 0 || enviando} onClick={enviarCiclo}>{enviando ? "Enviando…" : enviado ? "Reenviar ciclo" : "Enviar ciclo (checkout + check-in)"}</Button>
+          <Button disabled={pend.length > 0 || enviando || salvo.estado === "salvando"} onClick={enviarCiclo}>{enviando ? "Enviando…" : enviado ? "Reenviar ciclo" : "Enviar ciclo (checkout + check-in)"}</Button>
           {pend.length > 0 && <p className="text-xs text-muted-foreground">Resolva as pendências acima para liberar o envio.</p>}
         </div>}
       </Card>
@@ -398,11 +424,22 @@ export default function MetasSemanal() {
     return { x, txt: [okr?.codigo, ind?.codigo, obj?.codigo].filter(Boolean).join(" · ") };
   };
   const entregasAtuais = co.entregas.filter((e) => !e.herdada_de);
+  const erroCampo = (id: string) => tocados.has(id) ? [...pendIn, ...pendOut].find(p => p.campo === id)?.texto : undefined;
+  const secoes = aba === "checkout" ? [
+    { id: "bloco-kpis", label: "KPIs", total: retrato.length },
+    { id: "bloco-entregas", label: "Entregas", total: co.entregas.length },
+    { id: "bloco-riscos", label: "Riscos", total: abertos.length },
+    { id: "bloco-impedimentos", label: "Impedimentos", total: impedimentos.length },
+    { id: "bloco-atas", label: "Reuniões", total: (co.atas ?? []).length },
+    { id: "bloco-extras", label: "Outras entregas", total: (co.extras_lista ?? []).length },
+    ...(mesSR ? [{ id: "bloco-status-report", label: "Status report", total: resumoSR.total }] : []),
+  ] : [{ id: "bloco-prioridades", label: "Prioridades", total: ci.prioridades.length }, { id: "bloco-apoio", label: "Apoio e confiança", total: null }];
+  const navegar = (id: string) => { setSecao(id); requestAnimationFrame(() => irPara(id)); };
   const respostas = co.kpis_resposta.filter((k) => k.ok != null && retrato.some((r) => r.indicador_id === k.indicador_id));
 
   return (
-    <div className="space-y-4 pb-10">
-      <Card className="p-4 sm:p-5 flex flex-wrap items-end justify-between gap-4">
+    <div className="space-y-4 min-w-0" onBlur={e => { const id = e.target.id; if (id && e.target.matches("input, textarea") && !tocados.has(id)) setTocados(prev => new Set([...prev, id])); }}>
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b pb-5">
         <div>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Formulário semanal do diretor</p>
           <h1 className="text-2xl font-bold">{periodoSemana(sem)}</h1>
@@ -410,25 +447,30 @@ export default function MetasSemanal() {
           <div className="mt-1"><SeloDoCiclo /></div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <div className="w-56 space-y-1"><Label>Cadeira</Label>
-            <Select value={cad} onValueChange={(v) => { flush(); setCad(v); }}><SelectTrigger><SelectValue /></SelectTrigger>
+          <div className="w-full sm:w-56 min-w-0 space-y-1"><Label htmlFor="semanal-cadeira">Cadeira</Label>
+            <Select value={cad} onValueChange={(v) => { flush(); setCad(v); }}><SelectTrigger id="semanal-cadeira"><SelectValue /></SelectTrigger>
               <SelectContent>{b.cadeiras.filter((c) => c.ativo).map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent></Select>
           </div>
-          <div className="w-64 space-y-1"><Label>Ciclo</Label>
-            <Select value={sem} onValueChange={(v) => { flush(); setSem(v); }}><SelectTrigger><SelectValue /></SelectTrigger>
+          <div className="w-full sm:w-64 min-w-0 space-y-1"><Label htmlFor="semanal-ciclo">Ciclo</Label>
+            <Select value={sem} onValueChange={(v) => { flush(); setSem(v); }}><SelectTrigger id="semanal-ciclo"><SelectValue /></SelectTrigger>
               <SelectContent>{[...new Set([sem, ...ciclosDisponiveis()])].sort().reverse().map((s) => <SelectItem key={s} value={s}>{fmtSem(s)} (checkout {fmtSem(semanaCheckout(s))})</SelectItem>)}</SelectContent></Select>
           </div>
         </div>
-      </Card>
+      </header>
       <AvisoTransparencia ativo={transp.ativo} />
       {cad && <CartaoConformidade cadeira={cad} />}
 
-      <Tabs value={aba} onValueChange={(v) => setAba(v as Tipo)}>
+      <Tabs value={aba} onValueChange={(v) => { setAba(v as Tipo); setSecao(v === "checkout" ? "bloco-kpis" : "bloco-prioridades"); }}>
         <TabsList className="h-auto flex-wrap"><TabsTrigger value="checkout">Checkout · semana de {fmtSem(semOut)}</TabsTrigger><TabsTrigger value="checkin">Check-in · semana de {fmtSem(sem)}</TabsTrigger></TabsList>
+
+        <nav aria-label="Seções do formulário semanal" className="sticky top-0 z-20 flex flex-wrap gap-1 border-b bg-background py-2">
+          {secoes.map(x => <Button key={x.id} type="button" size="sm" variant={secao === x.id ? "secondary" : "ghost"} aria-current={secao === x.id ? "location" : undefined} onClick={() => navegar(x.id)} className="h-auto min-h-10 whitespace-normal text-xs">{x.label}{x.total !== null && <span className="ml-1 text-muted-foreground">{x.total}</span>}</Button>)}
+          <Button size="sm" variant="ghost" onClick={() => navegar("revisao-ciclo")}><ListChecks className="mr-1 h-4 w-4" />Revisão</Button>
+        </nav>
 
         <TabsContent value="checkout" className="space-y-4">
           <p className="text-sm text-muted-foreground">Retrospectiva da semana que passou: KPIs, entregas, riscos e pendências das reuniões.</p>
-          <Card className="p-4 space-y-3" id="bloco-kpis">
+          <section className="space-y-3 border-b py-5 scroll-mt-40" id="bloco-kpis" tabIndex={-1}>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold">1. Seus KPIs estão performando dentro do esperado?</h2>
               {podeEditar && sem>=INICIO_FREQUENCIA && !co.primeiro_envio_em && <Button size="sm" variant="outline" onClick={()=>setDesvioEscolha(!desvioEscolha)}><Plus className="h-4 w-4 mr-1"/>Desvio crítico</Button>}
@@ -475,38 +517,45 @@ export default function MetasSemanal() {
                         {tipo === "valor_periodo" && k.meta_mes != null && <p className="text-muted-foreground">meta de referência do mês: {fmtNum(k.meta_mes)}</p>}</div>
                       <div><p className="text-muted-foreground">Valor apontado no mês</p><p>{tipo === "entrega" ? "—" : fmtNum(k.realizado)}</p></div>
                       <div><p className="text-muted-foreground">Avaliação</p><p>{AVALIACAO_LBL[aval]}{avR.origem && <span className="block text-muted-foreground">{avR.origem}</span>}{tipo === "valor_mensal" && k.origem !== "bsc" && !semMeta && k.atingimento != null && <span className="block text-muted-foreground">atingimento {pct(k.atingimento)}</span>}</p></div></div>
-                    {tipo !== "entrega" && <Input placeholder={tipo === "valor_mensal" ? "Valor apontado — situação atual (número)" : "Valor apontado — situação atual (opcional)"} maxLength={200} value={r.situacao_atual ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { situacao_atual: e.target.value })} />}
-                    {r.desvio_critico&&<div id={`kpi-${k.indicador_id}-desvio`} className="space-y-2"><Label>Desvio crítico · valor, causa, impacto e ação obrigatórios</Label>{tipo==='entrega'&&<Input aria-label="Valor do desvio" value={r.situacao_atual??''} onChange={e=>setResp(k.indicador_id,{situacao_atual:e.target.value})} disabled={!podeEditar}/>}<Textarea aria-label="Causa do desvio" placeholder="Causa" value={r.causa??''} onChange={e=>setResp(k.indicador_id,{causa:e.target.value})} disabled={!podeEditar}/><Textarea aria-label="Impacto do desvio" placeholder="Impacto" value={r.impacto} onChange={e=>setResp(k.indicador_id,{impacto:e.target.value})} disabled={!podeEditar}/><Textarea aria-label="Ação do desvio" placeholder="Ação" value={r.plano} onChange={e=>setResp(k.indicador_id,{plano:e.target.value})} disabled={!podeEditar}/></div>}
+                    {tipo !== "entrega" && <FormField id={`kpi-${k.indicador_id}-valor`} label="Valor apontado · situação atual" required={!!r.desvio_critico} help={tipo === "valor_periodo" && !r.desvio_critico ? "Opcional" : undefined}><Input placeholder={tipo === "valor_mensal" ? "Valor apontado — situação atual (número)" : "Valor apontado — situação atual (opcional)"} maxLength={200} value={r.situacao_atual ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { situacao_atual: e.target.value })} /></FormField>}
+                    {r.desvio_critico && <div id={`kpi-${k.indicador_id}-desvio`} tabIndex={-1} className="space-y-3 border-l-2 border-destructive pl-3">
+                      <p className="text-sm font-medium">Desvio crítico</p>
+                      {tipo === "entrega" && <FormField id={`kpi-${k.indicador_id}-desvio-valor`} label="Valor do desvio" required><Input value={r.situacao_atual ?? ""} onChange={e => setResp(k.indicador_id, { situacao_atual: e.target.value })} disabled={!podeEditar} /></FormField>}
+                      <FormField id={`kpi-${k.indicador_id}-causa`} label="Causa do desvio" required><Textarea value={r.causa ?? ""} onChange={e => setResp(k.indicador_id, { causa: e.target.value })} disabled={!podeEditar} /></FormField>
+                      <FormField id={`kpi-${k.indicador_id}-impacto-critico`} label="Impacto do desvio" required><Textarea value={r.impacto} onChange={e => setResp(k.indicador_id, { impacto: e.target.value })} disabled={!podeEditar} /></FormField>
+                      <FormField id={`kpi-${k.indicador_id}-acao-critico`} label="Ação do desvio" required><Textarea value={r.plano} onChange={e => setResp(k.indicador_id, { plano: e.target.value })} disabled={!podeEditar} /></FormField>
+                      {erroCampo(`kpi-${k.indicador_id}-desvio`) && <p role="alert" className="text-xs text-destructive">{erroCampo(`kpi-${k.indicador_id}-desvio`)}</p>}
+                    </div>}
                     {tipo === "valor_periodo" && <div className="space-y-2 rounded bg-muted/40 p-2">
                       <p className="text-xs font-medium">Declaração do diretor para o mês</p>
                       <div className="flex gap-2">
-                        <Button size="sm" variant={r.declaracao === "on" ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "on" ? null : "on" })}>On track</Button>
-                        <Button size="sm" variant={r.declaracao === "off" ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "off" ? null : "off" })}>Off track</Button>
+                        <Button size="sm" aria-pressed={r.declaracao === "on"} variant={r.declaracao === "on" ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "on" ? null : "on" })}>On track</Button>
+                        <Button size="sm" aria-pressed={r.declaracao === "off"} variant={r.declaracao === "off" ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "off" ? null : "off" })}>Off track</Button>
                       </div>
-                      {r.declaracao === "off" && <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-just`}>Justificativa (obrigatória)</Label><Textarea id={`kpi-${k.indicador_id}-just`} rows={2} maxLength={LIMITE_TEXTO} value={r.justificativa ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { justificativa: e.target.value })} /></div>}
+                      {r.declaracao === "off" && <FormField id={`kpi-${k.indicador_id}-just`} label="Justificativa" required error={erroCampo(`kpi-${k.indicador_id}-just`)}><Textarea rows={2} maxLength={LIMITE_TEXTO} value={r.justificativa ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { justificativa: e.target.value })} /></FormField>}
                     </div>}
                     {tipo === "entrega" && <div className="grid gap-2 sm:grid-cols-3 rounded bg-muted/40 p-2">
-                      <div className="space-y-1"><Label>Status de entrega</Label>
-                        <Select value={r.status_entrega || ""} disabled={!podeEditar} onValueChange={(v) => setResp(k.indicador_id, { status_entrega: v as any })}><SelectTrigger><SelectValue placeholder="Escolha" /></SelectTrigger>
+                      <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-status-entrega`}>Status de entrega</Label>
+                        <Select value={r.status_entrega || ""} disabled={!podeEditar} onValueChange={(v) => setResp(k.indicador_id, { status_entrega: v as any })}><SelectTrigger id={`kpi-${k.indicador_id}-status-entrega`}><SelectValue placeholder="Escolha" /></SelectTrigger>
                           <SelectContent>{(Object.keys(STATUS_ENTREGA_LBL) as (keyof typeof STATUS_ENTREGA_LBL)[]).map((x) => <SelectItem key={x} value={x}>{STATUS_ENTREGA_LBL[x]}</SelectItem>)}</SelectContent></Select></div>
-                      <div className="space-y-1"><Label>% de avanço (opcional)</Label><Input type="number" min={0} max={100} value={r.avanco_pct ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { avanco_pct: e.target.value })} /></div>
-                      <div className="space-y-1"><Label>Evidência / comentário</Label><Input maxLength={400} value={r.evidencia ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { evidencia: e.target.value })} /></div>
+                      <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-avanco`}>% de avanço (opcional)</Label><Input id={`kpi-${k.indicador_id}-avanco`} type="number" min={0} max={100} value={r.avanco_pct ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { avanco_pct: e.target.value })} /></div>
+                      <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-evidencia`}>Evidência / comentário (opcional)</Label><Input id={`kpi-${k.indicador_id}-evidencia`} maxLength={400} value={r.evidencia ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { evidencia: e.target.value })} /></div>
                     </div>}
                     <div className="flex gap-2">
-                      <Button size="sm" variant={r.ok === true ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, true) })}>Sim</Button>
-                      <Button size="sm" variant={r.ok === false ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, false) })}>Não</Button>
+                      <Button size="sm" aria-label={`${k.codigo}: sim, dentro do esperado`} aria-pressed={r.ok === true} variant={r.ok === true ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, true) })}>Sim</Button>
+                      <Button size="sm" aria-label={`${k.codigo}: não, fora do esperado`} aria-pressed={r.ok === false} variant={r.ok === false ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, false) })}>Não</Button>
                     </div>
                     {r.ok === false && <div className="space-y-2">
-                      <div className="space-y-1"><Label>Impacto (opcional)</Label><Textarea rows={2} maxLength={LIMITE_TEXTO} value={r.impacto} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { impacto: e.target.value })} /></div>
-                      <div className="space-y-1"><Label>Plano de ação (opcional)</Label><Textarea rows={3} maxLength={LIMITE_TEXTO} value={r.plano} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { plano: e.target.value })} /></div>
+                      <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-impacto`}>Impacto {r.desvio_critico ? "(obrigatório)" : "(opcional)"}</Label><Textarea rows={2} maxLength={LIMITE_TEXTO} id={`kpi-${k.indicador_id}-impacto`} aria-required={!!r.desvio_critico} value={r.impacto} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { impacto: e.target.value })} /></div>
+                      <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-plano`}>Plano de ação {r.desvio_critico ? "(obrigatório)" : "(opcional)"}</Label><Textarea rows={3} maxLength={LIMITE_TEXTO} id={`kpi-${k.indicador_id}-plano`} aria-required={!!r.desvio_critico} value={r.plano} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { plano: e.target.value })} /></div>
                       {r.plano.trim() && <div className="space-y-2 rounded bg-muted/50 p-2">
                         <label className="flex items-center gap-2 text-sm"><Checkbox checked={r.vira_iniciativa} disabled={!podeEditar || !!r.iniciativa_criada_id} onCheckedChange={(v) => setResp(k.indicador_id, { vira_iniciativa: !!v })} />Este plano vira uma iniciativa</label>
                         {r.iniciativa_criada_id && <Badge variant="secondary">Iniciativa registrada</Badge>}
                         {r.vira_iniciativa && !r.iniciativa_criada_id && <>
                           <div className="grid gap-2 sm:grid-cols-2">
-                            <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-prazo`}>Prazo</Label><Input id={`kpi-${k.indicador_id}-prazo`} type="date" value={r.prazo} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { prazo: e.target.value })} /></div>
-                            <div className="space-y-1"><Label>Status</Label>
-                              <Select value={r.status_ini} disabled={!podeEditar} onValueChange={(v) => setResp(k.indicador_id, { status_ini: v })}><SelectTrigger><SelectValue /></SelectTrigger>
+                            <FormField id={`kpi-${k.indicador_id}-prazo`} label="Prazo" required error={erroCampo(`kpi-${k.indicador_id}-prazo`)}><Input type="date" value={r.prazo} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { prazo: e.target.value })} /></FormField>
+                            <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-status-ini`}>Status</Label>
+                              <Select value={r.status_ini} disabled={!podeEditar} onValueChange={(v) => setResp(k.indicador_id, { status_ini: v })}><SelectTrigger id={`kpi-${k.indicador_id}-status-ini`}><SelectValue /></SelectTrigger>
                                 <SelectContent>{["a_iniciar", "em_andamento", "concluida", "cancelada"].map((s) => <SelectItem key={s} value={s}>{STATUS_INI[s]}</SelectItem>)}</SelectContent></Select></div>
                           </div>
                           <div className="space-y-1"><Label>Responsável pela entrega</Label>{RespSelect({ id: `kpi-${k.indicador_id}-resp`, v: r.responsavel, on: (x) => setResp(k.indicador_id, { responsavel: x }) })}</div>
@@ -527,9 +576,9 @@ export default function MetasSemanal() {
             </div>
             {(co.kpis?.length ?? 0) > 0 && <div className="space-y-1 text-sm"><p className="text-xs text-muted-foreground">Apontamentos antigos</p>
               {(co.kpis ?? []).map((k, i) => { const ind = b.indicadores.find((x) => x.id === k.indicador_id); return <p key={i}>{ind?.codigo} · {ind?.nome} {k.valor && `— ${k.valor}`} {k.situacao && `(${SITUACAO_LBL[k.situacao]})`}</p>; })}</div>}
-          </Card>
+          </section>
 
-          <Card className="p-4 space-y-4" id="bloco-entregas">
+          <section className="space-y-4 border-b py-5 scroll-mt-40" id="bloco-entregas" tabIndex={-1}>
             <div className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">2. Entregas das prioridades</h2></div>
             {co.entregas.length === 0 && <p className="text-sm text-muted-foreground">Sem prioridades declaradas no check-in de {fmtSem(semOut)}.</p>}
             {podeEditar && entregasAtuais.length === 0 && cinOut.prioridades.some((p) => p.titulo) && (
@@ -554,7 +603,7 @@ export default function MetasSemanal() {
                 <div key={i} className="grid gap-2 rounded border p-3 md:grid-cols-[1fr_180px]">
                   <div className="self-center space-y-1"><p className="font-medium">{e.titulo}</p>{e.gov_acao_id && <Badge variant="secondary">Comitê {e.gov_comite_codigo || "—"}</Badge>}</div>
                   <Select value={e.status} onValueChange={(v) => set({ status: v as EntregaV2["status"] })} disabled={!podeEditar}>
-                    <SelectTrigger id={`ent-${i}`}><SelectValue placeholder="Resultado" /></SelectTrigger>
+                    <SelectTrigger id={`ent-${i}`} aria-label={`Resultado da entrega: ${e.titulo}`}><SelectValue placeholder="Resultado" /></SelectTrigger>
                     <SelectContent>{Object.entries(ENTREGA_LBL).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent>
                   </Select>
                   {(() => { const v = vinc(e.iniciativa_id); if (!v) return null; return (
@@ -565,42 +614,42 @@ export default function MetasSemanal() {
                         <SelectContent><SelectItem value="manter">Manter status</SelectItem>{["a_iniciar", "em_andamento", "concluida", "cancelada"].map((k) => <SelectItem key={k} value={k}>Atualizar para: {STATUS_INI[k]}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>); })()}
-                  {e.status && e.status !== "entregue" && <Input id={`ent-${i}-motivo`} className="md:col-span-2" placeholder="Por que não foi entregue e qual o novo prazo?" value={e.motivo} disabled={!podeEditar} onChange={(ev) => set({ motivo: ev.target.value })} />}
+                  {e.status && e.status !== "entregue" && <FormField id={`ent-${i}-motivo`} className="md:col-span-2" label="Por que não foi entregue e qual o novo prazo?" required error={erroCampo(`ent-${i}-motivo`)}><Input value={e.motivo} disabled={!podeEditar} onChange={(ev) => set({ motivo: ev.target.value })} /></FormField>}
                   <div className="md:col-span-2 space-y-1"><Label>Responsável pela entrega</Label>{RespSelect({ id: `ent-${i}-resp`, v: e.responsavel ?? { tipo: "eu" }, on: (r) => set({ responsavel: r }) })}</div>
                   <VinculosAcao id={`ent-${i}-vinc`} valor={e.vinculos} onChange={(v) => set({ vinculos: v })} indicadores={b.indicadores} okrs={b.okrs} objetivos={b.objetivos} projetos={projetos} cadeira={cad} disabled={!podeEditar} />
                 </div>
               );
             })}
-          </Card>
+          </section>
 
-          <Card className="p-4 space-y-3" id="bloco-riscos">
+          <section className="space-y-3 border-b py-5 scroll-mt-40" id="bloco-riscos" tabIndex={-1}>
             <h2 className="font-semibold">3. Riscos, impedimentos e decisões pendentes</h2>
             <p className="text-xs text-muted-foreground">Ficam com a cadeira e reaparecem toda semana até serem resolvidos.</p>
             {abertos.length === 0 && <p className="text-sm text-muted-foreground">Nenhum item aberto.</p>}
             {abertos.map((r) => (
               <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded border p-2 text-sm">
                 <span><Badge variant="outline" className="mr-2">{TIPO_RISCO[r.tipo]}</Badge>{r.descricao} <span className="text-muted-foreground">· {idadeSemanas(r.semana_criada, sem)}{r.reaberto_em ? " · reaberto" : ""}</span></span>
-                {podeEditar && <Button size="sm" variant="outline" onClick={() => mudarRisco(r, true)}>Resolver</Button>}
+                {podeEditar && <Button size="sm" variant="outline" disabled={!!riscoBusy} onClick={() => mudarRisco(r, true)}>{riscoBusy === r.id ? "Salvando…" : "Resolver"}</Button>}
               </div>
             ))}
             {resolvidos.length > 0 && <details className="text-sm"><summary className="cursor-pointer text-muted-foreground">Resolvidos ({resolvidos.length})</summary>
               {resolvidos.map((r) => (
                 <div key={r.id} className="mt-1 flex flex-wrap items-center justify-between gap-2 rounded border p-2">
                   <span className="text-muted-foreground"><Badge variant="outline" className="mr-2">{TIPO_RISCO[r.tipo]}</Badge>{r.descricao} · resolvido em {new Date(r.resolvido_em).toLocaleDateString("pt-BR")}</span>
-                  {podeEditar && <Button size="sm" variant="ghost" onClick={() => mudarRisco(r, false)}>Reabrir</Button>}
+                  {podeEditar && <Button size="sm" variant="ghost" disabled={!!riscoBusy} onClick={() => mudarRisco(r, false)}>{riscoBusy === r.id ? "Salvando…" : "Reabrir"}</Button>}
                 </div>))}
             </details>}
             {podeEditar && <div className="grid gap-3 sm:grid-cols-2">
-              <Select value={novoRisco.tipo} onValueChange={(v) => setNovoRisco({ ...novoRisco, tipo: v })}><SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{Object.entries(TIPO_RISCO).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent></Select>
-              <div className="space-y-1"><Label htmlFor="risco-descricao">Descrição</Label><Textarea id="risco-descricao" aria-label="Descrição do risco ou impedimento" placeholder="Descrição" maxLength={4000} value={novoRisco.descricao} onChange={(e) => setNovoRisco({ ...novoRisco, descricao: e.target.value })} /></div>
+              <div className="space-y-1.5"><Label htmlFor="risco-tipo">Tipo do item</Label><Select value={novoRisco.tipo} onValueChange={(v) => setNovoRisco({ ...novoRisco, tipo: v })}><SelectTrigger id="risco-tipo"><SelectValue /></SelectTrigger>
+                <SelectContent>{Object.entries(TIPO_RISCO).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent></Select></div>
+              <div className="space-y-1"><Label htmlFor="risco-descricao">Descrição · obrigatória ao registrar</Label><Textarea id="risco-descricao" aria-required="true" aria-label="Descrição do risco ou impedimento" placeholder="Descrição" maxLength={4000} value={novoRisco.descricao} onChange={(e) => setNovoRisco({ ...novoRisco, descricao: e.target.value })} /></div>
               <div className="space-y-1"><Label htmlFor="risco-impacto">Impacto</Label><Textarea id="risco-impacto" aria-label="Impacto do risco ou impedimento" value={novoRisco.impacto} onChange={e=>setNovoRisco({...novoRisco,impacto:e.target.value})} maxLength={4000}/></div>
               <div className="space-y-1"><Label>Diretor atribuído (opcional)</Label><Select value={novoRisco.atribuido_cadeira_id || "nenhum"} onValueChange={v=>setNovoRisco({...novoRisco,atribuido_cadeira_id:v==="nenhum"?"":v})}><SelectTrigger aria-label="Diretor atribuído"><SelectValue placeholder="Diretor atribuído (opcional)"/></SelectTrigger><SelectContent><SelectItem value="nenhum">Sem atribuição</SelectItem>{b.cadeiras.filter(c=>c.ativo).map(c=><SelectItem key={c.id} value={c.id}>{c.nome} · {c.diretor_nome || "Sem diretor vinculado"}</SelectItem>)}</SelectContent></Select></div>
               <div className="space-y-1"><Label htmlFor="risco-prazo">Prazo desejado (opcional)</Label><Input id="risco-prazo" type="date" value={novoRisco.prazo_desejado} onChange={e=>setNovoRisco({...novoRisco,prazo_desejado:e.target.value})}/></div>
-              <Button variant="outline" disabled={!novoRisco.descricao.trim()} onClick={registrarRisco}>Registrar</Button>
+              <Button variant="outline" disabled={!novoRisco.descricao.trim() || registrandoRisco} onClick={registrarRisco}>{registrandoRisco ? "Registrando…" : "Registrar item"}</Button>
             </div>}
             {ci.riscos.trim() && <div className="rounded bg-muted p-2 text-sm"><p className="text-xs text-muted-foreground">Registro antigo desta semana</p><p className="whitespace-pre-wrap">{ci.riscos}</p></div>}
-          </Card>
+          </section>
 
           <ImpedimentosRecebidos itens={impedimentos} cadeira={cad} ciclo={sem} editar={podeEditar} governanca={b.isGovernanca} onReload={carregarImpedimentos} />
           {erroImpedimentos && <p role="alert" className="text-destructive">Não foi possível carregar os impedimentos.</p>}
@@ -617,33 +666,33 @@ export default function MetasSemanal() {
             }} />
           </div>
 
-          <Card className="p-4 space-y-3" id="bloco-extras">
+          <section className="space-y-3 border-b py-5 scroll-mt-40" id="bloco-extras" tabIndex={-1}>
             <EntregasExtras lista={co.extras_lista ?? []} onChange={extras_lista => setCo({ ...co, extras_lista })} disabled={!podeEditar} legado={co} governanca={b.isGovernanca} />
             <Escala lbl="Avaliação da semana (1 = ruim, 5 = excelente)" v={co.ritmo} on={(n) => setCo({ ...co, ritmo: n })} />
-          </Card>
+          </section>
           {mesSR && cad && <StatusReportCiclo cadeira={cad} competencia={mesSR} ciclo={sem} podeEditar={podeEditar} userId={b.user?.id}
             userNome={b.perfis.find((p) => p.user_id === b.user?.id)?.display_name ?? b.user?.email ?? null} onResumo={setResumoSR} />}
         </TabsContent>
 
         <TabsContent value="checkin" className="space-y-4">
           <p className="text-sm text-muted-foreground">Prioridades estratégicas que serão cobradas no próximo checkout.</p>
-          <Card className="p-4 space-y-4" id="bloco-prioridades">
+          <section className="space-y-4 border-b py-5 scroll-mt-40" id="bloco-prioridades" tabIndex={-1}>
             <h2 className="font-semibold">Prioridades estratégicas da semana de {fmtSem(sem)}</h2>
             {ci.prioridades.map((p, i) => {
               const set = (x: Partial<PrioridadeV2>) => setCi({ ...ci, prioridades: ci.prioridades.map((q, j) => (j === i ? { ...q, ...x } : q)) });
               return (
                 <div key={p.id} className="grid gap-2 rounded border p-3 md:grid-cols-[1fr_1fr_auto]">
                   {p.gov_acao_id && <div className="md:col-span-3"><Badge variant="secondary">Comitê {p.gov_comite_codigo || "—"}</Badge></div>}
-                  <Input id={`pri-${i}-titulo`} placeholder={`Prioridade ${i + 1}`} value={p.titulo} disabled={!podeEditar} onChange={(e) => set({ titulo: e.target.value })} />
-                  <Select value={p.iniciativa_id || "none"} onValueChange={(v) => set({ iniciativa_id: v === "none" ? "" : v })} disabled={!podeEditar}>
-                    <SelectTrigger><SelectValue placeholder="Iniciativa vinculada" /></SelectTrigger>
+                  <FormField id={`pri-${i}-titulo`} label={`Prioridade ${i + 1}`} error={erroCampo(`pri-${i}-titulo`)}><Input placeholder="Título da prioridade" value={p.titulo} disabled={!podeEditar} onChange={(e) => set({ titulo: e.target.value })} /></FormField>
+                  <div className="space-y-1.5 min-w-0"><Label htmlFor={`pri-${i}-iniciativa`}>Iniciativa vinculada (opcional)</Label><Select value={p.iniciativa_id || "none"} onValueChange={(v) => set({ iniciativa_id: v === "none" ? "" : v })} disabled={!podeEditar}>
+                    <SelectTrigger id={`pri-${i}-iniciativa`}><SelectValue placeholder="Iniciativa vinculada" /></SelectTrigger>
                     <SelectContent><SelectItem value="none">Sem iniciativa vinculada</SelectItem>
                       {inis.map((x) => <SelectItem key={x.id} value={x.id}>{x.titulo} · {STATUS_INI[statusEfetivo(x)]}</SelectItem>)}</SelectContent>
-                  </Select>
+                  </Select></div>
                   {podeEditar && <Button variant="ghost" size="icon" aria-label="Remover prioridade" onClick={() => setCi({ ...ci, prioridades: ci.prioridades.filter((_, j) => j !== i) })}><Trash2 className="h-4 w-4" /></Button>}
-                  <Input className="md:col-span-2" placeholder="Resultado esperado até sexta" value={p.resultado} disabled={!podeEditar} onChange={(e) => set({ resultado: e.target.value })} />
+                  <FormField id={`pri-${i}-resultado`} className="md:col-span-2" label="Resultado esperado até sexta (opcional)"><Input value={p.resultado} disabled={!podeEditar} onChange={(e) => set({ resultado: e.target.value })} /></FormField>
                   <div className="md:col-span-2 grid gap-2 sm:grid-cols-[160px_1fr]">
-                    <div className="space-y-1"><Label htmlFor={`pri-${i}-prazo`}>Prazo</Label><Input id={`pri-${i}-prazo`} type="date" value={p.prazo} disabled={!podeEditar} onChange={(e) => set({ prazo: e.target.value })} /></div>
+                    <FormField id={`pri-${i}-prazo`} label="Prazo" required={!!p.titulo.trim()} error={erroCampo(`pri-${i}-prazo`)}><Input type="date" value={p.prazo} disabled={!podeEditar} onChange={(e) => set({ prazo: e.target.value })} /></FormField>
                     <div className="space-y-1"><Label>Responsável pela entrega</Label>{RespSelect({ id: `pri-${i}-resp`, v: p.responsavel, on: (r) => set({ responsavel: r }) })}</div>
                   </div>
                   <VinculosAcao id={`pri-${i}-vinc`} valor={p.vinculos} onChange={(v) => set({ vinculos: v })} indicadores={b.indicadores} okrs={b.okrs} objetivos={b.objetivos} projetos={projetos} cadeira={cad} disabled={!podeEditar} />
@@ -651,12 +700,12 @@ export default function MetasSemanal() {
               );
             })}
             {podeEditar && ci.prioridades.length < 5 && <Button variant="outline" size="sm" onClick={() => setCi({ ...ci, prioridades: [...ci.prioridades, novaPri()] })}><Plus className="h-4 w-4 mr-1" /> Prioridade (até 5)</Button>}
-          </Card>
+          </section>
 
-          <Card className="p-4 space-y-3" id="bloco-apoio">
-            <div className="space-y-1"><Label>Apoio necessário (de quem e para quê)</Label><Textarea rows={3} value={ci.apoio} disabled={!podeEditar} onChange={(e) => setCi({ ...ci, apoio: e.target.value })} /></div>
+          <section className="space-y-3 border-b py-5 scroll-mt-40" id="bloco-apoio" tabIndex={-1}>
+            <div className="space-y-1"><Label htmlFor="semanal-apoio">Apoio necessário (de quem e para quê) · opcional</Label><Textarea id="semanal-apoio" rows={3} value={ci.apoio} disabled={!podeEditar} onChange={(e) => setCi({ ...ci, apoio: e.target.value })} /></div>
             <Escala lbl="Confiança em cumprir a semana (1 = baixa, 5 = alta)" v={ci.confianca} on={(n) => setCi({ ...ci, confianca: n })} />
-          </Card>
+          </section>
         </TabsContent>
       </Tabs>
 
@@ -670,10 +719,15 @@ export default function MetasSemanal() {
         { aba: "checkin", id: "bloco-apoio", txt: `Apoio: ${ci.apoio.trim() ? "preenchido" : "—"} · Confiança ${ci.confianca}/5` },
       ]} />
 
-      {podeEditar && <div className="fixed bottom-2 right-4 z-40 rounded-full border bg-background px-3 py-1 text-xs shadow">
-        {salvo.estado === "salvando" ? "Salvando…" : salvo.estado === "salvo" ? `Salvo às ${salvo.em?.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) ?? "—"}`
-          : salvo.estado === "erro" ? <span className="text-destructive">Não foi possível salvar — suas alterações estão guardadas neste aparelho. <button className="underline" onClick={() => flush()}>Tentar de novo</button></span> : "Salvamento automático"}
+      {podeEditar && <div className="sticky bottom-0 z-30 border-t bg-background py-3 pr-12 sm:pr-14 flex flex-wrap items-center justify-between gap-3">
+        <SaveFeedback state={salvo} onRetry={() => void flush()} />
+        <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+          <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => { setAba(aba === "checkout" ? "checkin" : "checkout"); setSecao(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"); setTimeout(() => irPara(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"), 50); }}><ArrowRight className="mr-1 h-4 w-4" />{aba === "checkout" ? "Check-in" : "Checkout"}</Button>
+          <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => navegar("revisao-ciclo")}><ListChecks className="mr-1 h-4 w-4" />Revisar{pendIn.length + pendOut.length > 0 ? ` (${pendIn.length + pendOut.length})` : ""}</Button>
+          <Button className="flex-1 sm:flex-none" disabled={pendIn.length + pendOut.length > 0 || enviando || salvo.estado === "salvando"} onClick={enviarCiclo}><Send className="mr-1 h-4 w-4" />{enviando ? "Enviando…" : seloCiclo(rows.find(r => r.tipo === "checkin"), rows.find(r => r.tipo === "checkout"), sem).estado === "enviado" ? "Reenviar ciclo" : "Enviar ciclo"}</Button>
+        </div>
       </div>}
+
     </div>
   );
 }

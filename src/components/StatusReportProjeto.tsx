@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { exclusiveAction } from "@/lib/exclusiveAction";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,6 +95,7 @@ function FormProjeto({ projeto, comp, cadeiraId, podeEditar, atual, userId, user
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [aberto, setAberto] = useState(false);
   const [salvando, setSalvando] = useState(false);
+  const runOnce = useRef(exclusiveAction());
   useEffect(() => {
     if (!atual) { setF(vazio); return; }
     setF({ saude: atual.saude ?? "", pct: atual.pct_cronograma?.toString() ?? "", entregas: atual.entregas ?? "", custo: atual.custo_realizado?.toString() ?? "",
@@ -103,9 +105,10 @@ function FormProjeto({ projeto, comp, cadeiraId, podeEditar, atual, userId, user
   const set = (k: keyof typeof vazio) => (e: any) => setF((x) => ({ ...x, [k]: e?.target ? e.target.value : e }));
   const num = (v: string) => (v.trim() === "" ? null : Number(v.replace(/\./g, "").replace(",", ".")));
 
-  const salvar = async () => {
+  const salvar = () => runOnce.current(async () => {
     if (!atual?.arquivo_path && !arquivo) return toast.error(`${projeto.id}: anexe o arquivo do status report.`);
     setSalvando(true);
+    try {
     let arquivo_path = atual?.arquivo_path ?? null, arquivo_nome = atual?.arquivo_nome ?? null;
     if (arquivo) {
       const path = `${projeto.id}/${comp}/${Date.now()}_${arquivo.name.replace(/[^\w.\-]/g, "_")}`;
@@ -123,7 +126,9 @@ function FormProjeto({ projeto, comp, cadeiraId, podeEditar, atual, userId, user
     setSalvando(false);
     if (error) return toast.error(error.message);
     setArquivo(null); onSalvo(data); toast.success(`Status report de ${projeto.id} salvo.`);
-  };
+    } catch (e: any) { toast.error(e?.message ?? "Não foi possível salvar"); }
+    finally { setSalvando(false); }
+  });
 
   return (
     <div className="border rounded-md p-3 space-y-3">
@@ -140,27 +145,27 @@ function FormProjeto({ projeto, comp, cadeiraId, podeEditar, atual, userId, user
       {aberto && (
         <div className="space-y-3">
           <div className="grid sm:grid-cols-3 gap-2">
-            <div className="space-y-1"><Label>Saúde</Label>
+            <div className="space-y-1"><Label htmlFor={`sr-projeto-${projeto.id}-saude`}>Saúde</Label>
               <Select value={f.saude} onValueChange={set("saude")} disabled={!podeEditar}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                <SelectTrigger id={`sr-projeto-${projeto.id}-saude`}><SelectValue placeholder="Selecione" /></SelectTrigger>
                 <SelectContent>{["On-Track", "Alerta", "Off-Track"].map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-1"><Label>Cronograma executado (%)</Label><Input disabled={!podeEditar} value={f.pct} onChange={set("pct")} placeholder="ex.: 45" /></div>
-            <div className="space-y-1"><Label>Custo realizado acumulado (R$)</Label><Input disabled={!podeEditar} value={f.custo} onChange={set("custo")} placeholder="ex.: 120000" /></div>
+            <div className="space-y-1"><Label htmlFor={`sr-projeto-${projeto.id}-pct`}>{"Cronograma executado (%)"}</Label><Input disabled={!podeEditar} id={`sr-projeto-${projeto.id}-pct`} value={f.pct} onChange={set("pct")} placeholder="ex.: 45" /></div>
+            <div className="space-y-1"><Label htmlFor={`sr-projeto-${projeto.id}-custo`}>{"Custo realizado acumulado (R$)"}</Label><Input disabled={!podeEditar} id={`sr-projeto-${projeto.id}-custo`} value={f.custo} onChange={set("custo")} placeholder="ex.: 120000" /></div>
           </div>
           <div className="grid sm:grid-cols-2 gap-2">
-            <div className="space-y-1"><Label>Entregas do mês</Label><Textarea rows={2} disabled={!podeEditar} value={f.entregas} onChange={set("entregas")} /></div>
-            <div className="space-y-1"><Label>Avanços</Label><Textarea rows={2} disabled={!podeEditar} value={f.avancos} onChange={set("avancos")} /></div>
-            <div className="space-y-1"><Label>Equipe envolvida</Label><Textarea rows={2} disabled={!podeEditar} value={f.equipe} onChange={set("equipe")} /></div>
-            <div className="space-y-1"><Label>Recursos (necessários/alocados)</Label><Textarea rows={2} disabled={!podeEditar} value={f.recursos} onChange={set("recursos")} /></div>
-            <div className="space-y-1 sm:col-span-2"><Label>Desvios, causa raiz e plano de ação</Label><Textarea rows={2} disabled={!podeEditar} value={f.desvios} onChange={set("desvios")} /></div>
+            <div className="space-y-1"><Label htmlFor={`sr-projeto-${projeto.id}-entregas`}>{"Entregas do mês"}</Label><Textarea rows={2} disabled={!podeEditar} id={`sr-projeto-${projeto.id}-entregas`} value={f.entregas} onChange={set("entregas")} /></div>
+            <div className="space-y-1"><Label htmlFor={`sr-projeto-${projeto.id}-avancos`}>{"Avanços"}</Label><Textarea rows={2} disabled={!podeEditar} id={`sr-projeto-${projeto.id}-avancos`} value={f.avancos} onChange={set("avancos")} /></div>
+            <div className="space-y-1"><Label htmlFor={`sr-projeto-${projeto.id}-equipe`}>{"Equipe envolvida"}</Label><Textarea rows={2} disabled={!podeEditar} id={`sr-projeto-${projeto.id}-equipe`} value={f.equipe} onChange={set("equipe")} /></div>
+            <div className="space-y-1"><Label htmlFor={`sr-projeto-${projeto.id}-recursos`}>{"Recursos (necessários/alocados)"}</Label><Textarea rows={2} disabled={!podeEditar} id={`sr-projeto-${projeto.id}-recursos`} value={f.recursos} onChange={set("recursos")} /></div>
+            <div className="space-y-1 sm:col-span-2"><Label htmlFor={`sr-projeto-${projeto.id}-desvios`}>{"Desvios, causa raiz e plano de ação"}</Label><Textarea rows={2} disabled={!podeEditar} id={`sr-projeto-${projeto.id}-desvios`} value={f.desvios} onChange={set("desvios")} /></div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Label className="flex items-center gap-1"><Paperclip className="h-4 w-4" /> Arquivo do status report</Label>
-            <Input type="file" className="max-w-xs" disabled={!podeEditar} onChange={(e) => setArquivo(e.target.files?.[0] ?? null)} />
+            <Label htmlFor={`sr-projeto-${projeto.id}-arquivo`} className="flex items-center gap-1"><Paperclip className="h-4 w-4" /> Arquivo do status report</Label>
+            <Input id={`sr-projeto-${projeto.id}-arquivo`} type="file" className="max-w-xs" disabled={!podeEditar} onChange={(e) => setArquivo(e.target.files?.[0] ?? null)} />
             {atual?.arquivo_path && <Button size="sm" variant="outline" onClick={() => baixar(atual.arquivo_path)}><Download className="h-4 w-4 mr-1" /> {atual.arquivo_nome}</Button>}
-            {podeEditar && <Button size="sm" className="ml-auto" disabled={salvando} onClick={salvar}><Save className="h-4 w-4 mr-1" /> Salvar status report</Button>}
+            {podeEditar && <Button size="sm" className="ml-auto" disabled={salvando} onClick={salvar}><Save className="h-4 w-4 mr-1" /> {salvando ? "Salvando…" : "Salvar status report"}</Button>}
           </div>
         </div>
       )}

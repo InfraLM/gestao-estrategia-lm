@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { FormField } from '@/components/FormField';
+import { exclusiveAction } from '@/lib/exclusiveAction';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,19 +16,22 @@ function Linha({ item: r, cadeira, ciclo, editar, governanca, onReload }: { item
   const [motivo, setMotivo] = useState('');
   const [reabrindo, setReabrindo] = useState(false);
   const [busy, setBusy] = useState(false);
+  const runOnce = useRef(exclusiveAction());
   const [historico, setHistorico] = useState<any[] | null>(null);
   const destinatario = r.atribuido_cadeira_id === cadeira;
   const podeResponder = editar && destinatario && !!r.publicado_ciclo && r.publicado_ciclo < ciclo;
   const podeReabrir = editar && !!r.publicado_em && (r.cadeira_id === cadeira || governanca) && !!r.plano_acao;
-  const executar = async (reabrir: boolean) => {
+  const executar = (reabrir: boolean) => runOnce.current(async () => {
     setBusy(true);
+    try {
     const { error } = reabrir
       ? await supabase.rpc('rotina_impedimento_reabrir', { _id: r.id, _motivo: motivo })
       : await supabase.rpc('rotina_impedimento_responder', { _id:r.id, _ciclo:ciclo, _plano:resposta.plano, _prazo:resposta.prazo, _status:resposta.status, _justificativa:resposta.justificativa });
-    setBusy(false);
     if (error) return toast.error(error.message);
     toast.success(reabrir ? 'Impedimento reaberto' : 'Resposta registrada'); onReload();
-  };
+    } catch (e: any) { toast.error(e?.message ?? 'Não foi possível salvar'); }
+    finally { setBusy(false); }
+  });
   const verHistorico = async () => {
     if (historico) return setHistorico(null);
     const { data, error } = await supabase.from('mt_impedimento_auditoria').select('id,acao,usuario_nome,criado_em').eq('risco_id',r.id).order('criado_em',{ascending:false});
@@ -42,11 +47,11 @@ function Linha({ item: r, cadeira, ciclo, editar, governanca, onReload }: { item
     {r.publicado_em && destinatario && <p role="status" className="text-sm text-warning">Impedimento recebido · resposta {r.resposta_ciclo ? 'registrada neste ciclo' : 'pendente neste ciclo'}</p>}
     {r.motivo_reabertura && <p className="text-sm">Reabertura: {r.motivo_reabertura}</p>}
     {podeResponder ? <>
-      <div className="space-y-1"><Label htmlFor={`plano-${r.id}`}>Plano de ação / iniciativa / resposta *</Label><Textarea id={`plano-${r.id}`} value={resposta.plano} maxLength={4000} onChange={e=>setResposta({...resposta,plano:e.target.value})} /></div>
-      <div className="grid gap-3 sm:grid-cols-2"><div className="space-y-1"><Label htmlFor={`prazo-${r.id}`}>Prazo do plano *</Label><Input id={`prazo-${r.id}`} type="date" value={resposta.prazo} onChange={e=>setResposta({...resposta,prazo:e.target.value})} /></div>
-        <div className="space-y-1"><Label>Status *</Label><Select value={resposta.status} onValueChange={v=>setResposta({...resposta,status:v as StatusImpedimento})}><SelectTrigger aria-label={`Status do impedimento: ${r.descricao}`}><SelectValue /></SelectTrigger><SelectContent>{Object.entries(STATUS_IMPEDIMENTO).map(([v,l])=><SelectItem key={v} value={v}>{l}</SelectItem>)}</SelectContent></Select></div></div>
-      {resposta.status==='nao_procede' && <div className="space-y-1"><Label htmlFor={`just-${r.id}`}>Justificativa *</Label><Textarea id={`just-${r.id}`} value={resposta.justificativa} onChange={e=>setResposta({...resposta,justificativa:e.target.value})} maxLength={4000}/></div>}
-      <Button variant="outline" disabled={busy || !respostaCompleta(resposta)} onClick={()=>executar(false)}>Salvar resposta</Button>
+      <FormField id={`plano-${r.id}`} label="Plano de ação / iniciativa / resposta" required help="A resposta precisa ser salva para contar neste ciclo."><Textarea disabled={busy} value={resposta.plano} maxLength={4000} onChange={e=>setResposta({...resposta,plano:e.target.value})} /></FormField>
+      <div className="grid gap-3 sm:grid-cols-2"><FormField id={`prazo-${r.id}`} label="Prazo do plano" required><Input disabled={busy} type="date" value={resposta.prazo} onChange={e=>setResposta({...resposta,prazo:e.target.value})} /></FormField>
+        <div className="space-y-1"><Label htmlFor={`status-${r.id}`}>Status · obrigatório</Label><Select disabled={busy} value={resposta.status} onValueChange={v=>setResposta({...resposta,status:v as StatusImpedimento})}><SelectTrigger id={`status-${r.id}`} aria-label={`Status do impedimento: ${r.descricao}`}><SelectValue /></SelectTrigger><SelectContent>{Object.entries(STATUS_IMPEDIMENTO).map(([v,l])=><SelectItem key={v} value={v}>{l}</SelectItem>)}</SelectContent></Select></div></div>
+      {resposta.status==='nao_procede' && <FormField id={`just-${r.id}`} label="Justificativa" required><Textarea disabled={busy} value={resposta.justificativa} onChange={e=>setResposta({...resposta,justificativa:e.target.value})} maxLength={4000}/></FormField>}
+      <Button variant="outline" disabled={busy || !respostaCompleta(resposta)} onClick={()=>executar(false)}>{busy ? 'Salvando…' : 'Salvar resposta'}</Button>
     </> : r.plano_acao && <div className="space-y-1 text-sm"><p>Plano: {r.plano_acao}</p><p>Prazo: {r.prazo_plano?.split('-').reverse().join('/') ?? '—'}</p>{r.justificativa_resposta && <p>Justificativa: {r.justificativa_resposta}</p>}</div>}
     <div className="flex flex-wrap gap-2"><Button size="sm" variant="ghost" onClick={verHistorico}>Histórico</Button>{podeReabrir && <Button size="sm" variant="outline" onClick={()=>setReabrindo(!reabrindo)}>Reabrir com motivo</Button>}</div>
     {reabrindo && <div className="space-y-2"><Label htmlFor={`reabrir-${r.id}`}>Motivo da reabertura *</Label><Textarea id={`reabrir-${r.id}`} value={motivo} onChange={e=>setMotivo(e.target.value)} maxLength={4000}/><Button disabled={busy || !motivo.trim()} onClick={()=>executar(true)}>Confirmar reabertura</Button></div>}
