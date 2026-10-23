@@ -4699,6 +4699,7 @@ export type Database = {
           causa_raiz: string | null
           created_at: string
           desvios: string | null
+          farois_dimensoes: Json | null
           id: string
           periodo: string
           plano_acao: string | null
@@ -4712,6 +4713,7 @@ export type Database = {
           causa_raiz?: string | null
           created_at?: string
           desvios?: string | null
+          farois_dimensoes?: Json | null
           id?: string
           periodo: string
           plano_acao?: string | null
@@ -4725,6 +4727,7 @@ export type Database = {
           causa_raiz?: string | null
           created_at?: string
           desvios?: string | null
+          farois_dimensoes?: Json | null
           id?: string
           periodo?: string
           plano_acao?: string | null
