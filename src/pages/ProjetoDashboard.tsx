@@ -11,6 +11,7 @@ import { ArrowLeft, Loader2, Plus, Trash2, Upload, FileText, DollarSign, Activit
 import { useProjetoFromDB } from "@/hooks/useProjetoFromDB";
 import { useRef, useState } from "react";
 import { SaudeBadge } from "@/components/badges";
+import { FaroisReportLeitura } from "@/components/FaroisReportLeitura";
 
 export default function ProjetoDashboard() {
   const { id } = useParams<{ id: string }>();
@@ -242,6 +243,7 @@ export default function ProjetoDashboard() {
                   </div>
                   {sr.avancos && <p className="text-xs"><span className="font-semibold">Avanços:</span> {sr.avancos}</p>}
                   {sr.desvios && <p className="text-xs mt-1"><span className="font-semibold">Desvios:</span> {sr.desvios}</p>}
+                  <div className="mt-2"><FaroisReportLeitura valor={sr.farois_dimensoes} /></div>
                   <p className="text-[10px] text-muted-foreground mt-2">{new Date(sr.created_at).toLocaleString("pt-BR")}</p>
                 </div>
               ))}

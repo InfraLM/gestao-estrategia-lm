@@ -74,6 +74,7 @@ export interface StatusReportRow {
   causa_raiz: string | null;
   plano_acao: string | null;
   created_at: string;
+  farois_dimensoes?: unknown;
 }
 
 export function useProjetoFromDB(codigo: string | undefined) {
