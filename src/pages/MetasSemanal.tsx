@@ -522,8 +522,8 @@ export default function MetasSemanal() {
                       <p className="text-sm font-medium">Desvio crítico</p>
                       {tipo === "entrega" && <FormField id={`kpi-${k.indicador_id}-desvio-valor`} label="Valor do desvio" required><Input value={r.situacao_atual ?? ""} onChange={e => setResp(k.indicador_id, { situacao_atual: e.target.value })} disabled={!podeEditar} /></FormField>}
                       <FormField id={`kpi-${k.indicador_id}-causa`} label="Causa do desvio" required><Textarea value={r.causa ?? ""} onChange={e => setResp(k.indicador_id, { causa: e.target.value })} disabled={!podeEditar} /></FormField>
-                      <FormField id={`kpi-${k.indicador_id}-impacto-critico`} label="Impacto do desvio" required><Textarea value={r.impacto} onChange={e => setResp(k.indicador_id, { impacto: e.target.value })} disabled={!podeEditar} /></FormField>
-                      <FormField id={`kpi-${k.indicador_id}-acao-critico`} label="Ação do desvio" required><Textarea value={r.plano} onChange={e => setResp(k.indicador_id, { plano: e.target.value })} disabled={!podeEditar} /></FormField>
+                      <FormField id={`kpi-${k.indicador_id}-impacto-critico`} label="Impacto do desvio" required><Textarea rows={2} maxLength={LIMITE_TEXTO} value={r.impacto} onChange={e => setResp(k.indicador_id, { impacto: e.target.value })} disabled={!podeEditar} /></FormField>
+                      <FormField id={`kpi-${k.indicador_id}-acao-critico`} label="Plano de ação do desvio" required><Textarea rows={3} maxLength={LIMITE_TEXTO} value={r.plano} onChange={e => setResp(k.indicador_id, { plano: e.target.value })} disabled={!podeEditar} /></FormField>
                       {erroCampo(`kpi-${k.indicador_id}-desvio`) && <p role="alert" className="text-xs text-destructive">{erroCampo(`kpi-${k.indicador_id}-desvio`)}</p>}
                     </div>}
                     {tipo === "valor_periodo" && <div className="space-y-2 rounded bg-muted/40 p-2">
@@ -546,8 +546,10 @@ export default function MetasSemanal() {
                       <Button size="sm" aria-label={`${k.codigo}: não, fora do esperado`} aria-pressed={r.ok === false} variant={r.ok === false ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, false) })}>Não</Button>
                     </div>
                     {r.ok === false && <div className="space-y-2">
-                      <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-impacto`}>Impacto {r.desvio_critico ? "(obrigatório)" : "(opcional)"}</Label><Textarea rows={2} maxLength={LIMITE_TEXTO} id={`kpi-${k.indicador_id}-impacto`} aria-required={!!r.desvio_critico} value={r.impacto} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { impacto: e.target.value })} /></div>
-                      <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-plano`}>Plano de ação {r.desvio_critico ? "(obrigatório)" : "(opcional)"}</Label><Textarea rows={3} maxLength={LIMITE_TEXTO} id={`kpi-${k.indicador_id}-plano`} aria-required={!!r.desvio_critico} value={r.plano} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { plano: e.target.value })} /></div>
+                      {!r.desvio_critico && <>
+                        <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-impacto`}>Impacto (opcional)</Label><Textarea rows={2} maxLength={LIMITE_TEXTO} id={`kpi-${k.indicador_id}-impacto`} value={r.impacto} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { impacto: e.target.value })} /></div>
+                        <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-plano`}>Plano de ação (opcional)</Label><Textarea rows={3} maxLength={LIMITE_TEXTO} id={`kpi-${k.indicador_id}-plano`} value={r.plano} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { plano: e.target.value })} /></div>
+                      </>}
                       {r.plano.trim() && <div className="space-y-2 rounded bg-muted/50 p-2">
                         <label className="flex items-center gap-2 text-sm"><Checkbox checked={r.vira_iniciativa} disabled={!podeEditar || !!r.iniciativa_criada_id} onCheckedChange={(v) => setResp(k.indicador_id, { vira_iniciativa: !!v })} />Este plano vira uma iniciativa</label>
                         {r.iniciativa_criada_id && <Badge variant="secondary">Iniciativa registrada</Badge>}
