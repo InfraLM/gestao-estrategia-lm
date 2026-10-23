@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { FormField } from '@/components/FormField';
+import { exclusiveAction } from '@/lib/exclusiveAction';
 import { supabase } from '@/integrations/supabase/client';
 import { EntregaExtra, MotivoExtra, normalizarExtras, resumoExtras } from '@/lib/entregasExtras';
 import { Button } from '@/components/ui/button';
@@ -23,10 +25,11 @@ export default function EntregasExtras({ lista, onChange, disabled, legado, gove
   const [motivos, setMotivos] = useState<MotivoExtra[]>([]);
   const [erro, setErro] = useState(''); const [ocupado, setOcupado] = useState(false);
   const [novo, setNovo] = useState('');
+  const runOnce = useRef(exclusiveAction());
   const carregar = async () => { const { data, error } = await db.from('mt_extra_motivos').select('*').order('ordem'); setErro(error ? 'Não foi possível carregar os motivos.' : ''); if (!error) setMotivos(data ?? []); };
   useEffect(() => { carregar(); }, []);
-  const salvar = async (m: MotivoExtra) => { setOcupado(true); const { error } = await db.from('mt_extra_motivos').update({ nome: m.nome.trim(), ativo: m.ativo }).eq('id', m.id); setOcupado(false); if (error) return toast.error(error.message); toast.success('Motivo salvo.'); carregar(); };
-  const adicionar = async () => { if (!novo.trim()) return; setOcupado(true); const { error } = await db.from('mt_extra_motivos').insert({ nome: novo.trim(), ordem: motivos.length + 1 }); setOcupado(false); if (error) return toast.error(error.message); setNovo(''); carregar(); };
+  const salvar = (m: MotivoExtra) => runOnce.current(async () => { setOcupado(true); try { const { error } = await db.from('mt_extra_motivos').update({ nome: m.nome.trim(), ativo: m.ativo }).eq('id', m.id); if (error) throw error; toast.success('Motivo salvo.'); carregar(); } catch (e: any) { toast.error(e?.message ?? 'Não foi possível salvar'); } finally { setOcupado(false); } });
+  const adicionar = () => runOnce.current(async () => { if (!novo.trim()) return; setOcupado(true); try { const { error } = await db.from('mt_extra_motivos').insert({ nome: novo.trim(), ordem: motivos.length + 1 }); if (error) throw error; setNovo(''); carregar(); } catch (e: any) { toast.error(e?.message ?? 'Não foi possível adicionar'); } finally { setOcupado(false); } });
   return <div className="space-y-3">
     <h2 className="font-semibold">Entregas fora do planejado</h2>
     {erro && <p className="text-destructive text-sm">{erro}<Button variant="link" onClick={carregar}>Tentar novamente</Button></p>}
@@ -37,7 +40,7 @@ export default function EntregasExtras({ lista, onChange, disabled, legado, gove
         <div className="space-y-1"><Label htmlFor={`extra-${i}-descricao`}>Descrição curta</Label><Input id={`extra-${i}-descricao`} maxLength={500} disabled={disabled} value={e.descricao} onChange={ev => atualizar({ descricao: ev.target.value })} /></div>
         <div className="space-y-1 min-w-0"><Label htmlFor={`extra-${i}-motivo`}>Motivo</Label><Select disabled={disabled} value={e.motivo_id || undefined} onValueChange={id => { const m = motivos.find(x => x.id === id); if (m) atualizar({ motivo_id: id, motivo_nome: m.nome, exige_detalhe: m.exige_detalhe, detalhe: '' }); }}><SelectTrigger id={`extra-${i}-motivo`} className="h-auto min-h-10 text-left [&>span]:whitespace-normal"><SelectValue placeholder="Selecione o motivo" /></SelectTrigger><SelectContent>{opcoes.map(m => <SelectItem key={m.id} value={m.id}>{m.nome}{!m.ativo && ' (desativado)'}</SelectItem>)}{e.motivo_id && !opcoes.some(m => m.id === e.motivo_id) && <SelectItem value={e.motivo_id}>{e.motivo_nome}</SelectItem>}</SelectContent></Select></div>
         {!disabled && <Button className="self-end" variant="ghost" size="icon" aria-label={`Remover entrega ${i + 1}`} onClick={() => onChange(lista.filter((_, n) => n !== i))}><Trash2 className="h-4 w-4" /></Button>}
-        {e.exige_detalhe && <div className="md:col-span-3 space-y-1"><Label htmlFor={`extra-${i}-detalhe`}>Especificar Outros *</Label><Input id={`extra-${i}-detalhe`} required disabled={disabled} value={e.detalhe} onChange={ev => atualizar({ detalhe: ev.target.value })} /></div>}
+        {e.exige_detalhe && <FormField id={`extra-${i}-detalhe`} className="md:col-span-3" label="Especificar Outros" required><Input required disabled={disabled} value={e.detalhe} onChange={ev => atualizar({ detalhe: ev.target.value })} /></FormField>}
       </div>;
     })}
     {!disabled && <Button variant="outline" disabled={!motivos.length} onClick={() => onChange([...lista, { id: crypto.randomUUID(), descricao: '', motivo_id: '', motivo_nome: '', exige_detalhe: false, detalhe: '' }])}><Plus className="h-4 w-4 mr-2" />Adicionar entrega</Button>}

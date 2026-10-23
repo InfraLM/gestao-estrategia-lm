@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { exclusiveAction } from "@/lib/exclusiveAction";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,12 +38,12 @@ export default function StatusReportCiclo({ cadeira, competencia, ciclo, podeEdi
   }, [projs, regs]);
 
   return (
-    <Card className="p-4 space-y-3" id="bloco-status-report">
+    <section className="py-5 border-b space-y-3 scroll-mt-40" id="bloco-status-report" tabIndex={-1}>
       <h2 className="font-semibold">5. Status report dos projetos · {compLabel(competencia)}</h2>
       <p className="text-xs text-muted-foreground">Último ciclo do mês: anexe o status report de cada projeto em aberto em que sua cadeira é a principal e aponte o farol. A falta de anexo fica como pendência, mas não impede o envio do ciclo.</p>
       {!projs.length && <p className="text-sm text-muted-foreground">Nenhum projeto em aberto com esta cadeira como principal. Se faltar algum, peça à Governança em "Responsáveis dos projetos".</p>}
       {projs.map((p) => <LinhaProjeto key={p.id + competencia} p={p} atual={regs[p.codigo]} competencia={competencia} ciclo={ciclo} cadeira={cadeira} podeEditar={podeEditar} userId={userId} userNome={userNome} onSalvo={load} />)}
-    </Card>
+    </section>
   );
 }
 
@@ -51,14 +52,16 @@ function LinhaProjeto({ p, atual, competencia, ciclo, cadeira, podeEditar, userI
   const [f, setF] = useState({ escopo: "", custo: "", cronograma: "", comentario: "", situacao: "" });
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const saveOnce = useRef(exclusiveAction());
   useEffect(() => {
     setF({ escopo: atual?.farol_escopo ?? "", custo: atual?.farol_custo ?? "", cronograma: atual?.farol_cronograma ?? "", comentario: atual?.comentario ?? "", situacao: atual?.confirmacao_status ?? "" });
   }, [atual?.id, atual?.updated_at]);
   const completo = !!atual?.arquivo_path && !!atual?.farol_escopo && !!atual?.farol_custo && !!atual?.farol_cronograma;
   const pedeSituacao = !p.situacao_confirmada_em;
 
-  const salvar = async () => {
+  const salvar = () => saveOnce.current(async () => {
     setSalvando(true);
+    try {
     let arquivo_path = atual?.arquivo_path ?? null, arquivo_nome = atual?.arquivo_nome ?? null;
     if (arquivo) {
       const path = `${p.codigo}/${competencia}/${Date.now()}_${arquivo.name.replace(/[^\w.\-]/g, "_")}`;
@@ -79,21 +82,23 @@ function LinhaProjeto({ p, atual, competencia, ciclo, cadeira, podeEditar, userI
     setSalvando(false);
     if (error) return toast.error(error.message);
     setArquivo(null); toast.success(`Status report de ${p.codigo} salvo.`); onSalvo();
-  };
+    } catch (e: any) { toast.error(e?.message ?? "Não foi possível salvar o status report"); }
+    finally { setSalvando(false); }
+  });
   const Sel = ({ k, lbl }: { k: "escopo" | "custo" | "cronograma"; lbl: string }) => (
-    <div className="space-y-1"><Label className="text-xs">{lbl}</Label>
+    <div className="space-y-1"><Label htmlFor={`sr-${p.codigo}-${k}`} className="text-xs">{lbl}</Label>
       <Select value={f[k]} onValueChange={(v) => setF({ ...f, [k]: v })} disabled={!podeEditar}>
-        <SelectTrigger className="h-8"><SelectValue placeholder="Farol" /></SelectTrigger>
+        <SelectTrigger id={`sr-${p.codigo}-${k}`} className="h-8"><SelectValue placeholder="Farol" /></SelectTrigger>
         <SelectContent>{FAROIS.map((x) => <SelectItem key={x} value={x}>{FAROL_LBL[x]}</SelectItem>)}</SelectContent>
       </Select></div>
   );
   return (
     <div className="border rounded-md p-3 space-y-3" id={`sr-${p.codigo}`}>
-      <button type="button" className="flex w-full flex-wrap items-center justify-between gap-2 text-left" onClick={() => setAberto((a) => !a)}>
+      <Button type="button" variant="ghost" aria-expanded={aberto} aria-controls={`sr-${p.codigo}-campos`} className="h-auto flex w-full flex-wrap items-center justify-between gap-2 whitespace-normal text-left" onClick={() => setAberto((a) => !a)}>
         <span><span className="font-medium">{p.codigo} · {p.nome}</span> <span className="text-xs text-muted-foreground">{p.status}</span></span>
         <Badge variant={completo ? "outline" : "destructive"}>{completo ? "Completo" : "Pendente"}</Badge>
-      </button>
-      {aberto && <div className="space-y-3">
+      </Button>
+      {aberto && <div id={`sr-${p.codigo}-campos`} className="space-y-3">
         <div className="grid gap-2 sm:grid-cols-3"><Sel k="escopo" lbl="Escopo" /><Sel k="custo" lbl="Custo" /><Sel k="cronograma" lbl="Cronograma" /></div>
         <div className="space-y-1"><Label className="text-xs">Comentário</Label><Textarea rows={2} maxLength={4000} value={f.comentario} disabled={!podeEditar} onChange={(e) => setF({ ...f, comentario: e.target.value })} /></div>
         {(pedeSituacao || atual?.confirmacao_status) && <div className="space-y-1 max-w-xs"><Label className="text-xs">Confirme a situação do projeto</Label>
