@@ -327,7 +327,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
       </Tabs>
 
       {/* FORMULÁRIOS */}
-      <Dialog open={!!edit} onOpenChange={(o) => !o && setEdit(null)}>
+      <Dialog open={!!edit} onOpenChange={(o) => { if(!o&&window.confirm('Descartar alterações não salvas do cadastro?'))setEdit(null); }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{edit?.row.id || edit?.tipo === "usuario" ? "Editar" : "Novo"} · {{ cadeira: "Cadeira", usuario: "Usuário", objetivo: "Objetivo BSC", okr: "OKR", indicador: "Indicador", iniciativa: "Iniciativa" }[edit?.tipo ?? ""]}</DialogTitle></DialogHeader>
           {edit && (() => { const r = edit.row; switch (edit.tipo) {
