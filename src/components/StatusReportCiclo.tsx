@@ -77,7 +77,7 @@ function LinhaProjeto({ p, atual, competencia, ciclo, cadeira, podeEditar, userI
     const { error } = await db.from("mt_status_projetos").upsert(row, { onConflict: "projeto_codigo,competencia" });
     if (!error && f.situacao && f.situacao !== atual?.confirmacao_status) {
       const { error: e2 } = await db.rpc("projeto_confirmar_situacao", { _projeto: p.id, _situacao: f.situacao });
-      if (e2) toast.error(e2.message);
+      if (e2) { toast.error(`Status report salvo; situação não confirmada: ${e2.message}`); setArquivo(null); onSalvo(); return; }
     }
     setSalvando(false);
     if (error) return toast.error(error.message);
@@ -100,17 +100,17 @@ function LinhaProjeto({ p, atual, competencia, ciclo, cadeira, podeEditar, userI
       </Button>
       {aberto && <div id={`sr-${p.codigo}-campos`} className="space-y-3">
         <div className="grid gap-2 sm:grid-cols-3"><Sel k="escopo" lbl="Escopo" /><Sel k="custo" lbl="Custo" /><Sel k="cronograma" lbl="Cronograma" /></div>
-        <div className="space-y-1"><Label className="text-xs">Comentário</Label><Textarea rows={2} maxLength={4000} value={f.comentario} disabled={!podeEditar} onChange={(e) => setF({ ...f, comentario: e.target.value })} /></div>
-        {(pedeSituacao || atual?.confirmacao_status) && <div className="space-y-1 max-w-xs"><Label className="text-xs">Confirme a situação do projeto</Label>
+        <div className="space-y-1"><Label htmlFor={`sr-${p.codigo}-comentario`} className="text-xs">Comentário (opcional)</Label><Textarea id={`sr-${p.codigo}-comentario`} rows={2} maxLength={4000} value={f.comentario} disabled={!podeEditar} onChange={(e) => setF({ ...f, comentario: e.target.value })} /></div>
+        {(pedeSituacao || atual?.confirmacao_status) && <div className="space-y-1 max-w-xs"><Label htmlFor={`sr-${p.codigo}-situacao`} className="text-xs">Confirme a situação do projeto</Label>
           <Select value={f.situacao} onValueChange={(v) => setF({ ...f, situacao: v })} disabled={!podeEditar}>
-            <SelectTrigger className="h-8"><SelectValue placeholder="Situação" /></SelectTrigger>
+            <SelectTrigger id={`sr-${p.codigo}-situacao`} className="h-8"><SelectValue placeholder="Situação" /></SelectTrigger>
             <SelectContent>{Object.entries(SITUACOES).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}</SelectContent>
           </Select>
           {f.situacao === "nao_e_meu" && <p className="text-xs text-muted-foreground">O projeto volta para a fila da Governança.</p>}
         </div>}
         <div className="flex flex-wrap items-center gap-2">
-          <Label className="flex items-center gap-1 text-xs"><Paperclip className="h-4 w-4" /> Anexo</Label>
-          <Input type="file" className="max-w-xs" disabled={!podeEditar} onChange={(e) => setArquivo(e.target.files?.[0] ?? null)} />
+          <Label htmlFor={`sr-${p.codigo}-arquivo`} className="flex items-center gap-1 text-xs"><Paperclip className="h-4 w-4" /> Anexo</Label>
+          <Input id={`sr-${p.codigo}-arquivo`} type="file" className="max-w-xs" disabled={!podeEditar} onChange={(e) => setArquivo(e.target.files?.[0] ?? null)} />
           {atual?.arquivo_path && <Button size="sm" variant="outline" onClick={() => abrirArquivoStatus(atual.arquivo_path)}>{atual.arquivo_nome}</Button>}
           {podeEditar && <Button size="sm" className="ml-auto" disabled={salvando} onClick={salvar}>{salvando ? "Salvando…" : "Salvar"}</Button>}
         </div>

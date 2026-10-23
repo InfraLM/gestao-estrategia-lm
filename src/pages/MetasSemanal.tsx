@@ -532,7 +532,7 @@ export default function MetasSemanal() {
                         <Button size="sm" aria-pressed={r.declaracao === "on"} variant={r.declaracao === "on" ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "on" ? null : "on" })}>On track</Button>
                         <Button size="sm" aria-pressed={r.declaracao === "off"} variant={r.declaracao === "off" ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "off" ? null : "off" })}>Off track</Button>
                       </div>
-                      {r.declaracao === "off" && <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-just`}>Justificativa (obrigatória)</Label><Textarea id={`kpi-${k.indicador_id}-just`} rows={2} maxLength={LIMITE_TEXTO} value={r.justificativa ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { justificativa: e.target.value })} /></div>}
+                      {r.declaracao === "off" && <FormField id={`kpi-${k.indicador_id}-just`} label="Justificativa" required error={erroCampo(`kpi-${k.indicador_id}-just`)}><Textarea rows={2} maxLength={LIMITE_TEXTO} value={r.justificativa ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { justificativa: e.target.value })} /></FormField>}
                     </div>}
                     {tipo === "entrega" && <div className="grid gap-2 sm:grid-cols-3 rounded bg-muted/40 p-2">
                       <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-status-entrega`}>Status de entrega</Label>
@@ -553,9 +553,9 @@ export default function MetasSemanal() {
                         {r.iniciativa_criada_id && <Badge variant="secondary">Iniciativa registrada</Badge>}
                         {r.vira_iniciativa && !r.iniciativa_criada_id && <>
                           <div className="grid gap-2 sm:grid-cols-2">
-                            <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-prazo`}>Prazo</Label><Input id={`kpi-${k.indicador_id}-prazo`} type="date" value={r.prazo} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { prazo: e.target.value })} /></div>
-                            <div className="space-y-1"><Label>Status</Label>
-                              <Select value={r.status_ini} disabled={!podeEditar} onValueChange={(v) => setResp(k.indicador_id, { status_ini: v })}><SelectTrigger><SelectValue /></SelectTrigger>
+                            <FormField id={`kpi-${k.indicador_id}-prazo`} label="Prazo" required error={erroCampo(`kpi-${k.indicador_id}-prazo`)}><Input type="date" value={r.prazo} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { prazo: e.target.value })} /></FormField>
+                            <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-status-ini`}>Status</Label>
+                              <Select value={r.status_ini} disabled={!podeEditar} onValueChange={(v) => setResp(k.indicador_id, { status_ini: v })}><SelectTrigger id={`kpi-${k.indicador_id}-status-ini`}><SelectValue /></SelectTrigger>
                                 <SelectContent>{["a_iniciar", "em_andamento", "concluida", "cancelada"].map((s) => <SelectItem key={s} value={s}>{STATUS_INI[s]}</SelectItem>)}</SelectContent></Select></div>
                           </div>
                           <div className="space-y-1"><Label>Responsável pela entrega</Label>{RespSelect({ id: `kpi-${k.indicador_id}-resp`, v: r.responsavel, on: (x) => setResp(k.indicador_id, { responsavel: x }) })}</div>
