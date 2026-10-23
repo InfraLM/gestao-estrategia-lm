@@ -1,4 +1,5 @@
 # Pedidos da Naira · 22/10
+- [ ] UX 1A/1B/2A/2B: campos acessíveis reutilizáveis, feedback/ações sem duplicidade e navegação/hierarquia semanal; preservar regras, persistência e dados; testar sem gravações reais.
 - [x] Impedimentos atribuídos: campos, outbox deduplicada no envio, resposta/completude obrigatória, empilhamento, dashboard privado e auditoria; 374 testes aprovados, tela Naira computador/celular e resposta simulada no navegador; zero riscos/envios reais. Envio efetivo continua bloqueado pelo remetente pendente abaixo.
 - [x] Frequência KPI: 43 BSC casados sem mudar responsáveis, 13 KRs/23 Cesta propostos; cadastro/calendário, seleção semanal/completude/e-mails, pauta e desvio mensal auditado, avaliação/matriz; início 26/10, conferência Naira sem gravações reais de teste.
 - [x] Preparação dos avisos: controles desligados no Painel, horários/cron SQL, destinatários e contagens, prévias, histórico/reenvio bloqueados sem remetente, link semanal/login preservado; testes isolados e tela Naira computador/celular, zero envios/registros de teste reais.
