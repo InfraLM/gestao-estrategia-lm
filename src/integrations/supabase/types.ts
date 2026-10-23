@@ -1802,18 +1802,24 @@ export type Database = {
       }
       mt_convites: {
         Row: {
+          aceito_em: string | null
+          aceito_por: string | null
           cadeira_id: string | null
           created_at: string
           email: string
           perfil: string
         }
         Insert: {
+          aceito_em?: string | null
+          aceito_por?: string | null
           cadeira_id?: string | null
           created_at?: string
           email: string
           perfil?: string
         }
         Update: {
+          aceito_em?: string | null
+          aceito_por?: string | null
           cadeira_id?: string | null
           created_at?: string
           email?: string
@@ -4944,6 +4950,7 @@ export type Database = {
       }
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       modulo_conteudo: { Args: { _chave: string }; Returns: string }
+      mt_aceitar_meu_convite: { Args: never; Returns: boolean }
       mt_cadeira_do_usuario: { Args: { _uid: string }; Returns: string }
       mt_desvio_normal: {
         Args: { _indicador: string; _periodo: string; _resposta: Json }
@@ -4973,6 +4980,10 @@ export type Database = {
         Returns: boolean
       }
       mt_reabrir: { Args: { _comp: string }; Returns: undefined }
+      mt_vincular_convite_verificado: {
+        Args: { _uid: string }
+        Returns: boolean
+      }
       orc_budget_salvar: {
         Args: { _fonte: string; _projeto: string; _valor: number }
         Returns: undefined

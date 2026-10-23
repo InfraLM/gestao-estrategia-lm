@@ -372,6 +372,13 @@
       "when": 1792715006202,
       "tag": "0052_status_reports_farois_auditados",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1792716522660,
+      "tag": "0053_ciclo_diretores_vinculo_verificado_seguranca",
+      "breakpoints": true
     }
   ]
 }
