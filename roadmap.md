@@ -1,3 +1,15 @@
+# Preparação do primeiro ciclo · 26/10
+- [ ] 1. Vincular diretores e preparar primeiro login; exceção externa auditada.
+- [ ] 2. Fechar leitura semanal de usuário sem cadeira.
+- [ ] 3. Não procede sem empilhamento nem atraso.
+- [ ] 4. Gerar sugestões IA de responsáveis e revisão por confiança.
+- [ ] 5. Refazer propostas KR/Cesta sem alterar BSC; validação em massa.
+- [ ] 6. Exercitar ciclo completo isolado sem rede real.
+- [ ] 7. Testar processos sem sincronizar e restaurar desligado.
+- [ ] 8. Modelo budget/centros com importação, prévia e log.
+- [ ] 9. Importação metas 2030 com prévia/auditoria e faltantes.
+- [ ] 10. Pendências SR e UX 1C; conferir Naira desktop/celular.
+
 # Pedidos da Naira · 22/10
 - [x] Aprovação UX final: 1A/1B revalidados antes de 2B; impacto/plano crítico únicos e obrigatórios; faróis de /status-report salvos/histórico/auditoria via migração 0052; 381 testes, Naira computador/tablet/celular e teclado/foco; salvar/reler simulados isolados, sem registros reais. Itens adiados não implementados; publicação pendente.
 - [x] UX 1A/1B/2A/2B: campos acessíveis reutilizáveis adotados no semanal, lançamentos, frequência e status; feedback/ações sem duplicidade e navegação/hierarquia semanal; 376 testes, Naira computador/tablet/celular, foco de pendência e falha de autosave conferidos com gravações bloqueadas. Regras, persistência e dados preservados; sem publicação automática.
