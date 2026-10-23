@@ -1,0 +1,21 @@
+import { useEffect,useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select,SelectTrigger,SelectValue,SelectContent,SelectItem } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { resumoFrequencia } from '@/lib/frequenciaApontamento';
+import { toast } from 'sonner';
+const db=supabase as any;
+export default function FrequenciasPropostas({indicadores,cadeiras,pode,reload}:{indicadores:any[];cadeiras:any[];pode:boolean;reload:()=>void}){
+ const [rows,setRows]=useState<any[]>([]),[sel,setSel]=useState<string[]>([]),[cad,setCad]=useState('todos'),[busy,setBusy]=useState(false);
+ const carregar=async()=>{const {data,error}=await db.from('mt_frequencia_propostas').select('*').eq('status','proposto');if(error)toast.error(error.message);else setRows(data??[]);};
+ useEffect(()=>{if(pode)void carregar();},[pode]);
+ const confirmar=async(ids:string[])=>{if(busy)return;setBusy(true);const {data,error}=await db.rpc('mt_aprovar_frequencias',{_ids:ids});setBusy(false);if(error)return toast.error(error.message);toast.success(`${data} frequências confirmadas.`);setSel([]);void carregar();reload();};
+ const gerar=async()=>{setBusy(true);try{const ids=indicadores.filter(i=>['okr','cesta'].includes(i.origem)&&i.status==='ativo'&&!i.parent_id).map(i=>i.id);for(let i=0;i<ids.length;i+=10){const {data,error}=await supabase.functions.invoke('ciclo-preparar',{body:{tipo:'frequencias',ids:ids.slice(i,i+10)}});if(error||data?.error)throw new Error(data?.error??error?.message);}toast.success('Propostas geradas, sem alterar o calendário confirmado.');}catch(e){toast.error(e instanceof Error?e.message:'Falha na geração');}finally{setBusy(false);void carregar();}};
+ if(!pode)return null;
+ const lista=rows.map(r=>({...r,k:indicadores.find(i=>i.id===r.indicador_id)})).filter(r=>r.k&&(cad==='todos'||r.k.cadeira_id===cad));
+ return <section className="space-y-3 border-t pt-4"><h3 className="font-semibold">Propostas de frequência · OKRs e Cesta</h3><div className="flex flex-wrap gap-2"><Select value={cad} onValueChange={setCad}><SelectTrigger className="w-64" aria-label="Cadeira das propostas"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="todos">Todas as cadeiras</SelectItem>{cadeiras.map(c=><SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent></Select><Button variant="outline" disabled={busy} onClick={gerar}>{busy?'Processando…':'Refazer propostas com IA'}</Button><Button disabled={busy||!sel.length} onClick={()=>confirmar(sel)}>Confirmar selecionadas ({sel.length})</Button></div>
+ <div className="overflow-x-auto"><table className="w-full text-xs text-left"><thead><tr><th className="p-2"><Checkbox aria-label="Selecionar propostas visíveis" checked={lista.length>0&&lista.every(r=>sel.includes(r.indicador_id))} onCheckedChange={v=>setSel(v?lista.map(r=>r.indicador_id):[])}/></th><th>KPI / cadeira</th><th>Proposta</th><th>Mudança / reação / fonte</th><th>Justificativa</th><th/></tr></thead><tbody>{lista.map(r=><tr key={r.indicador_id} className="border-t align-top"><td className="p-2"><Checkbox aria-label={`Selecionar frequência ${r.k.codigo}`} checked={sel.includes(r.indicador_id)} onCheckedChange={v=>setSel(s=>v?[...s,r.indicador_id]:s.filter(id=>id!==r.indicador_id))}/></td><td className="p-2 min-w-48">{r.k.codigo} · {r.k.nome}<p className="text-muted-foreground">{cadeiras.find(c=>c.id===r.k.cadeira_id)?.nome}</p></td><td className="p-2 min-w-40">{resumoFrequencia(r.dados)}<Badge variant="outline">{r.dados.tratamento}</Badge><Badge variant="secondary">Proposta</Badge></td><td className="p-2 min-w-40">{r.dados.velocidade_mudanca} / {r.dados.velocidade_reacao}<p>Piso: {r.dados.piso_fonte}</p><p>{r.dados.fonte}</p></td><td className="p-2 min-w-56 max-w-96">{r.dados.frequencia_justificativa}</td><td className="p-2"><Button size="sm" disabled={busy} onClick={()=>confirmar([r.indicador_id])}>Confirmar</Button></td></tr>)}</tbody></table></div>{!lista.length&&<p className="text-sm text-muted-foreground">Nenhuma proposta pendente.</p>}
+ </section>;
+}
