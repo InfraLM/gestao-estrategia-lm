@@ -1,3 +1,8 @@
+# Urgente · links dos sócios (24/10)
+- [x] Diagnóstico: endereço publicado abre o formulário sem login (testado com sócio fictício, removido); links copiados na prévia caem no login da Lovable.
+- [x] Links sempre no endereço publicado, validade configurável, copiar/gerar novo/revogar/baixar todos, situação e último acesso, acessos registrados no banco.
+- [ ] Naira publica e gera novos links para todos (links antigos não podem ser recopiados).
+
 # Preparação do primeiro ciclo · 26/10
 - [x] 1. Pré-cadastro dos 7 diretores; Ian vinculado; demais aplicam no primeiro login verificado (testado isolado). Login não restringe domínio hoje, então não houve exceção a abrir.
 - [x] 2. Leitura semanal fechada para quem não tem cadeira (RLS testado).
