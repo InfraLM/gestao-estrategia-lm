@@ -32,13 +32,15 @@ export function useModuleAccess() {
       return { ocupante: own?.ocupante === true, diretor: own?.diretor === true };
     }, refetchOnWindowFocus: true, refetchInterval: 30000,
   });
-  const allowed = (module: string, edit = false) => !!user && !!query.data && (module === "socios" ? canAccessSocios(query.data.socio) : canAccessModule(query.data.grants, module, edit, query.data.superAdmin, query.data.roles.includes("admin")));
+  const offsite = useQuery({queryKey: ['offsite-access', user?.id], enabled: !!user, queryFn: async () => { const {data,error} = await (supabase as any).rpc('offsite_acesso'); if(error) throw error; return data as {admin:boolean;permitido:boolean}; }, refetchOnWindowFocus:true});
+  const allowed = (module: string, edit = false) => !!user && !!query.data && (module === "pre_offsite" ? offsite.data?.permitido === true : module === "socios" ? canAccessSocios(query.data.socio) : canAccessModule(query.data.grants, module, edit, query.data.superAdmin, query.data.roles.includes("admin")));
   return {
-    loading: authLoading || (!!user && query.isPending), error: query.isError,
+    loading: authLoading || (!!user && (query.isPending || offsite.isPending)), error: query.isError,
     grants: query.data?.grants ?? [], roles: query.data?.roles ?? [],
     isSuperAdmin: query.data?.superAdmin ?? false,
     socio: query.data?.socio ?? null,
     canAccessPath: (module: string, path: string) => {
+      if (module === "pre_offsite") return !!user && !!offsite.data?.permitido && (path === "/pre-offsite" || offsite.data.admin);
       if (module === "socios") return !!user && !!query.data && canAccessSocios(query.data.socio, path);
       if (["decisoes", "estrutura", "incentivos"].includes(module)) return !!user && !!query.data && canAccessPhase1Path(path, query.data.grants, query.data.superAdmin, query.data.roles.includes("admin"), ownership.data ?? { ocupante: false, diretor: false });
       return allowed(module);

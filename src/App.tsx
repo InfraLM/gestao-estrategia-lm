@@ -1,3 +1,5 @@
+import PreOffsiteFormulario from "./features/preOffsite/Formulario";
+import PreOffsiteAdmin from "./features/preOffsite/Admin";
 import PortfolioNovosVinculos from "./components/PortfolioNovosVinculos";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate, useSearchParams } from "react-router-dom";
@@ -62,6 +64,10 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/responder/:token" element={<SociosResponder />} />
             <Route element={<ModuleAccessGate><AppLayout /></ModuleAccessGate>}>
+              <Route path="/pre-offsite" element={<PreOffsiteFormulario />} />
+              <Route path="/pre-offsite/consolidado" element={<PreOffsiteAdmin />} />
+              <Route path="/pre-offsite/configuracao" element={<PreOffsiteAdmin modo="configuracao" />} />
+              <Route path="/pre-offsite/anexo" element={<PreOffsiteAdmin modo="anexo" />} />
               <Route path="/contexto-decisoes" element={<ContextoDecisoes />} />
               <Route path="/socios/insights" element={<SociosInsights />} />
               <Route path="/estrutura-organizacional" element={<EstruturaOrganizacional />} />

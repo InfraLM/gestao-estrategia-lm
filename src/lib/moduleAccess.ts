@@ -1,5 +1,6 @@
 export const ACCESS_MODULES = [
   { id: "estrategia", label: "Estratégia" },
+  { id: "pre_offsite", label: "Pré-Offsite 2027" },
   { id: "pmo", label: "PMO · Projetos e melhorias" },
   { id: "bpmo", label: "BPMO · Processos" },
   { id: "okrs", label: "OKRs" },
@@ -19,6 +20,7 @@ export type ModuleGrant = { modulo: string; nivel: AccessLevel };
 export const CLOSED_MODULES: readonly string[] = ["decisoes", "estrutura", "incentivos"];
 
 export function moduleForPath(path: string): AccessModule | null {
+  if (path.startsWith("/pre-offsite")) return "pre_offsite";
   if (path === "/contexto-decisoes") return "decisoes";
   if (path === "/estrutura-organizacional") return "estrutura";
   if (path === "/incentivos" || path === "/cesta-metas/insights") return "incentivos";
