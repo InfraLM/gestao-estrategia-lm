@@ -5338,6 +5338,7 @@ export type Database = {
         Returns: string
       }
       offsite_reabrir: { Args: { _id: string }; Returns: undefined }
+      offsite_referencias: { Args: never; Returns: Json }
       offsite_salvar: {
         Args: { _enviar?: boolean; _respostas: Json; _revisao: number }
         Returns: {

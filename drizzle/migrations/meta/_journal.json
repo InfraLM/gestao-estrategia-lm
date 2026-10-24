@@ -421,6 +421,13 @@
       "when": 1792868040529,
       "tag": "0059_pre_offsite_materiais_privados",
       "breakpoints": true
+    },
+    {
+      "idx": 60,
+      "version": "7",
+      "when": 1792868082573,
+      "tag": "0060_pre_offsite_referencias",
+      "breakpoints": true
     }
   ]
 }
