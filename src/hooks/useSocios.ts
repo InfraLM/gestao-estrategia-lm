@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import type { FormDados } from "@/lib/sociosTradeoff";
+import { linkSocio, type LinkPainel } from "@/lib/linksSocios";
 
 export type SocioRow = {
   id: string; user_id: string; status: string; respostas: any; diretrizes: any; projetos: any; extras: any;
@@ -89,12 +90,24 @@ export function useRespostaPorLink(token: string) {
   return { ...q, salvar, enviar };
 }
 
-export async function gerarLinkSocio(participanteId: string) {
-  const { data, error } = await db.rpc("socios_link_gerar", { _participante_id: participanteId });
+/** Gera novo link (revoga o anterior). Sempre usa o endereço publicado. */
+export async function gerarLinkSocio(participanteId: string, expiraEm?: string | null) {
+  const { data, error } = await db.rpc("socios_link_gerar", { _participante_id: participanteId, _expira_em: expiraEm ?? null });
   if (error) throw error;
-  return `${window.location.origin.includes("localhost") ? "https://nextlevel-lm.lovable.app" : window.location.origin}/responder/${data}`;
+  return linkSocio(data as string);
 }
 export async function revogarLinkSocio(participanteId: string) {
   const { error } = await db.rpc("socios_link_revogar", { _participante_id: participanteId });
   if (error) throw error;
+}
+
+export function useLinksSocios() {
+  return useQuery({
+    queryKey: ["socios-links-painel"],
+    queryFn: async () => {
+      const { data, error } = await db.rpc("socios_links_painel");
+      if (error) throw error;
+      return (data ?? []) as LinkPainel[];
+    },
+  });
 }
