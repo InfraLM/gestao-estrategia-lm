@@ -4595,6 +4595,38 @@ export type Database = {
         }
         Relationships: []
       }
+      socios_link_acessos: {
+        Row: {
+          acao: string
+          em: string
+          id: string
+          link_id: string
+          participante_id: string
+        }
+        Insert: {
+          acao: string
+          em?: string
+          id?: string
+          link_id: string
+          participante_id: string
+        }
+        Update: {
+          acao?: string
+          em?: string
+          id?: string
+          link_id?: string
+          participante_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "socios_link_acessos_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "socios_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       socios_links: {
         Row: {
           criado_em: string
@@ -4602,7 +4634,9 @@ export type Database = {
           expira_em: string
           id: string
           participante_id: string
+          primeiro_acesso_em: string | null
           revogado_em: string | null
+          token: string | null
           token_hash: string
           ultimo_acesso_em: string | null
         }
@@ -4612,7 +4646,9 @@ export type Database = {
           expira_em?: string
           id?: string
           participante_id: string
+          primeiro_acesso_em?: string | null
           revogado_em?: string | null
+          token?: string | null
           token_hash: string
           ultimo_acesso_em?: string | null
         }
@@ -4622,7 +4658,9 @@ export type Database = {
           expira_em?: string
           id?: string
           participante_id?: string
+          primeiro_acesso_em?: string | null
           revogado_em?: string | null
+          token?: string | null
           token_hash?: string
           ultimo_acesso_em?: string | null
         }
@@ -5371,9 +5409,16 @@ export type Database = {
       }
       socios_eh_respondente: { Args: { _uid: string }; Returns: boolean }
       socios_enviar: { Args: never; Returns: undefined }
+      socios_link_acesso: {
+        Args: { _acao: string; _token: string }
+        Returns: string
+      }
       socios_link_carregar: { Args: { _token: string }; Returns: Json }
       socios_link_enviar: { Args: { _token: string }; Returns: undefined }
-      socios_link_gerar: { Args: { _participante_id: string }; Returns: string }
+      socios_link_gerar: {
+        Args: { _expira_em?: string; _participante_id: string }
+        Returns: string
+      }
       socios_link_revogar: {
         Args: { _participante_id: string }
         Returns: undefined
@@ -5389,6 +5434,23 @@ export type Database = {
         Returns: Json
       }
       socios_link_uid: { Args: { _token: string }; Returns: string }
+      socios_links_painel: {
+        Args: never
+        Returns: {
+          acessos: number
+          criado_em: string
+          email: string
+          enviado_em: string
+          expira_em: string
+          link_ativo: boolean
+          nome: string
+          participante_id: string
+          primeiro_acesso_em: string
+          situacao: string
+          token: string
+          ultimo_acesso_em: string
+        }[]
+      }
       socios_pode_consolidar: { Args: { _uid: string }; Returns: boolean }
       socios_prazo_aberto: { Args: { _reaberto: string }; Returns: boolean }
       socios_reabrir: {
