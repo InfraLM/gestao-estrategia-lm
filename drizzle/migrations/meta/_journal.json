@@ -442,6 +442,13 @@
       "when": 1792868389626,
       "tag": "0062_pre_offsite_cadeira_vinculada",
       "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1792868544873,
+      "tag": "0063_pre_offsite_config_estavel",
+      "breakpoints": true
     }
   ]
 }
