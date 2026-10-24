@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { gerarLinkSocio, revogarLinkSocio, useLinksSocios } from "@/hooks/useSocios";
 import { linhasCsvLinks, linkSocio, mensagemSocio, SITUACAO_LABEL, type LinkPainel } from "@/lib/linksSocios";
 
-const fmt = (s: string | null) => (s ? new Date(s).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : "—");
+const fmt = (s: string | null) => (s ? new Date(s).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Sao_Paulo" }) : "—");
 const copiar = async (texto: string, ok: string) => {
   try { await navigator.clipboard.writeText(texto); toast.success(ok); }
   catch { window.prompt("Copie o texto abaixo:", texto); }
