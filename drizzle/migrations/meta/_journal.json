@@ -400,6 +400,13 @@
       "when": 1792717679934,
       "tag": "0056_editar_propostas_frequencia_auditadas",
       "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "7",
+      "when": 1792840404668,
+      "tag": "0057_socios_links_painel_acessos",
+      "breakpoints": true
     }
   ]
 }
