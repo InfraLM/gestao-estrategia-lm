@@ -435,6 +435,13 @@
       "when": 1792868302589,
       "tag": "0061_pre_offsite_promocao_nome",
       "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1792868389626,
+      "tag": "0062_pre_offsite_cadeira_vinculada",
+      "breakpoints": true
     }
   ]
 }
