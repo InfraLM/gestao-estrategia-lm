@@ -17,7 +17,8 @@ function Editor({data}:{data:NonNullable<ReturnType<typeof usePreOffsite>['data'
  try{respostaSchema.parse(snapshot);const res=await db.rpc('offsite_salvar',{_respostas:snapshot,_revisao:revision.current,_enviar:enviar});if(res.error)throw res.error;revision.current=res.data.revisao;saved.current=JSON.stringify(snapshot);setRecord(res.data);setState(saved.current===JSON.stringify(latest.current)?'Salvo':'Alterações pendentes');if(enviar){toast.success('Respostas enviadas');setReview(false);}return true;}catch(e:any){setState('Falha ao salvar');toast.error(e.message??'Não foi possível salvar');return false;}finally{busy.current=false;}
  };
  const persistRef=useRef(persist);persistRef.current=persist;
- useEffect(()=>{if(readonly)return;const timer=setTimeout(()=>{if(saved.current!==JSON.stringify(latest.current))void persistRef.current();},800);return()=>clearTimeout(timer);},[r,state,readonly]);
+ useEffect(()=>{if(readonly||state==='Falha ao salvar')return;const timer=setTimeout(()=>{if(saved.current!==JSON.stringify(latest.current))void persistRef.current();},800);return()=>clearTimeout(timer);},[r,state,readonly]);
+ useEffect(()=>()=>{if(saved.current!==JSON.stringify(latest.current))void persistRef.current();},[]);
  useEffect(()=>{const guard=(e:BeforeUnloadEvent)=>{if(saved.current!==JSON.stringify(latest.current)){e.preventDefault();e.returnValue='';}};window.addEventListener('beforeunload',guard);return()=>window.removeEventListener('beforeunload',guard);},[]);
  const goto=(s:number)=>{setStep(s);setReview(false);setTimeout(()=>{heading.current?.focus();heading.current?.scrollIntoView({block:'start',behavior:'instant'});},0);};
  const chair=data.refs.cadeiras.find(x=>x.id===data.acesso.cadeira_id);
