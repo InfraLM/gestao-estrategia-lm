@@ -1,8 +1,10 @@
 # Pré-Offsite 2027 · Diretoria v3.10
-- [ ] Configuração editável, acesso privado Naira/Ian/diretores e materiais por cadeira.
-- [ ] Formulário nove blocos, rascunho automático, revisão/envio/reabertura.
-- [ ] Consolidado, divergências, Excel e promoção explícita ao backlog.
-- [ ] Testes isolados de regras/acessos e conferência computador/celular.
+- [x] Configuração editável com redação fornecida, acesso privado Naira/Ian/diretores e materiais por cadeira.
+- [x] Formulário nove blocos, rascunho automático, revisão/envio/reabertura; vínculo de cadeira reutilizado sem alterar cadastros.
+- [x] Consolidado, divergências, Excel legível e promoção explícita ao backlog em lista própria sem aprovação automática.
+- [x] 14 testes novos isolados de regras/acessos, 13 de acesso existentes e 8 de atualização PMO aprovados; fluxo fictício computador/celular, Naira e download Excel conferidos. Zero respostas reais gravadas.
+- [ ] Materiais/mandatos e BSC Rev.03 — dependem dos documentos da Naira; seletores usam os objetivos/KPIs já cadastrados, sem substituir a revisão atual.
+- [ ] Publicar — ação da Naira; comparação de orçamento versus meta depende da modelagem financeira, sem inferências.
 
 # Urgente · links dos sócios (24/10)
 - [x] Diagnóstico: endereço publicado abre o formulário sem login (testado com sócio fictício, removido); links copiados na prévia caem no login da Lovable.
