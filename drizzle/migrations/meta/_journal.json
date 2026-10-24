@@ -449,6 +449,13 @@
       "when": 1792868544873,
       "tag": "0063_pre_offsite_config_estavel",
       "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1792868879234,
+      "tag": "0064_pre_offsite_prazo_27_outubro",
+      "breakpoints": true
     }
   ]
 }
