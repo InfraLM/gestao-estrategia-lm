@@ -428,6 +428,13 @@
       "when": 1792868082573,
       "tag": "0060_pre_offsite_referencias",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1792868302589,
+      "tag": "0061_pre_offsite_promocao_nome",
+      "breakpoints": true
     }
   ]
 }
