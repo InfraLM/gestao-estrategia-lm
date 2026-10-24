@@ -407,6 +407,13 @@
       "when": 1792840404668,
       "tag": "0057_socios_links_painel_acessos",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1792867969680,
+      "tag": "0058_pre_offsite_2027_privado",
+      "breakpoints": true
     }
   ]
 }
