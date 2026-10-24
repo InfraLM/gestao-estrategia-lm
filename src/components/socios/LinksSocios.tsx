@@ -60,27 +60,26 @@ export default function LinksSocios() {
         </div>
         {semToken > 0 && <p className="text-xs text-muted-foreground">{semToken} sócio(s) sem link recuperável (links antigos não podem ser copiados de novo): use "Gerar novo link".</p>}
         {q.isPending ? <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /> : q.isError ? <p className="text-sm text-destructive">Não foi possível carregar os links.</p> : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead><tr className="border-b text-left text-xs text-muted-foreground"><th className="py-2 pr-3">Sócio</th><th className="py-2 pr-3">Situação</th><th className="py-2 pr-3">Último acesso</th><th className="py-2 pr-3">Link válido até</th><th className="py-2">Ações</th></tr></thead>
-              <tbody>
-                {q.data.map(l => (
-                  <tr key={l.participante_id} className="border-b align-top">
-                    <td className="py-2 pr-3"><div className="font-medium">{l.nome}</div><div className="text-xs text-muted-foreground break-all">{l.email}</div></td>
-                    <td className="py-2 pr-3"><Badge variant={l.situacao === "enviado" ? "default" : "outline"}>{SITUACAO_LABEL[l.situacao]}</Badge></td>
-                    <td className="py-2 pr-3 whitespace-nowrap">{fmt(l.ultimo_acesso_em)}{l.acessos > 0 && <div className="text-xs text-muted-foreground">{l.acessos} registro(s)</div>}</td>
-                    <td className="py-2 pr-3 whitespace-nowrap">{l.link_ativo ? fmt(l.expira_em) : <span className="text-muted-foreground">Sem link ativo</span>}</td>
-                    <td className="py-2"><div className="flex flex-wrap gap-1">
-                      <Button size="sm" variant="outline" className="h-8" disabled={!l.token} title={l.token ? "Copiar link" : "Gere um novo link"} onClick={() => copiar(linkSocio(l.token!), "Link copiado")}><Copy className="h-3.5 w-3.5 mr-1" />Copiar link</Button>
-                      <Button size="sm" variant="outline" className="h-8" disabled={!l.token} onClick={() => copiar(mensagemSocio(l.nome, linkSocio(l.token!), l.expira_em), "Mensagem copiada")}><MessageSquare className="h-3.5 w-3.5 mr-1" />Mensagem</Button>
-                      <Button size="sm" className="h-8" disabled={!!busy} onClick={() => gerar(l)}>{busy === l.participante_id ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5 mr-1" />}Gerar novo link</Button>
-                      {l.link_ativo && <Button size="sm" variant="ghost" className="h-8" onClick={() => revogar(l)}><Ban className="h-3.5 w-3.5 mr-1" />Revogar</Button>}
-                    </div></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ul className="space-y-2">
+            {q.data.map(l => (
+              <li key={l.participante_id} className="rounded-md border p-3 space-y-2">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0"><div className="font-medium">{l.nome}</div><div className="text-xs text-muted-foreground break-all">{l.email}</div></div>
+                  <Badge variant={l.situacao === "enviado" ? "default" : "outline"}>{SITUACAO_LABEL[l.situacao]}</Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div><div className="text-muted-foreground">Último acesso</div><div>{fmt(l.ultimo_acesso_em)}{l.acessos > 0 ? ` · ${l.acessos} registro(s)` : ""}</div></div>
+                  <div><div className="text-muted-foreground">Link válido até</div><div>{l.link_ativo ? fmt(l.expira_em) : "Sem link ativo"}</div></div>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  <Button size="sm" variant="outline" className="h-8" disabled={!l.token} title={l.token ? "Copiar link" : "Gere um novo link"} onClick={() => copiar(linkSocio(l.token!), "Link copiado")}><Copy className="h-3.5 w-3.5 mr-1" />Copiar link</Button>
+                  <Button size="sm" variant="outline" className="h-8" disabled={!l.token} onClick={() => copiar(mensagemSocio(l.nome, linkSocio(l.token!), l.expira_em), "Mensagem copiada")}><MessageSquare className="h-3.5 w-3.5 mr-1" />Mensagem</Button>
+                  <Button size="sm" className="h-8" disabled={!!busy} onClick={() => gerar(l)}>{busy === l.participante_id ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5 mr-1" />}Gerar novo link</Button>
+                  {l.link_ativo && <Button size="sm" variant="ghost" className="h-8" onClick={() => revogar(l)}><Ban className="h-3.5 w-3.5 mr-1" />Revogar</Button>}
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
       </CardContent>
     </Card>
