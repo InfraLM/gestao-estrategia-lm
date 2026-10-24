@@ -1,8 +1,9 @@
 import {describe,it,expect} from 'vitest';
 import {PADRAO} from '@/features/preOffsite/config';
-import {completude,custoDiverge,divergencias,numero} from '@/features/preOffsite/domain';
+import {completude,custoDiverge,divergencias,numero,validarConfig} from '@/features/preOffsite/domain';
 import {retornoStatus} from '@/lib/atualizacaoStatus';
 describe('Pré-Offsite v3.10',()=>{
+ it('configuração conserva identificadores das respostas',()=>{const c=structuredClone(PADRAO);c.diretrizes[0].id='alterado';expect(()=>validarConfig(c,PADRAO)).toThrow(/identificadores/);expect(validarConfig(PADRAO,PADRAO).perguntas).toHaveLength(9)}); 
  it('tem nove blocos, dez diretrizes e oito projetos propostos',()=>{expect(PADRAO.blocos).toHaveLength(9);expect(PADRAO.diretrizes).toHaveLength(10);expect(PADRAO.projetos).toHaveLength(8)});
  it('rascunho vazio aceita revisão com avisos sem exigir campos',()=>{const p=completude({},PADRAO);expect(p.percentual).toBeLessThan(10);expect(p.avisos.length).toBeGreaterThan(0)});
  it('três diretrizes prioritárias são necessárias para concluir 3.2',()=>{const r:any={'3.selecionadas':['1','2']};for(const d of PADRAO.diretrizes)r[`3.pos.${d.id}`]='Concordo';expect(completude(r,PADRAO).avisos.some(a=>a.startsWith('3.2'))).toBe(true);r['3.selecionadas'].push('3');expect(completude(r,PADRAO).avisos.some(a=>a.startsWith('3.2'))).toBe(false)});

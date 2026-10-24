@@ -25,7 +25,7 @@ export function completude(r:Respostas,c:Config):{percentual:number;etapas:boole
  }
  avisos.push(...faltas);return faltas.length===0;
  });
- const total=c.perguntas.flat().length;const percentual=Math.round((total-avisos.length)/total*100);
+ const total=c.perguntas.flat().length;const percentual=Object.keys(r).length?Math.round((total-avisos.length)/total*100):0;
  for(const [i,p] of lista(r,'4.3').entries())if(custoDiverge(p))avisos.push(`4.3 · Proposta ${i+1}: soma dos trimestres difere do custo total.`);
  return{percentual,etapas,avisos};
 }
@@ -50,4 +50,12 @@ export function resumoResposta(r:Respostas,p:string,c:Config):any{
  if(p==='4.1'||p==='4.2')return{Seleção:r[p],Justificativa:r[`${p}.porque`]};
  if(p==='5.riscos')return c.escolhas.map(d=>({Escolha:d.titulo,...r[d.id]}));
  if(p==='6.3')return c.temas.map((t,i)=>({Tema:t,Resposta:r[`6.3.${i}`]}));return r[p];
+}
+export function validarConfig(c:unknown,base:Config):Config{
+ const item=z.object({id:z.string(),titulo:z.string(),descricao:z.string().optional()});
+ const campo=z.object({nome:z.string(),tipo:z.enum(['texto','numero','mes','escolha','objetivo','kpi','cadeira','processo','diretriz','projeto']).optional(),opcoes:z.array(z.string()).optional()});
+ const pergunta=z.object({id:z.string(),texto:z.string(),tipo:z.enum(['lista','escolha','multipla','processo','texto']).optional(),campos:z.array(campo).optional(),opcoes:z.array(z.string()).optional(),limite:z.number().optional(),ajuda:z.string().optional()});
+ const v=z.object({intro:z.string(),tese:z.string(),anexo:z.string(),blocos:z.array(z.string()).length(9),perguntas:z.array(z.array(pergunta)).length(9),diretrizes:z.array(item).length(10),projetos:z.array(item),andamento:z.array(item),produtos:z.array(item),escolhas:z.array(item),temas:z.array(z.string()),notas:z.record(z.string())}).parse(c) as Config;
+ for(const k of ['diretrizes','projetos','andamento','produtos','escolhas'] as const)if(JSON.stringify(v[k].map(x=>x.id))!==JSON.stringify(base[k].map(x=>x.id)))throw new Error('Preserve os identificadores e a ordem dos itens existentes.');
+ if(JSON.stringify(v.perguntas.map(q=>q.map(p=>p.id)))!==JSON.stringify(base.perguntas.map(q=>q.map(p=>p.id))))throw new Error('Preserve os identificadores das perguntas.');return v;
 }
