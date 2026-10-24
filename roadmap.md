@@ -1,3 +1,9 @@
+# Pré-Offsite 2027 · Diretoria v3.10
+- [ ] Configuração editável, acesso privado Naira/Ian/diretores e materiais por cadeira.
+- [ ] Formulário nove blocos, rascunho automático, revisão/envio/reabertura.
+- [ ] Consolidado, divergências, Excel e promoção explícita ao backlog.
+- [ ] Testes isolados de regras/acessos e conferência computador/celular.
+
 # Urgente · links dos sócios (24/10)
 - [x] Diagnóstico: endereço publicado abre o formulário sem login (testado com sócio fictício, removido); links copiados na prévia caem no login da Lovable.
 - [x] Links sempre no endereço publicado, validade configurável, copiar/gerar novo/revogar/baixar todos, situação e último acesso, acessos registrados no banco.
