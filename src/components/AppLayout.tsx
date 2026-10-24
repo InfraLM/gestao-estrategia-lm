@@ -31,6 +31,17 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    id: "pre_offsite",
+    label: "Pré-Offsite 2027",
+    icon: FileCheck2,
+    children: [
+      { to: "/pre-offsite", label: "Meu formulário", icon: ListChecks },
+      { to: "/pre-offsite/consolidado", label: "Consolidado", icon: LayoutGrid },
+      { to: "/pre-offsite/configuracao", label: "Configuração e materiais", icon: Settings2 },
+      { to: "/pre-offsite/anexo", label: "Anexo para a condução", icon: BookOpen },
+    ],
+  },
+  {
     id: "socios",
     label: "Desejos dos Sócios 2027",
     icon: Briefcase,
@@ -103,6 +114,10 @@ const navGroups: NavGroup[] = [
 const integracoesGroup: NavGroup = { id: "integracoes", label: "Integrações", icon: Server, children: [{ to: "/governanca/integracao", label: "Integração Governança", icon: Server }] };
 
 const titles: Record<string, string> = {
+  "/pre-offsite": "Pré-Offsite 2027 · Meu formulário",
+  "/pre-offsite/consolidado": "Pré-Offsite 2027 · Consolidado",
+  "/pre-offsite/configuracao": "Pré-Offsite 2027 · Configuração e materiais",
+  "/pre-offsite/anexo": "Pré-Offsite 2027 · Anexo para a condução",
   "/governanca/integracao": "Integração Governança",
   "/contexto-decisoes": "Contexto e decisões",
   "/socios/insights": "Desejos dos Sócios 2027 · Insights sócios",

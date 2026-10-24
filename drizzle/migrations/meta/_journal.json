@@ -407,6 +407,48 @@
       "when": 1792840404668,
       "tag": "0057_socios_links_painel_acessos",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1792867969680,
+      "tag": "0058_pre_offsite_2027_privado",
+      "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1792868040529,
+      "tag": "0059_pre_offsite_materiais_privados",
+      "breakpoints": true
+    },
+    {
+      "idx": 60,
+      "version": "7",
+      "when": 1792868082573,
+      "tag": "0060_pre_offsite_referencias",
+      "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1792868302589,
+      "tag": "0061_pre_offsite_promocao_nome",
+      "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1792868389626,
+      "tag": "0062_pre_offsite_cadeira_vinculada",
+      "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1792868544873,
+      "tag": "0063_pre_offsite_config_estavel",
+      "breakpoints": true
     }
   ]
 }

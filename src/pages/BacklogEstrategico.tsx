@@ -1,3 +1,4 @@
+import BacklogPreOffsite from "@/features/preOffsite/Backlog";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -379,6 +380,7 @@ export default function BacklogEstrategico() {
 
   return (
     <div className="space-y-6">
+      <BacklogPreOffsite />
       {/* Header */}
       <Card className="bg-gradient-to-br from-primary/5 via-info/5 to-success/5 border-primary/20">
         <CardHeader>

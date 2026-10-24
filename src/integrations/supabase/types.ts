@@ -2934,6 +2934,178 @@ export type Database = {
           },
         ]
       }
+      offsite_admins: {
+        Row: {
+          user_id: string
+        }
+        Insert: {
+          user_id: string
+        }
+        Update: {
+          user_id?: string
+        }
+        Relationships: []
+      }
+      offsite_backlog: {
+        Row: {
+          criado_em: string
+          criado_por: string | null
+          id: string
+          proposta: Json
+          proposta_indice: number
+          resposta_id: string
+          status: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string | null
+          id?: string
+          proposta: Json
+          proposta_indice: number
+          resposta_id: string
+          status?: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string | null
+          id?: string
+          proposta?: Json
+          proposta_indice?: number
+          resposta_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offsite_backlog_resposta_id_fkey"
+            columns: ["resposta_id"]
+            isOneToOne: false
+            referencedRelation: "offsite_respostas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offsite_config: {
+        Row: {
+          atualizado_em: string
+          conteudo: Json
+          id: string
+          prazo: string
+        }
+        Insert: {
+          atualizado_em?: string
+          conteudo?: Json
+          id?: string
+          prazo?: string
+        }
+        Update: {
+          atualizado_em?: string
+          conteudo?: Json
+          id?: string
+          prazo?: string
+        }
+        Relationships: []
+      }
+      offsite_historico: {
+        Row: {
+          acao: string
+          antes: Json | null
+          ator: string | null
+          criado_em: string
+          depois: Json | null
+          id: string
+          resposta_id: string | null
+        }
+        Insert: {
+          acao: string
+          antes?: Json | null
+          ator?: string | null
+          criado_em?: string
+          depois?: Json | null
+          id?: string
+          resposta_id?: string | null
+        }
+        Update: {
+          acao?: string
+          antes?: Json | null
+          ator?: string | null
+          criado_em?: string
+          depois?: Json | null
+          id?: string
+          resposta_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offsite_historico_resposta_id_fkey"
+            columns: ["resposta_id"]
+            isOneToOne: false
+            referencedRelation: "offsite_respostas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offsite_materiais: {
+        Row: {
+          arquivo_path: string | null
+          cadeira_id: string | null
+          criado_em: string
+          id: string
+          titulo: string
+          url: string | null
+        }
+        Insert: {
+          arquivo_path?: string | null
+          cadeira_id?: string | null
+          criado_em?: string
+          id?: string
+          titulo: string
+          url?: string | null
+        }
+        Update: {
+          arquivo_path?: string | null
+          cadeira_id?: string | null
+          criado_em?: string
+          id?: string
+          titulo?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
+      offsite_respostas: {
+        Row: {
+          atualizado_em: string
+          cadeira_id: string
+          enviado_em: string | null
+          id: string
+          nome: string
+          respostas: Json
+          revisao: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          cadeira_id: string
+          enviado_em?: string | null
+          id?: string
+          nome?: string
+          respostas?: Json
+          revisao?: number
+          status?: string
+          user_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          cadeira_id?: string
+          enviado_em?: string | null
+          id?: string
+          nome?: string
+          respostas?: Json
+          revisao?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       orc_auditoria: {
         Row: {
           anterior: Json | null
@@ -5157,6 +5329,35 @@ export type Database = {
       mt_vincular_convite_verificado: {
         Args: { _uid: string }
         Returns: boolean
+      }
+      offsite_acesso: { Args: never; Returns: Json }
+      offsite_admin: { Args: never; Returns: boolean }
+      offsite_cadeira: { Args: never; Returns: string }
+      offsite_promover: {
+        Args: { _id: string; _indice: number }
+        Returns: string
+      }
+      offsite_reabrir: { Args: { _id: string }; Returns: undefined }
+      offsite_referencias: { Args: never; Returns: Json }
+      offsite_salvar: {
+        Args: { _enviar?: boolean; _respostas: Json; _revisao: number }
+        Returns: {
+          atualizado_em: string
+          cadeira_id: string
+          enviado_em: string | null
+          id: string
+          nome: string
+          respostas: Json
+          revisao: number
+          status: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "offsite_respostas"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       orc_budget_salvar: {
         Args: { _fonte: string; _projeto: string; _valor: number }
