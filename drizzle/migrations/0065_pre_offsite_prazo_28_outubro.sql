@@ -1,0 +1,1 @@
+ALTER TABLE public.offsite_config ALTER COLUMN prazo SET DEFAULT DATE '2026-10-28';
