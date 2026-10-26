@@ -7,13 +7,14 @@ const siglas = ["CL", "IA", "IU", "NA", "YR"];
 /** Stable identity independent of answer availability and axis. Reserve the current participants' initials. */
 export function identidadesSocios(pessoas: { id: string; nome: string }[]) {
   const usadas = new Set(siglas);
+  const atribuidas = new Set<string>();
   return [...pessoas].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR") || a.id.localeCompare(b.id)).map(p => {
     const nome = chaveNome(p.nome);
     const partes = nome.split(/\s+/);
     const primeiro = partes[0] ?? "";
     const conhecido = conhecidos.findIndex(n => primeiro === n || (n === "CLETO" && nome.includes("CLETO")));
     let sigla = conhecido >= 0 ? siglas[conhecido] : "";
-    if (!sigla || usadas.has(sigla) && pessoas.filter(x => chaveNome(x.nome).split(/\s+/)[0] === primeiro).length > 1) {
+    if (!sigla || atribuidas.has(sigla)) {
       const letras = nome.replace(/[^A-Z]/g, "") || "SO";
       const candidatos = [partes.length > 1 ? `${primeiro[0]}${partes.at(-1)?.[0]}` : letras.slice(0, 2)];
       for (const a of letras) for (const b of letras) candidatos.push(a + b);
@@ -21,6 +22,7 @@ export function identidadesSocios(pessoas: { id: string; nome: string }[]) {
       sigla = candidatos.find(s => s.length === 2 && !usadas.has(s)) ?? "SO";
     }
     usadas.add(sigla);
+    atribuidas.add(sigla);
     const hash = [...nome].reduce((acc, c) => (acc * 31 + c.charCodeAt(0)) >>> 0, 0);
     return { ...p, sigla, cor: conhecido >= 0 ? conhecido : hash % 8 };
   });
