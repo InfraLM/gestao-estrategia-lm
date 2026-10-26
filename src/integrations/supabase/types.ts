@@ -1157,6 +1157,129 @@ export type Database = {
         }
         Relationships: []
       }
+      fitfinder_diretoria_cadeira: {
+        Row: {
+          cadeira_id: string | null
+          confirmado_em: string | null
+          confirmado_por: string | null
+          created_at: string
+          diretoria: string
+          id: string
+          status: string
+        }
+        Insert: {
+          cadeira_id?: string | null
+          confirmado_em?: string | null
+          confirmado_por?: string | null
+          created_at?: string
+          diretoria: string
+          id?: string
+          status?: string
+        }
+        Update: {
+          cadeira_id?: string | null
+          confirmado_em?: string | null
+          confirmado_por?: string | null
+          created_at?: string
+          diretoria?: string
+          id?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      fitfinder_espelho: {
+        Row: {
+          aderencia: Json
+          ativo: boolean
+          diretoria: string
+          gerado_em: string | null
+          grupo_pequeno: boolean
+          ocupacao: Json
+          por_cargo: Json
+          sincronizado_em: string
+          testes: Json
+          total_prestadores: number | null
+        }
+        Insert: {
+          aderencia?: Json
+          ativo?: boolean
+          diretoria: string
+          gerado_em?: string | null
+          grupo_pequeno?: boolean
+          ocupacao?: Json
+          por_cargo?: Json
+          sincronizado_em?: string
+          testes?: Json
+          total_prestadores?: number | null
+        }
+        Update: {
+          aderencia?: Json
+          ativo?: boolean
+          diretoria?: string
+          gerado_em?: string | null
+          grupo_pequeno?: boolean
+          ocupacao?: Json
+          por_cargo?: Json
+          sincronizado_em?: string
+          testes?: Json
+          total_prestadores?: number | null
+        }
+        Relationships: []
+      }
+      fitfinder_integracao_config: {
+        Row: {
+          ativo: boolean
+          atualizado_por: string | null
+          id: boolean
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_por?: string | null
+          id?: boolean
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_por?: string | null
+          id?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      fitfinder_sync_log: {
+        Row: {
+          concluido_em: string | null
+          diretorias: number | null
+          id: string
+          iniciado_em: string
+          mensagem: string | null
+          modo: string | null
+          ok: boolean | null
+          usuario: string | null
+        }
+        Insert: {
+          concluido_em?: string | null
+          diretorias?: number | null
+          id?: string
+          iniciado_em?: string
+          mensagem?: string | null
+          modo?: string | null
+          ok?: boolean | null
+          usuario?: string | null
+        }
+        Update: {
+          concluido_em?: string | null
+          diretorias?: number | null
+          id?: string
+          iniciado_em?: string
+          mensagem?: string | null
+          modo?: string | null
+          ok?: boolean | null
+          usuario?: string | null
+        }
+        Relationships: []
+      }
       gmail_processados: {
         Row: {
           draft_id: string | null
@@ -5229,6 +5352,7 @@ export type Database = {
       fase1_diretor: { Args: { _cadeira: string }; Returns: boolean }
       fase1_ocupante: { Args: { _cadeira: string }; Returns: boolean }
       fase1_sistema_proprio: { Args: { _sistema: string }; Returns: boolean }
+      fitfinder_pode_ler: { Args: { _diretoria: string }; Returns: boolean }
       gov_acoes_da_cadeira: {
         Args: { _cadeira: string }
         Returns: {

@@ -463,6 +463,13 @@
       "when": 1792925395316,
       "tag": "0065_pre_offsite_prazo_28_outubro",
       "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "7",
+      "when": 1793022440867,
+      "tag": "0066_fitfinder_raio_x_prestadores",
+      "breakpoints": true
     }
   ]
 }
