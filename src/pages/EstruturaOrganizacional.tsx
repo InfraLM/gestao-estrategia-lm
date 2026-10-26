@@ -20,6 +20,7 @@ import OrganogramaAtual from "@/components/estrutura/OrganogramaAtual";
 import EditarCargo, { type CargoEdicao } from "@/components/estrutura/EditarCargo";
 import { podeEditarEstrutura } from "@/lib/organograma";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useFitFinderAccess } from "@/hooks/useFitFinderAccess";
 
 const BLOCOS: { titulo: string; campo: keyof Cadeira }[] = [
   { titulo: "Missão", campo: "missao" }, { titulo: "É o D de", campo: "e_o_d_de" },
@@ -28,6 +29,8 @@ const BLOCOS: { titulo: string; campo: keyof Cadeira }[] = [
 ];
 export default function EstruturaOrganizacional() {
   const { user } = useAuth();
+  const fitfinder = useFitFinderAccess();
+  const [aba, setAba] = useState(new URLSearchParams(window.location.search).get("aba") ?? "organograma");
   const acesso = useModuleAccess();
   const canEdit = podeEditarEstrutura(acesso.grants, acesso.roles);
   const [editando, setEditando] = useState<Cadeira | null>(null);
@@ -56,7 +59,7 @@ export default function EstruturaOrganizacional() {
   const texto = (valor: string | null) => <EstruturaTexto texto={valor} acessoSocios={acessoSocios} />;
   return <div className="min-w-0 space-y-6">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">Estrutura Organizacional</h2><span role="status" className="text-sm text-muted-foreground">{filtradas.length} cadeiras</span></div>
-    <Tabs defaultValue={new URLSearchParams(window.location.search).get("aba") === "cadeiras" ? "cadeiras" : new URLSearchParams(window.location.search).get("aba") === "prestadores" ? "prestadores" : "organograma"} className="min-w-0"><TabsList className="mb-4 h-auto flex-wrap"><TabsTrigger value="organograma">Organograma atualizado</TabsTrigger><TabsTrigger value="fichas">Fichas estratégicas</TabsTrigger><TabsTrigger value="cadeiras">Cadeiras (metas e rotina)</TabsTrigger><TabsTrigger value="prestadores">Raio-x dos prestadores</TabsTrigger></TabsList><TabsContent value="prestadores"><RaioXPrestadores /></TabsContent><TabsContent value="cadeiras"><CadastroCadeiras /></TabsContent><TabsContent value="organograma"><OrganogramaAtual canEdit={canEdit} /></TabsContent><TabsContent value="fichas">
+    <Tabs value={aba === "prestadores" && !fitfinder.podeLer ? "organograma" : aba} onValueChange={setAba} className="min-w-0"><TabsList className="mb-4 h-auto flex-wrap"><TabsTrigger value="organograma">Organograma atualizado</TabsTrigger><TabsTrigger value="fichas">Fichas estratégicas</TabsTrigger><TabsTrigger value="cadeiras">Cadeiras (metas e rotina)</TabsTrigger>{fitfinder.podeLer && <TabsTrigger value="prestadores">Raio-x dos prestadores</TabsTrigger>}</TabsList>{fitfinder.podeLer && <TabsContent value="prestadores"><RaioXPrestadores /></TabsContent>}<TabsContent value="cadeiras"><CadastroCadeiras /></TabsContent><TabsContent value="organograma"><OrganogramaAtual canEdit={canEdit} /></TabsContent><TabsContent value="fichas">
     {query.isPending ? <div role="status" className="flex items-center justify-center gap-2 py-16"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />Carregando estrutura…</div>
       : query.isError ? <div role="alert" className="space-y-3 py-12 text-center"><p className="text-destructive">Não foi possível carregar a estrutura organizacional.</p><Button variant="outline" onClick={() => query.refetch()}>Tentar novamente</Button></div>
       : <>

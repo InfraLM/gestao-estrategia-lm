@@ -15,6 +15,8 @@ import { melhoriaRelevante, rotuloMaturidade, rotuloGrau, codigoDoNome } from "@
 import { estaAtrasado, resumoImpacto, ItemImpacto, ROTULO_ORIGEM, OrigemImpacto } from "@/lib/impactoObjetivo";
 import FinanceiroObjetivo from '@/components/FinanceiroObjetivo';
 import KpisObjetivo from '@/components/KpisObjetivo';
+import { useFitFinderAccess } from "@/hooks/useFitFinderAccess";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
 
 const db = supabase as any;
 const AVAL: Record<string, { t: string; v: "default" | "destructive" | "outline" | "secondary" }> = {
@@ -30,6 +32,8 @@ type Proc = { local: any[]; esp: any[]; imps: any[]; mels: any[]; corr: any[]; d
 
 /** Drill-down do objetivo: KPIs, KRs e cesta com tudo o que está vinculado, de todas as origens. */
 export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodigo: string }) {
+  const fitfinder = useFitFinderAccess();
+  const acesso = useModuleAccess();
   const [base, setBase] = useState<any>(null);
   const [inds, setInds] = useState<any[]>([]);
   const [gov, setGov] = useState<Gov>({ acoes: [], decisoes: [], vinc: [] });
@@ -124,7 +128,7 @@ export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodi
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/^AC02(\.|$)/i.test(objetivoCodigo) && <Button asChild size="sm" variant="outline"><Link to="/estrutura-organizacional?aba=prestadores">Ver raio-x dos prestadores</Link></Button>}
+        {fitfinder.podeLer && acesso.canAccessPath("estrutura", "/estrutura-organizacional") && /^AC02(\.|$)/i.test(objetivoCodigo) && <Button asChild size="sm" variant="outline"><Link to="/estrutura-organizacional?aba=prestadores">Ver raio-x dos prestadores</Link></Button>}
         <FinanceiroObjetivo codigo={objetivoCodigo} />
         <KpisObjetivo codigo={objetivoCodigo} />
         <Bloco titulo="Direto no objetivo" itens={diretos} vincular={podeVincular ? { tipo: "objetivo", ref: obj.id } : null} gov={gov} onMudou={carregarGov} />
