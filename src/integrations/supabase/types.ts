@@ -1187,6 +1187,44 @@ export type Database = {
         }
         Relationships: []
       }
+      fitfinder_diretoria_cadeiras: {
+        Row: {
+          cadeira_id: string
+          confirmado_em: string | null
+          confirmado_por: string | null
+          created_at: string
+          diretoria: string
+          id: string
+          status: string
+        }
+        Insert: {
+          cadeira_id: string
+          confirmado_em?: string | null
+          confirmado_por?: string | null
+          created_at?: string
+          diretoria: string
+          id?: string
+          status?: string
+        }
+        Update: {
+          cadeira_id?: string
+          confirmado_em?: string | null
+          confirmado_por?: string | null
+          created_at?: string
+          diretoria?: string
+          id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fitfinder_diretoria_cadeiras_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fitfinder_espelho: {
         Row: {
           aderencia: Json
@@ -1230,18 +1268,21 @@ export type Database = {
         Row: {
           ativo: boolean
           atualizado_por: string | null
+          diretores_podem_ler: boolean
           id: boolean
           updated_at: string
         }
         Insert: {
           ativo?: boolean
           atualizado_por?: string | null
+          diretores_podem_ler?: boolean
           id?: boolean
           updated_at?: string
         }
         Update: {
           ativo?: boolean
           atualizado_por?: string | null
+          diretores_podem_ler?: boolean
           id?: boolean
           updated_at?: string
         }

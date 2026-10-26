@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { mapearExport, sugerirCadeira } from "./mapear.ts";
+import { mapearExport, sugerirCadeiras } from "./mapear.ts";
 
 // Sincronização com o app Fit Finder (raio-x dos prestadores). Começa DESLIGADA; exige
 // FITFINDER_EXPORT_URL/FITFINDER_EXPORT_TOKEN e Governança/CEO. Grava apenas agregados por diretoria.
@@ -9,11 +9,12 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   const auth = req.headers.get("Authorization");
   if (!auth?.startsWith("Bearer ")) return out({ error: "Não autenticado" }, 401);
-  const url = Deno.env.get("SUPABASE_URL")!;
-  const anon = createClient(url, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: auth } } });
+  const url = Deno.env.get("SUPABASE_URL"), anonKey = Deno.env.get("SUPABASE_ANON_KEY"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !anonKey || !serviceKey) return out({ error: "Configuração indisponível" }, 503);
+  const anon = createClient(url, anonKey, { global: { headers: { Authorization: auth } } });
   const { data: c, error } = await anon.auth.getClaims(auth.slice(7));
   if (error || !c?.claims?.sub) return out({ error: "Não autenticado" }, 401);
-  const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const admin = createClient(url, serviceKey);
   const { data: ok } = await admin.rpc("proj_gov_ou_ceo", { _uid: c.claims.sub });
   if (!ok) return out({ error: "Sem permissão" }, 403);
 
@@ -38,9 +39,15 @@ Deno.serve(async (req) => {
     if (m.diretorias.length) {
       await admin.from("fitfinder_espelho").upsert(m.diretorias.map((d) => ({ ...d, ativo: true, gerado_em: m.gerado_em, sincronizado_em: agora })));
       const { data: cads } = await admin.from("mt_cadeiras").select("id,nome").eq("ativo", true);
-      await admin.from("fitfinder_diretoria_cadeira").upsert(
-        m.diretorias.map((d) => ({ diretoria: d.diretoria, cadeira_id: sugerirCadeira(d.diretoria, cads ?? []), status: "sugerido" })),
-        { onConflict: "diretoria", ignoreDuplicates: true });
+      // Só propõe para diretorias ainda não mapeadas; preserva decisões humanas.
+      const { data: existentes, error: erroMapa } = await admin.from("fitfinder_diretoria_cadeiras").select("diretoria");
+      if (erroMapa) throw erroMapa;
+      const pares = m.diretorias.filter(d => !existentes?.some(x => x.diretoria === d.diretoria)).flatMap(d =>
+        sugerirCadeiras(d.diretoria, cads ?? []).map(cadeira_id => ({ diretoria: d.diretoria, cadeira_id, status: "sugerido" })));
+      if (pares.length) {
+        const { error: erroPares } = await admin.from("fitfinder_diretoria_cadeiras").upsert(pares, { onConflict: "diretoria,cadeira_id", ignoreDuplicates: true });
+        if (erroPares) throw erroPares;
+      }
     }
     // sincronização completa (sem "desde"): diretorias ausentes deixam de aparecer
     if (!desde) {

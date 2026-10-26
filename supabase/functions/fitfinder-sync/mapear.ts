@@ -62,3 +62,22 @@ export function sugerirCadeira(diretoria: string, cadeiras: { id: string; nome: 
   const parcial = cadeiras.filter((c) => { const n = norm(c.nome); return n && (n.includes(d) || d.includes(n)); });
   return parcial.length === 1 ? parcial[0].id : null;
 }
+
+export const DIRETORIAS_FITFINDER = ["CRO", "COO", "CFO", "DGOP", "CEO"] as const;
+/** Agrupamento local; sempre propostas e nunca repartição de indicadores. */
+export function sugerirCadeiras(diretoria: string, cadeiras: { id: string; nome: string }[]): string[] {
+  const alvos: Record<string, string[]> = {
+    cro: ["cpto", "cmo", "comercial"], coo: ["coo"], cfo: ["cfo"],
+    dgop: ["cppo"], ceo: ["ceo", "institucional"],
+  };
+  return [...new Set((alvos[norm(diretoria)] ?? []).flatMap(alvo => {
+    const exatas = cadeiras.filter(c => norm(c.nome) === alvo);
+    const candidatos = exatas.length ? exatas : cadeiras.filter(c => norm(c.nome).startsWith(`${alvo} `));
+    if (candidatos.length === 1) return [candidatos[0].id];
+    if (alvo === "cppo" && !candidatos.length) {
+      const gov = cadeiras.filter(c => norm(c.nome).includes("governanca"));
+      return gov.length === 1 ? [gov[0].id] : [];
+    }
+    return [];
+  }))];
+}
