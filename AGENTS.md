@@ -6,7 +6,7 @@ Area rules live in nested AGENTS.md files; read the one for the folder before ch
 - `src/components/AGENTS.md` — shared layout/sidebar. `src/components/estrutura/AGENTS.md` — organogram.
 
 - Phase 1 spaces use six isolated tables and additive `fase1_*` auth helpers; new modules default closed, with owner/director read exceptions enforced server-side without changing legacy module access.
-- Pré-Offsite uses isolated offsite_* tables, explicit protected module admins, chair-scoped reference projections and optimistic-version save/send RPCs; only explicit promotion exposes a proposal in the strategic backlog, while private responses never feed AI or legacy routine/Sócios tables.
+- Pré-Offsite uses isolated offsite_* tables, explicit protected admins and a verified-email respondent allowlist referencing existing chairs, independent of legacy roles/module grants; ordinary account invitations remain in usuario_convites. Admin status alone never authorizes a personal response; consolidated/Excel status lists only active respondents. Chair-scoped references and optimistic-version save/send RPCs preserve privacy; only explicit promotion exposes a proposal in the strategic backlog, never automatic AI or routine/Sócios feeds.
 - Strategic reference URLs use linksEstrategicos; Contexto and Insights select sheets from the codigo query parameter using replace navigation and only RLS-visible records, preserving filters and existing access gates.
 - Strategic spaces read via RLS; Contexto, Insights Sócios, Incentivos read-only; CestaInsights edits only adherence fields (incentivos editors/admin). No general exports.
 - Editable static content is JSON per key in `conteudo_editavel` via `useConteudo`, static defaults as fallback.

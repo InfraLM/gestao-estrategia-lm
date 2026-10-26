@@ -1,3 +1,8 @@
+# Pré-Offsite · acessos de diretores 26/10
+- [x] Seis participantes por e-mail verificado e cadeiras existentes; cinco convites de cadastro (Iuri reutilizado), sem senhas ou novos acessos a outros módulos.
+- [x] Naira admin e respondente com rascunho preservado; Ian só admin. 38 testes passaram; tela Naira computador/celular, consolidado e Excel com seis respondentes conferidos. Sem publicar.
+- [ ] Primeiro acesso real dos cinco convidados — depende de cadastro/entrada e verificação por cada destinatário; regras testadas isoladamente.
+
 # Fit Finder · decisões 26/10
 - [x] Vínculos por pares, oito sugestões iniciais sem confirmação e agrupamento na tela; nomes existentes CMO / BU Certificações e CPPO (Processos e Pessoas).
 - [x] Acesso atual só Gov/CEO no banco, tela e AC02/AC.02; interruptor futuro desligado sem ampliar Estrutura.

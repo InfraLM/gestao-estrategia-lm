@@ -3234,6 +3234,51 @@ export type Database = {
         }
         Relationships: []
       }
+      offsite_participantes: {
+        Row: {
+          ativo: boolean
+          cadeira_id: string
+          convite_id: string | null
+          criado_em: string
+          email: string
+          nome: string
+          perfil: string
+        }
+        Insert: {
+          ativo?: boolean
+          cadeira_id: string
+          convite_id?: string | null
+          criado_em?: string
+          email: string
+          nome: string
+          perfil?: string
+        }
+        Update: {
+          ativo?: boolean
+          cadeira_id?: string
+          convite_id?: string | null
+          criado_em?: string
+          email?: string
+          nome?: string
+          perfil?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offsite_participantes_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offsite_participantes_convite_id_fkey"
+            columns: ["convite_id"]
+            isOneToOne: false
+            referencedRelation: "usuario_convites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offsite_respostas: {
         Row: {
           atualizado_em: string
