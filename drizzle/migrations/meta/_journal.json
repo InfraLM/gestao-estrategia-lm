@@ -484,6 +484,13 @@
       "when": 1793028237723,
       "tag": "0068_pre_offsite_prazo_7_novembro",
       "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1793028406599,
+      "tag": "0069_pre_offsite_prazo_28_outubro_v311",
+      "breakpoints": true
     }
   ]
 }
