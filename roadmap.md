@@ -1,3 +1,7 @@
+# Pré-Offsite · acessos de diretores 26/10
+- [ ] Conferir seis cadastros/cadeiras e conceder somente acesso Pré-Offsite; convidar ausentes sem senha.
+- [ ] Naira admin e respondente; Ian só admin; testar isolamento e devolver tabela, sem publicar.
+
 # Fit Finder · decisões 26/10
 - [x] Vínculos por pares, oito sugestões iniciais sem confirmação e agrupamento na tela; nomes existentes CMO / BU Certificações e CPPO (Processos e Pessoas).
 - [x] Acesso atual só Gov/CEO no banco, tela e AC02/AC.02; interruptor futuro desligado sem ampliar Estrutura.
