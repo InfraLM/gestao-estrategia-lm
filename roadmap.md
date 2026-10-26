@@ -1,7 +1,7 @@
 # Pré-Offsite · topo e Bloco 0 por diretoria
-- [ ] Navegação no topo, progresso e rodapé fixo sem sobreposição.
-- [ ] Perguntas 0.1–0.10, painéis de KPIs por cadeira com fallback, respostas antigas ignoradas; consolidado/Excel/anexo.
-- [ ] Testes isolados Yuri/Bruno/Felipe computador/celular, privacidade e histórico; não publicar nem alterar respostas/acessos.
+- [x] Navegação no topo, progresso e rodapé fixo sem sobreposição; computador/celular conferidos.
+- [x] Perguntas 0.1–0.10 em namespace novo, painéis por cadeira com principal cadastrado e apoio fallback; consolidado/Excel/influência/revisão/anexo. Configuração com histórico, prazo preservado.
+- [x] 40 testes aprovados; Yuri (21 KPIs), Bruno (8), Felipe (6) fictícios computador/celular e salvar/reler isolados; Naira e consolidado reais somente leitura; Excel fictício conferido. Assinatura do único rascunho inalterada, acessos preservados, não publicado.
 
 # Sócios · raias e escada de valor
 - [x] Eixos com raias alfabéticas, cores e siglas exclusivas, consenso e tooltip; P4 B/escada opcional/tensões/diretriz/histórico atualizados. 88 testes aprovados; Naira autenticada, computador/celular/claro/escuro, valores iguais e salvar/reler isolados; zero respostas reais alteradas, sem publicar.
