@@ -131,3 +131,5 @@
 - [x] Lançamentos movido para Rotina Semanal (rotas e acesso inalterados)
 - [x] "+ Apontar outros KPIs" (voluntário, fora do calendário, sugestão de desvio crítico)
 - [x] Dashboard da rotina (/semanal/dashboard) com aderência, painel por origem e formulários do ciclo
+
+- [x] Rotina: atas só endereçadas + fila Aguardando avaliação, janela de 3 meses com pendências antigas, ações/entregas por projeto no item 2 (publicar pendente)

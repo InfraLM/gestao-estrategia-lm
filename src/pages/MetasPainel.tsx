@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useAtasAguardando } from "@/components/GestaoPendenciasRotina";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -210,6 +211,7 @@ export default function MetasPainel() {
         <Button asChild variant="link" className="px-0"><Link to="/lancamentos?aba=lancar">Abrir formulário mensal</Link></Button>
       </Card>
 
+      {b.isGovernanca && <FilaAguardandoCard />}
       {b.isGovernanca && <ResumoExtras mes={comp} cadeiras={cadeiras} />}
       {b.isGovernanca && <AvisosCiclo />}
       {(b.isGovernanca || b.cadeiras.some(c=>c.nome==='CEO'&&c.id===b.minhaCadeira)) && <DesviosKpiPauta indicadores={b.indicadores} cadeiras={b.cadeiras}/>}
@@ -236,4 +238,13 @@ export default function MetasPainel() {
 
     </div>
   );
+}
+
+function FilaAguardandoCard() {
+  const q = useAtasAguardando(true);
+  return <Card className="flex flex-wrap items-center justify-between gap-2 p-4">
+    <div><p className="font-semibold">Ações de atas aguardando avaliação: {q.isPending ? "…" : q.data?.length ?? 0}</p>
+      <p className="text-xs text-muted-foreground">Sem responsável ligado a uma cadeira; não vão para nenhum formulário até a Governança atribuir.</p></div>
+    <Button asChild variant="outline" size="sm"><Link to="/semanal/dashboard">Avaliar e atribuir</Link></Button>
+  </Card>;
 }

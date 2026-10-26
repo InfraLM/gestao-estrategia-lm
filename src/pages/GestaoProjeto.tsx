@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { AcoesEntregaLista } from "@/components/AcoesEntregaCheckout";
 import { Link, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -305,6 +306,7 @@ function GestaoProjetoInner({ projeto: pj }: { projeto?: Projeto }) {
         <TabsContent value="iniciativas" className="mt-5">
           <PortfolioVinculos fonteTipo="projeto" projetoCodigo={projeto.id} />
           <EmpilhadosVinculo projetoCodigo={projeto.id} />
+          <div className="mt-4"><AcoesEntregaLista titulo="Entregas registradas na rotina semanal" filtro={{ projeto_id: projeto.id }} /></div>
         </TabsContent>
 
         {/* SUBMISSÕES — visão consolidada */}
