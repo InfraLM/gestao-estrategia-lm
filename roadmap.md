@@ -1,4 +1,5 @@
 # Pré-Offsite · acessos de diretores 26/10
+- [ ] Conferir grupos dos dois formulários no servidor; reutilizar Yuri/Cleto, preservar respostas Sócios e excluir Ian/Cleto das pendências Pré-Offsite; tabela final sem publicar.
 - [x] Seis participantes por e-mail verificado e cadeiras existentes; cinco convites de cadastro (Iuri reutilizado), sem senhas ou novos acessos a outros módulos.
 - [x] Naira admin e respondente com rascunho preservado; Ian só admin. 38 testes passaram; tela Naira computador/celular, consolidado e Excel com seis respondentes conferidos. Sem publicar.
 - [ ] Primeiro acesso real dos cinco convidados — depende de cadastro/entrada e verificação por cada destinatário; regras testadas isoladamente.
