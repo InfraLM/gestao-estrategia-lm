@@ -1,3 +1,4 @@
+import { PERSPECTIVAS_BLOCO0 } from './bloco0';
 import { IndicadoresConsolidado } from './Indicadores';
 import ConfigEditor from './ConfigEditor';
 import {exportarTudo,traduzir} from './export';
@@ -48,5 +49,6 @@ function Programas4B({rs}:{rs:Resposta[]}){
 function Bloco0({rs,c,refs}:{rs:Resposta[];c:Config;refs:any}){
  const grupos:{titulo:string;qs:Config['perguntas'][number]}[]=[];for(const p of c.perguntas[0]){if(p.id==='0.10')continue;if(p.grupo||!grupos.length)grupos.push({titulo:p.grupo??'Bloco 0',qs:[]});grupos[grupos.length-1].qs.push(p);}
  return <div className="space-y-6"><section className="space-y-3"><h3 className="font-semibold">0.10 · Frases de causa e efeito</h3>{rs.length===0?<p className="text-sm text-muted-foreground">Nenhuma resposta ainda.</p>:<ul className="space-y-2">{rs.map(r=><li key={r.id} className="border-l-2 border-primary pl-3 text-sm"><strong>{r.nome}:</strong> {resumoResposta(r.respostas,'0.10',c)?resumoResposta(r.respostas,'0.10',c):<span className="text-muted-foreground">Não respondido</span>}</li>)}</ul>}</section>
+ <section className="space-y-3"><h3 className="font-semibold">Indicadores influenciados</h3>{rs.map(r=><div key={r.id}><strong>{r.nome}</strong>{PERSPECTIVAS_BLOCO0.filter(p=>r.respostas[`b0.influencia.${p}`]).map(p=><div key={p}><p className="text-sm text-muted-foreground">{p}</p><Valor value={traduzir(r.respostas[`b0.influencia.${p}`],refs,c)}/></div>)}</div>)}</section>
  {grupos.map(g=><section key={g.titulo} className="space-y-3"><h3 className="text-lg font-semibold text-primary">{g.titulo}</h3>{g.qs.map(p=><details key={p.id} className="border rounded-md p-4"><summary className="font-medium cursor-pointer">{p.id} · {p.titulo??p.texto}</summary><div className="mt-4 grid gap-4 md:grid-cols-2">{rs.map(r=><div key={r.id} className="space-y-1"><strong className="text-sm">{r.nome}</strong><Valor value={traduzir(resumoResposta(r.respostas,p.id,c),refs,c)}/></div>)}</div></details>)}</section>)}</div>;
 }
