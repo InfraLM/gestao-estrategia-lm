@@ -1,7 +1,8 @@
 # Fit Finder · decisões 26/10
-- [ ] Vínculos por pares, sugestões iniciais sem confirmação e agrupamento na tela.
-- [ ] Acesso atual só Gov/CEO no banco, tela e AC02; interruptor futuro desligado sem ampliar Estrutura.
-- [ ] Testes isolados e conferência computador/celular; lembrar de publicar.
+- [x] Vínculos por pares, oito sugestões iniciais sem confirmação e agrupamento na tela; nomes existentes CMO / BU Certificações e CPPO (Processos e Pessoas).
+- [x] Acesso atual só Gov/CEO no banco, tela e AC02/AC.02; interruptor futuro desligado sem ampliar Estrutura.
+- [x] 41 testes aprovados (banco isolado com múltiplos pares e RLS); tela Naira computador/celular e atalho conferidos, negação simulada no navegador; zero indicadores reais ou sincronizações.
+- [ ] Publicar — ação da Naira.
 
 # Pré-Offsite 2027 · Diretoria v3.10
 - [x] Configuração editável com redação fornecida, acesso privado Naira/Ian/diretores e materiais por cadeira.
