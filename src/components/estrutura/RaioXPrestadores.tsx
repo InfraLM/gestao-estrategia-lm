@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useFitFinderAccess } from "@/hooks/useFitFinderAccess";
+import { DIRETORIAS_FITFINDER } from "../../../supabase/functions/fitfinder-sync/mapear";
+import { X, Plus } from "lucide-react";
 
 const db = supabase as any;
 type Item = { rotulo: string; qtd: number | null; pequeno?: boolean };
@@ -32,19 +35,19 @@ function Barras({ itens, sufixo = "" }: { itens: Item[]; sufixo?: string }) {
 
 /** Raio-x dos prestadores por diretoria (Fit Finder). Somente agregados; a visibilidade é decidida pelo banco. */
 export default function RaioXPrestadores() {
-  const [gov, setGov] = useState(false);
+  const { gov, podeLer, carregando } = useFitFinderAccess();
+  const [novas, setNovas] = useState<Record<string, string>>({});
   const [d, setD] = useState<any>({ cfg: null, esp: [], mapa: [], log: [], cads: [], carregado: false });
   const carregar = () => Promise.all([
-    db.from("fitfinder_integracao_config").select("ativo").maybeSingle(),
+    db.from("fitfinder_integracao_config").select("ativo,diretores_podem_ler").maybeSingle(),
     db.from("fitfinder_espelho").select("*").eq("ativo", true).order("diretoria"),
-    db.from("fitfinder_diretoria_cadeira").select("*").order("diretoria"),
+    db.from("fitfinder_diretoria_cadeiras").select("*").order("diretoria"),
     db.from("fitfinder_sync_log").select("*").order("iniciado_em", { ascending: false }).limit(10),
     db.from("mt_cadeiras").select("id,nome").eq("ativo", true).order("nome"),
   ]).then(([cfg, esp, mapa, log, cads]: any[]) => setD({ cfg: cfg.data, esp: esp.data ?? [], mapa: mapa.data ?? [], log: log.data ?? [], cads: cads.data ?? [], carregado: true }));
   useEffect(() => {
-    carregar();
-    supabase.auth.getUser().then(({ data }) => data.user && db.rpc("proj_gov_ou_ceo", { _uid: data.user.id }).then(({ data: ok }: any) => setGov(!!ok)));
-  }, []);
+    if (podeLer) carregar();
+  }, [podeLer]);
   const uid = async () => (await supabase.auth.getUser()).data.user?.id;
   const ligar = async (v: boolean) => {
     const { error } = await db.from("fitfinder_integracao_config").update({ ativo: v, atualizado_por: await uid(), updated_at: new Date().toISOString() }).eq("id", true);
@@ -59,14 +62,31 @@ export default function RaioXPrestadores() {
     carregar();
   };
   const salvarMapa = async (id: string, patch: any) => {
-    const { error } = await db.from("fitfinder_diretoria_cadeira").update(patch).eq("id", id);
+    const { error } = await db.from("fitfinder_diretoria_cadeiras").update(patch).eq("id", id);
     if (error) toast.error("Não foi possível salvar."); else carregar();
   };
-  const mapaDe = (dir: string) => d.mapa.find((m: any) => m.diretoria === dir);
+  const adicionar = async (diretoria: string) => {
+    const cadeira_id = novas[diretoria];
+    if (!cadeira_id || !gov) return;
+    const { error } = await db.from("fitfinder_diretoria_cadeiras").insert({ diretoria, cadeira_id, status: "sugerido" });
+    if (error) toast.error("Não foi possível adicionar. Confira se o par já existe.");
+    else { setNovas(n => ({ ...n, [diretoria]: "" })); carregar(); }
+  };
+  const remover = async (id: string) => {
+    const { error } = await db.from("fitfinder_diretoria_cadeiras").delete().eq("id", id);
+    if (error) toast.error("Não foi possível remover."); else carregar();
+  };
+  const liberarDiretores = async (diretores_podem_ler: boolean) => {
+    const { error } = await db.from("fitfinder_integracao_config").update({ diretores_podem_ler, atualizado_por: await uid(), updated_at: new Date().toISOString() }).eq("id", true);
+    if (error) toast.error("Não foi possível alterar o acesso."); else carregar();
+  };
+  const mapaDe = (dir: string) => d.mapa.filter((m: any) => m.diretoria === dir);
   const nomeCad = (id?: string | null) => d.cads.find((c: any) => c.id === id)?.nome;
   const ultima = d.esp.reduce((m: string | null, e: any) => (!m || e.sincronizado_em > m ? e.sincronizado_em : m), null);
-  // Governança/CEO veem tudo; diretores só recebem do banco a diretoria confirmada da própria cadeira
-  const visiveis = gov ? d.esp : d.esp.filter((e: any) => mapaDe(e.diretoria)?.status === "confirmado");
+  const visiveis = podeLer ? d.esp : [];
+  const diretorias = [...new Set<string>([...DIRETORIAS_FITFINDER, ...d.mapa.map((m: any) => m.diretoria)])];
+  if (carregando) return <p role="status" className="text-sm text-muted-foreground">Carregando…</p>;
+  if (!podeLer) return <p role="alert" className="text-sm text-muted-foreground">Raio-x restrito à Governança e ao CEO.</p>;
 
   return (
     <div className="space-y-4">
@@ -87,23 +107,31 @@ export default function RaioXPrestadores() {
               <Button size="sm" variant="outline" disabled={!d.cfg?.ativo} onClick={() => sync(true)}>Testar conexão</Button>
               <Button size="sm" disabled={!d.cfg?.ativo} onClick={() => sync(false)}>Sincronizar agora</Button>
             </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Switch aria-label="Permitir diretor ver a própria diretoria" checked={!!d.cfg?.diretores_podem_ler} onCheckedChange={liberarDiretores} />
+              <span>Diretor vê a própria diretoria: {d.cfg?.diretores_podem_ler ? "ligado" : "desligado"}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">A liberação exige vínculo confirmado e não libera acesso à Estrutura organizacional.</p>
             {d.log.length > 0 && <ul className="text-xs text-muted-foreground">{d.log.map((l: any) => <li key={l.id}>{new Date(l.iniciado_em).toLocaleString("pt-BR")} · {l.ok ? `OK · ${l.diretorias} diretorias` : l.ok === false ? `Falha${l.mensagem ? ` · ${l.mensagem}` : ""}` : "Em andamento"}</li>)}</ul>}
             <div className="space-y-1.5">
-              <p className="text-xs font-medium">Diretoria do Fit Finder → cadeira ({d.mapa.filter((m: any) => m.status === "confirmado").length}/{d.mapa.length} confirmadas)</p>
-              {!d.mapa.length && <p className="text-xs text-muted-foreground">Aparece depois da primeira sincronização. A sugestão é automática; só vale depois de confirmada.</p>}
-              {d.mapa.map((x: any) => (
-                <div key={x.id} className="flex flex-wrap items-center gap-2 rounded border px-2 py-1.5 text-xs">
-                  <span className="min-w-[160px] flex-1 font-medium">{x.diretoria}</span>
-                  <Select value={x.cadeira_id ?? ""} onValueChange={(v) => salvarMapa(x.id, { cadeira_id: v, status: "sugerido" })}>
-                    <SelectTrigger className="h-8 w-60" aria-label={`Cadeira de ${x.diretoria}`}><SelectValue placeholder="Escolher cadeira" /></SelectTrigger>
-                    <SelectContent>{d.cads.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent>
-                  </Select>
+              <p className="text-xs font-medium">Diretorias do Fit Finder → cadeiras ({d.mapa.filter((m: any) => m.status === "confirmado").length}/{d.mapa.length} vínculos confirmados)</p>
+              <p className="text-xs text-muted-foreground">Números da diretoria inteira, não separados por cadeira. Sugestões aguardam confirmação da Naira.</p>
+              {diretorias.map(dir => <section key={dir} className="space-y-2 border-b py-3">
+                <h4 className="text-sm font-medium break-words">{dir} · {mapaDe(dir).map((m: any) => nomeCad(m.cadeira_id)).filter(Boolean).join(", ") || "Sem cadeiras"}</h4>
+                {mapaDe(dir).map((x: any) => <div key={x.id} className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className="min-w-0 flex-1 break-words">{nomeCad(x.cadeira_id)}</span>
                   <Badge variant={x.status === "confirmado" ? "default" : "outline"}>{x.status === "confirmado" ? "Confirmado" : "Sugerido"}</Badge>
-                  {x.status !== "confirmado"
-                    ? <Button size="sm" variant="outline" className="h-7" disabled={!x.cadeira_id} onClick={() => salvarMapa(x.id, { status: "confirmado" })}>Confirmar</Button>
-                    : <Button size="sm" variant="ghost" className="h-7" onClick={() => salvarMapa(x.id, { status: "sugerido" })}>Desfazer</Button>}
+                  <Button size="sm" variant="outline" className="h-7" onClick={() => salvarMapa(x.id, { status: x.status === "confirmado" ? "sugerido" : "confirmado" })}>{x.status === "confirmado" ? "Desfazer" : "Confirmar"}</Button>
+                  <Button size="icon" variant="ghost" className="h-7 w-7" title="Remover vínculo" aria-label={`Remover ${dir} · ${nomeCad(x.cadeira_id)}`} onClick={() => remover(x.id)}><X className="h-4 w-4" /></Button>
+                </div>)}
+                <div className="flex items-center gap-2">
+                  <Select value={novas[dir] ?? ""} onValueChange={v => setNovas(n => ({ ...n, [dir]: v }))}>
+                    <SelectTrigger className="h-8 w-full max-w-80 min-w-0" aria-label={`Adicionar cadeira a ${dir}`}><SelectValue placeholder="Adicionar cadeira" /></SelectTrigger>
+                    <SelectContent>{d.cads.filter((c: any) => !mapaDe(dir).some((m: any) => m.cadeira_id === c.id)).map((c: any) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent>
+                  </Select>
+                  <Button size="icon" variant="outline" className="h-8 w-8 shrink-0" title="Adicionar vínculo sugerido" aria-label={`Adicionar vínculo ${dir}`} disabled={!novas[dir]} onClick={() => adicionar(dir)}><Plus className="h-4 w-4" /></Button>
                 </div>
-              ))}
+              </section>)}
             </div>
           </CardContent>
         </Card>
@@ -111,7 +139,7 @@ export default function RaioXPrestadores() {
 
       {d.carregado && !visiveis.length && (
         <p className="rounded border p-6 text-center text-sm text-muted-foreground">
-          {gov ? "Ainda não há dados sincronizados do Fit Finder." : "Nenhuma diretoria disponível para você. Diretores veem apenas a da própria cadeira, depois que a Governança confirmar a correspondência."}
+          Ainda não há dados sincronizados do Fit Finder.
         </p>
       )}
 
@@ -123,9 +151,10 @@ export default function RaioXPrestadores() {
             <Card key={e.diretoria}>
               <CardHeader className="pb-2">
                 <CardTitle className="flex flex-wrap items-center gap-2 text-sm">
-                  {e.diretoria}
-                  {m?.cadeira_id && <Badge variant="outline">{nomeCad(m.cadeira_id)}{m.status !== "confirmado" ? " · a confirmar" : ""}</Badge>}
+                  {e.diretoria} · {m.map((x: any) => nomeCad(x.cadeira_id)).filter(Boolean).join(", ") || "Sem cadeiras"}
+                  {m.some((x: any) => x.status !== "confirmado") && <Badge variant="outline">Vínculos a confirmar</Badge>}
                 </CardTitle>
+                <p className="text-xs text-muted-foreground">Números da diretoria inteira, não separados por cadeira.</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 {e.grupo_pequeno ? <p className="text-sm text-muted-foreground">Grupo pequeno (menos de 3 prestadores): indicadores ocultos para preservar a privacidade.</p> : <>

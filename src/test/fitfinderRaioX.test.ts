@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mapearExport, sugerirCadeira } from "../../supabase/functions/fitfinder-sync/mapear";
+import { mapearExport, sugerirCadeira, sugerirCadeiras } from "../../supabase/functions/fitfinder-sync/mapear";
 
 describe("Fit Finder: privacidade dos agregados", () => {
   it("diretoria com menos de 3 prestadores vira grupo pequeno sem indicadores", () => {
@@ -25,5 +25,19 @@ describe("Fit Finder: privacidade dos agregados", () => {
     const cads = [{ id: "1", nome: "CFO" }, { id: "2", nome: "COO" }];
     expect(sugerirCadeira("cfo", cads)).toBe("1");
     expect(sugerirCadeira("Diretoria X", cads)).toBeNull();
+  });
+});
+
+describe("Fit Finder: agrupamentos definidos pela Naira", () => {
+  const cadeiras = ["CPTO", "CMO / BU Certificações", "Comercial", "COO", "CFO", "CPPO (Processos e Pessoas)", "CEO", "Institucional"].map(nome => ({ id: nome, nome }));
+  it.each([
+    ["CRO", ["CPTO", "CMO / BU Certificações", "Comercial"]],
+    ["COO", ["COO"]], ["CFO", ["CFO"]],
+    ["DGOP", ["CPPO (Processos e Pessoas)"]], ["CEO", ["CEO", "Institucional"]],
+  ])("%s sugere as cadeiras equivalentes", (diretoria, esperado) => {
+    expect(sugerirCadeiras(diretoria as string, cadeiras)).toEqual(esperado);
+  });
+  it("não escolhe entre cadeiras ambíguas", () => {
+    expect(sugerirCadeiras("CRO", [{ id: "1", nome: "CMO A" }, { id: "2", nome: "CMO B" }])).toEqual([]);
   });
 });
