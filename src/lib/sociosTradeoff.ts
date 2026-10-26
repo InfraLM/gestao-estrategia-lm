@@ -37,13 +37,14 @@ export const PERGUNTAS: Pergunta[] = [
     helps: [
       "Core: PPG, FPG e ACLS.",
       "Resultados: receita bruta realizada jan–ago/26 de R$ 27,1 mi, com a PPG em 90%. Margem e CAC por produto ainda não estão validados (falta o P&L por produto); os LTV/CAC são projeções da modelagem v1 para 2030.",
+      "Escada de valor: os degraus que levam o médico até o core e o mantêm depois: oferta de entrada → produto principal (PPG) → add-on, upgrade ou renovação. Um produto de alavancagem vale pelo que gera de ascensão e retenção no core, mesmo que sozinho tenha LTV/CAC baixo. Hoje a ascensão ainda não é medida (sinal: R$ 0,65 mi migraram de FPG para PPG em jan–ago/26).",
       "Produtos que se pagam: POCUS e Paliativos têm LTV/CAC projetado de 4,4x e 4,0x para 2030 e se sustentariam sem depender da ascensão para a PPG. Hoje, porém, somam 0,9% da receita e estão com tráfego pago e vendas novas pausados (D-075). 'Se pagam' é projeção até o P&L por produto ser validado.",
       "Teste controlado: produto novo só entra com teto de investimento, prazo e critério de sucesso definidos antes de começar. Se não bater o critério, encerra.",
       "Orçamento fantasma: reserva prevista no orçamento, mas não comprometida: só é liberada quando um teste ou produto novo passa nos critérios. Se não for usada, volta para o caixa.",
     ],
     opcoes: [
       { v: "A", label: "Só o core: PPG, FPG e ACLS." },
-      { v: "B", label: "Core + produtos do portfólio atual que se pagam pela projeção 2030 (ex.: POCUS 4,4x e Paliativos 4,0x), mantidos só se o P&L por produto confirmar a margem.", labelCurto: "Core + portfólio que se paga (proj. 2030)" },
+      { v: "B", label: "Core + produtos que alavancam o core na escada de valor: ofertas que levam o médico até a PPG e add-ons ou upgrades depois dela (ex.: POCUS, Paliativos, mentorias, Fellowship), avaliados pela ascensão e retenção que geram no core, não só pelo resultado isolado.", labelCurto: "Core + alavancagem na escada de valor" },
       { v: "C", label: "Core + produtos mediante viabilidade: teto, prazo e critério de sucesso claros." },
       { v: "D", label: "Core + produtos do portfólio atual que se pagam + orçamento fantasma para testes e novos produtos." },
     ] },
@@ -273,7 +274,7 @@ const ESCOLHAS: Record<string, Record<string, [string, string]>> = {
   },
   portfolio: {
     A: ["Simplicidade: só os três produtos do core", "Receita de POCUS e Paliativos, que se pagam sozinhos"],
-    B: ["Core mais produtos que se pagam pela projeção 2030, condicionados ao P&L por produto", "Testar produtos novos em 2027"],
+    B: ["Core e os produtos que o alavancam na escada de valor (entrada, add-ons e upgrades)", "Julgar cada produto só pelo resultado isolado: o critério passa a ser ascensão e retenção, que ainda precisam ser medidas"],
     C: ["Core protegido, com novos produtos só quando a viabilidade estiver comprovada (teto, prazo e critério de sucesso)", "Receita de POCUS e Paliativos fora do foco, e velocidade de lançamento"],
     D: ["Core, portfólio atual que se paga e um orçamento fantasma: reserva liberada só para testes e novos produtos que passarem nos critérios", "Parte do caixa fica reservada e indisponível para outros usos enquanto houver teste em avaliação"],
   },
@@ -331,7 +332,9 @@ export function tensoes(r0: Respostas): string[] {
   if (financia(r) && ltvCac !== null && ltvCac < 3.5) out.push(`LTV/CAC mínimo de ${fmtNum(ltvCac)}x está abaixo do critério do conselheiro (3,5x) e perto da PPG 2030 (3,4x).`);
   if (financia(r) && custoFin !== null && custoDivida !== null && custoFin > custoDivida) out.push(`O custo máximo do financiamento (${fmtNum(custoFin)}% a.m.) é maior que o custo máximo de dívida da pergunta 9 (${fmtNum(custoDivida)}% a.m.).`);
   const pr = (r.produtos ?? {}) as Record<string, string>;
-  if ((r.portfolio === "B" || r.portfolio === "D") && ["pocus", "paliativos"].some(p => pr[p] === "crescer")) out.push("Crescer POCUS ou Paliativos se apoia na projeção 2030: hoje eles somam 0,9% da receita e estão com vendas novas pausadas (D-075). Crescer exige retomar as vendas e validar a margem no P&L por produto.");
+  if (r.portfolio === "D" && ["pocus", "paliativos"].some(p => pr[p] === "crescer")) out.push("Crescer POCUS ou Paliativos se apoia na projeção 2030: hoje eles somam 0,9% da receita e estão com vendas novas pausadas (D-075). Crescer exige retomar as vendas e validar a margem no P&L por produto.");
+  if (r.portfolio === "B" && r.trafego === "A") out.push("Escada de valor com a mídia focada só na PPG: os degraus de entrada não recebem tráfego e a ascensão depende só da base atual.");
+  if (r.portfolio === "B" && !String(r.produto_esc ?? "").trim()) out.push("Você escolheu alavancar o core pela escada de valor, mas não indicou como medir a ascensão e a retenção que cada produto gera.");
   if ((r.portfolio === "A" || r.portfolio === "C") && ["pocus", "paliativos"].some(p => pr[p] === "manter" || pr[p] === "crescer")) out.push("A postura de portfólio deixa POCUS e Paliativos fora do foco, mas você marcou Manter/Crescer para eles.");
   if (pr.fpg_presencial === "crescer" && r.trafego === "A") out.push("Quer crescer a FPG Presencial com a mídia focada na PPG: sozinha ela tem LTV/CAC projetado de 0,7x, e a ascensão não seria medida.");
   if (pr.ppg === "reduzir" || pr.ppg === "encerrar") out.push("Reduzir ou encerrar a PPG afeta ~79% da receita projetada.");
@@ -402,6 +405,7 @@ export function diretrizesSugeridas(r0: Respostas): Diretriz[] {
     const crits = criteriosMarcados(r).slice(0, 3).map(c => criterioTexto(c, r.fin_criterios?.[c.id]?.valor).replace(/^./, s => s.toLowerCase()));
     out.push({ texto: `Crescer no ritmo do caixa, financiando apenas iniciativas com prazo estabelecido para devolver o investimento e retorno acima do custo do dinheiro, tendo como primeira candidata: ${aposta}, com teto total de ${teto}, em parcelas liberadas só com ${crits.length ? crits.join("; ") : "critérios a definir"}.`, objetivos: ["P.03", "F.02"] });
   }
+  if (r.portfolio === "B") out.push({ texto: "Manter o core e só manter ou criar produtos que o alavanquem na escada de valor, medidos pela ascensão e retenção que geram na PPG.", objetivos: ["F.01", "P.01"] });
   if (r.portfolio === "C") out.push({ texto: "Manter o core e só lançar novos produtos mediante viabilidade comprovada: teto de investimento, prazo e critério de sucesso claros antes de começar.", objetivos: ["F.01", "P.01"] });
   if (r.portfolio === "D") out.push({ texto: "Manter o core e os produtos do portfólio atual que se pagam, com um orçamento fantasma para testes e novos produtos: reserva liberada só para iniciativas com teto, prazo e critério de sucesso aprovados; o que não for usado volta ao caixa.", objetivos: ["F.01", "P.01"] });
   if (r.caixa_min) out.push({ texto: `Manter caixa mínimo de ${r.caixa_min === "6" ? "6 meses ou mais" : `${r.caixa_min} ${r.caixa_min === "1" ? "mês" : "meses"}`}.`, objetivos: ["F.02"] });
@@ -485,7 +489,7 @@ export function compararSocios(lista: Respostas[]) {
 
 export const RESPOSTAS_ABERTAS: [string, string][] = [
   ["motor_porque", "Motor · por quê"], ["principio_obs", "Princípio · observações"],
-  ["portfolio_obs", "Portfólio · comentário"], ["produto_novo", "Produto novo a testar/lançar"],
+  ["portfolio_obs", "Portfólio · comentário"], ["produto_esc", "Escada de valor"], ["produto_novo", "Produto novo a testar/lançar"],
   ["trafego_obs", "Mídia · observações"], ["novo_aposta", "Primeira aposta Motor 2"],
   ["novo_lider", "Liderança do novo"], ["ddl_obs", "DDL · observações"],
   ["venda_cond", "Condições de venda"], ["sucessao_val", "Valuation"],
