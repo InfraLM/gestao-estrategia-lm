@@ -470,6 +470,13 @@
       "when": 1793022440867,
       "tag": "0066_fitfinder_raio_x_prestadores",
       "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "7",
+      "when": 1793024731506,
+      "tag": "0067_fitfinder_multiplas_cadeiras_acesso_restrito",
+      "breakpoints": true
     }
   ]
 }
