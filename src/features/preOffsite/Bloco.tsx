@@ -19,7 +19,6 @@ export default function Bloco({index,r,set,refs,c,disabled}:{index:number;r:Resp
  case '4A':return cards(c.projetos,id=>grupo([texto('Por que fracassou'),texto('Ponto cego da ficha'),escolha('Impacto',['Ajuda','Atrapalha','Neutro']),texto('Comentário')],`4A.${id}`));
  case '4.1':return <div className="space-y-4">{multi('4.1',c.projetos,2)}{field(texto('Por quê?'),'4.1.porque')}</div>;
  case '4.2':return <div className="space-y-4">{field({nome:'Projeto a adiar',tipo:'projeto'},'4.2')}{field(texto('O que o faria voltar à pauta?'),'4.2.porque')}</div>;
- case '4B':return cards(c.andamento,id=><div className="space-y-4">{grupo([escolha('Relação',['Minha área é dona','É impactada','Não se aplica'])],`4B.${id}`)}{r[`4B.${id}`]?.Relação&&r[`4B.${id}`]?.Relação!=='Não se aplica'&&grupo([escolha('Continuidade',CONTINUIDADE),escolha('Status',STATUS),texto('Comentário')],`4B.${id}`)}</div>);
  case '4C':return cards(c.produtos,id=>grupo([...(c.produtos.find(d=>d.id===id)?.titulo==='Outro'?[texto('Nome')]:[]),escolha('Posição',['Concordo em encerrar','Manteria']),texto('Impacto na sua área e o que garantir na transição')],`4C.${id}`));
  case '5.riscos':return <div className="space-y-5">{c.escolhas.map(d=><div className="border rounded-md p-4 space-y-4" key={d.id}><h3 className="font-medium">{d.id} · {d.titulo}</h3>{grupo([texto('Risco'),texto('Como mitigaria')],d.id)}</div>)}</div>;
  case '6.1':return grupo([texto('Claro'),texto('Faltando'),texto('Conflita')],'6.1');
