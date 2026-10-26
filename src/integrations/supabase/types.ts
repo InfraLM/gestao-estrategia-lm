@@ -4998,6 +4998,59 @@ export type Database = {
           },
         ]
       }
+      rotina_pendencia_sugestoes: {
+        Row: {
+          cadeira_id: string | null
+          confianca: string
+          contexto: string
+          criado_em: string
+          criado_por: string | null
+          id: string
+          item_ref: string
+          justificativa: string
+          motivo_sugerido: string
+          run_id: string | null
+          sugestao: string
+          tipo: string
+        }
+        Insert: {
+          cadeira_id?: string | null
+          confianca: string
+          contexto: string
+          criado_em?: string
+          criado_por?: string | null
+          id?: string
+          item_ref: string
+          justificativa?: string
+          motivo_sugerido?: string
+          run_id?: string | null
+          sugestao: string
+          tipo: string
+        }
+        Update: {
+          cadeira_id?: string | null
+          confianca?: string
+          contexto?: string
+          criado_em?: string
+          criado_por?: string | null
+          id?: string
+          item_ref?: string
+          justificativa?: string
+          motivo_sugerido?: string
+          run_id?: string | null
+          sugestao?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rotina_pendencia_sugestoes_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rotina_pendencias_gestao: {
         Row: {
           atualizado_em: string
