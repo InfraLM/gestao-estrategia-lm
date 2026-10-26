@@ -24,7 +24,7 @@ export function completude(r:Respostas,c:Config):{percentual:number;etapas:boole
  }
  avisos.push(...faltas);return faltas.length===0;
  });
- const total=c.perguntas.flat().length;const ids=new Set(c.perguntas.flat().map(p=>p.id));const respondeu=Object.keys(r).some(k=>ids.has(k)||ids.has(k.split('.').slice(0,2).join('.'))||ids.has(k.split('.')[0]));const percentual=respondeu?Math.round((total-avisos.length)/total*100):0;
+ const total=c.perguntas.flat().length;const percentual=Object.keys(r).length?Math.round((total-avisos.length)/total*100):0;
  for(const [i,p] of lista(r,'4.3').entries())if(custoDiverge(p))avisos.push(`4.3 · Proposta ${i+1}: soma dos trimestres difere do custo total.`);
  return{percentual,etapas,avisos};
 }
