@@ -128,7 +128,7 @@ export default function DesdobramentoObjetivo({ objetivoCodigo }: { objetivoCodi
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {fitfinder.podeLer && acesso.canAccessPath("estrutura", "/estrutura-organizacional") && /^AC02(\.|$)/i.test(objetivoCodigo) && <Button asChild size="sm" variant="outline"><Link to="/estrutura-organizacional?aba=prestadores">Ver raio-x dos prestadores</Link></Button>}
+        {fitfinder.podeLer && acesso.canAccessPath("estrutura", "/estrutura-organizacional") && /^AC\.?02(\.|$)/i.test(objetivoCodigo) && <Button asChild size="sm" variant="outline"><Link to="/estrutura-organizacional?aba=prestadores">Ver raio-x dos prestadores</Link></Button>}
         <FinanceiroObjetivo codigo={objetivoCodigo} />
         <KpisObjetivo codigo={objetivoCodigo} />
         <Bloco titulo="Direto no objetivo" itens={diretos} vincular={podeVincular ? { tipo: "objetivo", ref: obj.id } : null} gov={gov} onMudou={carregarGov} />
