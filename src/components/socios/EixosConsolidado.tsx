@@ -17,7 +17,7 @@ export default function EixosConsolidado({ respondentes }: { respondentes: { id:
     const valores = calcularEixos(respostas);
     return { ...p, respostas, valores, pos: posicionamento(respostas, valores)?.titulo };
   });
-  return <section aria-label="Eixos · os sócios na mesma régua" className="space-y-4">
+  return <section aria-label="Eixos · os sócios na mesma régua" className="space-y-4 bg-background text-foreground">
     <h2 className="text-base font-semibold">Eixos · os sócios na mesma régua</h2>
     <div aria-label="Legenda dos respondentes" className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
       {pessoas.map(p => <span key={p.id} className="flex items-center gap-2"><span className={`socios-identidade ${cores[p.cor]} grid h-7 w-7 shrink-0 place-items-center rounded-full text-[10px] font-bold`}>{p.sigla}</span>{p.nome}</span>)}
