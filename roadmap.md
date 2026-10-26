@@ -1,3 +1,8 @@
+# Pré-Offsite · topo e Bloco 0 por diretoria
+- [ ] Navegação no topo, progresso e rodapé fixo sem sobreposição.
+- [ ] Perguntas 0.1–0.10, painéis de KPIs por cadeira com fallback, respostas antigas ignoradas; consolidado/Excel/anexo.
+- [ ] Testes isolados Yuri/Bruno/Felipe computador/celular, privacidade e histórico; não publicar nem alterar respostas/acessos.
+
 # Sócios · raias e escada de valor
 - [x] Eixos com raias alfabéticas, cores e siglas exclusivas, consenso e tooltip; P4 B/escada opcional/tensões/diretriz/histórico atualizados. 88 testes aprovados; Naira autenticada, computador/celular/claro/escuro, valores iguais e salvar/reler isolados; zero respostas reais alteradas, sem publicar.
 
