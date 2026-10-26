@@ -2,6 +2,7 @@ import type { Pergunta } from './config';
 export const BLOCO0_TITULO='Onde estamos hoje, perspectiva por perspectiva (cerca de 20 minutos)';
 export const BLOCO0_ABERTURA='Antes de discutir 2027, precisamos de uma foto honesta da situação atual. Para cada perspectiva do BSC, você vê os indicadores estratégicos e táticos pelos quais a sua diretoria responde e responde a perguntas curtas sobre a sua área. Respostas objetivas: um número, um exemplo, uma frase.';
 export const CHAVE_BLOCO0='b0.v2.';
+export const PERSPECTIVAS_BLOCO0=['Aprendizado e Crescimento','Processos','Clientes e mercado','Financeira'];
 const t=(nome:string)=>({nome,tipo:'curto' as const});
 const n=(nome:string)=>({nome,tipo:'quantidade' as const});
 const e=(nome:string,opcoes:string[])=>({nome,tipo:'escolha' as const,opcoes});
