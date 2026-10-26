@@ -21,6 +21,8 @@ import { useModuleAccess } from "@/hooks/useModuleAccess";
 import ImpedimentosRecebidos from "@/components/ImpedimentosRecebidos";
 import { Impedimento, devidoImpedimento, respostaCompleta } from "@/lib/impedimentos";
 import PendenciasComites from "@/components/PendenciasComites";
+import AcoesEntregaCheckout from "@/components/AcoesEntregaCheckout";
+import { filtrarHerdadasJanela } from "@/lib/acoesEntrega";
 import { puxarAcao } from "@/lib/governancaPendencias";
 import {
   CheckinV2, CheckoutV2, Entrega as EntregaV2, KpiResposta, KpiRetrato, Pendencia, Prioridade as PrioridadeV2, Responsavel,
@@ -171,7 +173,9 @@ export default function MetasSemanal() {
     const rInOut = (data ?? []).find((r: any) => r.semana === semOut && r.tipo === "checkin");
     const cOut = normalizarCheckin(rInOut?.conteudo); setCinOut(cOut);
     if (!cout.entregas.length) cout.entregas = entregasDePrioridades(cOut.prioridades);
-    cout.entregas = mesclarHerdadas(cout.entregas, prioridadesHerdadas(data ?? [], semOut));
+    const { data: gest } = await db.from("rotina_pendencias_gestao").select("tipo,item_ref,cadeira_id,reativada_ciclo,baixada_em").eq("tipo", "prioridade");
+    // Janela de 3 meses: prioridades mais antigas ficam na lista da Governança (não empilham nem contam na completude).
+    cout.entregas = filtrarHerdadasJanela(mesclarHerdadas(cout.entregas, prioridadesHerdadas(data ?? [], semOut)), sem, gest ?? []);
     if (!cout.envio_token) cout.envio_token = novoId();
     if (!cout.atas?.length) cout.atas = atasAnteriores(data ?? [], semOut);
     // Números ao vivo até o primeiro envio; depois ficam os gravados no envio.
@@ -624,6 +628,7 @@ export default function MetasSemanal() {
                 </div>
               );
             })}
+            <AcoesEntregaCheckout cadeira={cad} ciclo={sem} podeEditar={podeEditar} indicadores={b.indicadores} objetivos={b.objetivos} iniciativas={b.iniciativas} />
           </section>
 
           <section className="space-y-3 border-b py-5 scroll-mt-40" id="bloco-riscos" tabIndex={-1}>
