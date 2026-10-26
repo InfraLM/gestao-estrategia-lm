@@ -1,3 +1,8 @@
+# Fit Finder · decisões 26/10
+- [ ] Vínculos por pares, sugestões iniciais sem confirmação e agrupamento na tela.
+- [ ] Acesso atual só Gov/CEO no banco, tela e AC02; interruptor futuro desligado sem ampliar Estrutura.
+- [ ] Testes isolados e conferência computador/celular; lembrar de publicar.
+
 # Pré-Offsite 2027 · Diretoria v3.10
 - [x] Configuração editável com redação fornecida, acesso privado Naira/Ian/diretores e materiais por cadeira.
 - [x] Formulário nove blocos, rascunho automático, revisão/envio/reabertura; vínculo de cadeira reutilizado sem alterar cadastros.
