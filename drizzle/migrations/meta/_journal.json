@@ -477,6 +477,13 @@
       "when": 1793024731506,
       "tag": "0067_fitfinder_multiplas_cadeiras_acesso_restrito",
       "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1793028237723,
+      "tag": "0068_pre_offsite_prazo_7_novembro",
+      "breakpoints": true
     }
   ]
 }
