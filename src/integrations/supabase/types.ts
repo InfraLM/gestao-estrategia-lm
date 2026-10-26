@@ -5731,6 +5731,7 @@ export type Database = {
       offsite_acesso: { Args: never; Returns: Json }
       offsite_admin: { Args: never; Returns: boolean }
       offsite_cadeira: { Args: never; Returns: string }
+      offsite_indicadores: { Args: never; Returns: Json }
       offsite_promover: {
         Args: { _id: string; _indice: number }
         Returns: string
