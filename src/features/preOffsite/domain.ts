@@ -1,3 +1,4 @@
+import { respostasBloco0 } from './bloco0';
 import { z } from 'zod';
 import type { Config } from './config';
 import { montarFrase } from './config';
@@ -6,6 +7,7 @@ export const respostaSchema=z.record(z.unknown()).refine(v=>JSON.stringify(v).le
 export const lista=(r:Respostas,k:string):any[]=>Array.isArray(r[k])?r[k]:[];
 export const presente=(v:any):boolean=>Array.isArray(v)?v.length>0&&v.every(presente):v&&typeof v==='object'?Object.values(v).length>0&&Object.values(v).every(presente):v!==undefined&&v!==null&&String(v).trim()!=='';
 export function completude(r:Respostas,c:Config):{percentual:number;etapas:boolean[];avisos:string[]} {
+ r=respostasBloco0(r);
  const avisos:string[]=[]; const etapas=c.perguntas.map((qs,b)=>{
  const faltas:string[]=[];
  for(const p of qs){ let ok=presente(r[p.id]);
@@ -31,17 +33,18 @@ export function completude(r:Respostas,c:Config):{percentual:number;etapas:boole
 export function numero(v:any):number{if(typeof v==='number')return v;const s=String(v??'').replace(/R\$\s?/g,'').trim();return Number(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s)||0;}
 export const custoDiverge=(p:Record<string,any>)=>Math.abs(['T1','T2','T3','T4'].reduce((s,k)=>s+numero(p[k]),0)-numero(p['Custo total']))>0.01;
 export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
+ r=respostasBloco0(r);
  const d:{titulo:string;dados:any}[]=[];
  const discordas=c.diretrizes.filter(x=>r[`3.pos.${x.id}`]==='Discordo');if(discordas.length)d.push({titulo:'1 · Diretrizes em discordância e indicadores',dados:discordas.map(x=>({diretriz:x.titulo,detalhes:r[`3.detalhe.${x.id}`],ajuste:r[`3.ajuste.${x.id}`]}))});
  d.push({titulo:'2 · Arquitetura do portfólio, mix de pagamento e working money',dados:{'5.7':r['5.7'],'5.1':r['5.1'],'5.4':r['5.4']}});
  d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...r[`4C.${x.id}`]}))}});
  d.push({titulo:'4 · Reação ao mandato',dados:{'6.1':r['6.1'],'6.2':r['6.2'],'6.4':r['6.4']}});
  d.push({titulo:'5 · Novas frentes e funções',dados:{'7.1':r['7.1']}});
- d.push({titulo:'6 · Processos críticos e estruturantes, autonomia e continuidade',dados:{'7.3':r['7.3'],'0.2':r['0.2'],'0.3':r['0.3'],'0.6':r['0.6']}});return d;
+ d.push({titulo:'6 · Processos críticos e estruturantes, sucessão, decisões que dependem dos sócios e pontos únicos de falha',dados:{'7.3':r['7.3'],'0.2':r['0.2'],'0.1':r['0.1'],'0.5':r['0.5']}});return d;
 }
 export const moeda=(v:any)=>numero(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 export function resumoResposta(r:Respostas,p:string,c:Config):any{
- if(p==='0.17')return r['0.17']&&typeof r['0.17']==='object'?montarFrase(r['0.17']):undefined;
+ if(p.startsWith('0.')){const v=respostasBloco0(r)[p];return p==='0.10'&&v?montarFrase(v):v;}
  if(p==='3.2')return c.diretrizes.map(d=>({Diretriz:d.titulo,Posição:r[`3.pos.${d.id}`]??'',Prioritária:lista(r,'3.selecionadas').includes(d.id)}));
  if(p==='3.3')return lista(r,'3.selecionadas').map(id=>({Diretriz:c.diretrizes.find(d=>d.id===id)?.titulo,...r[`3.detalhe.${id}`]}));
  if(p==='3.4')return c.diretrizes.filter(d=>r[`3.ajuste.${d.id}`]).map(d=>({Diretriz:d.titulo,Ajuste:r[`3.ajuste.${d.id}`]}));
@@ -52,7 +55,7 @@ export function resumoResposta(r:Respostas,p:string,c:Config):any{
 }
 export function validarConfig(c:unknown,base:Config):Config{
  const item=z.object({id:z.string(),titulo:z.string(),descricao:z.string().optional(),porque:z.string().optional(),selo:z.string().optional(),caixa:z.string().optional()});
- const campo=z.object({nome:z.string(),rotulo:z.string().optional(),placeholder:z.string().optional(),tipo:z.enum(['texto','numero','mes','escolha','objetivo','kpi','cadeira','processo','diretriz','projeto']).optional(),opcoes:z.array(z.string()).optional()});
+ const campo=z.object({nome:z.string(),rotulo:z.string().optional(),placeholder:z.string().optional(),tipo:z.enum(['texto','curto','quantidade','numero','mes','escolha','objetivo','kpi','cadeira','processo','diretriz','projeto']).optional(),opcoes:z.array(z.string()).optional()});
  const pergunta=z.object({id:z.string(),texto:z.string(),titulo:z.string().optional(),grupo:z.string().optional(),tipo:z.enum(['lista','escolha','multipla','processo','texto','grupo','frase']).optional(),campos:z.array(campo).optional(),opcoes:z.array(z.string()).optional(),limite:z.number().optional(),minimo:z.number().optional(),ajuda:z.string().optional(),apoio:z.object({porque:z.string(),como:z.string(),entregar:z.string()}).optional()});
  const v=z.object({versao:z.string().optional(),titulo:z.string().optional(),organizacao:z.string().optional(),tempo:z.string().optional(),intro:z.string(),bscTexto:z.string().optional(),bsc:z.array(z.object({ordem:z.string(),perspectiva:z.string(),pergunta:z.string()})).optional(),bscFecho:z.string().optional(),antes:z.string().optional(),tese:z.string(),teseExplicacao:z.string().optional(),anexo:z.string(),blocos:z.array(z.string()).length(9),perguntas:z.array(z.array(pergunta)).length(9),diretrizes:z.array(item).length(10),projetos:z.array(item),andamento:z.array(item),produtos:z.array(item),escolhas:z.array(item),temas:z.array(z.string()),notas:z.record(z.string()),caixas:z.record(z.string()).optional()}).parse(c) as Config;
  for(const k of ['diretrizes','projetos','andamento','produtos','escolhas'] as const)if(JSON.stringify(v[k].map(x=>x.id))!==JSON.stringify(base[k].map(x=>x.id)))throw new Error('Preserve os identificadores e a ordem dos itens existentes.');
