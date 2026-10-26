@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import ArvoreCadeiras from "@/components/estrutura/ArvoreCadeiras";
 import EstruturaTexto from "@/components/estrutura/EstruturaTexto";
 import { type Cadeira, NIVEIS, filtrarCadeiras, montarArvore, rotuloNivel } from "./estruturaOrganizacional";
+import RaioXPrestadores from "@/components/estrutura/RaioXPrestadores";
 import OrganogramaAtual from "@/components/estrutura/OrganogramaAtual";
 import EditarCargo, { type CargoEdicao } from "@/components/estrutura/EditarCargo";
 import { podeEditarEstrutura } from "@/lib/organograma";
@@ -55,7 +56,7 @@ export default function EstruturaOrganizacional() {
   const texto = (valor: string | null) => <EstruturaTexto texto={valor} acessoSocios={acessoSocios} />;
   return <div className="min-w-0 space-y-6">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">Estrutura Organizacional</h2><span role="status" className="text-sm text-muted-foreground">{filtradas.length} cadeiras</span></div>
-    <Tabs defaultValue={new URLSearchParams(window.location.search).get("aba") === "cadeiras" ? "cadeiras" : "organograma"} className="min-w-0"><TabsList className="mb-4 h-auto flex-wrap"><TabsTrigger value="organograma">Organograma atualizado</TabsTrigger><TabsTrigger value="fichas">Fichas estratégicas</TabsTrigger><TabsTrigger value="cadeiras">Cadeiras (metas e rotina)</TabsTrigger></TabsList><TabsContent value="cadeiras"><CadastroCadeiras /></TabsContent><TabsContent value="organograma"><OrganogramaAtual canEdit={canEdit} /></TabsContent><TabsContent value="fichas">
+    <Tabs defaultValue={new URLSearchParams(window.location.search).get("aba") === "cadeiras" ? "cadeiras" : new URLSearchParams(window.location.search).get("aba") === "prestadores" ? "prestadores" : "organograma"} className="min-w-0"><TabsList className="mb-4 h-auto flex-wrap"><TabsTrigger value="organograma">Organograma atualizado</TabsTrigger><TabsTrigger value="fichas">Fichas estratégicas</TabsTrigger><TabsTrigger value="cadeiras">Cadeiras (metas e rotina)</TabsTrigger><TabsTrigger value="prestadores">Raio-x dos prestadores</TabsTrigger></TabsList><TabsContent value="prestadores"><RaioXPrestadores /></TabsContent><TabsContent value="cadeiras"><CadastroCadeiras /></TabsContent><TabsContent value="organograma"><OrganogramaAtual canEdit={canEdit} /></TabsContent><TabsContent value="fichas">
     {query.isPending ? <div role="status" className="flex items-center justify-center gap-2 py-16"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />Carregando estrutura…</div>
       : query.isError ? <div role="alert" className="space-y-3 py-12 text-center"><p className="text-destructive">Não foi possível carregar a estrutura organizacional.</p><Button variant="outline" onClick={() => query.refetch()}>Tentar novamente</Button></div>
       : <>
