@@ -9,11 +9,11 @@ import { cn } from "@/lib/utils";
 import { useConsolidado, reabrirSocio } from "@/hooks/useSocios";
 import LinksSocios from "@/components/socios/LinksSocios";
 import { useObjetivosKpis, kpiNome } from "@/hooks/useObjetivosKpis";
-import { Regua } from "@/components/socios/Campos";
+import EixosConsolidado from "@/components/socios/EixosConsolidado";
 import { TradeOff } from "./SociosFormulario";
 import SubmissoesHistorico from "@/components/socios/SubmissoesHistorico";
 import {
-  calcularEixos, compararSocios, posicionamento, statusExibido, pontosProjeto, LINHAS_VERMELHAS, CONSEQUENCIAS, PAPEIS, INVEST_ITENS,
+  calcularEixos, compararSocios, statusExibido, pontosProjeto, LINHAS_VERMELHAS, CONSEQUENCIAS, PAPEIS, INVEST_ITENS,
   Diretriz, Projeto, Respostas, normalizar, respostasAbertas,
 } from "@/lib/sociosTradeoff";
 
@@ -127,15 +127,7 @@ export default function SociosConsolidado() {
 
       {detalhe && (() => { const s = socios.find(x => x.p.id === detalhe); return s ? <div><h3 className="font-semibold mb-2">Trade-off · {s.p.nome_exibicao}</h3><TradeOff r={s.r} eixos={s.eixos} nomeObjetivo={nomeObjetivo} /></div> : null; })()}
 
-      <Card>
-        <CardHeader className="pb-3"><CardTitle className="text-base">Eixos · os sócios na mesma régua</CardTitle></CardHeader>
-        <CardContent className="space-y-5">
-          <div className="flex flex-wrap gap-3 text-xs">{socios.map(s => <span key={s.p.id}><b>{s.p.nome_exibicao.slice(0, 1)}</b> = {s.p.nome_exibicao} {posicionamento(s.r, s.eixos)?.titulo ?? ""}</span>)}</div>
-          <Regua esquerda="Foco no core" direita="Abrir Motor 2" marcadores={socios.map(s => ({ nome: s.p.nome_exibicao, valor: s.eixos.core }))} />
-          <Regua esquerda="Preservar caixa" direita="Acelerar" marcadores={socios.map(s => ({ nome: s.p.nome_exibicao, valor: s.eixos.caixa }))} />
-          <Regua esquerda="Reinvestir" direita="Retorno aos sócios" marcadores={socios.map(s => ({ nome: s.p.nome_exibicao, valor: s.eixos.retorno }))} />
-        </CardContent>
-      </Card>
+      <EixosConsolidado respondentes={socios.map(s => ({ id: s.p.id, nome: s.p.nome_exibicao, respostas: s.r }))} />
 
       <Card>
         <CardHeader className="pb-3"><CardTitle className="text-base">Mapa de divergências</CardTitle></CardHeader>
