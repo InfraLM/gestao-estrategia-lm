@@ -1,6 +1,7 @@
 # Pré-Offsite · acessos de diretores 26/10
-- [ ] Conferir seis cadastros/cadeiras e conceder somente acesso Pré-Offsite; convidar ausentes sem senha.
-- [ ] Naira admin e respondente; Ian só admin; testar isolamento e devolver tabela, sem publicar.
+- [x] Seis participantes por e-mail verificado e cadeiras existentes; cinco convites de cadastro (Iuri reutilizado), sem senhas ou novos acessos a outros módulos.
+- [x] Naira admin e respondente com rascunho preservado; Ian só admin. 38 testes passaram; tela Naira computador/celular, consolidado e Excel com seis respondentes conferidos. Sem publicar.
+- [ ] Primeiro acesso real dos cinco convidados — depende de cadastro/entrada e verificação por cada destinatário; regras testadas isoladamente.
 
 # Fit Finder · decisões 26/10
 - [x] Vínculos por pares, oito sugestões iniciais sem confirmação e agrupamento na tela; nomes existentes CMO / BU Certificações e CPPO (Processos e Pessoas).
