@@ -4799,6 +4799,94 @@ export type Database = {
         }
         Relationships: []
       }
+      rotina_acoes_entrega: {
+        Row: {
+          atualizado_nome: string | null
+          atualizado_por: string | null
+          cadeira_id: string
+          ciclo_atualizacao: string
+          ciclo_origem: string
+          created_at: string
+          criado_nome: string | null
+          criado_por: string | null
+          data_conclusao: string | null
+          data_prevista: string | null
+          descricao: string
+          id: string
+          iniciativa_id: string | null
+          motivo_cancelamento: string
+          projeto_id: string | null
+          responsavel: string
+          status: string
+          updated_at: string
+          vinculos: Json
+        }
+        Insert: {
+          atualizado_nome?: string | null
+          atualizado_por?: string | null
+          cadeira_id: string
+          ciclo_atualizacao: string
+          ciclo_origem: string
+          created_at?: string
+          criado_nome?: string | null
+          criado_por?: string | null
+          data_conclusao?: string | null
+          data_prevista?: string | null
+          descricao: string
+          id?: string
+          iniciativa_id?: string | null
+          motivo_cancelamento?: string
+          projeto_id?: string | null
+          responsavel?: string
+          status: string
+          updated_at?: string
+          vinculos?: Json
+        }
+        Update: {
+          atualizado_nome?: string | null
+          atualizado_por?: string | null
+          cadeira_id?: string
+          ciclo_atualizacao?: string
+          ciclo_origem?: string
+          created_at?: string
+          criado_nome?: string | null
+          criado_por?: string | null
+          data_conclusao?: string | null
+          data_prevista?: string | null
+          descricao?: string
+          id?: string
+          iniciativa_id?: string | null
+          motivo_cancelamento?: string
+          projeto_id?: string | null
+          responsavel?: string
+          status?: string
+          updated_at?: string
+          vinculos?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rotina_acoes_entrega_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rotina_acoes_entrega_iniciativa_id_fkey"
+            columns: ["iniciativa_id"]
+            isOneToOne: false
+            referencedRelation: "mt_iniciativas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rotina_acoes_entrega_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rotina_avisos_config: {
         Row: {
           abertura_dia: number
@@ -4906,6 +4994,53 @@ export type Database = {
             columns: ["impedimento_id"]
             isOneToOne: false
             referencedRelation: "mt_rotina_riscos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rotina_pendencias_gestao: {
+        Row: {
+          atualizado_em: string
+          atualizado_nome: string | null
+          atualizado_por: string | null
+          baixada_em: string | null
+          cadeira_id: string | null
+          id: string
+          item_ref: string
+          motivo: string
+          reativada_ciclo: string | null
+          tipo: string
+        }
+        Insert: {
+          atualizado_em?: string
+          atualizado_nome?: string | null
+          atualizado_por?: string | null
+          baixada_em?: string | null
+          cadeira_id?: string | null
+          id?: string
+          item_ref: string
+          motivo?: string
+          reativada_ciclo?: string | null
+          tipo: string
+        }
+        Update: {
+          atualizado_em?: string
+          atualizado_nome?: string | null
+          atualizado_por?: string | null
+          baixada_em?: string | null
+          cadeira_id?: string | null
+          id?: string
+          item_ref?: string
+          motivo?: string
+          reativada_ciclo?: string | null
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rotina_pendencias_gestao_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
             referencedColumns: ["id"]
           },
         ]
@@ -5694,6 +5829,48 @@ export type Database = {
         Args: { _chave: string; _secao: string; _valor: Json }
         Returns: string
       }
+      rotina_acao_salvar: {
+        Args: { _cadeira: string; _ciclo: string; _dados: Json; _id: string }
+        Returns: {
+          atualizado_nome: string | null
+          atualizado_por: string | null
+          cadeira_id: string
+          ciclo_atualizacao: string
+          ciclo_origem: string
+          created_at: string
+          criado_nome: string | null
+          criado_por: string | null
+          data_conclusao: string | null
+          data_prevista: string | null
+          descricao: string
+          id: string
+          iniciativa_id: string | null
+          motivo_cancelamento: string
+          projeto_id: string | null
+          responsavel: string
+          status: string
+          updated_at: string
+          vinculos: Json
+        }
+        SetofOptions: {
+          from: "*"
+          to: "rotina_acoes_entrega"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      rotina_ata_aberta: {
+        Args: { a: Database["public"]["Tables"]["gov_acoes"]["Row"] }
+        Returns: boolean
+      }
+      rotina_ata_da_cadeira: {
+        Args: {
+          _cadeira: string
+          a: Database["public"]["Tables"]["gov_acoes"]["Row"]
+        }
+        Returns: boolean
+      }
+      rotina_atas_aguardando: { Args: never; Returns: Json }
       rotina_atividade_permitida: {
         Args: { _destino: string; _origem: string }
         Returns: boolean
@@ -5753,6 +5930,10 @@ export type Database = {
           status: string
         }[]
       }
+      rotina_dentro_janela: {
+        Args: { _ciclo: string; _origem: string; _ref: string; _tipo: string }
+        Returns: boolean
+      }
       rotina_impedimento_atrasado: {
         Args: { _hoje: string; _prazo: string; _status: string }
         Returns: boolean
@@ -5776,6 +5957,17 @@ export type Database = {
         Args: { _cadeira: string; _ciclo: string }
         Returns: Json
       }
+      rotina_pendencia_gerir: {
+        Args: {
+          _acao: string
+          _cadeira?: string
+          _motivo?: string
+          _ref: string
+          _tipo: string
+        }
+        Returns: undefined
+      }
+      rotina_pendencias_antigas: { Args: never; Returns: Json }
       rotina_pode_ler_checkin: { Args: { _cadeira: string }; Returns: boolean }
       rotina_retrato: {
         Args: { _cadeira: string; _comp: string }
