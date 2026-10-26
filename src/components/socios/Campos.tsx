@@ -18,7 +18,7 @@ export function Opcoes({ opcoes, value, onChange, disabled, name }: { opcoes: Op
           className={cn("flex items-start gap-3 rounded-md border p-3 text-left text-sm transition-colors disabled:opacity-60",
             value === o.v ? "border-primary bg-primary/10" : "border-border hover:bg-muted/50")}>
           <span className={cn("mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border text-[10px] font-bold", value === o.v ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground/40")}>{o.v.length <= 2 ? o.v : ""}</span>
-          <span>{o.label}</span>
+          <span>{o.labelCurto && <span className="mb-1 block font-semibold">{o.labelCurto}</span>}{o.label}</span>
         </button>
       ))}
     </div>

@@ -1,3 +1,6 @@
+# Sócios · raias e escada de valor
+- [x] Eixos com raias alfabéticas, cores e siglas exclusivas, consenso e tooltip; P4 B/escada opcional/tensões/diretriz/histórico atualizados. 88 testes aprovados; Naira autenticada, computador/celular/claro/escuro, valores iguais e salvar/reler isolados; zero respostas reais alteradas, sem publicar.
+
 # Pré-Offsite · acessos de diretores 26/10
 - [x] Grupos conferidos: seis Pré-Offsite e cinco Sócios; Yuri atualizado no mesmo participante, Cleto reutilizado sem convite novo; respostas Sócios com assinatura preservada. 22 testes isolados passaram; Naira nos dois formulários e consolidado sem Ian/Cleto conferidos. Sem publicar.
 - [x] Seis participantes por e-mail verificado e cadeiras existentes; cinco convites de cadastro (Iuri reutilizado), sem senhas ou novos acessos a outros módulos.

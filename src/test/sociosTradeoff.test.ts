@@ -117,12 +117,12 @@ describe("Desejos dos Sócios · trade-off", () => {
     expect(diretrizesSugeridas({ portfolio: "D", portfolio_v: 2 }).some(d => d.texto.includes("orçamento fantasma") && d.objetivos.join() === "F.01,P.01")).toBe(true);
   });
   it.each([
-    ["B", "pocus"], ["B", "paliativos"], ["D", "pocus"], ["D", "paliativos"],
+    ["D", "pocus"], ["D", "paliativos"],
   ])("P4 %s alerta sobre projeção 2030 ao crescer %s", (portfolio, produto) => {
     const alertas = tensoes({ portfolio, portfolio_v: 2, produtos: { [produto]: "crescer" } });
     expect(alertas.filter(t => t.includes("D-075"))).toHaveLength(1);
   });
-  it.each(["A", "C"])("P4 %s não emite o novo alerta reservado às opções B/D", portfolio => {
+  it.each(["A", "B", "C"])("P4 %s não emite o alerta reservado à opção D", portfolio => {
     expect(tensoes({ portfolio, portfolio_v: 2, produtos: { pocus: "crescer", paliativos: "crescer" } }).filter(t => t.includes("D-075"))).toHaveLength(0);
   });
   it.each(["manter", "reduzir", "encerrar"])("P4 não alerta projeção 2030 ao %s POCUS/Paliativos", acao => {
@@ -181,5 +181,29 @@ describe("Desejos dos Sócios · trade-off", () => {
     expect(criterios).toContain("3,5x");
     expect(criterios).toContain("12 meses");
     expect(criterios).toContain("2,45% ao mês");
+  });
+  it("escada sem detalhamento gera tensão somente em B e não bloqueia envio", () => {
+    const base = { motor: "A", principio: "A", ritmo: "B", portfolio: "B", portfolio_v: 2, trafego: "B", caixa_min: "2", divida: "D", ddl: "A", venda: "C", sucessao: "A", ...rank("sp", "tech", "pessoas", "reserva", "distrib", "novos") };
+    expect(tensoes(base).filter(t => t.includes("não indicou como medir"))).toHaveLength(1);
+    expect(tensoes({ ...base, produto_esc: "   " }).filter(t => t.includes("não indicou como medir"))).toHaveLength(1);
+    expect(tensoes({ ...base, produto_esc: "Medir retenção por coorte" }).filter(t => t.includes("não indicou como medir"))).toHaveLength(0);
+    expect(tensoes({ ...base, portfolio: "D" }).filter(t => t.includes("não indicou como medir"))).toHaveLength(0);
+    expect(validarEnvio({ respostas: base, diretrizes: [{ texto: "Plano", objetivos: [] }], projetos: [], extras: {} })).toEqual([]);
+  });
+  it("escada e mídia só PPG geram tensão exclusivamente em B + A", () => {
+    const alerta = (portfolio: string, trafego: string) => tensoes({ portfolio, portfolio_v: 2, trafego, produto_esc: "Coortes" }).filter(t => t.includes("degraus de entrada"));
+    expect(alerta("B", "A")).toHaveLength(1);
+    expect(alerta("B", "B")).toHaveLength(0);
+    expect(alerta("D", "A")).toHaveLength(0);
+  });
+  it("diretriz da escada associa F.01 e P.01 sem alterar B = 35", () => {
+    expect(diretrizesSugeridas({ portfolio: "B" }).map(d => d.objetivos)).toEqual([["F.01", "P.01"]]);
+    expect(calcularEixos({ portfolio: "B", produto_esc: "Coortes" }).core).toBe(35);
+  });
+  it("detalhe opcional mantém seu valor na normalização e projeção compartilhada do histórico", () => {
+    const r = { portfolio: "B", produto_esc: "Entrada ACLS: conversão e renovação por coorte" };
+    expect(normalizar(r).produto_esc).toBe(r.produto_esc);
+    expect(respostasAbertas(normalizar(r)).map(([, v]) => v)).toContain(r.produto_esc);
+    expect(r.portfolio).toBe("B");
   });
 });

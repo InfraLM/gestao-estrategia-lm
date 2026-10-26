@@ -196,6 +196,9 @@ export function FormularioSocio({ q }: { q: any }) {
                 </div>
               ))}
             </div>
+            {r.portfolio === "B" && (
+              <Campo label="Quais produtos fazem parte da escada de valor e como medir a ascensão e a retenção que cada um gera no core? — opcional"><Textarea aria-label="Escada de valor" value={r.produto_esc ?? ""} onChange={e => setR("produto_esc", e.target.value)} disabled={dis} /></Campo>
+            )}
             {(r.portfolio === "C" || r.portfolio === "D") && (
               <Campo label="Qual produto você testaria ou lançaria primeiro, com qual teto, prazo e critério de sucesso? (na opção D, indique também o tamanho do orçamento fantasma) — opcional"><Textarea value={r.produto_novo ?? ""} onChange={e => setR("produto_novo", e.target.value)} disabled={dis} /></Campo>
             )}
