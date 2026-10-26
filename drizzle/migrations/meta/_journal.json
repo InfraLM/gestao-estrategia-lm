@@ -505,6 +505,20 @@
       "when": 1793037076289,
       "tag": "0071_rotina_janela_aguardando_acoes_entrega",
       "breakpoints": true
+    },
+    {
+      "idx": 72,
+      "version": "7",
+      "when": 1793037931698,
+      "tag": "0072_rotina_impedimentos_sem_janela_sugestoes_ia",
+      "breakpoints": true
+    },
+    {
+      "idx": 73,
+      "version": "7",
+      "when": 1793038317388,
+      "tag": "0073_rotina_pendencias_antigas_so_enderecadas",
+      "breakpoints": true
     }
   ]
 }
