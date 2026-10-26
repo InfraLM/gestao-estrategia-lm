@@ -16,6 +16,7 @@ export function inicioJanela(ciclo: string) {
 export function dentroJanela(tipo: Gestao["tipo"], ref: string, origem: string | null | undefined, ciclo: string, gestao: Gestao[]) {
   const g = gestao.find((x) => x.tipo === tipo && x.item_ref === ref);
   if (g?.baixada_em) return false;
+  if (tipo === "impedimento") return true; // impedimentos atribuídos empilham até resolver/encerrar, sem janela
   const efetiva = [origem?.slice(0, 10), g?.reativada_ciclo ?? undefined].filter(Boolean).sort().pop();
   return !!efetiva && efetiva >= inicioJanela(ciclo);
 }

@@ -18,9 +18,10 @@ describe("janela de 3 meses", () => {
   it("início da janela é 3 meses antes do ciclo", () => expect(inicioJanela("2026-11-02")).toBe("2026-08-02"));
   it("origem recente empilha", () => expect(dentroJanela("ata", "a", "2026-09-10", "2026-10-26", [])).toBe(true));
   it("origem com mais de 3 meses não empilha", () => expect(dentroJanela("ata", "a", "2026-07-01", "2026-10-26", [])).toBe(false));
-  it("vale igual para prioridades e impedimentos", () => {
-    expect(dentroJanela("prioridade", "p", "2026-07-20", "2026-10-26", [])).toBe(false);
-    expect(dentroJanela("impedimento", "i", "2026-08-31", "2026-10-26", [])).toBe(true);
+  it("vale para prioridades", () => expect(dentroJanela("prioridade", "p", "2026-07-20", "2026-10-26", [])).toBe(false));
+  it("impedimentos atribuídos ficam fora da janela e empilham até encerrar", () => {
+    expect(dentroJanela("impedimento", "i", "2026-01-05", "2026-10-26", [])).toBe(true);
+    expect(dentroJanela("impedimento", "i", "2026-01-05", "2026-10-26", [{ tipo: "impedimento", item_ref: "i", cadeira_id: null, reativada_ciclo: null, baixada_em: "2026-10-26" }])).toBe(false);
   });
   it("pendência antiga reativada volta a empilhar", () => {
     const g: Gestao[] = [{ tipo: "ata", item_ref: "a", cadeira_id: null, reativada_ciclo: "2026-10-26", baixada_em: null }];
