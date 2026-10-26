@@ -1,4 +1,5 @@
 # Pré-Offsite · acessos de diretores 26/10
+- [x] Grupos conferidos: seis Pré-Offsite e cinco Sócios; Yuri atualizado no mesmo participante, Cleto reutilizado sem convite novo; respostas Sócios com assinatura preservada. 22 testes isolados passaram; Naira nos dois formulários e consolidado sem Ian/Cleto conferidos. Sem publicar.
 - [x] Seis participantes por e-mail verificado e cadeiras existentes; cinco convites de cadastro (Iuri reutilizado), sem senhas ou novos acessos a outros módulos.
 - [x] Naira admin e respondente com rascunho preservado; Ian só admin. 38 testes passaram; tela Naira computador/celular, consolidado e Excel com seis respondentes conferidos. Sem publicar.
 - [ ] Primeiro acesso real dos cinco convidados — depende de cadastro/entrada e verificação por cada destinatário; regras testadas isoladamente.
