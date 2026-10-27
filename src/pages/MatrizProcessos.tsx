@@ -20,6 +20,7 @@ type Processo = {
   nivel: string;
   revisao: number | null;
   diretor: string;
+  diretorPessoaIds?: string[];
   dono: string;
   status: string;
   fornecedores: string[];
@@ -143,7 +144,7 @@ export default function MatrizProcessos() {
       const seed = (processosSeed as Processo[]).find(s => s.id === p.id);
       if (!seed) return;
       const diff: Partial<Processo> = {};
-      (["nivel", "diretor", "status", "maturidade", "kpiValor", "vinculo", "mapeamentoConsultoria", "responsavelMapeamento", "responsavelMapeamentoPessoaId"] as const).forEach(k => {
+      (["nivel", "diretor", "diretorPessoaIds", "status", "maturidade", "kpiValor", "vinculo", "mapeamentoConsultoria", "responsavelMapeamento", "responsavelMapeamentoPessoaId"] as const).forEach(k => {
         if ((p as any)[k] !== (seed as any)[k]) (diff as any)[k] = (p as any)[k];
       });
       if (Object.keys(diff).length) edits[p.id] = diff;
@@ -330,6 +331,8 @@ export default function MatrizProcessos() {
                         <DiretoresMultiSelect
                           value={p.diretor || ""}
                           onChange={v => updateField(p.id, "diretor", v)}
+                          pessoaIds={p.diretorPessoaIds}
+                          onIdsChange={ids => updateField(p.id, "diretorPessoaIds", ids)}
                           size="sm"
                           placeholder="—"
                         />
