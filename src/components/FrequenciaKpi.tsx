@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Pencil } from 'lucide-react';
 import { ScrollText } from 'lucide-react';
 import { toast } from 'sonner';
-import { FREQUENCIAS, FREQUENCIA_LBL, TRATAMENTOS, resumoFrequencia, segundasMes, devidoNoCiclo, type CalendarioKpi } from '@/lib/frequenciaApontamento';
+import { FREQUENCIAS, FREQUENCIA_LBL, TRATAMENTOS, resumoFrequencia, type CalendarioKpi } from '@/lib/frequenciaApontamento';
 type Kpi = CalendarioKpi & { id: string; nome: string; codigo: string; cadeira_id: string | null; velocidade_mudanca?: string; velocidade_reacao?: string; frequencia_justificativa?: string };
 export default function FrequenciaKpi({ kpi, podeEditar, reload }: { kpi: Kpi; podeEditar: boolean; reload: () => void }) {
  const [open,setOpen]=useState(false),[saving,setSaving]=useState(false),[form,setForm]=useState({frequencia:kpi.frequencia??'mensal',mes_ciclo:kpi.mes_ciclo??1,semana_mes:kpi.semana_mes??1,tratamento:kpi.tratamento??'Revisar',velocidade_mudanca:kpi.velocidade_mudanca??'',velocidade_reacao:kpi.velocidade_reacao??'',frequencia_justificativa:kpi.frequencia_justificativa??''});

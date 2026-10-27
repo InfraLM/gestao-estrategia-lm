@@ -22,7 +22,7 @@ export default function CalendarioApontamento({indicadores,cadeiras,podeEditar,r
  const [busy,setBusy]=useState(false),[selecionados,setSelecionados]=useState<string[]>([]),[feedback,setFeedback]=useState('');
  const gate=useRef(exclusiveAction());const descartar=useUnsavedChanges(Object.keys(drafts).length>0);
  useEffect(()=>{const click=(e:MouseEvent)=>{const target=e.target instanceof Element?e.target.closest('[role="tab"]'):null;if(target&&Object.keys(drafts).length&&target.getAttribute('data-state')!=='active'&&!descartar()){e.preventDefault();e.stopPropagation();}};document.addEventListener('click',click,true);return()=>document.removeEventListener('click',click,true);},[drafts,descartar]);
- const base=indicadores.map(k=>salvos[k.id]?{...k,...salvos[k.id],origem_frequencia:'editado',frequencia_historico:[...(k.frequencia_historico??[{inicio:'0001-01-01',dados:k}]).filter(h=>h.inicio!==inicio),{inicio,dados:salvos[k.id]}]}:k);
+ const base=indicadores.map(k=>salvos[k.id]?{...k,...salvos[k.id],origem_frequencia:'editado',frequencia_historico:[...(k.frequencia_historico?.length?k.frequencia_historico:[{inicio:'0001-01-01',dados:k}]).filter(h=>h.inicio!==inicio),{inicio,dados:salvos[k.id]}]}:k);
  const visiveis=base.filter(k=>(cad==='todos'||k.cadeira_id===cad)&&(origem==='todos'||origemCalendario(k)===origem)&&(freq==='todos'||(drafts[k.id]?.frequencia??k.frequencia)===freq)&&(!soProposta||k.origem_frequencia==='proposta'));
  const semanas=segundasMes(mes),ids=Object.keys(drafts);
  const editar=(k:KpiCalendario,v:EdicaoFrequencia)=>{if(!podeEditar||busy)return;setDrafts(ds=>{const n={...ds};if(JSON.stringify(v)===JSON.stringify(edicaoInicial(k)))delete n[k.id];else n[k.id]=v;return n;});setMensagens(m=>({...m,[k.id]:''}));setFeedback('');};
