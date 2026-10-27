@@ -6278,6 +6278,15 @@ export type Database = {
         Args: { _dados: Json; _id: string; _tipo: string }
         Returns: string
       }
+      org_fonte_visivel: {
+        Args: { _fonte: string; _id: string }
+        Returns: boolean
+      }
+      org_nome_aprovado_interno: {
+        Args: { _campo: string; _fonte: string; _id: string }
+        Returns: Json
+      }
+      org_nomes_aprovados: { Args: { _fontes: Json }; Returns: Json }
       org_normalizar: { Args: { _texto: string }; Returns: string }
       org_pessoa_salvar: {
         Args: { _dados: Json; _id: string }
