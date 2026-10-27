@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useModuleAccess } from "./useModuleAccess";
 import type { CalendarioKpi } from '@/lib/frequenciaApontamento';
+import { useBaseOrganizacional } from './useBaseOrganizacional';
+import { nomeVinculado } from '@/lib/baseOrganizacional';
 
 /** Base compartilhada do Sistema de Metas 2S26 (lançamento mensal e, depois, check-in semanal). */
 export type Cadeira = { id: string; nome: string; diretor_user_id: string | null; diretor_nome: string | null; ativo: boolean };
@@ -20,6 +22,7 @@ export type MetaMensal = { id: string; indicador_id: string; competencia: string
 export type Iniciativa = {
   id: string; titulo: string; okr_id: string | null; indicador_id: string | null; objetivo_id: string | null; cadeira_id: string | null;
   responsavel_user_id: string | null; responsavel_nome: string | null; prazo: string | null;
+  responsavel_pessoa_id?: string | null;
   status: "a_iniciar" | "em_andamento" | "concluida" | "cancelada"; comentario: string | null;
 };
 export type UsuarioMt = { user_id: string; perfil: "diretor" | "governanca"; cadeira_id: string | null };
@@ -40,6 +43,7 @@ export const fmtData = (d: string | null) => (d ? new Date(d + "T12:00:00").toLo
 export const EMAIL_CORP = "@liberdademedicaedu.com.br";
 
 export function useMetasBase() {
+  const org = useBaseOrganizacional();
   const { user } = useAuth();
   const access = useModuleAccess();
   const [s, setS] = useState({
@@ -69,5 +73,9 @@ export function useMetasBase() {
 
   const corporativo = !!user?.email?.toLowerCase().endsWith(EMAIL_CORP);
   const meu = s.usuarios.find((x) => x.user_id === user?.id);
-  return { ...s, loading: loading || access.loading, reload: load, isGov: isGov && access.canWrite("metas"), isGovernanca: isGov, corporativo, minhaCadeira: meu?.cadeira_id ?? null, user };
+  const pessoas = org.diretorio.pessoas;
+  const cadeiras = s.cadeiras.map(c => { const titular = org.diretorio.cadeiras.find(k => k.id === c.id)?.titular_pessoa_id; const pessoa = pessoas.find(p => p.id === titular || (c.diretor_user_id && p.user_id === c.diretor_user_id)); return { ...c, diretor_nome: pessoa?.nome ?? c.diretor_nome }; });
+  const perfis = s.perfis.map(p => ({ ...p, display_name: pessoas.find(x => x.user_id === p.user_id)?.nome ?? p.display_name }));
+  const iniciativas = s.iniciativas.map(i => ({ ...i, responsavel_nome: nomeVinculado(i.responsavel_pessoa_id, i.responsavel_nome, pessoas) || null }));
+  return { ...s, cadeiras, perfis, iniciativas, pessoasOrg: pessoas, loading: loading || access.loading, reload: load, isGov: isGov && access.canWrite("metas"), isGovernanca: isGov, corporativo, minhaCadeira: meu?.cadeira_id ?? null, user };
 }

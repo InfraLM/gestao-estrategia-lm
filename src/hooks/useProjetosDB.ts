@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { projetos as mockProjetos, type Projeto } from "@/data/mockData";
 import { useRefetchOnFocus } from "./useRefetchOnFocus";
+import { useBaseOrganizacional } from './useBaseOrganizacional';
+import { nomeVinculado } from '@/lib/baseOrganizacional';
 
 /**
  * Carrega projetos do banco no formato Projeto (compatível com o mockData),
@@ -9,6 +11,8 @@ import { useRefetchOnFocus } from "./useRefetchOnFocus";
  * Refaz o fetch automaticamente quando a aba volta ao foco.
  */
 export function useProjetosDB() {
+  const org = useBaseOrganizacional();
+  const [refs, setRefs] = useState<Record<string, { diretor: string | null; gerente: string | null }>>({});
   const [data, setData] = useState<Projeto[]>(mockProjetos);
   const [loading, setLoading] = useState(true);
   const [usingDB, setUsingDB] = useState(false);
@@ -17,7 +21,7 @@ export function useProjetosDB() {
   const fetchProjetos = useCallback(async () => {
     const { data: rows, error } = await supabase
       .from("projetos")
-      .select("id,codigo,nome,wave,classificacao,categoria,objetivos,krs,diretor,gerente,budget,realizado,status_bc,status,saude,inicio,termino,ice,descricao,avancos,causa_raiz,plano_acao");
+      .select("id,codigo,nome,wave,classificacao,categoria,objetivos,krs,diretor,gerente,diretor_pessoa_id,gerente_pessoa_id,budget,realizado,status_bc,status,saude,inicio,termino,ice,descricao,avancos,causa_raiz,plano_acao");
     if (cancelRef.current) return;
     if (!error && rows && rows.length > 0) {
       const [links, objs, inds, okrs] = await Promise.all([
@@ -59,6 +63,7 @@ export function useProjetosDB() {
         planoAcao: r.plano_acao || undefined,
       }));
       setData(mapped);
+      setRefs(Object.fromEntries(rows.map(r => [r.codigo, { diretor: r.diretor_pessoa_id, gerente: r.gerente_pessoa_id }])));
       setUsingDB(true);
     }
     setLoading(false);
@@ -73,6 +78,7 @@ export function useProjetosDB() {
 
   useRefetchOnFocus(fetchProjetos);
 
-  return { data, loading, usingDB, refetch: fetchProjetos };
+  const projetados = data.map(p => ({ ...p, diretor: nomeVinculado(refs[p.id]?.diretor, p.diretor, org.diretorio.pessoas), gerente: nomeVinculado(refs[p.id]?.gerente, p.gerente, org.diretorio.pessoas) || undefined }));
+  return { data: projetados, loading, usingDB, refetch: fetchProjetos };
 }
 

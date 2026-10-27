@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
+import { nomeVinculado } from '@/lib/baseOrganizacional';
 import { useTransparencia, AvisoTransparencia } from "@/hooks/useTransparencia";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -78,6 +80,7 @@ type Tipo = "checkin" | "checkout";
 type Salvo = SaveState;
 
 export default function MetasSemanal() {
+  const org = useBaseOrganizacional();
   const transp = useTransparencia();
   const b = useMetasBase();
   const access = useModuleAccess();
@@ -266,7 +269,7 @@ export default function MetasSemanal() {
   const cadRow = b.cadeiras.find((c) => c.id === cad);
   const diretorNome = cadRow?.diretor_nome ?? b.perfis.find((p) => p.user_id === cadRow?.diretor_user_id)?.display_name ?? "";
   const nomeResp = (r: Responsavel) => r.tipo === "cadeira" ? b.cadeiras.find((c) => c.id === r.cadeira_id)?.nome ?? null
-    : r.tipo === "externo" || r.tipo === "lider" ? r.nome ?? null : diretorNome || null;
+    : r.tipo === "externo" ? r.nome ?? null : r.tipo === 'lider' ? nomeVinculado(r.pessoa_id, r.nome, org.diretorio.pessoas) || null : diretorNome || null;
 
   /** Envio único do ciclo: checkout (S−7) e check-in (S) gravados juntos, mesmo código e horário. */
   const enviarCiclo = () => sendOnce.current(async () => {
@@ -355,18 +358,22 @@ export default function MetasSemanal() {
   // ---------- Componentes ----------
   const RespSelect = ({ id, v, on }: { id: string; v: Responsavel; on: (r: Responsavel) => void }) => {
     const val = v.tipo === "cadeira" ? `cad:${v.cadeira_id}` : v.tipo || "eu";
+    const pessoasLideres = org.diretorio.pessoas.filter(p => p.ativo && p.cargo_id && lideres.some(l => l.id === p.cargo_id));
     return (
       <div className="space-y-2">
         <p className="text-xs text-muted-foreground">Diretor responsável: <b className="text-foreground">{diretorNome || "—"}</b></p>
-        <Select value={v.tipo === "lider" ? `lid:${v.cargo_id ?? v.nome}` : val} disabled={!podeEditar} onValueChange={(x) => {
+        <Select value={v.tipo === "lider" ? v.pessoa_id ? `pes:${v.pessoa_id}` : `lid:${v.cargo_id ?? v.nome}` : val} disabled={!podeEditar} onValueChange={(x) => {
+          if (x.startsWith('pes:')) { const p = pessoasLideres.find(p => p.id === x.slice(4)); if (p) on({ tipo: 'lider', pessoa_id: p.id, cargo_id: p.cargo_id ?? undefined, cadeira_id: p.cadeira_id ?? undefined, nome: p.nome }); return; }
           if (x.startsWith("lid:")) { const l = lideres.find((y) => y.id === x.slice(4)); return on({ tipo: "lider", cargo_id: l?.id, nome: l ? `${l.ocupante_nome || l.nome}${l.ocupante_nome ? ` (${l.nome})` : ""}` : "" }); }
           on(x === "eu" ? { tipo: "eu" } : x === "externo" ? { tipo: "externo", nome: "", email: "" } : { tipo: "cadeira", cadeira_id: x.slice(4) });
         }}>
           <SelectTrigger id={id} aria-label="Responsável pela entrega"><SelectValue placeholder="Responsável pela entrega" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="eu">{diretorNome ? `${diretorNome} (diretor)` : "Diretor da cadeira"}</SelectItem>
-            {lideres.map((l) => <SelectItem key={l.id} value={`lid:${l.id}`}>{l.ocupante_nome || l.nome}{l.ocupante_nome ? ` · ${l.nome}` : ""}</SelectItem>)}
-            {v.tipo === "lider" && !lideres.some((l) => l.id === v.cargo_id) && <SelectItem value={`lid:${v.cargo_id ?? v.nome}`}>{v.nome}</SelectItem>}
+            {pessoasLideres.map(p => <SelectItem key={p.id} value={`pes:${p.id}`}>{p.nome} · {lideres.find(l => l.id === p.cargo_id)?.nome}</SelectItem>)}
+            {lideres.filter(l => !pessoasLideres.some(p => p.cargo_id === l.id)).map((l) => <SelectItem key={l.id} value={`lid:${l.id}`}>{l.ocupante_nome || l.nome}{l.ocupante_nome ? ` · ${l.nome}` : ""} · sem vínculo</SelectItem>)}
+            {v.tipo === "lider" && v.pessoa_id && !pessoasLideres.some(p => p.id === v.pessoa_id) && <SelectItem value={`pes:${v.pessoa_id}`}>{nomeVinculado(v.pessoa_id, v.nome, org.diretorio.pessoas)}</SelectItem>}
+            {v.tipo === "lider" && !v.pessoa_id && !lideres.some((l) => l.id === v.cargo_id) && <SelectItem value={`lid:${v.cargo_id ?? v.nome}`}>{v.nome}</SelectItem>}
             {b.cadeiras.filter((c) => c.ativo).map((c) => <SelectItem key={c.id} value={`cad:${c.id}`}>{c.nome}</SelectItem>)}
             <SelectItem value="externo">Pessoa de fora (nome e e-mail)</SelectItem>
           </SelectContent>
