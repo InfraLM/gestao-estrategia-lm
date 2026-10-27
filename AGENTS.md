@@ -3,7 +3,7 @@
 Area rules live in nested AGENTS.md files; read the one for the folder before changing files there:
 - `docs/agents/metas-rotina.md` — Metas, OKRs, Cesta, Lançamentos, weekly cycle, transparency, projects (applies to src/pages Metas*/Semanal*/Hubs/Matriz*, src/lib rotina/avaliacao/matriz/projetos, mt_* SQL).
 - `docs/agents/socios-governanca.md` — Desejos dos Sócios, Governança integration, AI planning revisions.
-- `src/components/AGENTS.md` — shared layout/sidebar. `src/components/estrutura/AGENTS.md` — organogram.
+- `src/components/AGENTS.md` — layout. `src/components/estrutura/AGENTS.md` — organogram and canonical identities; apply directory rules across forms.
 
 - Phase 1 spaces use six isolated tables and additive `fase1_*` auth helpers; new modules default closed, with owner/director read exceptions enforced server-side without changing legacy module access.
 - Pré-Offsite uses isolated offsite_* tables, protected admins and verified-email chair participants independent of legacy grants; invitations stay in usuario_convites. Admin status alone never authorizes a personal response; status lists active respondents only. Chair-scoped references and versioned RPCs preserve privacy; promotion is explicit. Block-0 replacements use a new answer namespace and a local config overlay so legacy answers/config remain untouched; reusable matrix questions and pure aggregation helpers feed admin-only consolidation/Excel, with nominative leadership data restricted to own response/admins. Related KPI chips are read-only references; no legacy permission or KPI writes.

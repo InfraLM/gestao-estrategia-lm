@@ -28,8 +28,8 @@ export default function BaseOrganizacional() {
   const [busy, setBusy] = useState(false); const [erro, setErro] = useState(''); const [salvo, setSalvo] = useState('');
   const once = useRef(exclusiveAction()); useUnsavedChanges(!!edit);
   const admin = useQuery({ queryKey: ['base-org-admin', base.dataUpdatedAt], enabled: pode, queryFn: async () => {
-    const [p, c, h] = await Promise.all([db.from('org_pessoas').select('*').order('nome'), db.from('org_correspondencias').select('*').order('fonte'), db.from('org_auditoria').select('*').order('created_at', { ascending: false }).limit(100)]);
-    if (p.error || c.error || h.error) throw p.error || c.error || h.error; return { pessoas: p.data as PessoaOrg[], correspondencias: c.data as Correspondencia[], auditoria: h.data as any[] };
+    const [p, c, h, u, v] = await Promise.all([db.from('org_pessoas').select('*').order('nome'), db.from('org_correspondencias').select('*').order('fonte'), db.from('org_auditoria').select('*').order('created_at', { ascending: false }).limit(100), db.from('profiles').select('user_id,display_name,email'), db.from('org_vigencias').select('*').order('inicio', { ascending: false })]);
+    if (p.error || c.error || h.error || u.error || v.error) throw p.error || c.error || h.error || u.error || v.error; return { pessoas: p.data as PessoaOrg[], correspondencias: c.data as Correspondencia[], auditoria: h.data as any[], usuarios: u.data as { user_id: string; display_name: string | null; email: string | null }[], vigencias: v.data as any[] };
   } });
   const [selecionados, setSelecionados] = useState<string[]>([]); const [origem, setOrigem] = useState('todas'); const [status, setStatus] = useState('sugerido');
   const [confirmar, setConfirmar] = useState<'aprovar' | 'rejeitar' | null>(null);
@@ -47,7 +47,7 @@ export default function BaseOrganizacional() {
     } catch (e: any) { setErro(e.message || 'Não foi possível salvar.'); } finally { setBusy(false); }
   });
   const revisar = (ids: string[], acao: string, p?: string | null, c?: string | null) => once.current(async () => {
-    setBusy(true); setErro(''); try { const { error } = await db.rpc('org_correspondencia_revisar', { _ids: ids, _acao: acao, _pessoa: p ?? null, _cadeira: c ?? null }); if (error) throw error;
+    setBusy(true); setErro(''); try { for (let inicio = 0; inicio < ids.length; inicio += 500) { const { error } = await db.rpc('org_correspondencia_revisar', { _ids: ids.slice(inicio, inicio + 500), _acao: acao, _pessoa: p ?? null, _cadeira: c ?? null }); if (error) throw error; }
       setConfirmar(null); setCandidato(null); setSelecionados([]); setSalvo('Revisão registrada'); await reload();
     } catch (e: any) { setErro(e.message); } finally { setBusy(false); }
   });
