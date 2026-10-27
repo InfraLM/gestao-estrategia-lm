@@ -1,0 +1,3 @@
+ALTER TABLE public.processos ADD COLUMN diretor_pessoa_ids uuid[];
+CREATE FUNCTION public.org_processos_pessoas_guard() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ BEGIN IF NEW.diretor_pessoa_ids IS NOT NULL AND EXISTS(SELECT 1 FROM unnest(NEW.diretor_pessoa_ids) pid WHERE NOT EXISTS(SELECT 1 FROM public.org_pessoas p WHERE p.id=pid AND p.ativo)) THEN RAISE EXCEPTION 'Diretor inativo ou inexistente'; END IF; RETURN NEW; END $$;
+CREATE TRIGGER org_processos_pessoas_guard BEFORE INSERT OR UPDATE ON public.processos FOR EACH ROW EXECUTE FUNCTION public.org_processos_pessoas_guard();
