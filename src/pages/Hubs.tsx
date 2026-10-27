@@ -7,7 +7,7 @@ import MetasCadastros from "./MetasCadastros";
 import MetasPainel from "./MetasPainel";
 import MetasLancamento from "./MetasLancamento";
 import MatrizApontamentos from "./MatrizApontamentos";
-import { CalendarioApontamento } from '@/components/FrequenciaKpi';
+import CalendarioApontamento from '@/components/CalendarioApontamento';
 import FrequenciasPropostas from '@/components/FrequenciasPropostas';
 
 export function OkrsHub() {
@@ -32,7 +32,7 @@ export function LancamentosHub() {
   return <AbasPagina abas={[
     { id: "matriz", label: "Matriz de apontamentos", conteudo: <MatrizApontamentos /> },
     { id: "lancar", label: "Lançar mês", conteudo: <MetasLancamento /> },
-    { id: "calendario", label: "Calendário de apontamento", conteudo: <><CalendarioApontamento indicadores={b.indicadores.filter(i=>i.status==='ativo'&&!i.parent_id)} cadeiras={b.cadeiras.filter(c=>c.ativo)}/><FrequenciasPropostas indicadores={b.indicadores} cadeiras={b.cadeiras.filter(c=>c.ativo)} pode={b.isGovernanca||ceo} reload={b.reload}/></> },
+    { id: "calendario", label: "Calendário de apontamento", conteudo: <><CalendarioApontamento indicadores={b.indicadores.filter(i=>i.status==='ativo'&&!i.parent_id&&(i.origem!=='bsc'||['Estratégico','Tático'].includes((i as {nivel?:string}).nivel??'Tático')))} cadeiras={b.cadeiras.filter(c=>c.ativo)} podeEditar={b.isGovernanca||ceo} reload={b.reload}/><FrequenciasPropostas indicadores={b.indicadores} cadeiras={b.cadeiras.filter(c=>c.ativo)} pode={b.isGovernanca||ceo} reload={b.reload}/></> },
     ...(b.isGovernanca || ceo ? [{ id: "painel", label: "Painel e configuração", conteudo: <MetasPainel /> }] : []),
   ]} />;
 }
