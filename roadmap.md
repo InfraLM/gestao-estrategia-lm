@@ -1,3 +1,6 @@
+# Pré-Offsite · escala 0.1 substituída
+- [x] Nova escala de cinco níveis, legenda e ajuda por toque/hover; lacunas somente 3/4 e nível 5 separado nas contagens/Excel. 27 testes aprovados e computador/celular com salvamento fictício interceptado; valores antigos preservados, zero respostas reais alteradas, sem publicar.
+
 # Tipos de análise · Cesta e KRs
 - [x] Cadastro progressivo V/S/E, selo/filtro, autorização Gov/CEO e confirmação histórica auditada.
 - [x] Avaliação e apontamentos integrados, tolerância em unidade da meta, semestre civil e entrega com prazo; snapshots/histórico preservados; BSC intacto.
