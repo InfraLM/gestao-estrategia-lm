@@ -561,6 +561,13 @@
       "when": 1793126955431,
       "tag": "0079_base_organizacional_projecoes_guardas",
       "breakpoints": true
+    },
+    {
+      "idx": 80,
+      "version": "7",
+      "when": 1793127019612,
+      "tag": "0080_base_organizacional_leitura_minima_vinculos",
+      "breakpoints": true
     }
   ]
 }
