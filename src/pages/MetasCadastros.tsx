@@ -1,6 +1,6 @@
 import PortfolioVinculos from "@/components/PortfolioVinculos";
 import AnaliseMetaConfig from '@/components/AnaliseMetaConfig';
-import { analiseDefinida } from '@/lib/analiseMetas';
+import { ANALISE_LABEL, ANALISE_AJUDA,analiseDefinida } from '@/lib/analiseMetas';
 import FrequenciaKpi, { CalendarioApontamento } from '@/components/FrequenciaKpi';
 import { TIPO_LBL } from "@/lib/avaliacaoBsc";
 import { useMemo, useState } from "react";
@@ -81,7 +81,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
   };
 
   const BotaoNovo = ({ tipo, row, label }: { tipo: string; row: any; label: string }) =>
-    ro ? null : <Button size="sm" onClick={() => abrir(tipo, row)}><Plus className="h-4 w-4 mr-1" />{label}</Button>;
+    ro ? null : <Button size="sm" onClick={() => tipo==='indicador'?abrirIndicador({origem:(origemFixa??'bsc') as any}):abrir(tipo, row)}><Plus className="h-4 w-4 mr-1" />{label}</Button>;
   const Acoes = ({ tipo, row, tabela }: { tipo: string; row: any; tabela: string }) =>
     ro ? null : (
       <div className="flex gap-1 justify-end">
@@ -116,6 +116,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
       }
       case "indicador": {
         if (r.parent_id && r.regra_pai === "media_ponderada" && (r.peso_componente == null)) { toast.error("Informe o peso do componente (regra média ponderada)."); return; }
+        if(r.origem!=='bsc'&&!r.id&&r.tipo_apontamento==='entrega'&&!r.prazo_entrega){toast.error('Informe o prazo de entrega.');return;}
         const row = {
           codigo: r.codigo, nome: r.nome, origem: r.origem, objetivo_id: r.objetivo_id, okr_id: r.origem === "okr" ? r.okr_id : null,
           cadeira_id: r.cadeira_id, unidade: r.unidade || null, sentido: r.sentido, peso: r.peso ?? 0, status: r.status,
@@ -125,8 +126,9 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
         };
         const { data, error } = r.id ? await db.from("mt_indicadores").update(row).eq("id", r.id).select().single() : await db.from("mt_indicadores").insert(row).select().single();
         if (error) { toast.error(error.message); break; }
+        if(r.origem!=='bsc'&&!r.id&&r.tipo_apontamento){const configured=await db.rpc('mt_analise_configurar',{_id:data.id,_tipo_anterior:'valor_mensal',_dados:{tipo_apontamento:r.tipo_apontamento,prazo_entrega:r.prazo_entrega,unidade:r.unidade,sentido:r.sentido??'maior',meta_semestre:r.meta_semestre,tolerancia:r.tolerancia??0,metas:Object.fromEntries(Object.entries(r.metas??{}).map(([k,v]:any)=>[k,v.mes]))}});if(configured.error){toast.error(configured.error.message);b.reload();return;}}
         const metas = MESES_2S26.map((c) => ({ indicador_id: data.id, competencia: c, meta_mes: r.metas?.[c]?.mes ?? null, meta_acumulada: r.metas?.[c]?.acum ?? null }));
-        const { error: e2 } = await db.from("mt_metas_mensais").upsert(metas, { onConflict: "indicador_id,competencia" });
+        const { error: e2 } = r.origem!=='bsc'&&r.id?{error:null}:await db.from("mt_metas_mensais").upsert(metas, { onConflict: "indicador_id,competencia" });
         if (e2) toast.error(e2.message); else { toast.success("Salvo"); ok = true; }
         break;
       }
@@ -378,15 +380,17 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
                   <Campo label="Cadeira responsável"><Sel value={r.cadeira_id} onChange={(v) => set("cadeira_id", v)} items={cadItems} placeholder="Selecione" allowNone /></Campo>
                   {r.origem === "okr" && <Campo label="OKR"><Sel value={r.okr_id} onChange={(v) => set("okr_id", v)} items={okrItems} placeholder="Selecione" /></Campo>}
                 </div>
+                {r.origem!=='bsc'&&!r.id&&<Campo label="Tipo de análise da meta"><Sel value={r.tipo_apontamento??null} allowNone onChange={v=>set('tipo_apontamento',v)} placeholder="Sem tipo definido" items={Object.entries(ANALISE_LABEL).map(([v,l])=>({v,l}))}/>{r.tipo_apontamento&&<p className="text-xs text-muted-foreground">{ANALISE_AJUDA[r.tipo_apontamento as keyof typeof ANALISE_AJUDA]}</p>}</Campo>}
                 {r.origem!=='bsc'&&r.id&&<AnaliseMetaConfig item={r} metas={b.metas} podeEditar={editaFrequencia} reload={()=>{b.reload();setEdit(null);}}/>}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {(r.origem==='bsc'||!r.id&&r.tipo_apontamento!=='entrega')&&<div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <Campo label="Unidade"><Input value={r.unidade ?? ""} onChange={(e) => set("unidade", e.target.value)} placeholder="%, R$, dias" /></Campo>
                   <Campo label="Sentido"><Sel value={r.sentido} onChange={(v) => set("sentido", v)} placeholder="Sentido" items={[{ v: "maior", l: "Quanto maior melhor" }, { v: "menor", l: "Quanto menor melhor" }]} /></Campo>
                   {r.origem==='bsc'&&<Campo label="Tipo de apontamento (só Governança)"><Sel value={r.tipo_apontamento ?? "valor_mensal"} onChange={(v) => set("tipo_apontamento", v)} placeholder="Tipo" items={Object.entries(TIPO_LBL).map(([v, l]) => ({ v, l }))} /></Campo>}
                   <Campo label="Meta semestral/anual"><Input inputMode="decimal" value={txtNum(r.meta_semestre)} onChange={(e) => set("meta_semestre", num(e.target.value))} /></Campo>
                 </div>
-                {r.origem==='bsc'&&r.tipo_apontamento === "entrega" && <Campo label="Prazo da entrega"><Input type="date" value={r.prazo_entrega ?? ""} onChange={(e) => set("prazo_entrega", e.target.value)} /></Campo>}
-                <Campo label="Meta (texto de referência)"><Input value={r.meta_texto ?? ""} onChange={(e) => set("meta_texto", e.target.value)} /></Campo>
+                }
+                {r.tipo_apontamento === "entrega"&&(!r.id||r.origem==='bsc') && <Campo label="Prazo da entrega"><Input type="date" value={r.prazo_entrega ?? ""} onChange={(e) => set("prazo_entrega", e.target.value)} /></Campo>}
+                {(r.origem==='bsc'||!r.id&&r.tipo_apontamento!=='entrega')&&<><Campo label="Meta (texto de referência)"><Input value={r.meta_texto ?? ""} onChange={(e) => set("meta_texto", e.target.value)} /></Campo>
                 <Campo label="Curva de metas mensais (2º semestre)">
                   <div className="overflow-x-auto"><table className="text-xs w-full">
                     <thead><tr><th className="text-left p-1" />{MESES_2S26.map((c) => <th key={c} className="p-1">{NOME_MES[c.slice(5)]}</th>)}</tr></thead>
@@ -396,6 +400,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
                           onChange={(e) => set("metas", { ...r.metas, [c]: { ...r.metas?.[c], [k]: num(e.target.value) } })} /></td>)}</tr>))}
                     </tbody></table></div>
                 </Campo>
+                </>}
                 <div className="rounded-md border p-3 space-y-3">
                   <div className="text-xs font-semibold">Indicador composto</div>
                   <div className="grid sm:grid-cols-2 gap-3">
