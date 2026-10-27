@@ -60,6 +60,7 @@ export default function EstruturaOrganizacional() {
   const filtradas = useMemo(() => filtrarCadeiras(cadeiras, busca, nivel), [cadeiras, busca, nivel]);
   const atual = id ? porId.get(id) : undefined;
   const texto = (valor: string | null) => <EstruturaTexto texto={valor} acessoSocios={acessoSocios} />;
+  if (!acesso.canAccessPath('estrutura', '/estrutura-organizacional') && aba === 'base') return <BaseOrganizacional />;
   return <div className="min-w-0 space-y-6">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">Estrutura Organizacional</h2><span role="status" className="text-sm text-muted-foreground">{filtradas.length} cadeiras</span></div>
     <Tabs value={aba === "prestadores" && !fitfinder.podeLer ? "organograma" : aba} onValueChange={setAba} className="min-w-0"><TabsList className="mb-4 h-auto flex-wrap"><TabsTrigger value="base">Base organizacional</TabsTrigger><TabsTrigger value="organograma">Organograma atualizado</TabsTrigger><TabsTrigger value="fichas">Fichas estratégicas</TabsTrigger><TabsTrigger value="cadeiras">Cadeiras (metas e rotina)</TabsTrigger>{fitfinder.podeLer && <TabsTrigger value="prestadores">Raio-x dos prestadores</TabsTrigger>}</TabsList><TabsContent value="base"><BaseOrganizacional /></TabsContent>{fitfinder.podeLer && <TabsContent value="prestadores"><RaioXPrestadores /></TabsContent>}<TabsContent value="cadeiras"><CadastroCadeiras /></TabsContent><TabsContent value="organograma"><OrganogramaAtual canEdit={canEdit} /></TabsContent><TabsContent value="fichas">

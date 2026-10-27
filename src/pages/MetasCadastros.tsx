@@ -97,7 +97,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
     switch (edit.tipo) {
       case "cadeira": {
         const diretor = b.perfis.find((p) => p.user_id === r.diretor_user_id);
-        ok = await salvar("mt_cadeiras", { nome: r.nome, diretor_user_id: r.diretor_user_id, diretor_nome: diretor?.display_name ?? r.diretor_nome ?? null, ativo: r.ativo ?? true }, r.id);
+        ok = await salvar("mt_cadeiras", { nome: r.nome, diretor_user_id: r.diretor_user_id, diretor_nome: diretor?.display_name ?? r.diretor_nome ?? null, titular_pessoa_id: r.titular_pessoa_id ?? null, ativo: r.ativo ?? true }, r.id);
         break;
       }
       case "usuario": {
@@ -341,7 +341,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
             case "cadeira": return (<div className="space-y-3">
               <Campo label="Nome"><Input value={r.nome ?? ""} onChange={(e) => set("nome", e.target.value)} /></Campo>
               <Campo label="Diretor responsável (usuário)"><Sel value={r.diretor_user_id} onChange={(v) => set("diretor_user_id", v)} items={pessoaItems} placeholder="Selecione" allowNone /></Campo>
-              {!r.diretor_user_id && <Campo label="Nome do diretor (enquanto não tem usuário)"><Input value={r.diretor_nome ?? ""} onChange={(e) => set("diretor_nome", e.target.value)} /></Campo>}
+              {!r.diretor_user_id && <Campo label="Diretor sem usuário"><PessoaSelect value={r.titular_pessoa_id} texto={r.diretor_nome} onChange={p => set('titular_pessoa_id', p?.id ?? null)} /></Campo>}
             </div>);
             case "usuario": return (<div className="space-y-3">
               <p className="text-sm font-medium">{r._nome}</p>
