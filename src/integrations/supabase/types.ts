@@ -626,6 +626,7 @@ export type Database = {
           ordem: number
           projeto_id: string
           responsavel: string | null
+          responsavel_pessoa_id: string | null
           status: Database["public"]["Enums"]["cronograma_status_enum"]
           updated_at: string
         }
@@ -639,6 +640,7 @@ export type Database = {
           ordem?: number
           projeto_id: string
           responsavel?: string | null
+          responsavel_pessoa_id?: string | null
           status?: Database["public"]["Enums"]["cronograma_status_enum"]
           updated_at?: string
         }
@@ -652,6 +654,7 @@ export type Database = {
           ordem?: number
           projeto_id?: string
           responsavel?: string | null
+          responsavel_pessoa_id?: string | null
           status?: Database["public"]["Enums"]["cronograma_status_enum"]
           updated_at?: string
         }
@@ -661,6 +664,13 @@ export type Database = {
             columns: ["projeto_id"]
             isOneToOne: false
             referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cronograma_itens_responsavel_pessoa_id_fkey"
+            columns: ["responsavel_pessoa_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
             referencedColumns: ["id"]
           },
         ]
@@ -844,6 +854,7 @@ export type Database = {
           pacote: string
           projeto_id: string
           responsavel: string | null
+          responsavel_pessoa_id: string | null
           status: Database["public"]["Enums"]["eap_status_enum"]
           updated_at: string
         }
@@ -857,6 +868,7 @@ export type Database = {
           pacote: string
           projeto_id: string
           responsavel?: string | null
+          responsavel_pessoa_id?: string | null
           status?: Database["public"]["Enums"]["eap_status_enum"]
           updated_at?: string
         }
@@ -870,6 +882,7 @@ export type Database = {
           pacote?: string
           projeto_id?: string
           responsavel?: string | null
+          responsavel_pessoa_id?: string | null
           status?: Database["public"]["Enums"]["eap_status_enum"]
           updated_at?: string
         }
@@ -879,6 +892,13 @@ export type Database = {
             columns: ["projeto_id"]
             isOneToOne: false
             referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eap_itens_responsavel_pessoa_id_fkey"
+            columns: ["responsavel_pessoa_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
             referencedColumns: ["id"]
           },
         ]
@@ -1896,29 +1916,38 @@ export type Database = {
       mt_cadeiras: {
         Row: {
           ativo: boolean
+          codigo_org: string | null
           created_at: string
           diretor_nome: string | null
           diretor_user_id: string | null
           id: string
           nome: string
+          sigla_org: string | null
+          titular_pessoa_id: string | null
           updated_at: string
         }
         Insert: {
           ativo?: boolean
+          codigo_org?: string | null
           created_at?: string
           diretor_nome?: string | null
           diretor_user_id?: string | null
           id?: string
           nome: string
+          sigla_org?: string | null
+          titular_pessoa_id?: string | null
           updated_at?: string
         }
         Update: {
           ativo?: boolean
+          codigo_org?: string | null
           created_at?: string
           diretor_nome?: string | null
           diretor_user_id?: string | null
           id?: string
           nome?: string
+          sigla_org?: string | null
+          titular_pessoa_id?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -2407,6 +2436,7 @@ export type Database = {
           okr_id: string | null
           prazo: string | null
           responsavel_nome: string | null
+          responsavel_pessoa_id: string | null
           responsavel_user_id: string | null
           status: string
           titulo: string
@@ -2425,6 +2455,7 @@ export type Database = {
           okr_id?: string | null
           prazo?: string | null
           responsavel_nome?: string | null
+          responsavel_pessoa_id?: string | null
           responsavel_user_id?: string | null
           status?: string
           titulo: string
@@ -2443,6 +2474,7 @@ export type Database = {
           okr_id?: string | null
           prazo?: string | null
           responsavel_nome?: string | null
+          responsavel_pessoa_id?: string | null
           responsavel_user_id?: string | null
           status?: string
           titulo?: string
@@ -2475,6 +2507,13 @@ export type Database = {
             columns: ["okr_id"]
             isOneToOne: false
             referencedRelation: "mt_okrs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_iniciativas_responsavel_pessoa_id_fkey"
+            columns: ["responsavel_pessoa_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
             referencedColumns: ["id"]
           },
         ]
@@ -3520,6 +3559,36 @@ export type Database = {
         }
         Relationships: []
       }
+      org_auditoria: {
+        Row: {
+          antes: Json | null
+          autor: string | null
+          created_at: string
+          depois: Json | null
+          entidade: string
+          id: string
+          registro_id: string
+        }
+        Insert: {
+          antes?: Json | null
+          autor?: string | null
+          created_at?: string
+          depois?: Json | null
+          entidade: string
+          id?: string
+          registro_id: string
+        }
+        Update: {
+          antes?: Json | null
+          autor?: string | null
+          created_at?: string
+          depois?: Json | null
+          entidade?: string
+          id?: string
+          registro_id?: string
+        }
+        Relationships: []
+      }
       org_cadeiras: {
         Row: {
           ativo: boolean | null
@@ -3598,6 +3667,69 @@ export type Database = {
           },
         ]
       }
+      org_correspondencias: {
+        Row: {
+          cadeira_id: string | null
+          campo: string
+          confianca: number
+          created_at: string
+          fonte: string
+          id: string
+          motivo: string
+          pessoa_id: string | null
+          registro_id: string
+          revisado_em: string | null
+          revisado_por: string | null
+          status: string
+          texto_original: string
+        }
+        Insert: {
+          cadeira_id?: string | null
+          campo: string
+          confianca?: number
+          created_at?: string
+          fonte: string
+          id?: string
+          motivo?: string
+          pessoa_id?: string | null
+          registro_id: string
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          texto_original: string
+        }
+        Update: {
+          cadeira_id?: string | null
+          campo?: string
+          confianca?: number
+          created_at?: string
+          fonte?: string
+          id?: string
+          motivo?: string
+          pessoa_id?: string | null
+          registro_id?: string
+          revisado_em?: string | null
+          revisado_por?: string | null
+          status?: string
+          texto_original?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_correspondencias_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_correspondencias_pessoa_id_fkey"
+            columns: ["pessoa_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       org_organograma_cargos: {
         Row: {
           ativo: boolean
@@ -3606,11 +3738,14 @@ export type Database = {
           id: string
           mt_cadeira_id: string | null
           nivel: string
+          nivel_org: string | null
           nome: string
           observacoes: string | null
           ocupante_nome: string | null
           ordem: number
           parent_id: string | null
+          pessoa_id: string | null
+          revisao_org: boolean
           texto_original: string | null
           updated_at: string
         }
@@ -3621,11 +3756,14 @@ export type Database = {
           id?: string
           mt_cadeira_id?: string | null
           nivel?: string
+          nivel_org?: string | null
           nome: string
           observacoes?: string | null
           ocupante_nome?: string | null
           ordem?: number
           parent_id?: string | null
+          pessoa_id?: string | null
+          revisao_org?: boolean
           texto_original?: string | null
           updated_at?: string
         }
@@ -3636,11 +3774,14 @@ export type Database = {
           id?: string
           mt_cadeira_id?: string | null
           nivel?: string
+          nivel_org?: string | null
           nome?: string
           observacoes?: string | null
           ocupante_nome?: string | null
           ordem?: number
           parent_id?: string | null
+          pessoa_id?: string | null
+          revisao_org?: boolean
           texto_original?: string | null
           updated_at?: string
         }
@@ -3657,6 +3798,144 @@ export type Database = {
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "org_organograma_cargos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_pessoas: {
+        Row: {
+          aliases: string[]
+          ativo: boolean
+          cadeira_id: string | null
+          cargo_id: string | null
+          created_at: string
+          email: string | null
+          fonte: string | null
+          gestor_id: string | null
+          id: string
+          nome: string
+          revisao_pendente: boolean
+          updated_at: string
+          user_id: string | null
+          vigencia_inicio: string
+        }
+        Insert: {
+          aliases?: string[]
+          ativo?: boolean
+          cadeira_id?: string | null
+          cargo_id?: string | null
+          created_at?: string
+          email?: string | null
+          fonte?: string | null
+          gestor_id?: string | null
+          id?: string
+          nome: string
+          revisao_pendente?: boolean
+          updated_at?: string
+          user_id?: string | null
+          vigencia_inicio?: string
+        }
+        Update: {
+          aliases?: string[]
+          ativo?: boolean
+          cadeira_id?: string | null
+          cargo_id?: string | null
+          created_at?: string
+          email?: string | null
+          fonte?: string | null
+          gestor_id?: string | null
+          id?: string
+          nome?: string
+          revisao_pendente?: boolean
+          updated_at?: string
+          user_id?: string | null
+          vigencia_inicio?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_pessoas_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_pessoas_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "org_organograma_cargos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_pessoas_gestor_id_fkey"
+            columns: ["gestor_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_vigencias: {
+        Row: {
+          cadeira_id: string | null
+          cargo_id: string | null
+          created_at: string
+          criado_por: string | null
+          fim: string | null
+          gestor_id: string | null
+          id: string
+          inicio: string
+          pessoa_id: string
+        }
+        Insert: {
+          cadeira_id?: string | null
+          cargo_id?: string | null
+          created_at?: string
+          criado_por?: string | null
+          fim?: string | null
+          gestor_id?: string | null
+          id?: string
+          inicio: string
+          pessoa_id: string
+        }
+        Update: {
+          cadeira_id?: string | null
+          cargo_id?: string | null
+          created_at?: string
+          criado_por?: string | null
+          fim?: string | null
+          gestor_id?: string | null
+          id?: string
+          inicio?: string
+          pessoa_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_vigencias_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_vigencias_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "org_organograma_cargos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_vigencias_gestor_id_fkey"
+            columns: ["gestor_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_vigencias_pessoa_id_fkey"
+            columns: ["pessoa_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
             referencedColumns: ["id"]
           },
         ]
@@ -4582,9 +4861,11 @@ export type Database = {
           created_by: string | null
           descricao: string | null
           diretor: string | null
+          diretor_pessoa_id: string | null
           email_alias: string | null
           especialista: Database["public"]["Enums"]["especialista_enum"]
           gerente: string | null
+          gerente_pessoa_id: string | null
           ice: number
           id: string
           inicio: string | null
@@ -4623,9 +4904,11 @@ export type Database = {
           created_by?: string | null
           descricao?: string | null
           diretor?: string | null
+          diretor_pessoa_id?: string | null
           email_alias?: string | null
           especialista?: Database["public"]["Enums"]["especialista_enum"]
           gerente?: string | null
+          gerente_pessoa_id?: string | null
           ice?: number
           id?: string
           inicio?: string | null
@@ -4664,9 +4947,11 @@ export type Database = {
           created_by?: string | null
           descricao?: string | null
           diretor?: string | null
+          diretor_pessoa_id?: string | null
           email_alias?: string | null
           especialista?: Database["public"]["Enums"]["especialista_enum"]
           gerente?: string | null
+          gerente_pessoa_id?: string | null
           ice?: number
           id?: string
           inicio?: string | null
@@ -4690,6 +4975,20 @@ export type Database = {
             columns: ["cadeira_id"]
             isOneToOne: false
             referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projetos_diretor_pessoa_id_fkey"
+            columns: ["diretor_pessoa_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projetos_gerente_pessoa_id_fkey"
+            columns: ["gerente_pessoa_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
             referencedColumns: ["id"]
           },
         ]
@@ -4832,6 +5131,7 @@ export type Database = {
           motivo_cancelamento: string
           projeto_id: string | null
           responsavel: string
+          responsavel_pessoa_id: string | null
           status: string
           updated_at: string
           vinculos: Json
@@ -4853,6 +5153,7 @@ export type Database = {
           motivo_cancelamento?: string
           projeto_id?: string | null
           responsavel?: string
+          responsavel_pessoa_id?: string | null
           status: string
           updated_at?: string
           vinculos?: Json
@@ -4874,6 +5175,7 @@ export type Database = {
           motivo_cancelamento?: string
           projeto_id?: string | null
           responsavel?: string
+          responsavel_pessoa_id?: string | null
           status?: string
           updated_at?: string
           vinculos?: Json
@@ -4898,6 +5200,13 @@ export type Database = {
             columns: ["projeto_id"]
             isOneToOne: false
             referencedRelation: "projetos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rotina_acoes_entrega_responsavel_pessoa_id_fkey"
+            columns: ["responsavel_pessoa_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
             referencedColumns: ["id"]
           },
         ]
@@ -5924,6 +6233,56 @@ export type Database = {
         Args: { _arquivo?: string; _mensagem: string; _modo: string }
         Returns: undefined
       }
+      org_acao_salvar: {
+        Args: { _cadeira: string; _ciclo: string; _dados: Json; _id: string }
+        Returns: {
+          atualizado_nome: string | null
+          atualizado_por: string | null
+          cadeira_id: string
+          ciclo_atualizacao: string
+          ciclo_origem: string
+          created_at: string
+          criado_nome: string | null
+          criado_por: string | null
+          data_conclusao: string | null
+          data_prevista: string | null
+          descricao: string
+          id: string
+          iniciativa_id: string | null
+          motivo_cancelamento: string
+          projeto_id: string | null
+          responsavel: string
+          responsavel_pessoa_id: string | null
+          status: string
+          updated_at: string
+          vinculos: Json
+        }
+        SetofOptions: {
+          from: "*"
+          to: "rotina_acoes_entrega"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      org_correspondencia_revisar: {
+        Args: {
+          _acao: string
+          _cadeira?: string
+          _ids: string[]
+          _pessoa?: string
+        }
+        Returns: number
+      }
+      org_diretorio: { Args: never; Returns: Json }
+      org_estrutura_salvar: {
+        Args: { _dados: Json; _id: string; _tipo: string }
+        Returns: string
+      }
+      org_normalizar: { Args: { _texto: string }; Returns: string }
+      org_pessoa_salvar: {
+        Args: { _dados: Json; _id: string }
+        Returns: string
+      }
       planejamento_aprovar: { Args: { _id: string }; Returns: undefined }
       pmo_atualizar_status: { Args: { _itens: Json }; Returns: number }
       pmo_pode_atualizar: { Args: never; Returns: boolean }
@@ -6039,6 +6398,7 @@ export type Database = {
           motivo_cancelamento: string
           projeto_id: string | null
           responsavel: string
+          responsavel_pessoa_id: string | null
           status: string
           updated_at: string
           vinculos: Json
