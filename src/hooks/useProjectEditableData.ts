@@ -7,6 +7,7 @@ export interface CronogramaItem {
   id: string;
   fase: string;
   responsavel: string;
+  responsavel_pessoa_id?: string | null;
   dataPrevista: string; // ISO yyyy-mm-dd
   dataConclusao: string | null;
   previsto: number; // semanas
@@ -31,6 +32,7 @@ export interface EntregaItem {
   id: string;
   titulo: string;
   responsavel: string;
+  responsavel_pessoa_id?: string | null;
   dataPrevista: string;
   dataConclusao: string | null;
   horas: number;

@@ -48,6 +48,7 @@ export type Vinculo = { tipo: "objetivo" | "indicador"; ref_id: string; principa
 export type AcaoEntrega = {
   id?: string; cadeira_id?: string; ciclo_origem?: string; ciclo_atualizacao?: string;
   projeto_id: string | null; iniciativa_id: string | null; responsavel: string; descricao: string; vinculos: Vinculo[];
+  responsavel_pessoa_id?: string | null;
   status: "em_andamento" | "concluida" | "cancelada"; data_conclusao: string | null; data_prevista: string | null; motivo_cancelamento: string;
   updated_at?: string;
 };

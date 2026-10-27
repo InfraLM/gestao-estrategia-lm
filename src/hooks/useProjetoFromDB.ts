@@ -14,6 +14,8 @@ export interface ProjetoRow {
   saude: "On-Track" | "Alerta" | "Off-Track";
   diretor: string | null;
   gerente: string | null;
+  diretor_pessoa_id?: string | null;
+  gerente_pessoa_id?: string | null;
   budget: number;
   realizado: number;
   ice: number;
@@ -32,6 +34,7 @@ export interface CronogramaRow {
   ordem: number;
   fase: string;
   responsavel: string | null;
+  responsavel_pessoa_id?: string | null;
   data_prevista: string | null;
   data_conclusao: string | null;
   status: string;
@@ -44,6 +47,7 @@ export interface EapRow {
   pacote: string;
   entregavel: string;
   responsavel: string | null;
+  responsavel_pessoa_id?: string | null;
   data_prevista: string | null;
   data_conclusao: string | null;
   status: string;

@@ -18,6 +18,9 @@ import type { Indicador, Iniciativa, Objetivo } from "@/hooks/useMetasBase";
 import {
   AcaoEntrega, STATUS_ACAO_LBL, Vinculo, acaoAtrasada, acoesDoCiclo, errosAcao, novaAcao, responsavelSugerido, rotuloEmpilhada, vinculosSugeridos,
 } from "@/lib/acoesEntrega";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
+import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
+import { nomeVinculado } from '@/lib/baseOrganizacional';
 
 const db = supabase as any;
 type Proj = { id: string; codigo: string | null; nome: string; cadeira_id: string | null; gerente: string | null; diretor: string | null };
@@ -50,7 +53,7 @@ export default function AcoesEntregaCheckout({ cadeira, ciclo, podeEditar, indic
     ]);
     if (p.error || a.error) { setErro(true); return; }
     setErro(false); setProjetos(p.data ?? []); setTodas(a.data ?? []);
-    setLinhas(acoesDoCiclo((a.data ?? []) as AcaoEntrega[], ciclo).map((x) => ({ ...x, chave: x.id! })));
+    setLinhas(acoesDoCiclo((a.data ?? []) as AcaoEntrega[], ciclo).map((x) => ({ ...x, chave: x.id ?? crypto.randomUUID() })));
   };
   useEffect(() => { carregar(); }, [cadeira, ciclo]);
 
@@ -86,7 +89,8 @@ export default function AcoesEntregaCheckout({ cadeira, ciclo, podeEditar, indic
     set(l.chave, { tentou: true });
     if (Object.keys(errosAcao(l)).length) return;
     set(l.chave, { tentou: true, estado: "salvando" });
-    const { data, error } = await db.rpc("rotina_acao_salvar", { _id: l.id ?? null, _cadeira: cadeira, _ciclo: ciclo, _dados: {
+    const { data, error } = await db.rpc("org_acao_salvar", { _id: l.id ?? null, _cadeira: cadeira, _ciclo: ciclo, _dados: {
+      responsavel_pessoa_id: l.responsavel_pessoa_id ?? null,
       projeto_id: l.projeto_id, iniciativa_id: l.iniciativa_id, responsavel: l.responsavel, descricao: l.descricao, vinculos: l.vinculos,
       status: l.status, data_conclusao: l.status === "concluida" ? l.data_conclusao : null, data_prevista: l.data_prevista, motivo_cancelamento: l.status === "cancelada" ? l.motivo_cancelamento : "",
     } });
@@ -128,7 +132,7 @@ export default function AcoesEntregaCheckout({ cadeira, ciclo, podeEditar, indic
             <FonteSelect labelId={`${id}-fonte-l`} valor={fonte} rotulo={rotuloFonte(l)} grupos={opcoes} disabled={bloqueada} onChange={(v) => escolherFonte(l, v)} />
             <p className="text-xs text-muted-foreground">Ao escolher, o responsável e os vínculos são sugeridos e podem ser editados.</p></div>
           <FormField id={`${id}-resp`} label="Responsável" help="Pré-preenchido pelo projeto/iniciativa ou pela última ação ligada a ele.">
-            <Input value={l.responsavel} maxLength={200} disabled={bloqueada} onChange={(ev) => set(l.chave, { responsavel: ev.target.value })} />
+            <PessoaSelect value={l.responsavel_pessoa_id} texto={l.responsavel} disabled={bloqueada} onChange={p => set(l.chave, { responsavel_pessoa_id: p?.id ?? null })} />
           </FormField>
           <FormField id={`${id}-desc`} label="Descrição da entrega" required error={e.descricao} className="md:col-span-2">
             <Textarea value={l.descricao} maxLength={2000} disabled={bloqueada} onChange={(ev) => set(l.chave, { descricao: ev.target.value })} />
@@ -185,6 +189,7 @@ function FonteSelect({ labelId, valor, rotulo, grupos, disabled, onChange }: {
 
 /** Lista somente leitura (dashboard por diretor e ficha do projeto). */
 export function AcoesEntregaLista({ filtro, cadeiras, titulo }: { filtro: { projeto_id?: string; cadeira_id?: string }; cadeiras?: { id: string; nome: string }[]; titulo: string }) {
+  const { diretorio } = useBaseOrganizacional();
   const [itens, setItens] = useState<any[] | null>(null);
   useEffect(() => {
     let q = db.from("rotina_acoes_entrega").select("*").order("updated_at", { ascending: false }).limit(300);
@@ -204,7 +209,7 @@ export function AcoesEntregaLista({ filtro, cadeiras, titulo }: { filtro: { proj
       <ul className="space-y-1 text-sm">{lista.map((a) => <li key={a.id} className="flex flex-wrap items-center gap-2 border-b pb-1">
         <Badge variant={acaoAtrasada(a, hoje) ? "destructive" : "outline"}>{acaoAtrasada(a, hoje) ? "Atrasada" : STATUS_ACAO_LBL[a.status as AcaoEntrega["status"]]}</Badge>
         <span className="min-w-0 flex-1 break-words">{a.descricao}</span>
-        <span className="text-xs text-muted-foreground">{a.responsavel || "—"} · {a.status === "concluida" ? `concluída ${fmt(a.data_conclusao)}` : a.status === "em_andamento" ? `previsto ${fmt(a.data_prevista)}` : a.motivo_cancelamento}</span>
+        <span className="text-xs text-muted-foreground">{nomeVinculado(a.responsavel_pessoa_id, a.responsavel, diretorio.pessoas) || '—'} · {a.status === "concluida" ? `concluída ${fmt(a.data_conclusao)}` : a.status === "em_andamento" ? `previsto ${fmt(a.data_prevista)}` : a.motivo_cancelamento}</span>
       </li>)}</ul>
     </div>)}
   </section>;

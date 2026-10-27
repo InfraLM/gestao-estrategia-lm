@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Sparkles, Bot, CheckCircle2, AlertTriangle, XCircle, Save, Send, RotateCcw, Upload, FileText, Loader2, FileWarning, Info } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { diretores, objetivosBSC, okrs } from "@/data/mockData";
+import { objetivosBSC, okrs } from "@/data/mockData";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -57,6 +58,8 @@ export default function Submissao() {
   const [descricao, setDescricao] = useState("");
   const [diretor, setDiretor] = useState("");
   const [gerente, setGerente] = useState("");
+  const [diretorPessoa, setDiretorPessoa] = useState<string | null>(null);
+  const [gerentePessoa, setGerentePessoa] = useState<string | null>(null);
   const [categoria, setCategoria] = useState("");
   const [budget, setBudget] = useState("");
 
@@ -258,13 +261,11 @@ export default function Submissao() {
             </div>
             <div>
               <Label>Diretor Responsável</Label>
-              <Select value={diretor} onValueChange={setDiretor}><SelectTrigger className="mt-1"><SelectValue placeholder="Selecionar..." /></SelectTrigger>
-                <SelectContent>{diretores.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
-              </Select>
+              <PessoaSelect label="Diretor Responsável" value={diretorPessoa} texto={diretor} onChange={p => { setDiretorPessoa(p?.id ?? null); setDiretor(p?.nome ?? ''); }} />
             </div>
             <div>
               <Label>Gerente do Projeto</Label>
-              <Input value={gerente} onChange={e => setGerente(e.target.value)} placeholder="Nome do gerente" className="mt-1" />
+              <PessoaSelect label="Gerente do Projeto" value={gerentePessoa} texto={gerente} onChange={p => { setGerentePessoa(p?.id ?? null); setGerente(p?.nome ?? ''); }} />
             </div>
             <div className="md:col-span-2">
               <Label>Categoria Estratégica</Label>

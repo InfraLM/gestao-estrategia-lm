@@ -37,7 +37,7 @@ export default function BaseOrganizacional() {
   const correspondencias = admin.data?.correspondencias ?? [];
   const filtradas = correspondencias.filter(c => (origem === 'todas' || c.fonte === origem) && (status === 'todos' || c.status === status) && normalizarNome(`${c.texto_original} ${c.fonte} ${c.motivo}`).includes(normalizarNome(busca)));
   const pendencias = pendenciasBase(d); const pessoas = pode ? admin.data?.pessoas ?? d.pessoas : d.pessoas;
-  const filtrar = <T extends { nome: string }>(itens: T[]) => itens.filter(i => normalizarNome(i.nome).includes(normalizarNome(busca)));
+  const filtrar = (itens: { id: string; nome: string }[]) => itens.filter(i => normalizarNome(i.nome).includes(normalizarNome(busca)));
   const set = (campo: string, valor: unknown) => setEdit(e => e ? { ...e, row: { ...e.row, [campo]: valor } } : null);
   const reload = async () => { await base.recarregar(); await admin.refetch(); };
   const salvar = () => once.current(async () => {
