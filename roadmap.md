@@ -1,7 +1,7 @@
 # Pré-Offsite · correção Bloco 0
-- [ ] Restaurar 0.1–0.17 com matrizes, orientações, KPIs somente leitura e namespace novo; manter topo e ocultar 5.riscos.
-- [ ] Consolidado administrativo, lideranças privadas, Excel e anexo sem painéis indicadores/influência.
-- [ ] Testes fictícios computador/celular, sem respostas reais nem publicação.
+- [x] Restauradas 0.1–0.17 com matrizes, orientações sempre visíveis, KPIs somente leitura e namespace b0.v3.; topo e rodapé mantidos, 5.riscos oculto.
+- [x] Consolidado administrativo com contagens/observações, lideranças privadas, Excel e anexo atualizados sem indicadores/influência.
+- [x] 49 testes isolados aprovados; computador/celular, salvar/reler fictício e consolidado conferidos sem erros; Naira somente leitura, nenhuma resposta real/acesso alterado, sem publicar.
 
 # Pré-Offsite · topo e Bloco 0 por diretoria
 - [x] Navegação no topo, progresso e rodapé fixo sem sobreposição; computador/celular conferidos.
