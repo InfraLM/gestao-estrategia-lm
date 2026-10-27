@@ -3,11 +3,12 @@ export const FREQUENCIAS = ["semanal", "quinzenal", "mensal", "trimestral", "sem
 export type Frequencia = typeof FREQUENCIAS[number];
 export const FREQUENCIA_LBL: Record<Frequencia, string> = { semanal: "Semanal", quinzenal: "Quinzenal", mensal: "Mensal", trimestral: "Trimestral", semestral: "Semestral" };
 export const TRATAMENTOS = ["Pilotar", "Suavizar", "Vigiar por exceção", "Revisar"] as const;
-export type CalendarioKpi = { frequencia?: Frequencia | null; mes_ciclo?: number | null; semana_mes?: number | null; frequencia_inicio?: string | null; origem_frequencia?: string | null; tratamento?: string | null };
+export type CalendarioKpi = { frequencia?: Frequencia | null; mes_ciclo?: number | null; semana_mes?: number | null; frequencia_inicio?: string | null; origem_frequencia?: string | null; tratamento?: string | null; frequencia_historico?:{inicio:string;dados:Omit<CalendarioKpi,'frequencia_historico'>}[]|null };
 const dia = (s: string) => new Date(`${s}T12:00:00Z`);
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 export function semanaDoMes(ciclo: string): number { return Math.floor((dia(ciclo).getUTCDate() - 1) / 7) + 1; }
 export function devidoNoCiclo(k: CalendarioKpi, ciclo: string, critico = false): boolean {
+  k=frequenciaNoCiclo(k,ciclo);
   if (!k.frequencia || ciclo < (k.frequencia_inicio ?? INICIO_FREQUENCIA)) return true;
   const d = dia(ciclo), semana = semanaDoMes(ciclo), mes = d.getUTCMonth();
   if (d.getUTCDay() !== 1) return false;
@@ -29,6 +30,7 @@ export function segundasMes(comp: string): string[] {
 export const previstoNoMes = (k: CalendarioKpi, comp: string) => segundasMes(comp).some(c => devidoNoCiclo(k, c));
 export type PeriodoApontamento = { chave: string; label: string; inicio: string; fim: string; competencia: string };
 export function periodoApontamento(k: CalendarioKpi, ciclo: string, critico = false): PeriodoApontamento {
+  k=frequenciaNoCiclo(k,ciclo);
   const d = dia(ciclo), y = d.getUTCFullYear(), m = d.getUTCMonth();
   const f = critico ? "mensal" : k.frequencia ?? "mensal";
   if (f === "semanal" || f === "quinzenal") {
@@ -48,3 +50,4 @@ export function registrarLeituraNormal(estado: { normais: number; ultimoPeriodo:
   return { normais, ultimoPeriodo: periodo, ativo: normais < 2 };
 }
 export const resumoFrequencia = (k: CalendarioKpi) => !k.frequencia ? "Sem classificação" : `${FREQUENCIA_LBL[k.frequencia]}${["trimestral", "semestral"].includes(k.frequencia) ? ` · mês ${k.mes_ciclo ?? 1}` : ""}${k.frequencia === "quinzenal" ? " · semanas 1 e 3" : k.frequencia === "semanal" ? " · todas" : ` · semana ${k.semana_mes ?? 1}`}`;
+export function frequenciaNoCiclo(k:CalendarioKpi,ciclo:string):CalendarioKpi {const h=k.frequencia_historico?.filter(x=>x.inicio<=ciclo).sort((a,b)=>b.inicio.localeCompare(a.inicio))[0];return h?{...k,...h.dados,frequencia_historico:null}:k;}
