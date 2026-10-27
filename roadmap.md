@@ -1,5 +1,5 @@
 # Base única da estrutura organizacional
-- [ ] Incremento 0: diagnóstico numérico de fontes, campos textuais/referências e variações; definir plano seguro.
+- [x] Incremento 0: diagnóstico numérico de fontes, campos textuais/referências e variações; plano seguro preparado, sem alterações nos registros/acessos.
 - [ ] Incremento 1: base de cadeiras, cargos e pessoas com vigência, revisão e auditoria; Gov/CEO editam, diretores leem sem ampliar módulos.
 - [ ] Incremento 2: correspondências sugeridas, revisão/aprovação em massa da Naira e preservação do texto antigo.
 - [ ] Incremento 3: listas pesquisáveis e nomes projetados da base nos formulários; integrações preservam confirmação e agrupamentos.
