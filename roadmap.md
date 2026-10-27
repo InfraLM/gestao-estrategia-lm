@@ -1,5 +1,6 @@
 # Calendário de apontamento editável
-- [ ] Listas por KPI, prévia/carga/filtros, salvamento linha/lote e descarte; permissões/piso/auditoria e próximo ciclo; testes isolados e tela sem dados reais.
+- [x] Listas BSC estratégico/tático, KR e Cesta; prévia/carga total por cadeira/filtros; linha/lote com feedback e descarte, Gov/CEO e piso. Vigência próxima segunda por histórico nos retratos, guardas e avisos. 32 testes isolados aprovados; computador/celular/teclado e erro/retry com salvar/reler fictícios, zero dados reais, sem publicar.
+- [x] Conflitos a comunicar: semana 5 continua só semanais; carga >3 é alerta, não bloqueio; lote salva por linha e conserva falhas; envio de e-mails permanece desligado.
 
 # Pré-Offsite · escala 0.1 substituída
 - [x] Nova escala de cinco níveis, legenda e ajuda por toque/hover; lacunas somente 3/4 e nível 5 separado nas contagens/Excel. 27 testes aprovados e computador/celular com salvamento fictício interceptado; valores antigos preservados, zero respostas reais alteradas, sem publicar.
