@@ -1,3 +1,10 @@
+# Base única da estrutura organizacional
+- [ ] Incremento 0: diagnóstico numérico de fontes, campos textuais/referências e variações; definir plano seguro.
+- [ ] Incremento 1: base de cadeiras, cargos e pessoas com vigência, revisão e auditoria; Gov/CEO editam, diretores leem sem ampliar módulos.
+- [ ] Incremento 2: correspondências sugeridas, revisão/aprovação em massa da Naira e preservação do texto antigo.
+- [ ] Incremento 3: listas pesquisáveis e nomes projetados da base nos formulários; integrações preservam confirmação e agrupamentos.
+- [ ] Incremento 4: testes isolados e tela computador/celular/teclado; pendências/conflitos e lembrete de publicação.
+
 # Calendário de apontamento editável
 - [x] Listas BSC estratégico/tático, KR e Cesta; prévia/carga total por cadeira/filtros; linha/lote com feedback e descarte, Gov/CEO e piso. Vigência próxima segunda por histórico nos retratos, guardas e avisos. 32 testes isolados aprovados; computador/celular/teclado e erro/retry com salvar/reler fictícios, zero dados reais, sem publicar.
 - [x] Conflitos a comunicar: semana 5 continua só semanais; carga >3 é alerta, não bloqueio; lote salva por linha e conserva falhas; envio de e-mails permanece desligado.
