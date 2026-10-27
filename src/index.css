@@ -261,3 +261,6 @@
 .offsite-footer { padding-bottom:max(.75rem, env(safe-area-inset-bottom)); }
 .offsite-form section[id] { scroll-margin-top:9rem; }
 @media(max-width:639px) { .offsite-form { padding:.5rem; } .offsite-hero { padding:1.25rem; } .offsite-question { padding:1rem; } .offsite-block-heading { align-items:flex-start; } }
+.offsite-form { overflow-x: clip; }
+.offsite-nav { top: 4rem; }
+@media (max-width:639px) { .offsite-nav { top: 6.25rem; } }
