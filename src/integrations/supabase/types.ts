@@ -2248,6 +2248,7 @@ export type Database = {
           frequencia: string | null
           frequencia_editado_em: string | null
           frequencia_editado_por: string | null
+          frequencia_historico: Json
           frequencia_inicio: string | null
           frequencia_justificativa: string | null
           id: string
@@ -2288,6 +2289,7 @@ export type Database = {
           frequencia?: string | null
           frequencia_editado_em?: string | null
           frequencia_editado_por?: string | null
+          frequencia_historico?: Json
           frequencia_inicio?: string | null
           frequencia_justificativa?: string | null
           id?: string
@@ -2328,6 +2330,7 @@ export type Database = {
           frequencia?: string | null
           frequencia_editado_em?: string | null
           frequencia_editado_por?: string | null
+          frequencia_historico?: Json
           frequencia_inicio?: string | null
           frequencia_justificativa?: string | null
           id?: string
@@ -5725,6 +5728,10 @@ export type Database = {
       }
       mt_email_corporativo: { Args: never; Returns: boolean }
       mt_fechar: { Args: { _comp: string }; Returns: undefined }
+      mt_frequencia_dados: {
+        Args: { _i: Database["public"]["Tables"]["mt_indicadores"]["Row"] }
+        Returns: Json
+      }
       mt_frequencia_devida: {
         Args: {
           _ciclo: string
@@ -5736,10 +5743,117 @@ export type Database = {
         }
         Returns: boolean
       }
+      mt_frequencia_no_ciclo: {
+        Args: {
+          _ciclo: string
+          _i: Database["public"]["Tables"]["mt_indicadores"]["Row"]
+        }
+        Returns: {
+          analise_configurada_em: string | null
+          analise_historico: Json
+          cadeira_id: string | null
+          codigo: string
+          created_at: string
+          frequencia: string | null
+          frequencia_editado_em: string | null
+          frequencia_editado_por: string | null
+          frequencia_historico: Json
+          frequencia_inicio: string | null
+          frequencia_justificativa: string | null
+          id: string
+          mes_ciclo: number | null
+          meta_2030: string | null
+          meta_semestre: number | null
+          meta_texto: string | null
+          nivel: string | null
+          nome: string
+          objetivo_id: string | null
+          observacoes: string | null
+          okr_id: string | null
+          origem: string
+          origem_frequencia: string | null
+          parent_id: string | null
+          peso: number
+          peso_componente: number | null
+          prazo_entrega: string | null
+          regra_consolidacao: string
+          semana_mes: number | null
+          sentido: string
+          status: string
+          status_implantacao_medicao: string | null
+          tipo_apontamento: string
+          tolerancia: number | null
+          tratamento: string | null
+          unidade: string | null
+          updated_at: string
+          velocidade_mudanca: string | null
+          velocidade_reacao: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "mt_indicadores"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       mt_frequencia_numero: { Args: { _texto: string }; Returns: number }
+      mt_frequencia_propostas_validar: {
+        Args: { _ids: string[] }
+        Returns: number
+      }
       mt_frequencia_salvar: {
         Args: { _dados: Json; _id: string }
         Returns: undefined
+      }
+      mt_indicadores_no_ciclo: {
+        Args: { _ciclo: string }
+        Returns: {
+          analise_configurada_em: string | null
+          analise_historico: Json
+          cadeira_id: string | null
+          codigo: string
+          created_at: string
+          frequencia: string | null
+          frequencia_editado_em: string | null
+          frequencia_editado_por: string | null
+          frequencia_historico: Json
+          frequencia_inicio: string | null
+          frequencia_justificativa: string | null
+          id: string
+          mes_ciclo: number | null
+          meta_2030: string | null
+          meta_semestre: number | null
+          meta_texto: string | null
+          nivel: string | null
+          nome: string
+          objetivo_id: string | null
+          observacoes: string | null
+          okr_id: string | null
+          origem: string
+          origem_frequencia: string | null
+          parent_id: string | null
+          peso: number
+          peso_componente: number | null
+          prazo_entrega: string | null
+          regra_consolidacao: string
+          semana_mes: number | null
+          sentido: string
+          status: string
+          status_implantacao_medicao: string | null
+          tipo_apontamento: string
+          tolerancia: number | null
+          tratamento: string | null
+          unidade: string | null
+          updated_at: string
+          velocidade_mudanca: string | null
+          velocidade_reacao: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "mt_indicadores"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       mt_is_governanca: { Args: { _uid: string }; Returns: boolean }
       mt_pode_lancar: {
