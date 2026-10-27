@@ -1,3 +1,8 @@
+# Pré-Offsite · correção Bloco 0
+- [ ] Restaurar 0.1–0.17 com matrizes, orientações, KPIs somente leitura e namespace novo; manter topo e ocultar 5.riscos.
+- [ ] Consolidado administrativo, lideranças privadas, Excel e anexo sem painéis indicadores/influência.
+- [ ] Testes fictícios computador/celular, sem respostas reais nem publicação.
+
 # Pré-Offsite · topo e Bloco 0 por diretoria
 - [x] Navegação no topo, progresso e rodapé fixo sem sobreposição; computador/celular conferidos.
 - [x] Perguntas 0.1–0.10 em namespace novo, painéis por cadeira com principal cadastrado e apoio fallback; consolidado/Excel/influência/revisão/anexo. Configuração com histórico, prazo preservado.
