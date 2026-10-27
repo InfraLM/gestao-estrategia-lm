@@ -1,4 +1,5 @@
 import PortfolioVinculos from "@/components/PortfolioVinculos";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 import AnaliseMetaConfig from '@/components/AnaliseMetaConfig';
 import { ANALISE_LABEL, ANALISE_AJUDA,analiseDefinida } from '@/lib/analiseMetas';
 import FrequenciaKpi, { CalendarioApontamento } from '@/components/FrequenciaKpi';
@@ -96,7 +97,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
     switch (edit.tipo) {
       case "cadeira": {
         const diretor = b.perfis.find((p) => p.user_id === r.diretor_user_id);
-        ok = await salvar("mt_cadeiras", { nome: r.nome, diretor_user_id: r.diretor_user_id, diretor_nome: diretor?.display_name ?? r.diretor_nome ?? null, ativo: r.ativo ?? true }, r.id);
+        ok = await salvar("mt_cadeiras", { nome: r.nome, diretor_user_id: r.diretor_user_id, diretor_nome: diretor?.display_name ?? r.diretor_nome ?? null, titular_pessoa_id: r.titular_pessoa_id ?? null, ativo: r.ativo ?? true }, r.id);
         break;
       }
       case "usuario": {
@@ -136,7 +137,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
         const resp = b.perfis.find((p) => p.user_id === r.responsavel_user_id);
         ok = await salvar("mt_iniciativas", {
           titulo: r.titulo, okr_id: r.okr_id, indicador_id: r.indicador_id, objetivo_id: r.objetivo_id, cadeira_id: r.cadeira_id,
-          responsavel_user_id: r.responsavel_user_id, responsavel_nome: resp?.display_name ?? resp?.email ?? null,
+          responsavel_user_id: r.responsavel_user_id, responsavel_pessoa_id: r.responsavel_pessoa_id ?? null, responsavel_nome: r.responsavel_nome ?? resp?.display_name ?? resp?.email ?? null,
           prazo: r.prazo || null, status: r.status ?? "a_iniciar", comentario: r.comentario || null, ...(r.id ? {} : { created_by: b.user?.id }),
         }, r.id);
         break;
@@ -340,7 +341,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
             case "cadeira": return (<div className="space-y-3">
               <Campo label="Nome"><Input value={r.nome ?? ""} onChange={(e) => set("nome", e.target.value)} /></Campo>
               <Campo label="Diretor responsável (usuário)"><Sel value={r.diretor_user_id} onChange={(v) => set("diretor_user_id", v)} items={pessoaItems} placeholder="Selecione" allowNone /></Campo>
-              {!r.diretor_user_id && <Campo label="Nome do diretor (enquanto não tem usuário)"><Input value={r.diretor_nome ?? ""} onChange={(e) => set("diretor_nome", e.target.value)} /></Campo>}
+              {!r.diretor_user_id && <Campo label="Diretor sem usuário"><PessoaSelect value={r.titular_pessoa_id} texto={r.diretor_nome} onChange={p => set('titular_pessoa_id', p?.id ?? null)} /></Campo>}
             </div>);
             case "usuario": return (<div className="space-y-3">
               <p className="text-sm font-medium">{r._nome}</p>
@@ -426,7 +427,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
                 <Campo label="KPI / KR de origem (opcional)"><Sel value={r.indicador_id} onChange={(v) => set("indicador_id", v)} allowNone placeholder="Nenhum" items={b.indicadores.filter((i) => i.status === "ativo").map((i) => ({ v: i.id, l: `${i.codigo} · ${i.nome}` }))} /></Campo>
                 <Campo label="Objetivo estratégico"><Sel value={r.objetivo_id} onChange={(v) => set("objetivo_id", v)} items={objItems} placeholder="Selecione" allowNone /></Campo>
                 <Campo label="Cadeira"><Sel value={r.cadeira_id} onChange={(v) => set("cadeira_id", v)} items={b.isGov ? cadItems : cadItems.filter((c) => c.v === b.minhaCadeira)} placeholder="Selecione" allowNone={b.isGov} /></Campo>
-                <Campo label="Responsável (qualquer usuário)"><Sel value={r.responsavel_user_id} onChange={(v) => set("responsavel_user_id", v)} items={pessoaItems} placeholder="Selecione" allowNone /></Campo>
+                <Campo label="Responsável"><PessoaSelect value={r.responsavel_pessoa_id} texto={r.responsavel_nome} onChange={p => setEdit(e => e ? { ...e, row: { ...e.row, responsavel_pessoa_id: p?.id ?? null, responsavel_user_id: p?.user_id ?? null, ...(p?.cadeira_id && (b.isGov || p.cadeira_id === b.minhaCadeira) ? { cadeira_id: p.cadeira_id } : {}) } } : null)} /></Campo>
                 <Campo label="Prazo"><Input type="date" value={r.prazo ?? ""} onChange={(e) => set("prazo", e.target.value)} /></Campo>
                 <Campo label="Status"><Sel value={r.status} onChange={(v) => set("status", v)} placeholder="Status" items={["a_iniciar", "em_andamento", "concluida", "cancelada"].map((x) => ({ v: x, l: STATUS_INI[x] }))} /></Campo>
               </div>

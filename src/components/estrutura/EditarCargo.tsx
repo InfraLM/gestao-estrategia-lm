@@ -9,8 +9,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NIVEIS } from "@/pages/estruturaOrganizacional";
 import { descendentes, validarCargo } from "@/lib/organograma";
+import PessoaSelect from './PessoaSelect';
 
-export type CargoEdicao = { id?: string; nome: string; ocupante_nome: string | null; nivel: string | null; parent_id: string | null; ordem: number | null; ativo: boolean | null; observacoes?: string | null; mt_cadeira_id?: string | null };
+export type CargoEdicao = { id?: string; nome: string; ocupante_nome: string | null; nivel: string | null; parent_id: string | null; ordem: number | null; ativo: boolean | null; observacoes?: string | null; mt_cadeira_id?: string | null; pessoa_id?: string | null };
 export default function EditarCargo({ cargo, cargos, salvar, fechar, campos = [], cadeirasSemanal }: {
   cargo: CargoEdicao; cargos: CargoEdicao[]; salvar: (valor: CargoEdicao & Record<string, unknown>) => Promise<void>;
   fechar: () => void; campos?: { campo: string; titulo: string; valor: string | null }[];
@@ -35,7 +36,7 @@ export default function EditarCargo({ cargo, cargos, salvar, fechar, campos = []
   return <Dialog open onOpenChange={aberto => { if (!aberto && !busy) fechar(); }}><DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto"><DialogHeader><DialogTitle>{cargo.id ? "Editar cargo" : "Novo cargo"}</DialogTitle></DialogHeader>
     <form className="space-y-4" onSubmit={e => { e.preventDefault(); void submit(); }}>
       <div className="space-y-1.5"><Label htmlFor="cargo-nome">Cargo / cadeira</Label><Input id="cargo-nome" required value={valor.nome} onChange={e => alterar("nome", e.target.value)} /></div>
-      <div className="space-y-1.5"><Label htmlFor="cargo-pessoa">Ocupante</Label><Input id="cargo-pessoa" value={valor.ocupante_nome ?? ""} onChange={e => alterar("ocupante_nome", e.target.value || null)} /></div>
+      <div className="space-y-1.5"><Label>Ocupante</Label><PessoaSelect label="Ocupante" value={valor.pessoa_id} texto={valor.ocupante_nome} onChange={p => alterar('pessoa_id', p?.id ?? null)} /></div>
       <div className="grid gap-4 sm:grid-cols-2"><div className="space-y-1.5"><Label>Nível</Label><Select value={valor.nivel ?? "outro"} onValueChange={v => alterar("nivel", v)}><SelectTrigger aria-label="Nível do cargo"><SelectValue /></SelectTrigger><SelectContent>{Object.entries(NIVEIS).map(([v, t]) => <SelectItem key={v} value={v}>{v === "outro" ? "Operacional / outro" : t}</SelectItem>)}</SelectContent></Select></div>
         <div className="space-y-1.5"><Label htmlFor="cargo-ordem">Ordem</Label><Input id="cargo-ordem" type="number" step="1" value={valor.ordem ?? 0} onChange={e => alterar("ordem", Number(e.target.value))} /></div></div>
       <div className="space-y-1.5"><Label>Cadeira superior</Label><Select value={valor.parent_id ?? "raiz"} onValueChange={v => alterar("parent_id", v === "raiz" ? null : v)}><SelectTrigger aria-label="Cadeira superior"><SelectValue /></SelectTrigger><SelectContent><div className="p-2"><Input placeholder="Buscar cargo ou ocupante" aria-label="Buscar cadeira superior" value={busca} onChange={e => setBusca(e.target.value)} onKeyDown={e => e.stopPropagation()} /></div><SelectItem value="raiz">Sem superior</SelectItem>{cargos.filter(c => c.id && !bloqueados.has(c.id) && `${c.nome} ${c.ocupante_nome}`.toLocaleLowerCase().includes(busca.toLocaleLowerCase())).map(c => <SelectItem key={c.id} value={c.id ?? "raiz"}>{c.nome} {c.ocupante_nome ? `· ${c.ocupante_nome}` : ""}</SelectItem>)}</SelectContent></Select></div>

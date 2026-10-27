@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
+import { normalizarNome } from '@/lib/baseOrganizacional';
 
 const SITUACOES = [
   { v: "mapeado", l: "Mapeado" }, { v: "sem_cadeira", l: "Sem cadeira" },
@@ -26,6 +27,7 @@ export default function GovernancaIntegracao() {
   const qc = useQueryClient();
   const [sincronizando, setSinc] = useState(false);
   const [filtro, setFiltro] = useState("todos");
+  const [buscaCadeira, setBuscaCadeira] = useState('');
 
   const dados = useQuery({
     enabled: isAdmin,
@@ -141,7 +143,8 @@ export default function GovernancaIntegracao() {
                       <Popover>
                         <PopoverTrigger asChild><Button variant="outline" size="sm" className="max-w-56 justify-start truncate">{m.cadeiras.length ? m.cadeiras.map(nomeCad).join(", ") : "Escolher…"}</Button></PopoverTrigger>
                         <PopoverContent className="w-64 space-y-2">
-                          {(dados.data?.cadeiras ?? []).map((c: any) => (
+                          <Input aria-label="Buscar cadeira da correspondência" value={buscaCadeira} onChange={e => setBuscaCadeira(e.target.value)} placeholder="Buscar cadeira…" />
+                          {(dados.data?.cadeiras ?? []).filter((c: any) => normalizarNome(`${c.nome} ${c.diretor_nome}`).includes(normalizarNome(buscaCadeira))).map((c: any) => (
                             <label key={c.id} className="flex items-center gap-2 text-sm">
                               <Checkbox checked={m.cadeiras.includes(c.id)} onCheckedChange={(ok) => salvar(m, { cadeiras: ok ? [...m.cadeiras, c.id] : m.cadeiras.filter((x) => x !== c.id) })} />
                               {c.nome}{c.diretor_nome ? ` · ${c.diretor_nome}` : ""}

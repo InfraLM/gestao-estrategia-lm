@@ -12,6 +12,7 @@ import { projetos } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SaudeBadge } from "@/components/badges";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 interface KPI { indicador: string; atual: string; meta: string }
 interface BC {
@@ -19,6 +20,7 @@ interface BC {
   projeto_id?: string;
   area_responsavel: string;
   responsavel: string;
+  responsavel_pessoa_id?: string | null;
   problema_descricao: string;
   problema_evidencias: string;
   processo_impactado: string;
@@ -132,7 +134,7 @@ export default function MelhoriaDetalhe() {
         <h3 className="font-semibold">1. Identificação da Iniciativa</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div><Label>Área responsável</Label><Input value={bc.area_responsavel} onChange={e => setBc({ ...bc, area_responsavel: e.target.value })} /></div>
-          <div><Label>Responsável</Label><Input value={bc.responsavel} onChange={e => setBc({ ...bc, responsavel: e.target.value })} /></div>
+          <div><Label>Responsável</Label><PessoaSelect value={bc.responsavel_pessoa_id} texto={bc.responsavel} onChange={p => setBc({ ...bc, responsavel_pessoa_id: p?.id ?? null })} /></div>
         </div>
       </Card>
 

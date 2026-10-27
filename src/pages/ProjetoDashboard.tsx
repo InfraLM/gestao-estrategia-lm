@@ -11,6 +11,7 @@ import { ArrowLeft, Loader2, Plus, Trash2, Upload, FileText, DollarSign, Activit
 import { useProjetoFromDB } from "@/hooks/useProjetoFromDB";
 import { useRef, useState } from "react";
 import { SaudeBadge } from "@/components/badges";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 export default function ProjetoDashboard() {
   const { id } = useParams<{ id: string }>();
@@ -107,7 +108,7 @@ export default function ProjetoDashboard() {
                   {db.cronograma.map(c => (
                     <tr key={c.id} className="border-b border-border/50">
                       <td className="px-2 py-2"><Input defaultValue={c.fase} onBlur={e => e.target.value !== c.fase && db.updateCronograma(c.id, { fase: e.target.value })} className="h-8" /></td>
-                      <td className="px-2 py-2"><Input defaultValue={c.responsavel ?? ""} onBlur={e => db.updateCronograma(c.id, { responsavel: e.target.value })} className="h-8" /></td>
+                      <td className="min-w-48 px-2 py-2"><PessoaSelect value={c.responsavel_pessoa_id} texto={c.responsavel} onChange={pessoa => db.updateCronograma(c.id, { responsavel_pessoa_id: pessoa?.id ?? null })} /></td>
                       <td className="px-2 py-2"><Input type="date" defaultValue={c.data_prevista ?? ""} onBlur={e => db.updateCronograma(c.id, { data_prevista: e.target.value || null })} className="h-8" /></td>
                       <td className="px-2 py-2"><Input type="date" defaultValue={c.data_conclusao ?? ""} onBlur={e => db.updateCronograma(c.id, { data_conclusao: e.target.value || null })} className="h-8" /></td>
                       <td className="px-2 py-2">
@@ -145,7 +146,7 @@ export default function ProjetoDashboard() {
                     <tr key={e.id} className="border-b border-border/50">
                       <td className="px-2 py-2"><Input defaultValue={e.pacote} onBlur={ev => db.updateEap(e.id, { pacote: ev.target.value })} className="h-8" /></td>
                       <td className="px-2 py-2"><Input defaultValue={e.entregavel} onBlur={ev => db.updateEap(e.id, { entregavel: ev.target.value })} className="h-8" /></td>
-                      <td className="px-2 py-2"><Input defaultValue={e.responsavel ?? ""} onBlur={ev => db.updateEap(e.id, { responsavel: ev.target.value })} className="h-8" /></td>
+                      <td className="min-w-48 px-2 py-2"><PessoaSelect value={e.responsavel_pessoa_id} texto={e.responsavel} onChange={pessoa => db.updateEap(e.id, { responsavel_pessoa_id: pessoa?.id ?? null })} /></td>
                       <td className="px-2 py-2"><Input type="date" defaultValue={e.data_prevista ?? ""} onBlur={ev => db.updateEap(e.id, { data_prevista: ev.target.value || null })} className="h-8" /></td>
                       <td className="px-2 py-2"><Input type="date" defaultValue={e.data_conclusao ?? ""} onBlur={ev => db.updateEap(e.id, { data_conclusao: ev.target.value || null })} className="h-8" /></td>
                       <td className="px-2 py-2">
@@ -256,8 +257,8 @@ export default function ProjetoDashboard() {
             <h3 className="font-semibold">Dados do projeto</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div><Label>Nome</Label><Input defaultValue={p.nome} onBlur={e => e.target.value !== p.nome && db.updateProjeto({ nome: e.target.value })} className="mt-1" /></div>
-              <div><Label>Diretor</Label><Input defaultValue={p.diretor ?? ""} onBlur={e => db.updateProjeto({ diretor: e.target.value })} className="mt-1" /></div>
-              <div><Label>Gerente</Label><Input defaultValue={p.gerente ?? ""} onBlur={e => db.updateProjeto({ gerente: e.target.value })} className="mt-1" /></div>
+              <div><Label>Diretor</Label><PessoaSelect label="Diretor" value={p.diretor_pessoa_id} texto={p.diretor} onChange={pessoa => db.updateProjeto({ diretor_pessoa_id: pessoa?.id ?? null })} /></div>
+              <div><Label>Gerente</Label><PessoaSelect label="Gerente" value={p.gerente_pessoa_id} texto={p.gerente} onChange={pessoa => db.updateProjeto({ gerente_pessoa_id: pessoa?.id ?? null })} /></div>
               <div><Label>Budget (R$)</Label><Input type="number" defaultValue={p.budget} onBlur={e => db.updateProjeto({ budget: Number(e.target.value) })} className="mt-1" /></div>
               <div><Label>Realizado (R$)</Label><Input type="number" defaultValue={p.realizado} onBlur={e => db.updateProjeto({ realizado: Number(e.target.value) })} className="mt-1" /></div>
               <div><Label>ICE</Label><Input type="number" step="0.1" defaultValue={p.ice} onBlur={e => db.updateProjeto({ ice: Number(e.target.value) })} className="mt-1" /></div>

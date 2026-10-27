@@ -1,0 +1,11 @@
+import { describe, expect, it } from 'vitest';
+import { candidatosNome, nomeVinculado, selecaoPessoa, type PessoaOrg } from '@/lib/baseOrganizacional';
+import { normalizarResponsavel } from '@/lib/rotinaSemanal';
+const pessoa = (id: string, nome: string, aliases: string[] = []): PessoaOrg => ({ id, nome, aliases, cargo_id: 'cargo', cadeira_id: 'coo', user_id: null, ativo: true, revisao_pendente: true });
+describe('Base organizacional · referências sem alterar legado', () => {
+  it('Yuri Ribeiro sugere Yuri Garcia, sem confundir com Iuri', () => { const ps = [pessoa('y', 'Yuri Garcia', ['Yuri Ribeiro']), pessoa('i', 'Iuri Franco')]; expect(candidatosNome('Yuri Ribeiro', ps).map(p => p.id)).toEqual(['y']); expect(candidatosNome('Iuri Franco', ps).map(p => p.id)).toEqual(['i']); });
+  it('nome sem vínculo permanece original após renomear base', () => { const ps = [pessoa('y', 'Yuri Garcia')]; expect(nomeVinculado(null, 'Yuri Ribeiro', ps)).toBe('Yuri Ribeiro'); expect(nomeVinculado('y', 'Yuri Ribeiro', ps)).toBe('Yuri Garcia'); expect(nomeVinculado('y', 'Yuri Ribeiro', [pessoa('y', 'Yuri Garcia atualizado')])).toBe('Yuri Garcia atualizado'); });
+  it('escolher pessoa preenche só cadeira permitida e não inventa usuário', () => { const ps = [pessoa('y', 'Yuri Garcia')]; expect(selecaoPessoa('y', ps, ['coo'])).toMatchObject({ cadeira_id: 'coo', user_id: null }); expect(selecaoPessoa('y', ps, ['cfo']).cadeira_id).toBeNull(); });
+  it('homônimos continuam múltiplos candidatos e textos compostos não são fusão', () => { const ps = [pessoa('a', 'Felipe'), pessoa('b', 'Felipe')]; expect(candidatosNome('Felipe', ps)).toHaveLength(2); expect(candidatosNome('Felipe/Guilherme', ps)).toHaveLength(0); });
+  it('histórico líder antigo e nova referência sobrevivem à normalização', () => { expect(normalizarResponsavel({ tipo: 'lider', nome: 'Yuri Ribeiro', cargo_id: 'cargo' })).toEqual({ tipo: 'lider', nome: 'Yuri Ribeiro', cargo_id: 'cargo' }); expect(normalizarResponsavel({ tipo: 'lider', nome: 'Yuri Garcia', pessoa_id: 'y', cargo_id: 'cargo', cadeira_id: 'coo' })).toMatchObject({ pessoa_id: 'y', cadeira_id: 'coo' }); });
+});

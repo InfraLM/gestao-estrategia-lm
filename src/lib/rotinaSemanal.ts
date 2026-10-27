@@ -3,7 +3,7 @@ import type { PrioridadeSemanal } from "@/lib/governancaPendencias";
 import { EntregaExtra, normalizarExtras, errosExtras } from "@/lib/entregasExtras";
 import type { CalendarioKpi } from '@/lib/frequenciaApontamento';
 
-export type Responsavel = { tipo: "" | "eu" | "lider" | "cadeira" | "externo"; cadeira_id?: string; nome?: string; email?: string; contato_id?: string; cargo_id?: string };
+export type Responsavel = { tipo: "" | "eu" | "lider" | "cadeira" | "externo"; cadeira_id?: string; nome?: string; email?: string; contato_id?: string; cargo_id?: string; pessoa_id?: string };
 /** Vínculos múltiplos de uma ação (ids de mt_indicadores / projetos). */
 export type Vinculos = { bsc: string[]; kr: string[]; cesta: string[]; projetos: string[] };
 export const vinculosVazios = (): Vinculos => ({ bsc: [], kr: [], cesta: [], projetos: [] });
@@ -51,7 +51,7 @@ const respVazio = (): Responsavel => ({ tipo: "" });
 export function normalizarResponsavel(r: any): Responsavel {
   if (!r || typeof r !== "object") return respVazio();
   if (r.tipo === "eu") return { tipo: "eu" };
-  if (r.tipo === "lider") return { tipo: "lider", nome: r.nome ?? "", cargo_id: r.cargo_id };
+  if (r.tipo === "lider") return { tipo: "lider", nome: r.nome ?? "", cargo_id: r.cargo_id, ...(r.pessoa_id ? { pessoa_id: r.pessoa_id } : {}), ...(r.cadeira_id ? { cadeira_id: r.cadeira_id } : {}) };
   if (r.tipo === "cadeira") return { tipo: "cadeira", cadeira_id: r.cadeira_id ?? "" };
   if (r.tipo === "externo") return { tipo: "externo", nome: r.nome ?? "", email: r.email ?? "", contato_id: r.contato_id };
   return respVazio();

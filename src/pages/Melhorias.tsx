@@ -1,4 +1,5 @@
 import { useConteudo } from "@/hooks/useConteudo";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 import { EditarConteudo } from "@/components/EditarConteudo";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -69,6 +70,7 @@ interface MelhoriaEstrategica {
   justificativa: string;
   resultadoEsperado: string;
   responsavel: string;
+  responsavel_pessoa_id?: string | null;
   dataPrevista: string;
   dataConclusao?: string;
   status: Status;
@@ -249,6 +251,7 @@ export default function Melhorias() {
       justificativa: draft.justificativa ?? "",
       resultadoEsperado: draft.resultadoEsperado ?? "",
       responsavel: draft.responsavel ?? "",
+      responsavel_pessoa_id: draft.responsavel_pessoa_id ?? null,
       dataPrevista: draft.dataPrevista ?? "",
       dataConclusao: draft.dataConclusao,
       status: (draft.status as Status) ?? "Backlog",
@@ -432,7 +435,7 @@ export default function Melhorias() {
                       <div className="grid grid-cols-3 gap-3">
                         <div>
                           <label className="text-xs font-medium text-muted-foreground">Responsável</label>
-                          <Input value={draft.responsavel ?? ""} onChange={e => setDraft(d => ({ ...d, responsavel: e.target.value }))} />
+                          <PessoaSelect value={draft.responsavel_pessoa_id} texto={draft.responsavel} onChange={p => setDraft(d => ({ ...d, responsavel_pessoa_id: p?.id ?? null }))} />
                         </div>
                         <div>
                           <label className="text-xs font-medium text-muted-foreground">Data prevista</label>
@@ -653,7 +656,7 @@ export default function Melhorias() {
                           )}
                         </td>
                         <td className="px-2 py-1">
-                          <Input value={i.responsavel} onChange={e => updateItem(i.id, { responsavel: e.target.value })} className="h-7 text-xs" />
+                          <PessoaSelect value={i.responsavel_pessoa_id} texto={i.responsavel} onChange={p => updateItem(i.id, { responsavel_pessoa_id: p?.id ?? null })} />
                         </td>
                         <td className="px-2 py-1">
                           <Input type="date" value={i.dataPrevista} onChange={e => updateItem(i.id, { dataPrevista: e.target.value })} className="h-7 text-xs" />

@@ -30,6 +30,7 @@ import PortfolioVinculos from "@/components/PortfolioVinculos";
 import EmpilhadosVinculo from "@/components/EmpilhadosVinculo";
 import { PredecessoraDialog, PredecessorBadge, isEntregaBloqueada } from "@/components/PredecessoraDialog";
 import { CentrosProjeto } from '@/components/FinanceiroObjetivo';
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 const tooltipStyle = {
   background: "hsl(var(--card))",
@@ -643,7 +644,7 @@ function CronogramaEditavel({ editable, projetoId }: { editable: Editable; proje
                   <Input value={c.fase} onChange={e => updateCronograma(c.id, { fase: e.target.value })} className="h-8 text-sm" />
                 </td>
                 <td className="px-2 py-1.5">
-                  <Input value={c.responsavel} onChange={e => updateCronograma(c.id, { responsavel: e.target.value })} className="h-8 text-sm" />
+                  <PessoaSelect value={c.responsavel_pessoa_id} texto={c.responsavel} onChange={p => updateCronograma(c.id, { responsavel_pessoa_id: p?.id ?? null })} />
                 </td>
                 <td className="px-2 py-1.5">
                   <Input type="date" value={c.dataPrevista} onChange={e => updateCronograma(c.id, { dataPrevista: e.target.value })} className="h-8 text-xs" />
@@ -850,7 +851,7 @@ function EapEditavel({ editable, projetoId }: { editable: Editable; projetoId: s
                             <Input value={e.titulo} onChange={ev => updateEntrega(pacote.id, e.id, { titulo: ev.target.value })} className="h-8 text-sm" />
                           </td>
                           <td className="px-2 py-1.5">
-                            <Input value={e.responsavel} onChange={ev => updateEntrega(pacote.id, e.id, { responsavel: ev.target.value })} className="h-8 text-sm" />
+                            <PessoaSelect value={e.responsavel_pessoa_id} texto={e.responsavel} onChange={p => updateEntrega(pacote.id, e.id, { responsavel_pessoa_id: p?.id ?? null })} />
                           </td>
                           <td className="px-2 py-1.5">
                             <Input type="date" value={e.dataPrevista} onChange={ev => updateEntrega(pacote.id, e.id, { dataPrevista: ev.target.value })} className="h-8 text-xs" />

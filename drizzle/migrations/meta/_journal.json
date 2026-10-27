@@ -554,6 +554,41 @@
       "when": 1793126342073,
       "tag": "0078_base_organizacional_pessoas_correspondencias",
       "breakpoints": true
+    },
+    {
+      "idx": 79,
+      "version": "7",
+      "when": 1793126955431,
+      "tag": "0079_base_organizacional_projecoes_guardas",
+      "breakpoints": true
+    },
+    {
+      "idx": 80,
+      "version": "7",
+      "when": 1793127019612,
+      "tag": "0080_base_organizacional_leitura_minima_vinculos",
+      "breakpoints": true
+    },
+    {
+      "idx": 81,
+      "version": "7",
+      "when": 1793127231199,
+      "tag": "0081_base_organizacional_vigencia_sem_ambiguidade",
+      "breakpoints": true
+    },
+    {
+      "idx": 82,
+      "version": "7",
+      "when": 1793127395656,
+      "tag": "0082_base_organizacional_vinculos_aditivos_extra",
+      "breakpoints": true
+    },
+    {
+      "idx": 83,
+      "version": "7",
+      "when": 1793127569208,
+      "tag": "0083_base_organizacional_revisao_titulares",
+      "breakpoints": true
     }
   ]
 }

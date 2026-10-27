@@ -22,6 +22,7 @@ import { podeEditarEstrutura } from "@/lib/organograma";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useFitFinderAccess } from "@/hooks/useFitFinderAccess";
 import BaseOrganizacional from '@/components/estrutura/BaseOrganizacional';
+import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
 
 const BLOCOS: { titulo: string; campo: keyof Cadeira }[] = [
   { titulo: "Missão", campo: "missao" }, { titulo: "É o D de", campo: "e_o_d_de" },
@@ -33,7 +34,8 @@ export default function EstruturaOrganizacional() {
   const fitfinder = useFitFinderAccess();
   const [aba, setAba] = useState(new URLSearchParams(window.location.search).get("aba") ?? "organograma");
   const acesso = useModuleAccess();
-  const canEdit = podeEditarEstrutura(acesso.grants, acesso.roles);
+  const org = useBaseOrganizacional();
+  const canEdit = podeEditarEstrutura(acesso.grants, acesso.roles) && org.diretorio.pode_editar;
   const [editando, setEditando] = useState<Cadeira | null>(null);
   const acessoSocios = acesso.canAccessPath("socios", "/socios/insights");
   const query = useQuery({
@@ -58,6 +60,7 @@ export default function EstruturaOrganizacional() {
   const filtradas = useMemo(() => filtrarCadeiras(cadeiras, busca, nivel), [cadeiras, busca, nivel]);
   const atual = id ? porId.get(id) : undefined;
   const texto = (valor: string | null) => <EstruturaTexto texto={valor} acessoSocios={acessoSocios} />;
+  if (!acesso.canAccessPath('estrutura', '/estrutura-organizacional') && aba === 'base') return <BaseOrganizacional />;
   return <div className="min-w-0 space-y-6">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">Estrutura Organizacional</h2><span role="status" className="text-sm text-muted-foreground">{filtradas.length} cadeiras</span></div>
     <Tabs value={aba === "prestadores" && !fitfinder.podeLer ? "organograma" : aba} onValueChange={setAba} className="min-w-0"><TabsList className="mb-4 h-auto flex-wrap"><TabsTrigger value="base">Base organizacional</TabsTrigger><TabsTrigger value="organograma">Organograma atualizado</TabsTrigger><TabsTrigger value="fichas">Fichas estratégicas</TabsTrigger><TabsTrigger value="cadeiras">Cadeiras (metas e rotina)</TabsTrigger>{fitfinder.podeLer && <TabsTrigger value="prestadores">Raio-x dos prestadores</TabsTrigger>}</TabsList><TabsContent value="base"><BaseOrganizacional /></TabsContent>{fitfinder.podeLer && <TabsContent value="prestadores"><RaioXPrestadores /></TabsContent>}<TabsContent value="cadeiras"><CadastroCadeiras /></TabsContent><TabsContent value="organograma"><OrganogramaAtual canEdit={canEdit} /></TabsContent><TabsContent value="fichas">
@@ -86,7 +89,7 @@ export default function EstruturaOrganizacional() {
     {editando && <EditarCargo cargo={{ ...editando, parent_id: editando.cadeira_pai_id }} cargos={cadeiras.map(c => ({ ...c, parent_id: c.cadeira_pai_id }))} campos={BLOCOS.map(b => ({ campo: b.campo, titulo: b.titulo, valor: typeof editando[b.campo] === "string" ? String(editando[b.campo]) : null }))} fechar={() => setEditando(null)} salvar={async (v: CargoEdicao & Record<string, unknown>) => {
       if (!canEdit || !v.id) throw new Error("Sem permissão");
       const campos = Object.fromEntries(BLOCOS.map(b => [b.campo, v[b.campo]]));
-      const { error } = await supabase.from("org_cadeiras").update({ ...campos, nome: v.nome, ocupante_nome: v.ocupante_nome, nivel: v.nivel, cadeira_pai_id: v.parent_id, ordem: v.ordem, ativo: v.ativo }).eq("id", v.id).select("id").single();
+      const { error } = await supabase.from("org_cadeiras").update({ ...campos, nome: v.nome, pessoa_id: v.pessoa_id ?? null, ocupante_nome: v.ocupante_nome, nivel: v.nivel, cadeira_pai_id: v.parent_id, ordem: v.ordem, ativo: v.ativo }).eq("id", v.id).select("id").single();
       if (error) throw error; await query.refetch();
     }} />}
   </div>;

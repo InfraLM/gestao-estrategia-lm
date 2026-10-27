@@ -1782,6 +1782,7 @@ export type Database = {
           processo_impactado: string | null
           projeto_id: string
           responsavel: string | null
+          responsavel_pessoa_id: string | null
           updated_at: string
         }
         Insert: {
@@ -1810,6 +1811,7 @@ export type Database = {
           processo_impactado?: string | null
           projeto_id: string
           responsavel?: string | null
+          responsavel_pessoa_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -1838,9 +1840,18 @@ export type Database = {
           processo_impactado?: string | null
           projeto_id?: string
           responsavel?: string | null
+          responsavel_pessoa_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "melhoria_business_case_responsavel_pessoa_id_fkey"
+            columns: ["responsavel_pessoa_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mt_acao_vinculos: {
         Row: {
@@ -3607,6 +3618,7 @@ export type Database = {
           ocupante_nome: string | null
           ocupante_user_id: string | null
           ordem: number | null
+          pessoa_id: string | null
           processos: string | null
           updated_at: string
         }
@@ -3627,6 +3639,7 @@ export type Database = {
           ocupante_nome?: string | null
           ocupante_user_id?: string | null
           ordem?: number | null
+          pessoa_id?: string | null
           processos?: string | null
           updated_at?: string
         }
@@ -3647,6 +3660,7 @@ export type Database = {
           ocupante_nome?: string | null
           ocupante_user_id?: string | null
           ordem?: number | null
+          pessoa_id?: string | null
           processos?: string | null
           updated_at?: string
         }
@@ -3663,6 +3677,13 @@ export type Database = {
             columns: ["mt_cadeira_id"]
             isOneToOne: false
             referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_cadeiras_pessoa_id_fkey"
+            columns: ["pessoa_id"]
+            isOneToOne: false
+            referencedRelation: "org_pessoas"
             referencedColumns: ["id"]
           },
         ]
@@ -6278,6 +6299,15 @@ export type Database = {
         Args: { _dados: Json; _id: string; _tipo: string }
         Returns: string
       }
+      org_fonte_visivel: {
+        Args: { _fonte: string; _id: string }
+        Returns: boolean
+      }
+      org_nome_aprovado_interno: {
+        Args: { _campo: string; _fonte: string; _id: string }
+        Returns: Json
+      }
+      org_nomes_aprovados: { Args: { _fontes: Json }; Returns: Json }
       org_normalizar: { Args: { _texto: string }; Returns: string }
       org_pessoa_salvar: {
         Args: { _dados: Json; _id: string }

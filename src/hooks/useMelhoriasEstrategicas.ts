@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRefetchOnFocus } from "./useRefetchOnFocus";
+import { useBaseOrganizacional } from './useBaseOrganizacional';
+import { nomeVinculado } from '@/lib/baseOrganizacional';
 
 
 export type MelhoriaStatus = "Backlog" | "A Iniciar" | "Em Andamento" | "Validação" | "Concluído" | "Pausado";
@@ -14,6 +16,7 @@ export interface MelhoriaEstrategicaStored {
   justificativa: string;
   resultadoEsperado: string;
   responsavel: string;
+  responsavel_pessoa_id?: string | null;
   dataPrevista: string;
   dataConclusao?: string;
   status: MelhoriaStatus;
@@ -49,6 +52,7 @@ export function saveMelhorias(items: MelhoriaEstrategicaStored[]) {
 
 /** Hook read-only para consumidores (ex.: Status Report). */
 export function useMelhoriasEstrategicas() {
+  const org = useBaseOrganizacional();
   const [items, setItems] = useState<MelhoriaEstrategicaStored[]>(() => loadMelhorias());
 
   useEffect(() => {
@@ -65,5 +69,5 @@ export function useMelhoriasEstrategicas() {
 
 
 
-  return items;
+  return items.map(i => ({ ...i, responsavel: nomeVinculado(i.responsavel_pessoa_id, i.responsavel, org.diretorio.pessoas) }));
 }

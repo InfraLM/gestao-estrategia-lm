@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { GovAcao, contarPendencias, ordenarPendencias, seloPrazo } from "@/lib/governancaPendencias";
 import { AtaStatus, empilharAtas } from "@/lib/rotinaSemanal";
+import NomeOrganizacional from '@/components/estrutura/NomeOrganizacional';
 
 const ATA_LBL: Record<string, string> = { entregue: "Entregue", em_andamento: "Em andamento", nao_entregue: "Não entregue" };
 
@@ -57,7 +58,7 @@ export default function PendenciasComites({ cadeira, usuario, podeEditar, admin,
           {a.prioridade && <Badge variant="outline">{a.prioridade}</Badge>}
           {a.precisa_escalar && <Badge variant="destructive">Escalar</Badge>}
         </div>
-        <p className="text-sm text-muted-foreground break-words">Ata · {a.reuniao_titulo ?? "Reunião não informada"} ({data(a.reuniao_data)}) · Responsável: {a.responsavel_origem ?? "—"}</p>
+        <p className="text-sm text-muted-foreground break-words">Ata · {a.reuniao_titulo ?? "Reunião não informada"} ({data(a.reuniao_data)}) · Responsável: <NomeOrganizacional fonte="gov_acoes" id={a.id} campo="responsavel_origem" texto={a.responsavel_origem} /></p>
         {onStatus && <div className="grid gap-2 sm:grid-cols-[200px_1fr]">
           <Select value={a.meu.status || "none"} disabled={!podeEditar} onValueChange={(v) => onStatus({ ...a.meu, titulo: a.titulo, status: (v === "none" ? "" : v) as AtaStatus["status"] })}>
             <SelectTrigger aria-label={`Seu status: ${a.titulo}`}><SelectValue placeholder="Seu status" /></SelectTrigger>

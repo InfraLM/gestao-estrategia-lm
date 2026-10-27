@@ -7,16 +7,17 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
 import { nomeVinculado, type PessoaOrg } from '@/lib/baseOrganizacional';
 
-export default function PessoaSelect({ value, texto, onChange, disabled, label = 'Responsável', cadeira, usuarios, cargo }: {
+export default function PessoaSelect({ value, texto, onChange, disabled, label = 'Responsável', cadeira, usuarios, cargo, id }: {
   value?: string | null; texto?: string | null; onChange: (pessoa: PessoaOrg | null) => void; disabled?: boolean; label?: string;
   cadeira?: string; usuarios?: boolean; cargo?: boolean;
+  id?: string;
 }) {
   const { diretorio, isError } = useBaseOrganizacional();
   const [open, setOpen] = useState(false);
   const pessoas = diretorio.pessoas.filter(p => p.ativo && (!cadeira || p.cadeira_id === cadeira) && (!usuarios || p.user_id) && (!cargo || p.cargo_id));
   return <div className="min-w-0 space-y-1">
     <Popover open={open} onOpenChange={setOpen}><PopoverTrigger asChild>
-      <Button type="button" variant="outline" aria-label={label} role="combobox" aria-expanded={open} disabled={disabled || isError}
+      <Button id={id} type="button" variant="outline" aria-label={label} role="combobox" aria-expanded={open} disabled={disabled || isError}
         className="h-auto min-h-10 w-full justify-between whitespace-normal text-left font-normal">
         <span className="min-w-0 break-words">{nomeVinculado(value, texto, diretorio.pessoas) || 'Sem responsável'}</span><ChevronsUpDown className="ml-2 h-4 w-4 shrink-0" />
       </Button></PopoverTrigger><PopoverContent align="start" className="w-[--radix-popover-trigger-width] max-w-[calc(100vw-2rem)] p-0">
