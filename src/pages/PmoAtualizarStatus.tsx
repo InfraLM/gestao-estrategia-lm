@@ -13,10 +13,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { filtrarAtualizacao, STATUS_DIRETOS } from "@/lib/atualizacaoStatus";
+import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
+import { nomeVinculado } from '@/lib/baseOrganizacional';
 
-type Item = { id: string; codigo: string; nome: string; status: string; cadeira: string; diretor: string | null; tipo: string; origem: string; termino: string | null; avanco_pct: number | null; updated_at: string; comentario?: string; espelho?: boolean };
+type Item = { id: string; codigo: string; nome: string; status: string; cadeira: string; diretor: string | null; diretor_pessoa_id?: string | null; tipo: string; origem: string; termino: string | null; avanco_pct: number | null; updated_at: string; comentario?: string; espelho?: boolean };
 type Draft = { status: string; termino: string; avanco_pct: number | null; comentario: string };
 export default function PmoAtualizarStatus() {
+  const org = useBaseOrganizacional();
   const [sp, setSp] = useSearchParams(); const [items, setItems] = useState<Item[]>([]);
   const [cadeiras, setCadeiras] = useState<string[]>([]); const [edit, setEdit] = useState(false);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({}); const [loading, setLoading] = useState(true);
@@ -27,7 +30,7 @@ export default function PmoAtualizarStatus() {
   const carregar = async () => {
     setLoading(true); setError(false);
     const [p, c, m, perm] = await Promise.all([
-      supabase.from("projetos").select("id,codigo,nome,status,classificacao,cadeira_id,diretor,termino,avanco_pct,updated_at,atualizacao_comentario").order("codigo"),
+      supabase.from("projetos").select("id,codigo,nome,status,classificacao,cadeira_id,diretor,diretor_pessoa_id,termino,avanco_pct,updated_at,atualizacao_comentario").order("codigo"),
       supabase.from("mt_cadeiras").select("id,nome").eq("ativo", true),
       supabase.from("proc_espelho_melhorias").select("*").eq("ativo", true),
       supabase.rpc("pmo_pode_atualizar"),
@@ -57,7 +60,7 @@ export default function PmoAtualizarStatus() {
     finally { setBusy(false); }
   });
   const historico = async (id: string) => { const { data, error: err } = await supabase.from("pmo_atualizacoes_auditoria").select("*").eq("projeto_id", id).order("created_at", { ascending: false }); if (err) toast.error("Não foi possível abrir o histórico."); else setAudit(data ?? []); };
-  const lista = filtrarAtualizacao(items, sp);
+  const lista = filtrarAtualizacao(items.map(i => ({ ...i, diretor: nomeVinculado(i.diretor_pessoa_id, i.diretor, org.diretorio.pessoas) || null })), sp);
   if (loading) return <p>Carregando atualizações…</p>;
   if (error) return <div className="space-y-3"><p role="alert">Não foi possível carregar o portfólio.</p><Button onClick={carregar}>Tentar novamente</Button></div>;
   return <div className="space-y-6">

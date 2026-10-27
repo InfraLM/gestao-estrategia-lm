@@ -10,6 +10,7 @@ export function useBaseOrganizacional() {
     queryFn: async () => { const { data, error } = await supabase.rpc('org_diretorio'); if (error) throw error; return data as unknown as DiretorioOrg; } });
   return { ...query, diretorio: query.data ?? DIRETORIO_VAZIO, recarregar: async () => {
     await cache.invalidateQueries({ queryKey: ['base-organizacional'] });
+    await cache.invalidateQueries({ queryKey: ['nomes-organizacionais'] });
     window.dispatchEvent(new Event('base-organizacional'));
   } };
 }

@@ -11,6 +11,7 @@ import { FileText, Paperclip, Save, Download } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { projetos } from "@/data/mockData";
+import { useProjetosGestao } from '@/hooks/useProjetosGestao';
 
 const db = supabase as any;
 const MES: Record<string, string> = { "01": "Jan", "02": "Fev", "03": "Mar", "04": "Abr", "05": "Mai", "06": "Jun", "07": "Jul", "08": "Ago", "09": "Set", "10": "Out", "11": "Nov", "12": "Dez" };
@@ -53,8 +54,10 @@ export function StatusReportsDaCadeira({ cadeiraId, diretorNome, comp, podeEdita
   cadeiraId: string; diretorNome: string | null; comp: string; podeEditar: boolean; userId?: string; userNome: string | null;
 }) {
   const [extras, setExtras] = useState<string[]>([]);
-  const base = useMemo(() => projetosDoDiretor(diretorNome), [diretorNome]);
-  const lista = [...base, ...projetos.filter((p) => extras.includes(p.id) && !base.some((b) => b.id === p.id))];
+  const gestao = useProjetosGestao();
+  const candidatos = gestao.projetos.map(p => ({ ...p, id: p.codigo }));
+  const base = candidatos.filter(p => p.cadeira_id === cadeiraId);
+  const lista = [...base, ...candidatos.filter(p => extras.includes(p.id) && !base.some(b => b.id === p.id))];
   const [regs, setRegs] = useState<Record<string, StatusProjeto>>({});
 
   useEffect(() => {
@@ -81,7 +84,7 @@ export function StatusReportsDaCadeira({ cadeiraId, diretorNome, comp, podeEdita
           <Label className="text-xs">Incluir outro projeto:</Label>
           <Select value="" onValueChange={(v) => setExtras((x) => [...x, v])}>
             <SelectTrigger className="w-[360px] h-8"><SelectValue placeholder="Selecione um projeto" /></SelectTrigger>
-            <SelectContent>{projetos.filter((p) => !lista.some((l) => l.id === p.id)).map((p) => <SelectItem key={p.id} value={p.id}>{p.id} · {p.nome}</SelectItem>)}</SelectContent>
+            <SelectContent>{candidatos.filter((p) => !lista.some((l) => l.id === p.id)).map((p) => <SelectItem key={p.id} value={p.id}>{p.id} · {p.nome}</SelectItem>)}</SelectContent>
           </Select>
         </div>
       )}

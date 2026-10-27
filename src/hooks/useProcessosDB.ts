@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import seedJson from "@/data/processos.json";
 import { useRefetchOnFocus } from "./useRefetchOnFocus";
+import { useNomesOrganizacionais } from './useNomesOrganizacionais';
 
 
 export type Processo = {
@@ -77,6 +78,7 @@ export function useProcessosDB() {
   useEffect(() => { reload(); }, [reload]);
   useRefetchOnFocus(reload);
 
-  return { data, loading, reload };
+  const nomes = useNomesOrganizacionais(data.flatMap(p => [{ fonte: 'processos', id: p.id, campo: 'diretor' }, { fonte: 'processos', id: p.id, campo: 'dono' }]));
+  return { data: data.map(p => ({ ...p, diretor: nomes.resolver('processos', p.id, 'diretor', p.diretor), dono: nomes.resolver('processos', p.id, 'dono', p.dono) })), loading, reload };
 }
 

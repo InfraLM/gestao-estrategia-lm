@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useBaseOrganizacional } from './useBaseOrganizacional';
+import { nomeVinculado } from '@/lib/baseOrganizacional';
 
 export interface ProjetoRow {
   id: string;
@@ -81,6 +83,7 @@ export interface StatusReportRow {
 }
 
 export function useProjetoFromDB(codigo: string | undefined) {
+  const org = useBaseOrganizacional();
   const [projeto, setProjeto] = useState<ProjetoRow | null>(null);
   const [cronograma, setCronograma] = useState<CronogramaRow[]>([]);
   const [eap, setEap] = useState<EapRow[]>([]);
@@ -209,7 +212,7 @@ export function useProjetoFromDB(codigo: string | undefined) {
   };
 
   return {
-    projeto, cronograma, eap, submissoes, statusReports, loading, reload,
+    projeto: projeto ? { ...projeto, diretor: nomeVinculado(projeto.diretor_pessoa_id, projeto.diretor, org.diretorio.pessoas) || null, gerente: nomeVinculado(projeto.gerente_pessoa_id, projeto.gerente, org.diretorio.pessoas) || null } : null, cronograma, eap, submissoes, statusReports, loading, reload,
     addCronograma, updateCronograma, deleteCronograma,
     addEap, updateEap, deleteEap,
     submitEntrega, downloadEntrega,

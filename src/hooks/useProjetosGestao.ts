@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useBaseOrganizacional } from './useBaseOrganizacional';
+import { nomeVinculado } from '@/lib/baseOrganizacional';
 
 const db = supabase as any;
 export type ProjetoG = {
   id: string; codigo: string; nome: string; status: string; diretor: string | null; cadeira_id: string | null;
   cadeira_confirmada_em: string | null; situacao_confirmada_em: string | null; objetivos: string[] | null; krs: string[] | null;
   atualizacao_direta_em: string | null; atualizacao_direta_nome: string | null;
+  diretor_pessoa_id?: string | null;
 };
 export type ProjVinc = { id: string; projeto_id: string; tipo: "bsc_objetivo" | "bsc_kpi" | "kr" | "cesta"; ref_id: string };
 export type StatusRep = {
@@ -18,13 +21,14 @@ export type DecisaoProj = { id: string; projeto_id: string; competencia: string;
 
 /** Projetos com cadeira responsável, apoio, vínculos de impacto, status reports e decisões. */
 export function useProjetosGestao() {
+  const org = useBaseOrganizacional();
   const { user } = useAuth();
   const [s, setS] = useState({ projetos: [] as ProjetoG[], apoio: [] as { projeto_id: string; cadeira_id: string }[], vinculos: [] as ProjVinc[], reports: [] as StatusRep[], decisoes: [] as DecisaoProj[] });
   const [ceo, setCeo] = useState(false);
   const [loading, setLoading] = useState(true);
   const load = useCallback(async () => {
     const [p, a, v, r, d] = await Promise.all([
-      db.from("projetos").select("id,codigo,nome,status,diretor,cadeira_id,cadeira_confirmada_em,situacao_confirmada_em,objetivos,krs,atualizacao_direta_em,atualizacao_direta_nome").order("codigo"),
+      db.from("projetos").select("id,codigo,nome,status,diretor,diretor_pessoa_id,cadeira_id,cadeira_confirmada_em,situacao_confirmada_em,objetivos,krs,atualizacao_direta_em,atualizacao_direta_nome").order("codigo"),
       db.from("projeto_cadeiras_apoio").select("projeto_id,cadeira_id"),
       db.from("projeto_vinculos").select("id,projeto_id,tipo,ref_id"),
       db.from("mt_status_projetos").select("*").order("competencia", { ascending: false }),
@@ -36,7 +40,7 @@ export function useProjetosGestao() {
   useEffect(() => { load(); }, [load]);
   useEffect(() => { if (user) db.rpc("proj_eh_ceo", { _uid: user.id }).then(({ data }: any) => setCeo(!!data)); }, [user]);
   const ultimo = (codigo: string) => s.reports.find((r) => r.projeto_codigo === codigo) ?? null;
-  return { ...s, loading, reload: load, ceo, ultimo };
+  return { ...s, projetos: s.projetos.map(p => ({ ...p, diretor: nomeVinculado(p.diretor_pessoa_id, p.diretor, org.diretorio.pessoas) || null })), loading, reload: load, ceo, ultimo };
 }
 
 export async function abrirArquivoStatus(path: string) {
