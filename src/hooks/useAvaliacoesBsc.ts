@@ -50,7 +50,7 @@ export function useAvaliacoesBsc(competencia: string | null, cadeiras: string[] 
         const cks = (c.data ?? []).filter((x: any) => x.cadeira_id === ind.cadeira_id);
         const vigente=analiseNaData(ind,todos[0]?.updated_at??`${competencia}-31T23:59:59`,todos[0]?.analise_snapshot);
         const tipo = vigente.tipo_apontamento ?? "valor_mensal";
-        const r = avaliarPorTipo({ ...vigente, indicador_id: ind.id, sentido: vigente.sentido, competencia, meta_mes: tipo === "valor_mensal" ? meta : null, meta_semestre: vigente.meta_semestre, meta_texto: vigente.meta_texto, realizado: lanc?.valor ?? null,
+        const r = avaliarPorTipo({ ...vigente, indicador_id: ind.id, sentido: vigente.sentido, competencia, meta_mes: tipo === "valor_mensal" ? (vigente.metas&&competencia in vigente.metas?vigente.metas[competencia]:meta) : null, meta_semestre: vigente.meta_semestre, meta_texto: vigente.meta_texto, realizado: lanc?.valor ?? null,
           tipo, prazo_entrega: vigente.prazo_entrega, apontamento: apontamentoMaisRecente(ind.id, fora?null:competencia, todos[0] ?? null, cks) },
           sit ? { valor: sit, data: arvData } : null, cks);
         (out[ind.cadeira_id] ??= { itens: [], cont: contarAvaliacoes([]), off: [] }).itens.push({ id: ind.id, nome: ind.nome, cadeira_id: ind.cadeira_id, grupo: ind.origem, ...r });

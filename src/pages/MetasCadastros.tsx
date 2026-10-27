@@ -386,15 +386,16 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
                   <Campo label="Unidade"><Input value={r.unidade ?? ""} onChange={(e) => set("unidade", e.target.value)} placeholder="%, R$, dias" /></Campo>
                   <Campo label="Sentido"><Sel value={r.sentido} onChange={(v) => set("sentido", v)} placeholder="Sentido" items={[{ v: "maior", l: "Quanto maior melhor" }, { v: "menor", l: "Quanto menor melhor" }]} /></Campo>
                   {r.origem==='bsc'&&<Campo label="Tipo de apontamento (só Governança)"><Sel value={r.tipo_apontamento ?? "valor_mensal"} onChange={(v) => set("tipo_apontamento", v)} placeholder="Tipo" items={Object.entries(TIPO_LBL).map(([v, l]) => ({ v, l }))} /></Campo>}
-                  <Campo label="Meta semestral/anual"><Input inputMode="decimal" value={txtNum(r.meta_semestre)} onChange={(e) => set("meta_semestre", num(e.target.value))} /></Campo>
+                  {(r.origem==='bsc'||r.tipo_apontamento==='valor_periodo')&&<Campo label="Meta semestral/anual"><Input inputMode="decimal" value={txtNum(r.meta_semestre)} onChange={(e) => set("meta_semestre", num(e.target.value))} /></Campo>}
+                  {r.origem!=='bsc'&&r.tipo_apontamento==='valor_mensal'&&<Campo label="Tolerância (unidade da meta)"><Input inputMode="decimal" value={txtNum(r.tolerancia)} onChange={e=>set('tolerancia',num(e.target.value))}/></Campo>}
                 </div>
                 }
                 {r.tipo_apontamento === "entrega"&&(!r.id||r.origem==='bsc') && <Campo label="Prazo da entrega"><Input type="date" value={r.prazo_entrega ?? ""} onChange={(e) => set("prazo_entrega", e.target.value)} /></Campo>}
                 {(r.origem==='bsc'||!r.id&&r.tipo_apontamento!=='entrega')&&<><Campo label="Meta (texto de referência)"><Input value={r.meta_texto ?? ""} onChange={(e) => set("meta_texto", e.target.value)} /></Campo>
-                <Campo label="Curva de metas mensais (2º semestre)">
+                <Campo label={r.origem!=='bsc'&&r.tipo_apontamento==='valor_periodo'?'Referências mensais (opcionais, sem farol automático)':'Curva de metas mensais (2º semestre)'}>
                   <div className="overflow-x-auto"><table className="text-xs w-full">
                     <thead><tr><th className="text-left p-1" />{MESES_2S26.map((c) => <th key={c} className="p-1">{NOME_MES[c.slice(5)]}</th>)}</tr></thead>
-                    <tbody>{(["mes", "acum"] as const).map((k) => (
+                    <tbody>{(r.origem==='bsc'?(["mes", "acum"] as const):(["mes"] as const)).map((k) => (
                       <tr key={k}><td className="p-1 whitespace-nowrap">{k === "mes" ? "Meta do mês" : "Meta acumulada"}</td>
                         {MESES_2S26.map((c) => <td key={c} className="p-1"><Input className="h-8 min-w-[70px]" inputMode="decimal" aria-label={`${k} ${c}`} value={txtNum(r.metas?.[c]?.[k])}
                           onChange={(e) => set("metas", { ...r.metas, [c]: { ...r.metas?.[c], [k]: num(e.target.value) } })} /></td>)}</tr>))}
