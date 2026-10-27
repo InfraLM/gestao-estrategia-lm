@@ -575,6 +575,13 @@
       "when": 1793127231199,
       "tag": "0081_base_organizacional_vigencia_sem_ambiguidade",
       "breakpoints": true
+    },
+    {
+      "idx": 82,
+      "version": "7",
+      "when": 1793127395656,
+      "tag": "0082_base_organizacional_vinculos_aditivos_extra",
+      "breakpoints": true
     }
   ]
 }
