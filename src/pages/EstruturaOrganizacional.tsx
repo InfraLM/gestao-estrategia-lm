@@ -22,6 +22,7 @@ import { podeEditarEstrutura } from "@/lib/organograma";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useFitFinderAccess } from "@/hooks/useFitFinderAccess";
 import BaseOrganizacional from '@/components/estrutura/BaseOrganizacional';
+import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
 
 const BLOCOS: { titulo: string; campo: keyof Cadeira }[] = [
   { titulo: "Missão", campo: "missao" }, { titulo: "É o D de", campo: "e_o_d_de" },
@@ -33,7 +34,8 @@ export default function EstruturaOrganizacional() {
   const fitfinder = useFitFinderAccess();
   const [aba, setAba] = useState(new URLSearchParams(window.location.search).get("aba") ?? "organograma");
   const acesso = useModuleAccess();
-  const canEdit = podeEditarEstrutura(acesso.grants, acesso.roles);
+  const org = useBaseOrganizacional();
+  const canEdit = podeEditarEstrutura(acesso.grants, acesso.roles) && org.diretorio.pode_editar;
   const [editando, setEditando] = useState<Cadeira | null>(null);
   const acessoSocios = acesso.canAccessPath("socios", "/socios/insights");
   const query = useQuery({

@@ -27,7 +27,7 @@ export default function BaseOrganizacional() {
   const [edit, setEdit] = useState<{ tipo: string; row: Record<string, any> } | null>(null);
   const [busy, setBusy] = useState(false); const [erro, setErro] = useState(''); const [salvo, setSalvo] = useState('');
   const once = useRef(exclusiveAction()); useUnsavedChanges(!!edit);
-  const admin = useQuery({ queryKey: ['base-org-admin'], enabled: pode, queryFn: async () => {
+  const admin = useQuery({ queryKey: ['base-org-admin', base.dataUpdatedAt], enabled: pode, queryFn: async () => {
     const [p, c, h] = await Promise.all([db.from('org_pessoas').select('*').order('nome'), db.from('org_correspondencias').select('*').order('fonte'), db.from('org_auditoria').select('*').order('created_at', { ascending: false }).limit(100)]);
     if (p.error || c.error || h.error) throw p.error || c.error || h.error; return { pessoas: p.data as PessoaOrg[], correspondencias: c.data as Correspondencia[], auditoria: h.data as any[] };
   } });

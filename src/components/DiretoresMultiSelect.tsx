@@ -1,9 +1,12 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Check, ChevronDown, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
+import { normalizarNome } from '@/lib/baseOrganizacional';
+import { Input } from '@/components/ui/input';
 
 export const DIRETORES_BPMO = [
   "Yuri Garcia",
@@ -37,6 +40,10 @@ interface Props {
 export function DiretoresMultiSelect({
   value, onChange, options = DIRETORES_BPMO, placeholder = "Selecione diretores", className, size = "md",
 }: Props) {
+  const { diretorio } = useBaseOrganizacional();
+  const [busca, setBusca] = useState('');
+  const oficiais = diretorio.pessoas.filter(p => p.ativo && p.cadeira_id && diretorio.cadeiras.some(c => c.id === p.cadeira_id));
+  const opcoes = oficiais.length ? oficiais.map(p => p.nome) : options;
   const selected = useMemo(() => parseDiretores(value), [value]);
   const toggle = (d: string) => {
     const set = new Set(selected);
@@ -75,18 +82,20 @@ export function DiretoresMultiSelect({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-64 p-1" align="start">
-        {options.map(d => {
+        <Input aria-label="Buscar diretor" placeholder="Buscar diretor…" value={busca} onChange={e => setBusca(e.target.value)} />
+        {opcoes.filter(d => normalizarNome(d).includes(normalizarNome(busca))).map(d => {
           const active = selected.includes(d);
           return (
-            <button
+            <Button
               key={d}
               type="button"
               onClick={() => toggle(d)}
-              className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-left hover:bg-accent hover:text-accent-foreground"
+              variant="ghost"
+              className="h-auto w-full justify-start gap-2 whitespace-normal px-2 py-1.5 text-left text-sm"
             >
               <Check className={cn("h-4 w-4", active ? "opacity-100" : "opacity-0")} />
               <span className="flex-1">{d}</span>
-            </button>
+            </Button>
           );
         })}
         {selected.length > 0 && (

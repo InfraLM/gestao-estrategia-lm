@@ -33,7 +33,7 @@ async function setup() {
  INSERT INTO projetos VALUES('${projeto}','Yuri Ribeiro',NULL,'${cadeira}');
  INSERT INTO profiles VALUES('${uid}','Diretor teste','teste@example.invalid');
  SELECT set_config('test.gov','true',false);`);
- for (const f of ['0078_base_organizacional_pessoas_correspondencias.sql','0079_base_organizacional_projecoes_guardas.sql','0080_base_organizacional_leitura_minima_vinculos.sql']) await pg.exec(readFileSync(`drizzle/migrations/${f}`, 'utf8'));
+ for (const f of ['0078_base_organizacional_pessoas_correspondencias.sql','0079_base_organizacional_projecoes_guardas.sql','0080_base_organizacional_leitura_minima_vinculos.sql','0081_base_organizacional_vigencia_sem_ambiguidade.sql']) await pg.exec(readFileSync(`drizzle/migrations/${f}`, 'utf8'));
  return pg;
 }
 const salvar = async (pg: PGlite, id: string | null = null, dados: Record<string, unknown> = {}) => (await pg.query<{ id: string }>('SELECT org_pessoa_salvar($1,$2::jsonb) id', [id, JSON.stringify({ nome: 'Yuri Garcia', aliases: ['Yuri Ribeiro'], cadeira_id: cadeira, vigencia_inicio: '2026-10-27', ...dados })])).rows[0].id;
