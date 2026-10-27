@@ -1,6 +1,7 @@
 import rev02 from '@/data/bscRev02.json';
 import { useId, useState } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover, PopoverContent } from '@/components/ui/popover';
+import { Anchor as PopoverAnchor } from '@radix-ui/react-popover';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +12,7 @@ import { CHAVE_BLOCO0, codigoNormalizado, linhasMatriz, sugestoesCadeia, kpisRel
 
 function Escolha({campo,value,onChange,disabled,criterios=false}:{campo:Campo;value:any;onChange:(v:string)=>void;disabled:boolean;criterios?:boolean}) {
  const [ajuda,setAjuda]=useState<string|null>(null);
- return <fieldset className="space-y-2 min-w-0"><legend className="text-sm font-medium mb-2">{campo.nome}</legend><div className="flex flex-wrap gap-2" role="radiogroup" aria-label={campo.nome}>{campo.opcoes?.map(o=>{const criterio=criterios?CRITERIOS_COMPETENCIAS.find(x=>x.opcao===o)?.criterio:undefined;const botao=<Button type="button" role="radio" aria-checked={value===o} variant={value===o?'default':'outline'} disabled={disabled} onClick={()=>{onChange(o);if(criterio)setAjuda(o);}} onMouseEnter={()=>{if(criterio)setAjuda(o);}} onFocus={()=>{if(criterio)setAjuda(o);}} onBlur={()=>setAjuda(null)} className="min-h-11 h-auto max-w-full py-2 px-3 whitespace-normal break-words text-left text-sm">{o}</Button>;return criterio?<Popover key={o} open={ajuda===o} onOpenChange={open=>setAjuda(open?o:null)}><PopoverTrigger asChild>{botao}</PopoverTrigger><PopoverContent onOpenAutoFocus={e=>e.preventDefault()} onCloseAutoFocus={e=>e.preventDefault()} className="max-w-[calc(100vw-2rem)] text-sm">{criterio}</PopoverContent></Popover>:<span key={o} className="max-w-full">{botao}</span>;})}</div></fieldset>;
+ return <fieldset className="space-y-2 min-w-0"><legend className="text-sm font-medium mb-2">{campo.nome}</legend><div className="flex flex-wrap gap-2" role="radiogroup" aria-label={campo.nome}>{campo.opcoes?.map(o=>{const criterio=criterios?CRITERIOS_COMPETENCIAS.find(x=>x.opcao===o)?.criterio:undefined;const botao=<Button type="button" role="radio" aria-checked={value===o} variant={value===o?'default':'outline'} disabled={disabled} onClick={()=>{onChange(o);if(criterio)setAjuda(o);}} onMouseEnter={()=>{if(criterio)setAjuda(o);}} onFocus={()=>{if(criterio)setAjuda(o);}} onBlur={()=>setAjuda(null)} className="min-h-11 h-auto max-w-full py-2 px-3 whitespace-normal break-words text-left text-sm">{o}</Button>;return criterio?<Popover key={o} open={ajuda===o} onOpenChange={open=>setAjuda(open?o:null)}><PopoverAnchor asChild>{botao}</PopoverAnchor><PopoverContent onOpenAutoFocus={e=>e.preventDefault()} onCloseAutoFocus={e=>e.preventDefault()} className="max-w-[calc(100vw-2rem)] text-sm">{criterio}</PopoverContent></Popover>:<span key={o} className="max-w-full">{botao}</span>;})}</div></fieldset>;
 }
 function Observacao({value,onChange,disabled,ajuda}:{value:any;onChange:(v:string)=>void;disabled:boolean;ajuda?:string}) {const id=useId();return <details open={value?true:undefined} className="text-sm"><summary className="cursor-pointer text-primary font-medium min-h-11 flex items-center">Observação (opcional){ajuda?` · ${ajuda}`:''}</summary><label htmlFor={id} className="sr-only">Observação</label><Input id={id} aria-label="Observação" value={value??''} disabled={disabled} onChange={e=>onChange(e.target.value)}/></details>;}
 
