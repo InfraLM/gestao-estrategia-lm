@@ -85,6 +85,7 @@ interface Risco {
 
 
 interface MapaAtividade {
+  responsavel_pessoa_id?: string | null;
   id: string;
   codigo: string;
   atividade: string;
@@ -96,6 +97,7 @@ interface MapaAtividade {
 }
 
 interface PlanoAcao {
+  responsavel_pessoa_id?: string | null;
   id: string;
   oQueFazer: string;
   porQue?: string;
@@ -478,7 +480,7 @@ export default function GestaoProcessos() {
                     <TableRow key={a.id}>
                       <TableCell><Textarea rows={2} value={a.oQueFazer} onChange={ev => updateData({ plano: data.plano.map(x => x.id === a.id ? { ...x, oQueFazer: ev.target.value } : x) })} /></TableCell>
                       <TableCell><Textarea rows={2} value={a.porQue || ""} onChange={ev => updateData({ plano: data.plano.map(x => x.id === a.id ? { ...x, porQue: ev.target.value } : x) })} /></TableCell>
-                      <TableCell><PessoaSelect texto={a.responsavel} onChange={p => updateData({ plano: data.plano.map(x => x.id === a.id ? { ...x, responsavel: p?.nome ?? '' } : x) })} /></TableCell>
+                      <TableCell><PessoaSelect value={a.responsavel_pessoa_id} texto={a.responsavel} onChange={p => updateData({ plano: data.plano.map(x => x.id === a.id ? { ...x, responsavel_pessoa_id: p?.id ?? null } : x) })} /></TableCell>
                       <TableCell><Input type="date" value={a.prazo || ""} onChange={ev => updateData({ plano: data.plano.map(x => x.id === a.id ? { ...x, prazo: ev.target.value } : x) })} /></TableCell>
                       <TableCell>
                         <Select value={a.status} onValueChange={v => updateData({ plano: data.plano.map(x => x.id === a.id ? { ...x, status: v as any } : x) })}>
@@ -550,7 +552,7 @@ function MapaTab({ title, items, onChange, copyFromAsIs }: { title: string; item
               <TableRow key={a.id}>
                 <TableCell><Input value={a.codigo} onChange={ev => upd(a.id, { codigo: ev.target.value })} className="h-8 text-xs" /></TableCell>
                 <TableCell><Textarea rows={1} value={a.atividade} onChange={ev => upd(a.id, { atividade: ev.target.value })} /></TableCell>
-                <TableCell><PessoaSelect texto={a.responsavel} onChange={p => upd(a.id, { responsavel: p?.nome ?? '' })} /></TableCell>
+                <TableCell><PessoaSelect value={a.responsavel_pessoa_id} texto={a.responsavel} onChange={p => upd(a.id, { responsavel_pessoa_id: p?.id ?? null })} /></TableCell>
                 <TableCell><Input value={a.sistema || ""} onChange={ev => upd(a.id, { sistema: ev.target.value })} className="h-8 text-xs" /></TableCell>
                 <TableCell><Input value={a.tempo || ""} placeholder="hh:mm" onChange={ev => upd(a.id, { tempo: ev.target.value })} className="h-8 text-xs" /></TableCell>
                 <TableCell>
@@ -738,6 +740,7 @@ function RiscosTab({ processoNome, items, onChange }: { processoNome: string; it
       tipo: draft.tipo,
       acoesMitigadoras: draft.acoesMitigadoras,
       responsavel: draft.responsavel,
+      responsavel_pessoa_id: draft.responsavel_pessoa_id,
       prazo: draft.prazo,
       dataConclusao: draft.dataConclusao,
       impacto: (draft.impacto ?? 3) as Risco["impacto"],

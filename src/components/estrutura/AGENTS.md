@@ -2,3 +2,4 @@
 
 - Structure trees share OrganogramaVisual; nodes open existing detail sheets and zoom/collapse stay local presentation state to preserve hierarchy and permissions.
 - org_organograma_cargos stores operational positions separately from org_cadeiras mandates to preserve goal/incentive links. Both edit paths use estrutura grants/admin and RLS; visible-sheet imports preserve source text/cells and mark inferred grouping. Server validation rejects cycles.
+- BaseOrganizacional manages people and canonical chair/cargo metadata through Gov/CEO-audited RPCs; PessoaSelect resolves explicit IDs only, never fuzzy-confirms old text. Directors may read only the minimal base tab without opening restricted fichas or Fit Finder; imports and legacy edits remain additionally capped by Gov/CEO server policies.
