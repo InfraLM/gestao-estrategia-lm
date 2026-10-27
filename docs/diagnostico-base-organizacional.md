@@ -74,10 +74,20 @@ Conflitos de cargos: cadeira atual CPTO versus cargo importado CRO; cadeira CPPO
 - 3 fichas estratégicas sem cadeira de metas; 6 cadeiras sem usuário titular associado.
 - 139 projetos sem cadeira principal confirmada; sugestões existentes não devem ser aprovadas pela migração.
 - 19 nomes de origem da Governança sem pares de cadeira; 48 ações sem endereçamento reconhecido.
-- Não existe cadastro geral de pessoas com aliases, cargo, gestor, vigência e vínculo opcional ao usuário.
+- No diagnóstico inicial não existia cadastro geral de pessoas; a base aditiva implementada tem 139 pessoas, das quais 131 sem cadeira, 139 sem cargo e 137 sem usuário associado. Esses campos não foram inferidos.
 - Nomes compostos/grupos (“People”, “Comitê”, “O grupo”, “Felipe/Guilherme”) exigem decisão de pessoa versus cadeira versus múltiplos responsáveis.
 - Chefias inferidas no organograma precisam de revisão; não inferir e-mails nem usuários a partir de primeiros nomes.
 
 ## Segurança e conflitos a preservar
 
 O novo diretório não confere acesso a módulos, não altera `mt_usuarios`, convites, participantes Sócios/Pré-Offsite nem confirma titulares. A pessoa e o usuário autenticado são identidades distintas. Cargo é posição, cadeira é responsabilidade e diretoria agregada da integração não é uma cadeira individual. Renomear a base muda a apresentação dos vínculos aprovados, nunca o texto original ou snapshots de ciclos já enviados. Dados financeiros, contatos externos e respostas privadas ficam fora da sugestão geral de nomes.
+
+## Resultado dos incrementos e limites
+
+- Base administrativa com pessoas/cadeiras/cargos, revisão, aliases, vigência e auditoria; leitura mínima dos diretores e edição Gov/CEO.
+- 700 correspondências sugeridas, 445 com candidato e **zero aprovadas**. Aprovação explícita preserva texto e bloqueia origem alterada.
+- Seletores aplicados à rotina, entregas, iniciativas, projetos/EAP/cronograma, organograma, filas e processos/melhorias. Referências locais continuam locais, não constituem sincronização.
+- 145 cargos ainda sem pessoa explicitamente vinculada; 15 também sem ocupante textual. Vínculos de cargo/cadeira/usuário dependem da revisão da Naira.
+- Fit Finder mantém diretorias agregadas e confirmação própria; processos externos permanecem desligados. Sócios e Pré-Offsite mantêm participantes e respostas separados, sem inferir acesso pelo nome.
+- A tela legada de Submissão com IA já não persistia projetos; o seletor foi atualizado, mas transformar sua simulação em cadastro real não foi incluído. As duas telas existentes de gestão de projetos persistem referências.
+- Correspondência de nomes de Governança complementa, mas não substitui, o endereçamento operacional de atas por pares de cadeira. Não aprovar pares automaticamente.

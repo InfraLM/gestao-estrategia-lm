@@ -1,9 +1,11 @@
 # Base única da estrutura organizacional
 - [x] Incremento 0: diagnóstico numérico de fontes, campos textuais/referências e variações; plano seguro preparado, sem alterações nos registros/acessos.
-- [ ] Incremento 1: base de cadeiras, cargos e pessoas com vigência, revisão e auditoria; Gov/CEO editam, diretores leem sem ampliar módulos.
-- [ ] Incremento 2: correspondências sugeridas, revisão/aprovação em massa da Naira e preservação do texto antigo.
-- [ ] Incremento 3: listas pesquisáveis e nomes projetados da base nos formulários; integrações preservam confirmação e agrupamentos.
-- [ ] Incremento 4: testes isolados e tela computador/celular/teclado; pendências/conflitos e lembrete de publicação.
+- [x] Incremento 1: base de cadeiras, cargos e 139 pessoas com vigência, revisão e auditoria; Gov/CEO editam, diretores leem base mínima.
+- [x] Incremento 2: 700 correspondências sugeridas (445 candidatos), revisão explícita em massa; zero aprovadas, textos antigos preservados.
+- [x] Incremento 3: seletores/IDs e projeções em rotina, iniciativas, projetos, cargos, filas e processos/melhorias; integrações mantêm confirmação e agrupamentos.
+- [x] Incremento 4: testes isolados e tela computador/celular/teclado com salvar/reler fictícios, acesso real Naira somente leitura e diretor simulado; limites em docs/diagnostico-base-organizacional.md.
+- [ ] Revisão da Naira: aprovar correspondências e completar pessoas/cargos/cadeiras/usuários; nenhum vínculo inferido ou aprovado sozinho.
+- [ ] Publicar — ação da Naira; Submissão IA legada continua simulação sem cadastro real, fora desta alteração de identidade.
 
 # Calendário de apontamento editável
 - [x] Listas BSC estratégico/tático, KR e Cesta; prévia/carga total por cadeira/filtros; linha/lote com feedback e descarte, Gov/CEO e piso. Vigência próxima segunda por histórico nos retratos, guardas e avisos. 32 testes isolados aprovados; computador/celular/teclado e erro/retry com salvar/reler fictícios, zero dados reais, sem publicar.
