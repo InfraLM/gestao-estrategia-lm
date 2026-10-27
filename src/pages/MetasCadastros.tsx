@@ -219,7 +219,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
               </tbody>
             </table>
           </Card>
-          <CalendarioApontamento indicadores={indicadores.filter(i=>!i.parent_id)} cadeiras={b.cadeiras.filter(c=>c.ativo)}/>
+          <CalendarioApontamento indicadores={b.indicadores.filter(i=>i.status==='ativo'&&!i.parent_id&&(i.origem!=='bsc'||['Estratégico','Tático'].includes((i as {nivel?:string}).nivel??'Tático')))} cadeiras={b.cadeiras.filter(c=>c.ativo)} podeEditar={editaFrequencia} reload={b.reload}/>
           <p className="text-xs text-muted-foreground">Arquivados saem dos lançamentos, mas o histórico é preservado. Peso 0 aparece em seção própria e não entra na nota.</p>
         </TabsContent>
 
