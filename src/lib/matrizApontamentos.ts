@@ -1,3 +1,4 @@
+import { analiseNaData } from "./analiseMetas";
 import { avaliarPorTipo, apontamentoMaisRecente, situacaoNumerica, FIM_PERIODO, type Avaliacao, type ArvoreSit, type CheckoutReg, type Fonte, type TipoApontamento, type StatusEntrega } from "@/lib/avaliacaoBsc";
 import { previstoNoMes, type CalendarioKpi } from '@/lib/frequenciaApontamento';
 
@@ -21,11 +22,13 @@ export function atingimento(valor: number | null, meta: number | null, sentido: 
 
 export type Celula = { valor: number | null; meta: number | null; aval: Avaliacao; origem: string | null; ating: number | null; critico?: boolean;
   fonte?: Fonte; status_entrega?: StatusEntrega | null; alertaDeclarado?: boolean; prazoVencido?: boolean; foraCalendario?: boolean };
-type IndM = CalendarioKpi & { id: string; sentido: "maior" | "menor"; meta_semestre: number | null; meta_texto: string | null; tipo_apontamento?: TipoApontamento | null; prazo_entrega?: string | null };
-type LancM = { declaracao?: string | null; justificativa?: string | null; status_entrega?: string | null; avanco_pct?: number | null; updated_at?: string | null } | null;
+type IndM = CalendarioKpi & { id: string; sentido: "maior" | "menor"; meta_semestre: number | null; meta_texto: string | null; tipo_apontamento?: TipoApontamento | null; prazo_entrega?: string | null;origem?:string;analise_configurada_em?:string|null;analise_historico?:any[];tolerancia?:number|null };
+type LancM = { declaracao?: string | null; justificativa?: string | null; status_entrega?: string | null; avanco_pct?: number | null; updated_at?: string | null;analise_snapshot?:any } | null;
 
 /** Célula mensal pela regra única por tipo. Atingimento numérico só para V (e S depois do fim do período). */
 export function celulaMes(ind: IndM, competencia: string, meta_mes: number | null, realizado: number | null, arvore: ArvoreSit, checkouts: CheckoutReg[], hoje = new Date(), lanc: LancM = null): Celula {
+  ind=analiseNaData(ind,lanc?.updated_at??`${competencia}-31T23:59:59`,lanc?.analise_snapshot);
+  if(lanc?.analise_snapshot?.metas&&competencia in lanc.analise_snapshot.metas)meta_mes=lanc.analise_snapshot.metas[competencia];
   const tipo = ind.tipo_apontamento ?? "valor_mensal";
   const foraCalendario = !!ind.frequencia && !previstoNoMes(ind,competencia);
   const historico = checkouts.filter(c=>competenciaDa(c)<=competencia);

@@ -503,7 +503,7 @@ export default function MetasSemanal() {
                 const semMeta = k.meta_mes == null && (k.origem !== "bsc" || (k.meta_semestre == null && !k.meta_texto));
                 const tipo = k.tipo_apontamento ?? "valor_mensal";
                 const cks = hist.filter((h) => h.tipo === "checkout");
-                const avR = avaliarPorTipo({ indicador_id: k.indicador_id, sentido: k.sentido ?? "maior", competencia: k.competencia, meta_mes: tipo === "valor_mensal" ? k.meta_mes : null, meta_semestre: k.meta_semestre ?? null, meta_texto: k.meta_texto ?? null, realizado: k.realizado,
+                const avR = avaliarPorTipo({ origem:k.origem,analise_configurada_em:k.analise_configurada_em,tolerancia:k.tolerancia,indicador_id: k.indicador_id, sentido: k.sentido ?? "maior", competencia: k.competencia, meta_mes: tipo === "valor_mensal" ? k.meta_mes : null, meta_semestre: k.meta_semestre ?? null, meta_texto: k.meta_texto ?? null, realizado: k.realizado,
                   fora_calendario:false, tipo, prazo_entrega: k.prazo_entrega ?? null, apontamento: apontamentoMaisRecente(k.indicador_id, k.competencia, null, cks) }, arvore.mapa[k.nome.trim()] ? { valor: arvore.mapa[k.nome.trim()], data: arvore.data } : null, cks);
                 const aval = avR.aval;
                 return (

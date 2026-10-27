@@ -1,10 +1,10 @@
 /** Dashboard consolidado da Rotina Semanal: classificação dos apontamentos de KPI vindos da projeção segura do banco. */
-import { numeroBr } from "@/lib/avaliacaoBsc";
+import { avaliarPorTipo,numeroBr } from "@/lib/avaliacaoBsc";
 import { LIMITE_CRITICO } from "@/lib/matrizApontamentos";
 
 export type KpiDash = {
   indicador_id: string; codigo: string; nome: string; origem: "bsc" | "okr" | "cesta"; nivel?: string | null;
-  tipo_apontamento?: string | null; sentido?: string | null; periodo_label?: string | null;
+  analise_configurada_em?:string|null;tolerancia?:number|null;competencia?:string|null;apontado_em?:string|null;tipo_apontamento?: string | null; sentido?: string | null; periodo_label?: string | null;
   meta_mes?: number | null; meta_semestre?: number | null; meta_texto?: string | null; realizado?: number | null; prazo_entrega?: string | null;
   voluntario?: boolean; desvio_critico?: boolean; situacao_atual?: string | null; declaracao?: string | null; status_entrega?: string | null; avanco_pct?: string | null;
 };
@@ -18,6 +18,7 @@ export const origemDash = (k: Pick<KpiDash, "origem" | "nivel">): OrigemDash =>
 
 /** Avaliação do apontamento do ciclo pelo tipo V/S/E (sem considerar a frequência). */
 export function avaliarApontamento(k: KpiDash): { aval: Exclude<Situacao, "fora">; ating: number | null } {
+  if(k.origem!=='bsc'&&k.analise_configurada_em){const n=(k.situacao_atual?numeroBr(k.situacao_atual):null)??k.realizado??null;const r=avaliarPorTipo({...k,indicador_id:k.indicador_id,competencia:k.competencia??null,sentido:k.sentido==='menor'?'menor':'maior',meta_mes:k.meta_mes??null,meta_semestre:k.meta_semestre??null,meta_texto:k.meta_texto??null,realizado:n,tipo:k.tipo_apontamento as any,apontamento:{data:k.apontado_em??'',origem:'checkout',declaracao:k.declaracao as any,status_entrega:k.status_entrega as any}},null,[]);return {aval:r.aval==='encerrada'||r.aval==='sem_meta'?'acomp':r.aval,ating:k.tipo_apontamento==='valor_mensal'&&n!=null&&k.meta_mes? (k.sentido==='menor'?k.meta_mes/n:n/k.meta_mes):null};}
   const tipo = k.tipo_apontamento ?? "valor_mensal";
   if (tipo === "entrega") {
     const s = k.status_entrega ?? "";
