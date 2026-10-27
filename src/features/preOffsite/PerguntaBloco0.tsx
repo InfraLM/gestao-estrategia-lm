@@ -1,3 +1,4 @@
+import rev02 from '@/data/bscRev02.json';
 import { useId } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -5,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2 } from 'lucide-react';
 import { Field, type Refs } from './Fields';
 import { montarFrase, type Campo, type Config, type Pergunta } from './config';
-import { CHAVE_BLOCO0, codigoNormalizado, linhasMatriz, sugestoesCadeia } from './bloco0';
+import { CHAVE_BLOCO0, codigoNormalizado, linhasMatriz, sugestoesCadeia, kpisRelacionados } from './bloco0';
 
 function Escolha({campo,value,onChange,disabled}:{campo:Campo;value:any;onChange:(v:string)=>void;disabled:boolean}) {
  return <fieldset className="space-y-2 min-w-0"><legend className="text-sm font-medium mb-2">{campo.nome}</legend><div className="flex flex-wrap gap-2" role="radiogroup" aria-label={campo.nome}>{campo.opcoes?.map(o=><Button key={o} type="button" role="radio" aria-checked={value===o} variant={value===o?'default':'outline'} disabled={disabled} onClick={()=>onChange(o)} className="min-h-11 h-auto py-2 px-3 whitespace-normal text-left text-sm">{o}</Button>)}</div></fieldset>;
@@ -18,7 +19,7 @@ export default function PerguntaBloco0({p,r,set,refs,c,disabled}:{p:Pergunta;r:R
  const dinamicas=(key:string,campos:Campo[],limite?:number,minimo?:number)=>{const rows=Array.isArray(value[key])?value[key]:[];const visible=rows.length?rows:Array.from({length:minimo??1},()=>({}));return <div className="space-y-5">{visible.map((row:any,i:number)=><div key={i} className="space-y-4 border-b pb-5"><div className="flex items-center justify-between"><h4 className="text-sm font-semibold">{key==='decisoes'?'Decisão':'Item'} {i+1}</h4>{!disabled&&<Button variant="ghost" size="icon" aria-label={`Remover ${key==='decisoes'?'decisão':'item'} ${i+1}`} onClick={()=>save({...value,[key]:visible.filter((_:any,j:number)=>j!==i)})}><Trash2 className="h-4 w-4"/></Button>}</div>{campos.map(f=><div key={f.nome}>{field(f,row[f.nome],v=>save({...value,[key]:visible.map((x:any,j:number)=>j===i?{...x,[f.nome]:v}:x)}))}</div>)}</div>)}{!disabled&&<Button variant="outline" disabled={!!limite&&visible.length>=limite} onClick={()=>save({...value,[key]:[...visible,{}]})}><Plus className="h-4 w-4 mr-2"/>Adicionar{limite?` (${visible.length}/${limite})`:''}</Button>}</div>;};
  const rows=linhasMatriz(p,value);const updateRow=(i:number,patch:any)=>save({...value,itens:rows.map((x,j)=>j===i?{...x,...patch}:x)});
  const sugestoes=sugestoesCadeia(r,refs.processos);
- const kpis=(p.kpis??[]).flatMap(code=>{const found=refs.kpis.filter(k=>codigoNormalizado(k.codigo??'')===codigoNormalizado(code));return found.length?found:[{id:code,codigo:code,nome:code}];});
+ const kpis=kpisRelacionados(p.kpis??[],refs.kpis,rev02.flatMap(o=>o.kpis),refs.indicadores);
  return <section className="space-y-4 border-b pb-8" aria-label={`${p.id} · ${p.titulo}`}><header className="space-y-2"><h2 className="text-base font-semibold">{p.id} · {p.titulo}</h2><div className="flex flex-wrap gap-2">{p.objetivos?.map(o=>{const code=o.split(' ')[0];const actual=refs.objetivos.find(x=>codigoNormalizado(x.codigo??'')===codigoNormalizado(code));return <Badge key={o} variant="secondary" className="whitespace-normal">{actual?`${code} ${actual.nome}`:o}</Badge>;})}</div>{!!kpis.length&&<div className="space-y-2"><p className="text-xs font-medium text-muted-foreground">KPIs relacionados</p><div className="flex flex-wrap gap-2">{kpis.map(k=>{const current=k.situacao_atual??k.situacaoAtual??refs.indicadores?.find(x=>x.id===k.id)?.situacao_atual;return <Badge key={k.id} variant="outline" className="max-w-full whitespace-normal text-left py-1.5">{k.codigo} · {k.nome}{current!=null&&current!==''?` · Atual: ${current}`:''}</Badge>;})}</div></div>}</header>
  {p.apoio&&<dl className="space-y-2 text-sm">{[['Por que importa',p.apoio.porque],['Como fazer',p.apoio.como],['O que entregar',p.apoio.entregar]].map(([k,v])=><div key={k}><dt className="inline font-semibold">{k}: </dt><dd className="inline text-muted-foreground">{v}</dd></div>)}</dl>}{p.ajuda&&<p className="text-sm font-medium">{p.ajuda}</p>}
  <div className="bg-muted/40 border-l-4 border-primary p-4 sm:p-5 space-y-5"><h3 className="font-semibold text-primary">Sua resposta</h3>
