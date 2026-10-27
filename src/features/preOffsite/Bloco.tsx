@@ -1,5 +1,5 @@
 import PerguntaBloco0 from './PerguntaBloco0';
-import { CHAVE_BLOCO0, respostasBloco0 } from './bloco0';
+import { CHAVE_BLOCO0, respostasBloco0, perguntaPara } from './bloco0';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
@@ -11,7 +11,8 @@ const texto=(nome:string,rotulo?:string):Campo=>({nome,rotulo});
 const escolha=(nome:string,opcoes:string[]):Campo=>({nome,tipo:'escolha',opcoes});
 export function CaixaDecisao({texto}:{texto?:string}){if(!texto)return null;return <aside className="rounded-md bg-muted p-4 space-y-1"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Por que decidimos assim</p><p className="text-sm leading-relaxed whitespace-pre-wrap">{texto}</p></aside>;}
 export function CadeiaBsc(){return <ol aria-label="Cadeia de causa e efeito do BSC" className="flex flex-wrap items-center gap-2">{PERSPECTIVAS.map((p,i)=><li key={p} className="flex items-center gap-2"><span className="rounded-full border border-primary px-3 py-1 text-sm font-medium">{p}</span>{i<PERSPECTIVAS.length-1&&<ArrowRight aria-hidden className="h-4 w-4 text-primary"/>}</li>)}</ol>;}
-export default function Bloco({index,r,set,refs,c,disabled,cadeiraId}:{index:number;r:Respostas;set:(k:string,v:any)=>void;refs:Refs;c:Config;disabled:boolean;cadeiraId?:string}){
+export default function Bloco({index,r,set,refs,c,disabled,cadeiraId,admin=false,nome=''}:{index:number;r:Respostas;set:(k:string,v:any)=>void;refs:Refs;c:Config;disabled:boolean;cadeiraId?:string;admin?:boolean;nome?:string}){
+ const perguntas=index===0&&!admin?c.perguntas[0].map(p=>perguntaPara(p,nome)).filter((p):p is Pergunta=>!!p):c.perguntas[index];
 
  const field=(campo:Campo,key:string)=> <Field campo={campo} value={r[key]} onChange={v=>set(key,v)} refs={refs} config={c} disabled={disabled}/>;
  const grupo=(campos:Campo[],key:string)=> <Grupo campos={campos} value={r[key]} onChange={v=>set(key,v)} refs={refs} config={c} disabled={disabled}/>;
@@ -38,9 +39,9 @@ export default function Bloco({index,r,set,refs,c,disabled,cadeiraId}:{index:num
  };
  const nota=c.notas[`b${index}`];
  return <div className="space-y-8">
- {index===0&&<div className="space-y-4">{nota&&<p className="leading-relaxed">{nota}</p>}<CadeiaBsc/>{c.notas['b0.fim']&&<p className="text-sm text-muted-foreground">{c.notas['b0.fim']}</p>}</div>}
+ {index===0&&<div className="space-y-4">{nota&&<p className="leading-relaxed whitespace-pre-line">{nota}</p>}<CadeiaBsc/>{c.notas['b0.fim']&&<p className="text-sm text-muted-foreground">{c.notas['b0.fim']}</p>}</div>}
  {index===3&&<blockquote className="border-l-4 border-primary pl-4 space-y-2"><p className="text-base font-medium">{c.tese}</p>{c.teseExplicacao&&<p className="text-sm text-muted-foreground">{c.teseExplicacao}</p>}</blockquote>}
  {index!==0&&nota&&<p className="text-sm text-muted-foreground">{nota}</p>}
- {c.perguntas[index].map(p=><div key={p.id} className="space-y-6">{p.grupo&&<><h3 className="text-lg font-semibold text-primary pt-2">{p.grupo}</h3></>}{index===0?<PerguntaBloco0 p={p} r={r} set={set} refs={refs} c={c} disabled={disabled}/>:<section className="space-y-4 border-b pb-8"><h2 className="text-base font-semibold">{p.id==='5.riscos'?'':`${p.id} · `}{p.titulo??p.texto}</h2>{p.titulo&&<p className="text-sm">{p.texto}</p>}{p.apoio&&<details className="rounded-md border p-3 text-sm"><summary className="cursor-pointer font-medium">Apoio: por que importa, como fazer, o que entregar</summary><dl className="mt-3 space-y-2"><div><dt className="font-medium">Por que importa</dt><dd className="text-muted-foreground">{p.apoio.porque}</dd></div><div><dt className="font-medium">Como fazer</dt><dd className="text-muted-foreground">{p.apoio.como}</dd></div><div><dt className="font-medium">O que entregar</dt><dd className="text-muted-foreground">{p.apoio.entregar}</dd></div></dl></details>}<CaixaDecisao texto={c.caixas?.[p.id]}/>{(p.ajuda||c.notas[p.id])&&<p className="text-sm text-muted-foreground">{p.ajuda??c.notas[p.id]}</p>}{render(p)}</section>}</div>)}
+ {perguntas.map(p=><div key={p.id} className="space-y-6">{p.grupo&&<><h3 className="text-lg font-semibold text-primary pt-2">{p.grupo}</h3></>}{index===0?<PerguntaBloco0 p={p} r={r} set={set} refs={refs} c={c} disabled={disabled}/>:<section className="space-y-4 border-b pb-8"><h2 className="text-base font-semibold">{p.id==='5.riscos'?'':`${p.id} · `}{p.titulo??p.texto}</h2>{p.titulo&&<p className="text-sm">{p.texto}</p>}{p.apoio&&<details className="rounded-md border p-3 text-sm"><summary className="cursor-pointer font-medium">Apoio: por que importa, como fazer, o que entregar</summary><dl className="mt-3 space-y-2"><div><dt className="font-medium">Por que importa</dt><dd className="text-muted-foreground">{p.apoio.porque}</dd></div><div><dt className="font-medium">Como fazer</dt><dd className="text-muted-foreground">{p.apoio.como}</dd></div><div><dt className="font-medium">O que entregar</dt><dd className="text-muted-foreground">{p.apoio.entregar}</dd></div></dl></details>}<CaixaDecisao texto={c.caixas?.[p.id]}/>{(p.ajuda||c.notas[p.id])&&<p className="text-sm text-muted-foreground">{p.ajuda??c.notas[p.id]}</p>}{render(p)}</section>}</div>)}
  </div>;
 }
