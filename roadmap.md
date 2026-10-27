@@ -1,3 +1,8 @@
+# Pré-Offsite v3.13
+- [ ] Conteúdo no código e configuração salva; projetos removidos só no histórico, prazo/respostas preservados.
+- [ ] Formulário contínuo, visual aprovado, tabelas e prévia por diretor sem gravar por outro usuário.
+- [ ] Testes isolados, conferência de roteamento e rascunho real somente leitura; lembrar Publicar.
+
 # Base única da estrutura organizacional
 - [x] Incremento 0: diagnóstico numérico de fontes, campos textuais/referências e variações; plano seguro preparado, sem alterações nos registros/acessos.
 - [x] Incremento 1: base de cadeiras, cargos e 139 pessoas com vigência, revisão e auditoria; Gov/CEO editam, diretores leem base mínima.
