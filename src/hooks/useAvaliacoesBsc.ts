@@ -1,3 +1,4 @@
+import { analiseNaData } from "@/lib/analiseMetas";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { avaliarPorTipo, apontamentoMaisRecente, contarAvaliacoes, mapaArvore, Avaliacao, CheckoutReg, Fonte } from "@/lib/avaliacaoBsc";
@@ -34,7 +35,7 @@ export function useAvaliacoesBsc(competencia: string | null, cadeiras: string[] 
     Promise.all([
       db.from("mt_indicadores").select("*").in("origem", origens).eq("status", "ativo"),
       db.from("mt_metas_mensais").select("indicador_id,meta_mes").eq("competencia", competencia),
-      db.from("mt_lancamentos").select("indicador_id,competencia,valor,revisao,sem_medicao,declaracao,justificativa,status_entrega,avanco_pct,updated_at").lte("competencia", competencia),
+      db.from("mt_lancamentos").select("indicador_id,competencia,valor,revisao,sem_medicao,declaracao,justificativa,status_entrega,avanco_pct,updated_at,analise_snapshot").lte("competencia", competencia),
       ck,
       db.from("conteudo_editavel").select("valor,updated_at").eq("chave", "bsc.rev02").maybeSingle(),
     ]).then(([i, m, l, c, a]: any[]) => {
@@ -47,9 +48,10 @@ export function useAvaliacoesBsc(competencia: string | null, cadeiras: string[] 
         const lanc = todos.find((x: any) => !x.sem_medicao);
         const sit = ind.origem === "bsc" ? arv[String(ind.nome).trim()] : undefined;
         const cks = (c.data ?? []).filter((x: any) => x.cadeira_id === ind.cadeira_id);
-        const tipo = ind.tipo_apontamento ?? "valor_mensal";
-        const r = avaliarPorTipo({ ...ind, indicador_id: ind.id, sentido: ind.sentido, competencia, meta_mes: tipo === "valor_mensal" ? meta : null, meta_semestre: ind.meta_semestre, meta_texto: ind.meta_texto, realizado: lanc?.valor ?? null,
-          tipo, prazo_entrega: ind.prazo_entrega, apontamento: apontamentoMaisRecente(ind.id, fora?null:competencia, todos[0] ?? null, cks) },
+        const vigente=analiseNaData(ind,todos[0]?.updated_at??`${competencia}-31T23:59:59`,todos[0]?.analise_snapshot);
+        const tipo = vigente.tipo_apontamento ?? "valor_mensal";
+        const r = avaliarPorTipo({ ...vigente, indicador_id: ind.id, sentido: vigente.sentido, competencia, meta_mes: tipo === "valor_mensal" ? (vigente.metas&&competencia in vigente.metas?vigente.metas[competencia]:meta) : null, meta_semestre: vigente.meta_semestre, meta_texto: vigente.meta_texto, realizado: lanc?.valor ?? null,
+          tipo, prazo_entrega: vigente.prazo_entrega, apontamento: apontamentoMaisRecente(ind.id, fora?null:competencia, todos[0] ?? null, cks) },
           sit ? { valor: sit, data: arvData } : null, cks);
         (out[ind.cadeira_id] ??= { itens: [], cont: contarAvaliacoes([]), off: [] }).itens.push({ id: ind.id, nome: ind.nome, cadeira_id: ind.cadeira_id, grupo: ind.origem, ...r });
       }

@@ -32,7 +32,7 @@ const pct = (v: number | null) => (v == null ? "—" : `${(v * 100).toLocaleStri
 
 type Comp = { competencia: string; estado: "aberto" | "fechado" | "reaberto"; revisao: number };
 type Lanc = { id?: string; indicador_id: string; competencia: string; revisao: number; valor: number | null; sem_medicao: boolean; comentario: string | null;
-  declaracao?: "on" | "off" | null; justificativa?: string | null; status_entrega?: StatusEntrega | null; avanco_pct?: number | null; evidencia?: string | null; updated_at?: string };
+  declaracao?: "on" | "off" | null; justificativa?: string | null; status_entrega?: StatusEntrega | null; avanco_pct?: number | null; evidencia?: string | null; updated_at?: string; analise_snapshot?:any };
 type Envio = { cadeira_id: string; competencia: string; revisao: number; status: string; nota: number | null; enviado_por_nome: string | null; enviado_em: string | null };
 type Rascunho = { valor: string; sem: boolean; comentario: string; declaracao: "on" | "off" | null; justificativa: string; status_entrega: StatusEntrega | ""; avanco: string; evidencia: string };
 const tipoDe = (i: Indicador) => i.tipo_apontamento ?? "valor_mensal";
@@ -144,9 +144,9 @@ export default function MetasLancamento() {
   // Sem nota mensal: cada indicador tem sua avaliação pela regra do tipo de apontamento (o que está na tela, ainda não enviado).
   const avalDe = (i: Indicador) => {
     const d = rasc[i.id]; const tipo = tipoDe(i);
-    return avaliarPorTipo({ indicador_id: i.id, sentido: i.sentido, competencia: comp, meta_mes: tipo === "valor_mensal" ? metaDe(i.id, comp)?.meta_mes ?? null : null, meta_semestre: i.meta_semestre, meta_texto: i.meta_texto,
+    return avaliarPorTipo({ origem:i.origem,analise_configurada_em:i.analise_configurada_em,tolerancia:i.tolerancia,indicador_id: i.id, sentido: i.sentido, competencia: comp, meta_mes: tipo === "valor_mensal" ? metaDe(i.id, comp)?.meta_mes ?? null : null, meta_semestre: i.meta_semestre, meta_texto: i.meta_texto,
       realizado: d?.sem ? null : parseNum(d?.valor ?? ""), tipo, prazo_entrega: i.prazo_entrega ?? null,
-      apontamento: d && (d.declaracao || d.status_entrega) ? { declaracao: d.declaracao, justificativa: d.justificativa, status_entrega: (d.status_entrega || null) as any, avanco_pct: parseNum(d.avanco), data: "", origem: "Lançar mês" } : null }, null, []);
+      apontamento: d && (d.declaracao || d.status_entrega) ? { declaracao: d.declaracao, justificativa: d.justificativa, status_entrega: (d.status_entrega || null) as any, avanco_pct: parseNum(d.avanco), data:lancDe(i.id,comp)?.updated_at??new Date().toISOString(), origem: "Lançar mês" } : null }, null, []);
   };
 
   const envio = envios.find((e) => e.cadeira_id === cadeira && e.competencia === comp && e.revisao === rev);
@@ -174,7 +174,7 @@ export default function MetasLancamento() {
     const rows = daCadeira.filter((i) => !filhos(i.id).length).map((i) => {
       const d = rasc[i.id]; const v = parseNum(d?.valor ?? "");
       const av = parseNum(d?.avanco ?? ""); const tipo = tipoDe(i);
-      return { indicador_id: i.id, competencia: comp, revisao: rev, valor: d?.sem || Number.isNaN(v) || tipo === "entrega" ? null : v, sem_medicao: !!d?.sem && tipo === "valor_mensal", comentario: d?.comentario || null, updated_by: b.user?.id,
+      return { indicador_id: i.id, competencia: comp, revisao: rev, valor: d?.sem || Number.isNaN(v) || tipo === "entrega" ? (i.analise_configurada_em?lancDe(i.id,comp)?.valor??null:null) : v, sem_medicao: !!d?.sem && tipo === "valor_mensal", comentario: d?.comentario || null, updated_by: b.user?.id,
         declaracao: tipo === "valor_periodo" ? d?.declaracao ?? null : null, justificativa: tipo === "valor_periodo" && d?.declaracao === "off" ? d.justificativa.trim() || null : null,
         status_entrega: tipo === "entrega" ? d?.status_entrega || null : null, avanco_pct: tipo === "entrega" && av != null && !Number.isNaN(av) ? Math.max(0, Math.min(100, av)) : null, evidencia: tipo === "entrega" ? d?.evidencia || null : null };
     });

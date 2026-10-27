@@ -26,7 +26,7 @@ export type KpiRetrato = CalendarioKpi & {
   tipo_apontamento?: "valor_mensal" | "valor_periodo" | "entrega"; prazo_entrega?: string | null;
   periodo_inicio?: string; periodo_fim?: string; periodo_label?: string; desvio_critico?: boolean; desvio_id?: string;
   /** Apontamento voluntário ("+ Apontar outros KPIs"): fora do calendário, não conta na completude nem muda a frequência. */
-  voluntario?: boolean;
+  voluntario?: boolean; analise_configurada_em?:string|null; tolerancia?:number|null;
 };
 export type KpiResposta = {
   indicador_id: string; ok: boolean | null; impacto: string; plano: string; vira_iniciativa: boolean; prazo: string;
@@ -131,7 +131,7 @@ export function montarRetrato(base: any[], competencia: string | null, faixas: F
       competencia: b.competencia ?? competencia, meta_mes: (b.competencia ?? competencia) ? b.meta_mes ?? null : null, realizado: (b.competencia ?? competencia) ? b.realizado ?? null : null,
       atingimento: b.origem === "bsc" || (b.tipo_apontamento ?? "valor_mensal") !== "valor_mensal" ? null : at, faixa: null, congelado_em: agora,
       sentido: b.sentido, nivel: b.nivel ?? null, meta_semestre: b.meta_semestre ?? null, meta_texto: b.meta_texto ?? null,
-      tipo_apontamento: b.tipo_apontamento ?? "valor_mensal", prazo_entrega: b.prazo_entrega ?? null,
+      analise_configurada_em:b.analise_configurada_em??null,tolerancia:b.tolerancia??0,tipo_apontamento: b.tipo_apontamento ?? "valor_mensal", prazo_entrega: b.prazo_entrega ?? null,
       frequencia: b.frequencia, mes_ciclo: b.mes_ciclo, semana_mes: b.semana_mes, tratamento: b.tratamento, origem_frequencia: b.origem_frequencia,
       periodo_inicio: b.periodo_inicio, periodo_fim: b.periodo_fim, periodo_label: b.periodo_label, desvio_critico: b.desvio_critico, desvio_id: b.desvio_id,
     };

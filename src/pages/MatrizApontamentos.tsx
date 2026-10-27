@@ -35,7 +35,7 @@ export default function MatrizApontamentos() {
   const [ate, setAte] = useState(MESES_2S26[MESES_2S26.length - 1]);
   useEffect(() => {
     Promise.all([
-      db.from("mt_lancamentos").select("indicador_id,competencia,valor,revisao,sem_medicao,declaracao,justificativa,status_entrega,avanco_pct,updated_at"),
+      db.from("mt_lancamentos").select("indicador_id,competencia,valor,revisao,sem_medicao,declaracao,justificativa,status_entrega,avanco_pct,updated_at,analise_snapshot"),
       db.from("mt_metas_mensais").select("indicador_id,competencia,meta_mes"),
       carregarSituacoesKpi(),
       db.from("conteudo_editavel").select("valor,updated_at").eq("chave", "bsc.rev02").maybeSingle(),
