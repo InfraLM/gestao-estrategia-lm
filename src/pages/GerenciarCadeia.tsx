@@ -203,7 +203,7 @@ function ProcessoDialog({
   const { toast } = useToast();
   const isEdit = !!processo;
   const [form, setForm] = useState({
-    id: "", nome: "", nivel: "", area: "", status: "MAPEAMENTO", diretor: "",
+    id: "", nome: "", nivel: "", area: "", status: "MAPEAMENTO", diretor: "", diretorPessoaIds: [] as string[],
   });
   const [busy, setBusy] = useState(false);
 
@@ -216,6 +216,7 @@ function ProcessoDialog({
         area: processo?.area || "",
         status: processo?.status || "MAPEAMENTO",
         diretor: processo?.diretor || "",
+        diretorPessoaIds: processo?.diretorPessoaIds ?? [],
       });
     }
   }, [open, processo]);
@@ -226,10 +227,10 @@ function ProcessoDialog({
       return;
     }
     setBusy(true);
-    if (isEdit) {
+    if (isEdit && processo) {
       const { error } = await supabase.from("processos").update({
-        nome: form.nome, nivel: form.nivel || null, area: form.area || null, status: form.status, diretor: form.diretor || null,
-      }).eq("id", processo!.id);
+        nome: form.nome, nivel: form.nivel || null, area: form.area || null, status: form.status, diretor_pessoa_ids: form.diretorPessoaIds,
+      }).eq("id", processo.id);
       setBusy(false);
       if (error) return toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
       toast({ title: "Processo atualizado" });
@@ -238,6 +239,7 @@ function ProcessoDialog({
         id: form.id.trim(), nome: form.nome.trim(),
         nivel: form.nivel || null, area: form.area || null, status: form.status,
         diretor: form.diretor || null,
+        diretor_pessoa_ids: form.diretorPessoaIds,
         ativo: true,
       });
       setBusy(false);
@@ -285,7 +287,7 @@ function ProcessoDialog({
             </div>
             <div>
               <Label>Diretor(es)</Label>
-              <DiretoresMultiSelect value={form.diretor} onChange={v => setForm({ ...form, diretor: v })} />
+              <DiretoresMultiSelect value={form.diretor} pessoaIds={form.diretorPessoaIds} onIdsChange={ids => setForm({ ...form, diretorPessoaIds: ids })} onChange={v => setForm({ ...form, diretor: v })} />
             </div>
           </div>
         </div>
