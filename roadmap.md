@@ -1,3 +1,6 @@
+# Calendário de apontamento editável
+- [ ] Listas por KPI, prévia/carga/filtros, salvamento linha/lote e descarte; permissões/piso/auditoria e próximo ciclo; testes isolados e tela sem dados reais.
+
 # Pré-Offsite · escala 0.1 substituída
 - [x] Nova escala de cinco níveis, legenda e ajuda por toque/hover; lacunas somente 3/4 e nível 5 separado nas contagens/Excel. 27 testes aprovados e computador/celular com salvamento fictício interceptado; valores antigos preservados, zero respostas reais alteradas, sem publicar.
 
