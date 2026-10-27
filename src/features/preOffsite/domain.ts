@@ -1,4 +1,4 @@
-import { respostasBloco0, bloco0Completo } from './bloco0';
+import { respostasBloco0, bloco0Completo, perguntaPara } from './bloco0';
 import { z } from 'zod';
 import type { Config } from './config';
 import { montarFrase } from './config';
@@ -8,9 +8,9 @@ export const lista=(r:Respostas,k:string):any[]=>Array.isArray(r[k])?r[k]:[];
 export const presente=(v:any):boolean=>Array.isArray(v)?v.length>0&&v.every(presente):v&&typeof v==='object'?Object.values(v).length>0&&Object.values(v).every(presente):v!==undefined&&v!==null&&String(v).trim()!=='';
 export function completude(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[]} {
  r=respostasBloco0(r);
- const avisos:string[]=[]; const etapas=c.perguntas.map((qs,b)=>{
+ const avisos:string[]=[];let total=0; const etapas=c.perguntas.map((qs,b)=>{
  const faltas:string[]=[];
- for(const p of qs){ let ok=presente(r[p.id]);
+ for(const p of qs){ if(b===0){const v=perguntaPara(p,nome??'');if(!v||v.opcional)continue;} total++; let ok=presente(r[p.id]);
  if(p.tipo==='lista'){const rows=lista(r,p.id);ok=rows.length>0&&rows.every(row=>(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(row?.[f.nome])));if(['2.1'].includes(p.id))ok=ok&&rows.length===3;if(p.minimo)ok=ok&&rows.length>=p.minimo;}
  if(p.tipo==='grupo'||p.tipo==='frase')ok=(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(r[p.id]?.[f.nome]));
  if(p.id==='3.2')ok=lista(r,'3.selecionadas').length===3&&c.diretrizes.every(d=>presente(r[`3.pos.${d.id}`]));
@@ -27,7 +27,7 @@ export function completude(r:Respostas,c:Config,nome?:string):{percentual:number
  }
  avisos.push(...faltas);return faltas.length===0;
  });
- const total=c.perguntas.flat().length;const percentual=Object.keys(r).length?Math.round((total-avisos.length)/total*100):0;
+ const percentual=Object.keys(r).length?Math.round((total-avisos.length)/total*100):0;
  for(const [i,p] of lista(r,'4.3').entries())if(custoDiverge(p))avisos.push(`4.3 · Proposta ${i+1}: soma dos trimestres difere do custo total.`);
  return{percentual,etapas,avisos};
 }
