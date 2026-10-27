@@ -3,11 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import seedJson from "@/data/processos.json";
 import { useRefetchOnFocus } from "./useRefetchOnFocus";
 import { useNomesOrganizacionais } from './useNomesOrganizacionais';
+import { useBaseOrganizacional } from './useBaseOrganizacional';
 
 
 export type Processo = {
   id: string; nome: string; nivel: string; revisao: number | null;
   diretor: string; dono: string; status: string;
+  diretorPessoaIds?: string[];
   fornecedores: string[]; clientes: string[]; documentos: any[];
   vinculo?: Record<string, number>;
   maturidade?: number; kpiValor?: number;
@@ -33,6 +35,7 @@ function mapRow(r: any): Processo {
   return {
     id: r.id, nome: r.nome, nivel: r.nivel, revisao: r.revisao,
     diretor: r.diretor, dono: r.dono, status: r.status,
+    diretorPessoaIds: r.diretor_pessoa_ids ?? undefined,
     fornecedores: r.fornecedores || [], clientes: r.clientes || [], documentos: r.documentos || [],
     vinculo: r.vinculo || undefined,
     maturidade: r.maturidade ?? undefined,
@@ -57,6 +60,7 @@ export async function assinarFluxo(url?: string): Promise<string | undefined> {
 
 /** Carrega processos do banco; faz fallback para o seed JSON em caso de falha. */
 export function useProcessosDB() {
+  const org = useBaseOrganizacional();
   const [data, setData] = useState<Processo[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -64,7 +68,7 @@ export function useProcessosDB() {
     setLoading(true);
     const { data: rows, error } = await supabase
       .from("processos")
-      .select("id,nome,nivel,revisao,diretor,dono,status,fornecedores,clientes,documentos,vinculo,maturidade,kpi_valor,ativo,area,imagem_fluxo_url,kpi_nome,kpi_meta,kpi_unidade");
+      .select("id,nome,nivel,revisao,diretor,diretor_pessoa_ids,dono,status,fornecedores,clientes,documentos,vinculo,maturidade,kpi_valor,ativo,area,imagem_fluxo_url,kpi_nome,kpi_meta,kpi_unidade");
     if (error || !rows || rows.length === 0) {
       setData(applyLocalEdits(seedJson as Processo[]));
     } else {
@@ -79,6 +83,6 @@ export function useProcessosDB() {
   useRefetchOnFocus(reload);
 
   const nomes = useNomesOrganizacionais(data.flatMap(p => [{ fonte: 'processos', id: p.id, campo: 'diretor' }, { fonte: 'processos', id: p.id, campo: 'dono' }]));
-  return { data: data.map(p => ({ ...p, diretor: nomes.resolver('processos', p.id, 'diretor', p.diretor), dono: nomes.resolver('processos', p.id, 'dono', p.dono) })), loading, reload };
+  return { data: data.map(p => ({ ...p, diretor: p.diretorPessoaIds?.length ? p.diretorPessoaIds.map(id => org.diretorio.pessoas.find(x => x.id === id)?.nome).filter(Boolean).join(', ') || p.diretor : nomes.resolver('processos', p.id, 'diretor', p.diretor), dono: nomes.resolver('processos', p.id, 'dono', p.dono) })), loading, reload };
 }
 

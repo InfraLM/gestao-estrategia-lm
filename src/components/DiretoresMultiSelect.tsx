@@ -31,6 +31,8 @@ export function joinDiretores(arr: string[]): string {
 interface Props {
   value: string;
   onChange: (next: string) => void;
+  pessoaIds?: string[];
+  onIdsChange?: (ids: string[]) => void;
   options?: string[];
   placeholder?: string;
   className?: string;
@@ -38,19 +40,27 @@ interface Props {
 }
 
 export function DiretoresMultiSelect({
-  value, onChange, options = DIRETORES_BPMO, placeholder = "Selecione diretores", className, size = "md",
+  value, onChange, pessoaIds, onIdsChange, options = DIRETORES_BPMO, placeholder = "Selecione diretores", className, size = "md",
 }: Props) {
   const { diretorio } = useBaseOrganizacional();
   const [busca, setBusca] = useState('');
   const oficiais = diretorio.pessoas.filter(p => p.ativo && p.cadeira_id && diretorio.cadeiras.some(c => c.id === p.cadeira_id));
   const opcoes = oficiais.length ? oficiais.map(p => p.nome) : options;
-  const selected = useMemo(() => parseDiretores(value), [value]);
+  const selected = useMemo(() => pessoaIds?.length ? pessoaIds.map(id => diretorio.pessoas.find(p => p.id === id)?.nome).filter((n): n is string => !!n) : parseDiretores(value), [value, pessoaIds, diretorio.pessoas]);
   const toggle = (d: string) => {
+    if (onIdsChange) {
+      const pessoa = oficiais.find(p => p.nome === d);
+      if (!pessoa) return;
+      const ids = new Set(pessoaIds ?? []);
+      if (ids.has(pessoa.id)) ids.delete(pessoa.id); else ids.add(pessoa.id);
+      onIdsChange([...ids]);
+      return;
+    }
     const set = new Set(selected);
     if (set.has(d)) set.delete(d); else set.add(d);
     onChange(joinDiretores(Array.from(set)));
   };
-  const clearAll = (e: React.MouseEvent) => { e.stopPropagation(); onChange(""); };
+  const clearAll = (e: React.MouseEvent) => { e.stopPropagation(); if (onIdsChange) onIdsChange([]); else onChange(""); };
 
   return (
     <Popover>

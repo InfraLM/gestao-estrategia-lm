@@ -44,6 +44,7 @@ interface EscopoMapeamento {
   escopoIncluso?: string;
   escopoExcluso?: string;
   patrocinador?: string;
+  patrocinadorPessoaIds?: string[];
   ownerProcesso?: string;
   ownerPessoaId?: string | null;
   equipeMapeamento?: string;
@@ -370,6 +371,8 @@ export default function GestaoProcessos() {
                 <DiretoresMultiSelect
                   value={e.patrocinador || selected?.diretor || ""}
                   onChange={v => setEscopo({ patrocinador: v })}
+                  pessoaIds={e.patrocinadorPessoaIds}
+                  onIdsChange={ids => setEscopo({ patrocinadorPessoaIds: ids })}
                   options={DIRETORES_BPMO}
                 />
               </Field>

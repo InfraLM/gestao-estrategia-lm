@@ -4498,6 +4498,7 @@ export type Database = {
           clientes: Json
           created_at: string
           diretor: string | null
+          diretor_pessoa_ids: string[] | null
           documentos: Json
           dono: string | null
           fornecedores: Json
@@ -4521,6 +4522,7 @@ export type Database = {
           clientes?: Json
           created_at?: string
           diretor?: string | null
+          diretor_pessoa_ids?: string[] | null
           documentos?: Json
           dono?: string | null
           fornecedores?: Json
@@ -4544,6 +4546,7 @@ export type Database = {
           clientes?: Json
           created_at?: string
           diretor?: string | null
+          diretor_pessoa_ids?: string[] | null
           documentos?: Json
           dono?: string | null
           fornecedores?: Json
@@ -6302,6 +6305,10 @@ export type Database = {
       org_fonte_visivel: {
         Args: { _fonte: string; _id: string }
         Returns: boolean
+      }
+      org_iniciativa_vincular: {
+        Args: { _iniciativa: string; _pessoa: string }
+        Returns: undefined
       }
       org_nome_aprovado_interno: {
         Args: { _campo: string; _fonte: string; _id: string }
