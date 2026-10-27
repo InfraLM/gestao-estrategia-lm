@@ -1,0 +1,16 @@
+import {describe,it,expect} from 'vitest';
+import {avaliarPorTipo,farolEntrega} from '@/lib/avaliacaoBsc';
+import {analiseNaData,fimSemestre,tipoMudou} from '@/lib/analiseMetas';
+import {avaliarApontamento} from '@/lib/dashboardRotina';
+import {celulaMes} from '@/lib/matrizApontamentos';
+const base={indicador_id:'k',origem:'cesta',analise_configurada_em:'2026-10-27',competencia:'2026-10',sentido:'maior' as const,meta_mes:100,meta_semestre:200,meta_texto:null,realizado:95};
+describe('Análise configurável',()=>{
+ it('V tolerância em unidades após fim de mês, nunca antes',()=>{expect(avaliarPorTipo({...base,tolerancia:5},null,[],new Date('2026-10-28')).aval).toBe('acomp');expect(avaliarPorTipo({...base,tolerancia:5},null,[],new Date('2026-11-01')).aval).toBe('on');expect(avaliarPorTipo({...base,tolerancia:4},null,[],new Date('2026-11-01')).aval).toBe('off')});
+ it('V menor é melhor usa tolerância inversa',()=>{expect(avaliarPorTipo({...base,sentido:'menor',realizado:105,tolerancia:5},null,[],new Date('2026-11-01')).aval).toBe('on')});
+ it('BSC ignora a nova tolerância',()=>{expect(avaliarPorTipo({...base,origem:'bsc',tolerancia:5},null,[],new Date('2026-11-01')).aval).toBe('off')});
+ it('S ignora referência mensal e compara só após fim do semestre civil',()=>{const s={...base,tipo:'valor_periodo' as const,competencia:'2027-03',realizado:201,meta_mes:999};expect(fimSemestre('2027-03')).toBe('2027-06-30');expect(avaliarPorTipo(s,null,[],new Date('2027-04-01')).fonte).toBe('declarado');expect(avaliarPorTipo(s,null,[],new Date('2027-07-01'))).toMatchObject({aval:'on',fonte:'calculado'})});
+ it('E vencida sem implantada = Off, implantada no prazo = On, depois = Off',()=>{expect(farolEntrega(null,'2026-10-26',new Date('2026-10-27'))).toBe('off');expect(farolEntrega('implantada','2026-10-26',new Date('2026-10-27'),'2026-10-25')).toBe('on');expect(farolEntrega('implantada','2026-10-26',new Date('2026-10-27'),'2026-10-27')).toBe('off')});
+ it('troca conserva configuração histórica e snapshot sem mutar original',()=>{const i={origem:'cesta',tipo_apontamento:'entrega' as const,analise_configurada_em:'2026-10-27T10:00:00Z',analise_historico:[{tipo_apontamento:'valor_mensal',ate:'2026-10-27T10:00:00Z'}]};expect(analiseNaData(i,'2026-09-30').tipo_apontamento).toBe('valor_mensal');expect(analiseNaData(i,'2026-11-01').tipo_apontamento).toBe('entrega');expect(i.tipo_apontamento).toBe('entrega');expect(tipoMudou('entrega','entrega')).toBe(false);expect(tipoMudou('valor_mensal','entrega')).toBe(true)});
+ it('dashboard usa farol único para entrega vencida sem status',()=>{expect(avaliarApontamento({...base,codigo:'K',nome:'K',origem:'cesta',tipo_apontamento:'entrega',prazo_entrega:'2020-01-01'}).aval).toBe('off')});
+ it('matriz usa snapshot do antigo V em vez do E atual',()=>{expect(celulaMes({...base,id:'k',tipo_apontamento:'entrega'},'2026-09',100,101,null,[],new Date('2026-11-01'),{updated_at:'2026-09-30',analise_snapshot:{tipo_apontamento:'valor_mensal',metas:{'2026-09':100}}}).aval).toBe('on')});
+});
