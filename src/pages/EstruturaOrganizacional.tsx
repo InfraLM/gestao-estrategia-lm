@@ -89,7 +89,7 @@ export default function EstruturaOrganizacional() {
     {editando && <EditarCargo cargo={{ ...editando, parent_id: editando.cadeira_pai_id }} cargos={cadeiras.map(c => ({ ...c, parent_id: c.cadeira_pai_id }))} campos={BLOCOS.map(b => ({ campo: b.campo, titulo: b.titulo, valor: typeof editando[b.campo] === "string" ? String(editando[b.campo]) : null }))} fechar={() => setEditando(null)} salvar={async (v: CargoEdicao & Record<string, unknown>) => {
       if (!canEdit || !v.id) throw new Error("Sem permissão");
       const campos = Object.fromEntries(BLOCOS.map(b => [b.campo, v[b.campo]]));
-      const { error } = await supabase.from("org_cadeiras").update({ ...campos, nome: v.nome, ocupante_nome: v.ocupante_nome, nivel: v.nivel, cadeira_pai_id: v.parent_id, ordem: v.ordem, ativo: v.ativo }).eq("id", v.id).select("id").single();
+      const { error } = await supabase.from("org_cadeiras").update({ ...campos, nome: v.nome, pessoa_id: v.pessoa_id ?? null, ocupante_nome: v.ocupante_nome, nivel: v.nivel, cadeira_pai_id: v.parent_id, ordem: v.ordem, ativo: v.ativo }).eq("id", v.id).select("id").single();
       if (error) throw error; await query.refetch();
     }} />}
   </div>;

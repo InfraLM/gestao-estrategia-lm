@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { filtrarItens, planoEmMassa, ItemPendencia, Sugestao } from "@/lib/pendenciasMassa";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 const db = supabase as any;
 const fmt = (d: string | null) => (d ? new Date(`${String(d).slice(0, 10)}T12:00`).toLocaleDateString("pt-BR") : "sem data");
@@ -113,6 +114,7 @@ function Painel({ titulo, ajuda, contexto, itens, carregando, erro, sugestoes, c
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" disabled={!selecionados.length} onClick={() => setConfirmar({ acao: "sugerida" })}>Aplicar sugestão da IA</Button>
+          <div className="w-full max-w-64"><PessoaSelect label="Pessoa para atribuição" onChange={p => setCadeiraMassa(p?.cadeira_id ?? '')} /></div>
           <Select value={cadeiraMassa} onValueChange={setCadeiraMassa}><SelectTrigger aria-label="Atribuir a cadeira" className="h-8 w-[200px] text-xs"><SelectValue placeholder="Atribuir a…" /></SelectTrigger>
             <SelectContent>{ativas.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent></Select>
           <Button size="sm" variant="outline" disabled={!selecionados.length || !cadeiraMassa} onClick={() => setConfirmar({ acao: "atribuir" })}>Atribuir</Button>
