@@ -11,6 +11,7 @@ export default {
         sans: ['Roboto', 'Helvetica Neue', 'Arial', 'system-ui', 'sans-serif'],
       },
       colors: {
+        offsite: { navy: "hsl(var(--offsite-navy))", "navy-soft": "hsl(var(--offsite-navy-soft))", decision: "hsl(var(--offsite-decision))" },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
