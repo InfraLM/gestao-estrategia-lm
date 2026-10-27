@@ -6,13 +6,13 @@ export type Respostas=Record<string, any>;
 export const respostaSchema=z.record(z.unknown()).refine(v=>JSON.stringify(v).length<=1000000,'Resposta muito extensa');
 export const lista=(r:Respostas,k:string):any[]=>Array.isArray(r[k])?r[k]:[];
 export const presente=(v:any):boolean=>Array.isArray(v)?v.length>0&&v.every(presente):v&&typeof v==='object'?Object.values(v).length>0&&Object.values(v).every(presente):v!==undefined&&v!==null&&String(v).trim()!=='';
-export function completude(r:Respostas,c:Config):{percentual:number;etapas:boolean[];avisos:string[]} {
+export function completude(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[]} {
  r=respostasBloco0(r);
  const avisos:string[]=[]; const etapas=c.perguntas.map((qs,b)=>{
  const faltas:string[]=[];
  for(const p of qs){ let ok=presente(r[p.id]);
- if(p.tipo==='lista'){const rows=lista(r,p.id);ok=rows.length>0&&rows.every(row=>(p.campos??[]).every(f=>presente(row?.[f.nome])));if(['2.1','6.2'].includes(p.id))ok=ok&&rows.length===3;if(p.minimo)ok=ok&&rows.length>=p.minimo;}
- if(p.tipo==='grupo'||p.tipo==='frase')ok=(p.campos??[]).every(f=>presente(r[p.id]?.[f.nome]));
+ if(p.tipo==='lista'){const rows=lista(r,p.id);ok=rows.length>0&&rows.every(row=>(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(row?.[f.nome])));if(['2.1'].includes(p.id))ok=ok&&rows.length===3;if(p.minimo)ok=ok&&rows.length>=p.minimo;}
+ if(p.tipo==='grupo'||p.tipo==='frase')ok=(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(r[p.id]?.[f.nome]));
  if(p.id==='3.2')ok=lista(r,'3.selecionadas').length===3&&c.diretrizes.every(d=>presente(r[`3.pos.${d.id}`]));
  if(p.id==='3.3')ok=lista(r,'3.selecionadas').length===3&&lista(r,'3.selecionadas').every(id=>['Objeção mais forte','O que precisa ser verdade','O que sua área vai fazer','KPI','Quanto espera mover em 2027'].every(k=>presente(r[`3.detalhe.${id}`]?.[k])));
  if(p.id==='3.4')ok=c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])&&!lista(r,'3.selecionadas').includes(d.id)).every(d=>presente(r[`3.ajuste.${d.id}`]));
@@ -22,7 +22,7 @@ export function completude(r:Respostas,c:Config):{percentual:number;etapas:boole
  if(p.id==='4.2')ok=c.projetos.some(d=>d.id===r['4.2'])&&presente(r['4.2.porque']);
  if(p.id==='4C')ok=c.produtos.filter(d=>d.titulo!=='Outro'||presente(r[`4C.${d.id}`]?.Nome)).every(d=>['Posição','Impacto na sua área e o que garantir na transição'].every(k=>presente(r[`4C.${d.id}`]?.[k])));
  if(p.id==='5.riscos')ok=c.escolhas.every(d=>presente(r[d.id]?.Risco)&&presente(r[d.id]?.['Como mitigaria']));
- if(b===0)ok=bloco0Completo(p,r[p.id]);
+ if(b===0)ok=bloco0Completo(p,r[p.id],nome??'');
  if(!ok)faltas.push(`${p.id==='5.riscos'?'':p.id+' · '}${p.titulo??p.texto}`);
  }
  avisos.push(...faltas);return faltas.length===0;
@@ -38,10 +38,10 @@ export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
  const d:{titulo:string;dados:any}[]=[];
  const discordas=c.diretrizes.filter(x=>r[`3.pos.${x.id}`]==='Discordo');if(discordas.length)d.push({titulo:'1 · Diretrizes em discordância e indicadores',dados:discordas.map(x=>({diretriz:x.titulo,detalhes:r[`3.detalhe.${x.id}`],ajuste:r[`3.ajuste.${x.id}`]}))});
  d.push({titulo:'2 · Arquitetura do portfólio, mix de pagamento e working money',dados:{'5.7':r['5.7'],'5.1':r['5.1'],'5.4':r['5.4']}});
- d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...r[`4C.${x.id}`]}))}});
- d.push({titulo:'4 · Reação ao mandato',dados:{'6.1':r['6.1'],'6.2':r['6.2'],'6.4':r['6.4']}});
- d.push({titulo:'5 · Novas frentes e funções',dados:{'7.1':r['7.1']}});
- d.push({titulo:'6 · Processos críticos e estruturantes, lacunas de competência e estrutura, lideranças dependentes e pontos de parada',dados:{'7.3':r['7.3'],'0.2':r['0.2'],'0.1':r['0.1'],'0.3':r['0.3'],'0.4':r['0.4'],'0.7':r['0.7']}});return d;
+ d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Adia','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...r[`4C.${x.id}`]}))}});
+ d.push({titulo:'4 · Reação ao mandato e decisões fora da alçada',dados:{'6.1':r['6.1'],'0.18':r['0.18']}});
+ d.push({titulo:'5 · Novas frentes e funções',dados:{'0.3':r['0.3']}});
+ d.push({titulo:'6 · Processos críticos e estruturantes, lacunas de competência e estrutura, lideranças dependentes e pontos de parada',dados:{'0.6':r['0.6'],'0.2':r['0.2'],'0.1':r['0.1'],'0.3':r['0.3'],'0.4':r['0.4'],'0.7':r['0.7']}});return d;
 }
 export const moeda=(v:any)=>numero(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 export function resumoResposta(r:Respostas,p:string,c:Config):any{
@@ -56,16 +56,16 @@ export function resumoResposta(r:Respostas,p:string,c:Config):any{
 }
 export function validarConfig(c:unknown,base:Config):Config{
  const item=z.object({id:z.string(),titulo:z.string(),descricao:z.string().optional(),porque:z.string().optional(),selo:z.string().optional(),caixa:z.string().optional()});
- const campo=z.object({nome:z.string(),rotulo:z.string().optional(),placeholder:z.string().optional(),tipo:z.enum(['texto','curto','quantidade','numero','mes','escolha','objetivo','kpi','cadeira','processo','diretriz','projeto']).optional(),opcoes:z.array(z.string()).optional()});
- const pergunta=z.object({id:z.string(),texto:z.string(),titulo:z.string().optional(),grupo:z.string().optional(),tipo:z.enum(['matriz','lista','escolha','multipla','processo','texto','grupo','frase']).optional(),campos:z.array(campo).optional(),opcoes:z.array(z.string()).optional(),limite:z.number().optional(),minimo:z.number().optional(),ajuda:z.string().optional(),apoio:z.object({porque:z.string(),como:z.string(),entregar:z.string()}).optional(),objetivos:z.array(z.string()).optional(),kpis:z.array(z.string()).optional(),itens:z.array(z.string()).optional(),observacao:z.string().optional(),extras:z.array(campo).optional(),sublista:z.object({titulo:z.string(),limite:z.number(),campos:z.array(campo)}).optional()});
+ const campo=z.object({nome:z.string(),rotulo:z.string().optional(),placeholder:z.string().optional(),tipo:z.enum(['texto','curto','quantidade','numero','mes','escolha','objetivo','kpi','cadeira','processo','diretriz','projeto']).optional(),opcoes:z.array(z.string()).optional(),cadeiras:z.array(z.string()).optional(),opcional:z.boolean().optional(),opcoesDaMatriz:z.boolean().optional()});
+ const pergunta=z.object({id:z.string(),texto:z.string(),titulo:z.string().optional(),grupo:z.string().optional(),tipo:z.enum(['matriz','lista','escolha','multipla','processo','texto','grupo','frase']).optional(),campos:z.array(campo).optional(),opcoes:z.array(z.string()).optional(),limite:z.number().optional(),minimo:z.number().optional(),ajuda:z.string().optional(),apoio:z.object({porque:z.string(),como:z.string(),entregar:z.string()}).optional(),objetivos:z.array(z.string()).optional(),kpis:z.array(z.string()).optional(),itens:z.array(z.string()).optional(),observacao:z.string().optional(),extras:z.array(campo).optional(),sublista:z.object({titulo:z.string(),limite:z.number(),campos:z.array(campo),opcional:z.boolean().optional()}).optional(),cadeiras:z.array(z.string()).optional(),itensCadeiras:z.record(z.array(z.string())).optional(),opcionais:z.array(z.string()).optional(),opcional:z.boolean().optional(),privada:z.boolean().optional(),nota:z.string().optional(),semOutro:z.boolean().optional()});
  const v=z.object({versao:z.string().optional(),titulo:z.string().optional(),organizacao:z.string().optional(),tempo:z.string().optional(),intro:z.string(),bscTexto:z.string().optional(),bsc:z.array(z.object({ordem:z.string(),perspectiva:z.string(),pergunta:z.string()})).optional(),bscFecho:z.string().optional(),antes:z.string().optional(),tese:z.string(),teseExplicacao:z.string().optional(),anexo:z.string(),blocos:z.array(z.string()).length(9),perguntas:z.array(z.array(pergunta)).length(9),diretrizes:z.array(item).length(10),projetos:z.array(item),andamento:z.array(item),produtos:z.array(item),escolhas:z.array(item),temas:z.array(z.string()),notas:z.record(z.string()),caixas:z.record(z.string()).optional()}).parse(c) as Config;
  for(const k of ['diretrizes','projetos','andamento','produtos','escolhas'] as const)if(JSON.stringify(v[k].map(x=>x.id))!==JSON.stringify(base[k].map(x=>x.id)))throw new Error('Preserve os identificadores e a ordem dos itens existentes.');
  if(JSON.stringify(v.perguntas.map(q=>q.map(p=>p.id)))!==JSON.stringify(base.perguntas.map(q=>q.map(p=>p.id))))throw new Error('Preserve os identificadores das perguntas.');return v;
 }
 export const normalizarNome=(v:any)=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2).sort().join(' ');
 const parecido=(a:string,b:string)=>{if(!a||!b)return false;if(a===b||a.includes(b)||b.includes(a))return true;const x=new Set(a.split(' ')),y=b.split(' ');const inter=y.filter(w=>x.has(w)).length;return inter/Math.min(x.size,y.length)>=0.6;};
-export type Item4B={diretor:string;cadeira_id:string;Nome:string;Posição:string;'Status hoje':string;Comentário:string;duplicado:boolean};
+export type Item4B={diretor:string;cadeira_id:string;Nome:string;Posição:string;'Status hoje':string;Retorno:string;'Esforço/capital':string;'Recurso liberado':number;Comentário:string;duplicado:boolean};
 export function itens4B(rs:{nome:string;cadeira_id:string;respostas:Respostas}[]):Item4B[]{
- const itens=rs.flatMap(r=>lista(r.respostas,'4B').filter(x=>presente(x?.Nome)).map(x=>({diretor:r.nome,cadeira_id:r.cadeira_id,Nome:String(x.Nome),Posição:x['Posição']??'','Status hoje':x['Status hoje']??'',Comentário:x['Comentário']??'',duplicado:false,n:normalizarNome(x.Nome)})));
+ const itens=rs.flatMap(r=>lista(r.respostas,'4B').filter(x=>presente(x?.Nome)).map(x=>({diretor:r.nome,cadeira_id:r.cadeira_id,Nome:String(x.Nome),Posição:x['Posição']??'','Status hoje':x['Status hoje']??'',Retorno:x.Retorno??'','Esforço/capital':x['Esforço/capital']??'','Recurso liberado':numero(x['Recurso liberado']),Comentário:x['Comentário']??'',duplicado:false,n:normalizarNome(x.Nome)})));
  return itens.map(i=>{const{n,...rest}=i;return{...rest,duplicado:itens.some(o=>o!==i&&o.cadeira_id!==i.cadeira_id&&parecido(n,o.n))};});
 }
