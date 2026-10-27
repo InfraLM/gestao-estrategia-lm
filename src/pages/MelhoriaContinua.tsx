@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useProcessosDB } from "@/hooks/useProcessosDB";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 const AREAS = [
   "Comercial","Geração de Demanda","CX","Áudio Visual","Infra & Tech",
@@ -35,6 +36,7 @@ interface Acao {
   oQueFazer: string;
   justificativa: string;
   responsavel: string;
+  responsavel_pessoa_id?: string | null;
   dataPrevista: string;
   dataConclusao?: string;
   status: Status;
@@ -62,6 +64,7 @@ interface RiscoProcesso {
   probabilidade: Escala;  // 1..5
   acaoMitigadora: string;
   responsavel: string;
+  responsavel_pessoa_id?: string | null;
   prazo: string;
   dataConclusao?: string;
   status: "Aberto" | "Em Mitigação" | "Mitigado" | "Aceito";
@@ -364,6 +367,7 @@ export default function MelhoriaContinua() {
       oQueFazer: draft.oQueFazer ?? "",
       justificativa: draft.justificativa ?? "",
       responsavel: draft.responsavel ?? "",
+      responsavel_pessoa_id: draft.responsavel_pessoa_id ?? null,
       dataPrevista: draft.dataPrevista ?? "",
       dataConclusao: draft.dataConclusao,
       status: (draft.status as Status) ?? "Backlog",
@@ -397,6 +401,7 @@ export default function MelhoriaContinua() {
       probabilidade: (typeof riscoDraft.probabilidade === "number" ? riscoDraft.probabilidade : 3) as Escala,
       acaoMitigadora: riscoDraft.acaoMitigadora ?? "",
       responsavel: riscoDraft.responsavel ?? "",
+      responsavel_pessoa_id: riscoDraft.responsavel_pessoa_id ?? null,
       prazo: riscoDraft.prazo ?? "",
       status,
       statusChangedAt: at,
@@ -593,7 +598,7 @@ export default function MelhoriaContinua() {
                       <div className="grid grid-cols-3 gap-3">
                         <div>
                           <label className="text-xs font-medium text-muted-foreground">Responsável</label>
-                          <Input value={draft.responsavel ?? ""} onChange={e => setDraft(d => ({ ...d, responsavel: e.target.value }))} />
+                          <PessoaSelect value={draft.responsavel_pessoa_id} texto={draft.responsavel} onChange={p => setDraft(d => ({ ...d, responsavel_pessoa_id: p?.id ?? null }))} />
                         </div>
                         <div>
                           <label className="text-xs font-medium text-muted-foreground">Data prevista</label>
@@ -807,7 +812,7 @@ export default function MelhoriaContinua() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs font-medium text-muted-foreground">Responsável</label>
-                      <Input value={riscoDraft.responsavel ?? ""} onChange={e => setRiscoDraft(d => ({ ...d, responsavel: e.target.value }))} />
+                      <PessoaSelect value={riscoDraft.responsavel_pessoa_id} texto={riscoDraft.responsavel} onChange={p => setRiscoDraft(d => ({ ...d, responsavel_pessoa_id: p?.id ?? null }))} />
                     </div>
                     <div>
                       <label className="text-xs font-medium text-muted-foreground">Prazo (data prevista)</label>

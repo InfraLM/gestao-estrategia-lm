@@ -15,6 +15,7 @@ import { NATUREZAS_BPMO, TIPOS_BPMO, STATUS_RISCO_BPMO, IMPACTO_LABEL, PROB_LABE
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { DiretoresMultiSelect } from "@/components/DiretoresMultiSelect";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 
 type Processo = {
@@ -44,6 +45,7 @@ interface EscopoMapeamento {
   escopoExcluso?: string;
   patrocinador?: string;
   ownerProcesso?: string;
+  ownerPessoaId?: string | null;
   equipeMapeamento?: string;
   prazoInicio?: string;
   prazoTermino?: string;
@@ -368,7 +370,7 @@ export default function GestaoProcessos() {
                   options={DIRETORES_BPMO}
                 />
               </Field>
-              <Field label="Owner do processo"><Input value={e.ownerProcesso || selected?.dono || ""} onChange={ev => setEscopo({ ownerProcesso: ev.target.value })} /></Field>
+              <Field label="Owner do processo"><PessoaSelect value={e.ownerPessoaId} texto={e.ownerProcesso || selected?.dono} onChange={p => setEscopo({ ownerPessoaId: p?.id ?? null })} /></Field>
               <Field label="Equipe de mapeamento"><Input value={e.equipeMapeamento || ""} onChange={ev => setEscopo({ equipeMapeamento: ev.target.value })} /></Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Início"><Input type="date" value={e.prazoInicio || ""} onChange={ev => setEscopo({ prazoInicio: ev.target.value })} /></Field>

@@ -17,7 +17,7 @@ async function setup() {
  CREATE TABLE mt_cadeiras(id uuid PRIMARY KEY,nome text,diretor_user_id uuid,diretor_nome text,ativo boolean DEFAULT true);
  CREATE TABLE mt_usuarios(user_id uuid,cadeira_id uuid);
  CREATE TABLE profiles(user_id uuid,display_name text,email text);
- CREATE TABLE org_organograma_cargos(id uuid PRIMARY KEY,nome text,nivel text,parent_id uuid,mt_cadeira_id uuid,ativo boolean DEFAULT true);
+ CREATE TABLE org_organograma_cargos(id uuid PRIMARY KEY,nome text,ocupante_nome text,nivel text,parent_id uuid,mt_cadeira_id uuid,ativo boolean DEFAULT true);
  CREATE TABLE org_cadeiras(id uuid PRIMARY KEY,nome text);
  CREATE TABLE projetos(id uuid PRIMARY KEY,diretor text,gerente text,cadeira_id uuid);
  CREATE TABLE mt_iniciativas(id uuid PRIMARY KEY,responsavel_nome text);

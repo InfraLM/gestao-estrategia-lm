@@ -25,12 +25,13 @@ export default function OrganogramaAtual({ canEdit }: { canEdit: boolean }) {
   const [importados, setImportados] = useState<CargoImportado[] | null>(null); const [erro, setErro] = useState(""); const [busy, setBusy] = useState(false);
   const gov = useQuery({ queryKey: ["org-gov-cadeiras", user?.id], enabled: !!user, queryFn: async () => {
     const db = supabase as any;
-    const [{ data: g }, { data: c }] = await Promise.all([db.rpc("mt_is_governanca", { _uid: user!.id }), db.from("mt_cadeiras").select("id,nome").eq("ativo", true).order("nome")]);
+    if (!user) return null;
+    const [{ data: g }, { data: c }] = await Promise.all([db.rpc("proj_gov_ou_ceo", { _uid: user.id }), db.from("mt_cadeiras").select("id,nome").eq("ativo", true).order("nome")]);
     return g ? (c ?? []) as { id: string; nome: string }[] : null;
   }});
   const salvar = async (v: CargoEdicao) => {
     if (!canEdit) throw new Error("Sem permissão");
-    const payload = { nome: v.nome, ocupante_nome: v.ocupante_nome, nivel: v.nivel ?? "outro", parent_id: v.parent_id, ordem: v.ordem ?? 0, ativo: v.ativo === true, observacoes: v.observacoes, ...(gov.data ? { mt_cadeira_id: v.mt_cadeira_id ?? null } : {}) };
+    const payload = { nome: v.nome, ocupante_nome: v.ocupante_nome, pessoa_id: v.pessoa_id ?? null, nivel: v.nivel ?? "outro", parent_id: v.parent_id, ordem: v.ordem ?? 0, ativo: v.ativo === true, observacoes: v.observacoes, ...(gov.data ? { mt_cadeira_id: v.mt_cadeira_id ?? null } : {}) };
     const result = v.id ? await supabase.from("org_organograma_cargos").update(payload).eq("id", v.id).select().single() : await supabase.from("org_organograma_cargos").insert(payload).select().single();
     if (result.error) throw result.error;
     await cache.invalidateQueries({ queryKey: key }); setSelecionado(null);
