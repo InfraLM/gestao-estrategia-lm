@@ -1,7 +1,8 @@
 # Tipos de análise · Cesta e KRs
-- [ ] Cadastro progressivo V/S/E, selo/filtro, autorização Gov/CEO e confirmação histórica auditada.
-- [ ] Avaliação e apontamentos integrados, tolerância, semestre e entrega com prazo, histórico preservado; BSC intacto.
-- [ ] Testes isolados e telas fictícias, conflitos e lembrete de publicar.
+- [x] Cadastro progressivo V/S/E, selo/filtro, autorização Gov/CEO e confirmação histórica auditada.
+- [x] Avaliação e apontamentos integrados, tolerância em unidade da meta, semestre civil e entrega com prazo; snapshots/histórico preservados; BSC intacto.
+- [x] 69 testes isolados aprovados; cadastro Cesta computador/celular e OKRs celular, salvar/reler interceptado sem erros. Zero itens reais configurados; não publicado.
+- [x] Conflitos para comunicar: base compartilhada BSC intacta; frequência independente; Cancelada continua Encerrada; implantação tardia usa data do apontamento (não existe data de conclusão separada); período atual cadastro 2S26.
 
 # Pré-Offsite · correção Bloco 0
 - [x] Restauradas 0.1–0.17 com matrizes, orientações sempre visíveis, KPIs somente leitura e namespace b0.v3.; topo e rodapé mantidos, 5.riscos oculto.
