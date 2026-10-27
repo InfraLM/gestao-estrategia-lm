@@ -1,3 +1,8 @@
+# Tipos de análise · Cesta e KRs
+- [ ] Cadastro progressivo V/S/E, selo/filtro, autorização Gov/CEO e confirmação histórica auditada.
+- [ ] Avaliação e apontamentos integrados, tolerância, semestre e entrega com prazo, histórico preservado; BSC intacto.
+- [ ] Testes isolados e telas fictícias, conflitos e lembrete de publicar.
+
 # Pré-Offsite · correção Bloco 0
 - [x] Restauradas 0.1–0.17 com matrizes, orientações sempre visíveis, KPIs somente leitura e namespace b0.v3.; topo e rodapé mantidos, 5.riscos oculto.
 - [x] Consolidado administrativo com contagens/observações, lideranças privadas, Excel e anexo atualizados sem indicadores/influência.
