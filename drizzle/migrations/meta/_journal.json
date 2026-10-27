@@ -589,6 +589,13 @@
       "when": 1793127569208,
       "tag": "0083_base_organizacional_revisao_titulares",
       "breakpoints": true
+    },
+    {
+      "idx": 84,
+      "version": "7",
+      "when": 1793127705563,
+      "tag": "0084_base_organizacional_iniciativa_referencia",
+      "breakpoints": true
     }
   ]
 }

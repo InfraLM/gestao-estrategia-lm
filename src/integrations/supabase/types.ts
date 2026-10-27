@@ -6303,6 +6303,10 @@ export type Database = {
         Args: { _fonte: string; _id: string }
         Returns: boolean
       }
+      org_iniciativa_vincular: {
+        Args: { _iniciativa: string; _pessoa: string }
+        Returns: undefined
+      }
       org_nome_aprovado_interno: {
         Args: { _campo: string; _fonte: string; _id: string }
         Returns: Json
