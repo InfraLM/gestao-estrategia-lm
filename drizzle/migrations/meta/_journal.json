@@ -533,6 +533,13 @@
       "when": 1793096129371,
       "tag": "0075_metas_tipos_analise_configuracao",
       "breakpoints": true
+    },
+    {
+      "idx": 76,
+      "version": "7",
+      "when": 1793096228751,
+      "tag": "0076_metas_analise_retratos_integracao",
+      "breakpoints": true
     }
   ]
 }
