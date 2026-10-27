@@ -168,3 +168,6 @@
 - [x] Dashboard da rotina (/semanal/dashboard) com aderência, painel por origem e formulários do ciclo
 
 - [x] Rotina: atas só endereçadas + fila Aguardando avaliação, janela de 3 meses com pendências antigas, ações/entregas por projeto no item 2 (publicar pendente)
+
+# Pré-Offsite v3.12
+- [x] Bloco 0 (0.18/0.19, 0.16 removida), Blocos 2/4B/6/7/8, roteamento "Apenas", conversão v3.11, roteiro; registro do banco gravado, prazo 28/10. 58 testes; rascunho da Naira abre sem erro; sem publicar.
