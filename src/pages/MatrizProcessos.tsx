@@ -12,6 +12,7 @@ import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw, Target, Work
 import { E2E_ZONES, zonesForProcesso, type E2EZone } from "@/data/e2eZones";
 import CadeiaValor from "@/pages/CadeiaValor";
 import GerenciarCadeia from "@/pages/GerenciarCadeia";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 type Processo = {
   id: string;
@@ -29,6 +30,7 @@ type Processo = {
   vinculo?: Record<string, number>;
   mapeamentoConsultoria?: boolean;
   responsavelMapeamento?: string;
+  responsavelMapeamentoPessoaId?: string | null;
 };
 
 const STORAGE_KEY = "matriz-processos-edits-v1";
@@ -138,9 +140,10 @@ export default function MatrizProcessos() {
   useEffect(() => {
     const edits: Record<string, Partial<Processo>> = {};
     data.forEach(p => {
-      const seed = (processosSeed as Processo[]).find(s => s.id === p.id)!;
+      const seed = (processosSeed as Processo[]).find(s => s.id === p.id);
+      if (!seed) return;
       const diff: Partial<Processo> = {};
-      (["nivel", "diretor", "status", "maturidade", "kpiValor", "vinculo", "mapeamentoConsultoria", "responsavelMapeamento"] as const).forEach(k => {
+      (["nivel", "diretor", "status", "maturidade", "kpiValor", "vinculo", "mapeamentoConsultoria", "responsavelMapeamento", "responsavelMapeamentoPessoaId"] as const).forEach(k => {
         if ((p as any)[k] !== (seed as any)[k]) (diff as any)[k] = (p as any)[k];
       });
       if (Object.keys(diff).length) edits[p.id] = diff;
@@ -381,12 +384,7 @@ export default function MatrizProcessos() {
                         </button>
                       </TableCell>
                       <TableCell>
-                        <Input
-                          value={p.responsavelMapeamento ?? ""}
-                          onChange={e => updateField(p.id, "responsavelMapeamento", e.target.value)}
-                          placeholder="Nome do responsável"
-                          className="h-8 text-xs"
-                        />
+                        <PessoaSelect value={p.responsavelMapeamentoPessoaId} texto={p.responsavelMapeamento} onChange={pessoa => updateField(p.id, 'responsavelMapeamentoPessoaId', pessoa?.id ?? null)} />
                       </TableCell>
                       <TableCell className="text-center text-xs">{p.revisao ?? "—"}</TableCell>
                     </TableRow>
