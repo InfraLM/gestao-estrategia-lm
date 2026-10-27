@@ -547,6 +547,13 @@
       "when": 1793097551729,
       "tag": "0077_calendario_frequencia_vigencia",
       "breakpoints": true
+    },
+    {
+      "idx": 78,
+      "version": "7",
+      "when": 1793126342073,
+      "tag": "0078_base_organizacional_pessoas_correspondencias",
+      "breakpoints": true
     }
   ]
 }
