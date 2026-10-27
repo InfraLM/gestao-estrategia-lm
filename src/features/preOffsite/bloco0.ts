@@ -2,7 +2,15 @@ import type { Pergunta, Campo, Config } from './config';
 export const BLOCO0_TITULO='Como a estratégia se encadeia (cerca de 25 minutos)';
 export const BLOCO0_ABERTURA='Responda pensando na LM inteira e na sua área. Marque as opções e use as observações para apontar lacunas, nomes ou exemplos.';
 export const CHAVE_BLOCO0='b0.v3.';
-export const ESCALA_COMPETENCIAS=['Domina','Bom domínio','Parcial','Não tem'];
+export const CRITERIOS_COMPETENCIAS=[
+ {opcao:'Domina e aplica com autonomia',criterio:'Conhece o tema, aplica consistentemente e entrega resultados sem depender de orientação.'},
+ {opcao:'Conhece e aplica com pouca autonomia',criterio:'Conhece o tema e consegue aplicá-lo, mas precisa de orientação pontual ou validação em situações específicas.'},
+ {opcao:'Conhece, mas aplica parcialmente',criterio:'Tem conhecimento conceitual, mas apresenta lacunas na aplicação prática, inconsistências ou necessidade frequente de suporte.'},
+ {opcao:'Não domina / não aplica',criterio:'Não possui conhecimento ou capacidade prática suficiente para aplicar o tema de forma adequada.'},
+ {opcao:'Não se aplica / Não avaliado',criterio:'O tema não faz parte de suas responsabilidades ou não há evidências suficientes para avaliar.'},
+];
+export const ESCALA_COMPETENCIAS=CRITERIOS_COMPETENCIAS.map(x=>x.opcao);
+export const competenciaLacuna=(avaliacao:unknown)=>avaliacao==='Conhece, mas aplica parcialmente'||avaliacao==='Não domina / não aplica';
 export const PERSPECTIVAS_BLOCO0=['Aprendizado e Crescimento','Processos','Clientes e mercado','Financeira'];
 const t=(nome:string):Campo=>({nome,tipo:'curto'});
 const e=(nome:string,opcoes:string[]):Campo=>({nome,tipo:'escolha',opcoes});
@@ -36,7 +44,7 @@ export function configBloco0(c:Config):Config {const nova=c.perguntas?.[0]?.some
 export function linhasMatriz(p:Pergunta,v:any):Record<string,any>[] {const rows=Array.isArray(v?.itens)?v.itens:[];return (p.itens??[]).filter(n=>n!=='Outro').map(Item=>({Item,...rows.find((r:any)=>r.Item===Item)})).concat(rows.filter((r:any)=>r.Outro===true||!(p.itens??[]).includes(r.Item)));}
 export function contagensMatriz(p:Pergunta,rs:{nome:string;respostas:Record<string,any>}[]){return (p.campos??[]).flatMap(f=>(f.opcoes??[]).map(Opcao=>({Campo:f.nome,Opcao,contagens:rs.map(r=>({diretor:r.nome,total:linhasMatriz(p,r.respostas[CHAVE_BLOCO0+p.id]).filter(x=>x[f.nome]===Opcao).length}))})));}
 export function bloco0Completo(p:Pergunta,v:any):boolean{const filled=(x:any)=>x!==null&&x!==undefined&&String(x).trim()!=='';const camposOk=(row:any,cs:Campo[])=>cs.filter(f=>!['Observação','Recurso liberado'].includes(f.nome)).every(f=>filled(row?.[f.nome]));if(p.tipo==='frase')return camposOk(v,p.campos??[]);if(p.tipo==='matriz'){if(!linhasMatriz(p,v).every(row=>camposOk(row,p.campos??[])))return false;}if(p.tipo==='lista'){if(!Array.isArray(v?.linhas)||v.linhas.length<(p.minimo??1)||!v.linhas.every((r:any)=>camposOk(r,p.campos??[])))return false;}if(p.tipo==='multipla'&&(!Array.isArray(v?.selecoes)||!v.selecoes.length))return false;return (p.extras??[]).every(f=>filled(v?.extras?.[f.nome]));}
-export function sugestoesCadeia(r:Record<string,any>,processos:{id:string;nome:string}[]=[]){return {competencias:linhasMatriz(NOVO_BLOCO0[0],r[CHAVE_BLOCO0+'0.1']).filter(x=>x.Avaliação==='Parcial'||x.Avaliação==='Não tem').map(x=>String(x.Item)),processos:(r[CHAVE_BLOCO0+'0.6']?.linhas??[]).map((x:any)=>processos.find(p=>p.id===x.Processo)?.nome??x.Processo).filter(Boolean)};}
+export function sugestoesCadeia(r:Record<string,any>,processos:{id:string;nome:string}[]=[]){return {competencias:linhasMatriz(NOVO_BLOCO0[0],r[CHAVE_BLOCO0+'0.1']).filter(x=>competenciaLacuna(x.Avaliação)).map(x=>String(x.Item)),processos:(r[CHAVE_BLOCO0+'0.6']?.linhas??[]).map((x:any)=>processos.find(p=>p.id===x.Processo)?.nome??x.Processo).filter(Boolean)};}
 export type KpiOffsite={id:string;codigo:string;nome:string;nivel:string;perspectiva:string;cadeira_id:string;diretor:string;papel:string;situacao_atual:string|null;meta_2026:string|null;fonte?:string;periodo?:string};
 export function linhasIndicadores(kpis:KpiOffsite[],rs:{cadeira_id:string;nome:string;respostas:Record<string,any>}[]){const rows=kpis.map(k=>{const r=rs.find(r=>r.cadeira_id===k.cadeira_id);const a=r?.respostas['b0.kpis']?.[k.id]??{};return {...k,diretor:r?.nome??k.diretor,corrigida:String(a.corrigida??''),confiabilidade:String(a.confiabilidade??''),meta2027:String(a.meta2027??''),explicacao:String(a.explicacao??'')};});return rows.map(row=>({...row,divergente:!!row.meta2027.trim()&&rows.some(x=>x.id===row.id&&x.papel!==row.papel&&!!x.meta2027.trim()&&x.meta2027.trim().toLocaleLowerCase('pt-BR')!==row.meta2027.trim().toLocaleLowerCase('pt-BR')),naoMedido:row.confiabilidade==='Ainda não medido'}));}
 
