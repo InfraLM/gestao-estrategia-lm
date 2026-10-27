@@ -297,6 +297,7 @@ export default function MetasSemanal() {
             _prazo: k.prazo || null, _resp_nome: nomeResp(k.responsavel), _status: k.status_ini || "em_andamento", _reaproveitar: alvo,
           });
           if (error) throw error;
+          if (k.responsavel.pessoa_id) { const { error: erroPessoa } = await db.rpc('org_iniciativa_vincular', { _iniciativa: data, _pessoa: k.responsavel.pessoa_id }); if (erroPessoa) throw erroPessoa; }
           const vs = vinculosParaGravar(k.vinculos, k.indicador_id);
           if (vs.length) { const { error: e2 } = await db.rpc("rotina_vincular_iniciativa", { _iniciativa: data, _vinculos: vs }); if (e2) throw e2; }
           resp.push({ ...k, iniciativa_criada_id: data });
