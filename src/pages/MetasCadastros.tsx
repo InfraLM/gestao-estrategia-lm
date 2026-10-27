@@ -1,4 +1,6 @@
 import PortfolioVinculos from "@/components/PortfolioVinculos";
+import AnaliseMetaConfig from '@/components/AnaliseMetaConfig';
+import { analiseDefinida } from '@/lib/analiseMetas';
 import FrequenciaKpi, { CalendarioApontamento } from '@/components/FrequenciaKpi';
 import { TIPO_LBL } from "@/lib/avaliacaoBsc";
 import { useMemo, useState } from "react";
@@ -52,6 +54,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
   const [origemF, setOrigemF] = useState<string>(origemFixa ?? "todas");
   const [cadF, setCadF] = useState<string>("todas");
   const [statusF, setStatusF] = useState<string>("ativo");
+  const [analiseF,setAnaliseF]=useState('todas');
 
   const nomeCad = (id: string | null) => b.cadeiras.find((c) => c.id === id)?.nome ?? "—";
   const nomeObj = (id: string | null) => b.objetivos.find((o) => o.id === id)?.codigo ?? "—";
@@ -63,8 +66,8 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
   const pessoaItems = b.perfis.map((p) => ({ v: p.user_id, l: p.display_name || p.email || p.user_id }));
 
   const indicadores = useMemo(() => b.indicadores.filter((i) =>
-    (origemF === "todas" || i.origem === origemF) && (cadF === "todas" || i.cadeira_id === cadF) && (statusF === "todos" || i.status === statusF)
-  ), [b.indicadores, origemF, cadF, statusF]);
+    (origemF === "todas" || i.origem === origemF) && (cadF === "todas" || i.cadeira_id === cadF) && (statusF === "todos" || i.status === statusF) && (analiseF==='todas'||(analiseF==='indefinido'?!analiseDefinida(i):analiseDefinida(i)&&i.tipo_apontamento===analiseF))
+  ), [b.indicadores, origemF, cadF, statusF,analiseF]);
 
   if (b.loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
   const ro = !b.isGov;
@@ -118,7 +121,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
           cadeira_id: r.cadeira_id, unidade: r.unidade || null, sentido: r.sentido, peso: r.peso ?? 0, status: r.status,
           meta_semestre: r.meta_semestre, meta_texto: r.meta_texto || null, parent_id: r.parent_id, regra_consolidacao: r.regra_consolidacao,
           peso_componente: r.peso_componente, observacoes: r.observacoes || null,
-          tipo_apontamento: r.tipo_apontamento ?? "valor_mensal", prazo_entrega: r.tipo_apontamento === "entrega" ? r.prazo_entrega || null : r.prazo_entrega ?? null,
+          ...(r.origem==='bsc'?{tipo_apontamento:r.tipo_apontamento??'valor_mensal',prazo_entrega:r.prazo_entrega??null}:{}),
         };
         const { data, error } = r.id ? await db.from("mt_indicadores").update(row).eq("id", r.id).select().single() : await db.from("mt_indicadores").insert(row).select().single();
         if (error) { toast.error(error.message); break; }
@@ -176,6 +179,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
             {!origemFixa && <div className="w-40"><Campo label="Origem"><Sel value={origemF} onChange={(v) => setOrigemF(v ?? "todas")} placeholder="Origem" items={[{ v: "todas", l: "Todas" }, { v: "bsc", l: "KPI do BSC" }, { v: "okr", l: "KR de OKR" }, { v: "cesta", l: "Cesta de metas" }]} /></Campo></div>}
             <div className="w-56"><Campo label="Cadeira"><Sel value={cadF} onChange={(v) => setCadF(v ?? "todas")} placeholder="Cadeira" items={[{ v: "todas", l: "Todas" }, ...cadItems]} /></Campo></div>
             <div className="w-36"><Campo label="Status"><Sel value={statusF} onChange={(v) => setStatusF(v ?? "todos")} placeholder="Status" items={[{ v: "todos", l: "Todos" }, { v: "ativo", l: "Ativos" }, { v: "arquivado", l: "Arquivados" }]} /></Campo></div>
+            <div className="w-48"><Campo label="Tipo de análise"><Sel value={analiseF} onChange={v=>setAnaliseF(v??'todas')} placeholder="Todos" items={[{v:'todas',l:'Todos'},{v:'indefinido',l:'Sem tipo definido'},{v:'valor_mensal',l:'Mensal (V)'},{v:'valor_periodo',l:'Semestral (S)'},{v:'entrega',l:'Entrega (E)'}]}/></Campo></div>
             <div className="ml-auto"><BotaoNovo tipo="indicador" row={{}} label="Novo indicador" /></div>
           </div>
           <Card className="overflow-x-auto">
@@ -183,7 +187,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
               <thead className="bg-muted/50 text-xs text-muted-foreground"><tr>
                 <th className="text-left p-2 freeze-col-1 bg-muted">Código</th><th className="text-left p-2">Nome</th><th className="p-2">Origem</th>
                 <th className="text-left p-2">Objetivo</th><th className="text-left p-2">Cadeira</th><th className="p-2">Sentido</th>
-                <th className="p-2">Tipo de apontamento</th><th className="p-2">Frequência de apontamento</th><th className="text-left p-2">Meta semestral/anual</th><th className="p-2">Curva</th><th className="p-2">Status</th><th className="p-2" />
+                <th className="p-2">Tipo de análise</th><th className="p-2">Frequência de apontamento</th><th className="text-left p-2">Meta semestral/anual</th><th className="p-2">Curva</th><th className="p-2">Status</th><th className="p-2" />
               </tr></thead>
               <tbody>
                 {indicadores.map((i) => {
