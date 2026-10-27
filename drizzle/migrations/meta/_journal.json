@@ -568,6 +568,13 @@
       "when": 1793127019612,
       "tag": "0080_base_organizacional_leitura_minima_vinculos",
       "breakpoints": true
+    },
+    {
+      "idx": 81,
+      "version": "7",
+      "when": 1793127231199,
+      "tag": "0081_base_organizacional_vigencia_sem_ambiguidade",
+      "breakpoints": true
     }
   ]
 }
