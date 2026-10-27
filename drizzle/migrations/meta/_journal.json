@@ -526,6 +526,13 @@
       "when": 1793041830249,
       "tag": "0074_offsite_indicadores_por_cadeira",
       "breakpoints": true
+    },
+    {
+      "idx": 75,
+      "version": "7",
+      "when": 1793096129371,
+      "tag": "0075_metas_tipos_analise_configuracao",
+      "breakpoints": true
     }
   ]
 }

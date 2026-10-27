@@ -2240,6 +2240,8 @@ export type Database = {
       }
       mt_indicadores: {
         Row: {
+          analise_configurada_em: string | null
+          analise_historico: Json
           cadeira_id: string | null
           codigo: string
           created_at: string
@@ -2270,6 +2272,7 @@ export type Database = {
           status: string
           status_implantacao_medicao: string | null
           tipo_apontamento: string
+          tolerancia: number | null
           tratamento: string | null
           unidade: string | null
           updated_at: string
@@ -2277,6 +2280,8 @@ export type Database = {
           velocidade_reacao: string | null
         }
         Insert: {
+          analise_configurada_em?: string | null
+          analise_historico?: Json
           cadeira_id?: string | null
           codigo: string
           created_at?: string
@@ -2307,6 +2312,7 @@ export type Database = {
           status?: string
           status_implantacao_medicao?: string | null
           tipo_apontamento?: string
+          tolerancia?: number | null
           tratamento?: string | null
           unidade?: string | null
           updated_at?: string
@@ -2314,6 +2320,8 @@ export type Database = {
           velocidade_reacao?: string | null
         }
         Update: {
+          analise_configurada_em?: string | null
+          analise_historico?: Json
           cadeira_id?: string | null
           codigo?: string
           created_at?: string
@@ -2344,6 +2352,7 @@ export type Database = {
           status?: string
           status_implantacao_medicao?: string | null
           tipo_apontamento?: string
+          tolerancia?: number | null
           tratamento?: string | null
           unidade?: string | null
           updated_at?: string
@@ -2573,6 +2582,7 @@ export type Database = {
       }
       mt_lancamentos: {
         Row: {
+          analise_snapshot: Json | null
           avanco_pct: number | null
           comentario: string | null
           competencia: string
@@ -2590,6 +2600,7 @@ export type Database = {
           valor: number | null
         }
         Insert: {
+          analise_snapshot?: Json | null
           avanco_pct?: number | null
           comentario?: string | null
           competencia: string
@@ -2607,6 +2618,7 @@ export type Database = {
           valor?: number | null
         }
         Update: {
+          analise_snapshot?: Json | null
           avanco_pct?: number | null
           comentario?: string | null
           competencia?: string
@@ -5690,6 +5702,17 @@ export type Database = {
       is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       modulo_conteudo: { Args: { _chave: string }; Returns: string }
       mt_aceitar_meu_convite: { Args: never; Returns: boolean }
+      mt_analise_configurar: {
+        Args: {
+          _confirmar_historico?: boolean
+          _dados: Json
+          _id: string
+          _tipo_anterior: string
+        }
+        Returns: undefined
+      }
+      mt_analise_historico_existe: { Args: { _id: string }; Returns: boolean }
+      mt_analise_retrato: { Args: { _id: string }; Returns: Json }
       mt_aprovar_frequencias: { Args: { _ids: string[] }; Returns: number }
       mt_cadeira_do_usuario: { Args: { _uid: string }; Returns: string }
       mt_desvio_normal: {
