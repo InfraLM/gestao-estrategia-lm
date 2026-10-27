@@ -201,7 +201,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
                       <td className="p-2">{nomeObj(i.objetivo_id)}{i.okr_id && <div className="text-[11px] text-muted-foreground">{nomeOkr(i.okr_id)}</div>}</td>
                       <td className="p-2">{nomeCad(i.cadeira_id)}</td>
                       <td className="p-2 text-center text-xs">{i.sentido === "maior" ? "↑ maior" : "↓ menor"}</td>
-                      <td className="p-2 text-center text-xs"><Badge variant="secondary" className="text-[10px]">{TIPO_LBL[i.tipo_apontamento ?? "valor_mensal"]}</Badge>{i.tipo_apontamento === "entrega" && i.prazo_entrega && <div className="text-[11px] text-muted-foreground">prazo {new Date(i.prazo_entrega + "T12:00:00").toLocaleDateString("pt-BR")}</div>}{i.status_implantacao_medicao && <div><Badge variant="outline" className="text-[10px] mt-1" title="Status de implantação da medição (planilha rev. 17.09.26)">medição: {i.status_implantacao_medicao}</Badge></div>}</td>
+                      <td className="p-2 text-center text-xs">{i.origem!=='bsc'?<AnaliseMetaConfig item={i} metas={b.metas} podeEditar={editaFrequencia} reload={b.reload}/>:<Badge variant="secondary" className="text-[10px]">{TIPO_LBL[i.tipo_apontamento ?? "valor_mensal"]}</Badge>}{i.tipo_apontamento === "entrega" && i.prazo_entrega && <div className="text-[11px] text-muted-foreground">prazo {new Date(i.prazo_entrega + "T12:00:00").toLocaleDateString("pt-BR")}</div>}{i.status_implantacao_medicao && <div><Badge variant="outline" className="text-[10px] mt-1" title="Status de implantação da medição (planilha rev. 17.09.26)">medição: {i.status_implantacao_medicao}</Badge></div>}</td>
                       <td className="p-2"><FrequenciaKpi kpi={i} podeEditar={editaFrequencia} reload={b.reload}/></td>
                       <td className="p-2 text-xs">{i.meta_semestre != null ? `${fmtNum(i.meta_semestre)} ${i.unidade ?? ""}` : i.meta_texto ?? "—"}</td>
                       <td className="p-2 text-center text-xs">{nMetas ? `${nMetas}/6` : <span className="text-warning">pendente</span>}</td>
@@ -378,13 +378,14 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
                   <Campo label="Cadeira responsável"><Sel value={r.cadeira_id} onChange={(v) => set("cadeira_id", v)} items={cadItems} placeholder="Selecione" allowNone /></Campo>
                   {r.origem === "okr" && <Campo label="OKR"><Sel value={r.okr_id} onChange={(v) => set("okr_id", v)} items={okrItems} placeholder="Selecione" /></Campo>}
                 </div>
+                {r.origem!=='bsc'&&r.id&&<AnaliseMetaConfig item={r} metas={b.metas} podeEditar={editaFrequencia} reload={()=>{b.reload();setEdit(null);}}/>}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <Campo label="Unidade"><Input value={r.unidade ?? ""} onChange={(e) => set("unidade", e.target.value)} placeholder="%, R$, dias" /></Campo>
                   <Campo label="Sentido"><Sel value={r.sentido} onChange={(v) => set("sentido", v)} placeholder="Sentido" items={[{ v: "maior", l: "Quanto maior melhor" }, { v: "menor", l: "Quanto menor melhor" }]} /></Campo>
-                  <Campo label="Tipo de apontamento (só Governança)"><Sel value={r.tipo_apontamento ?? "valor_mensal"} onChange={(v) => set("tipo_apontamento", v)} placeholder="Tipo" items={Object.entries(TIPO_LBL).map(([v, l]) => ({ v, l }))} /></Campo>
+                  {r.origem==='bsc'&&<Campo label="Tipo de apontamento (só Governança)"><Sel value={r.tipo_apontamento ?? "valor_mensal"} onChange={(v) => set("tipo_apontamento", v)} placeholder="Tipo" items={Object.entries(TIPO_LBL).map(([v, l]) => ({ v, l }))} /></Campo>}
                   <Campo label="Meta semestral/anual"><Input inputMode="decimal" value={txtNum(r.meta_semestre)} onChange={(e) => set("meta_semestre", num(e.target.value))} /></Campo>
                 </div>
-                {r.tipo_apontamento === "entrega" && <Campo label="Prazo da entrega"><Input type="date" value={r.prazo_entrega ?? ""} onChange={(e) => set("prazo_entrega", e.target.value)} /></Campo>}
+                {r.origem==='bsc'&&r.tipo_apontamento === "entrega" && <Campo label="Prazo da entrega"><Input type="date" value={r.prazo_entrega ?? ""} onChange={(e) => set("prazo_entrega", e.target.value)} /></Campo>}
                 <Campo label="Meta (texto de referência)"><Input value={r.meta_texto ?? ""} onChange={(e) => set("meta_texto", e.target.value)} /></Campo>
                 <Campo label="Curva de metas mensais (2º semestre)">
                   <div className="overflow-x-auto"><table className="text-xs w-full">
