@@ -15,6 +15,7 @@ import { useProcessosDB } from "@/hooks/useProcessosDB";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import PessoaSelect from '@/components/estrutura/PessoaSelect';
+import NomeOrganizacional from '@/components/estrutura/NomeOrganizacional';
 
 const AREAS = [
   "Comercial","Geração de Demanda","CX","Áudio Visual","Infra & Tech",
@@ -664,7 +665,7 @@ export default function MelhoriaContinua() {
                             <span className="inline-flex items-center gap-1"><Link2 className="h-3 w-3" /> {a.processoNome}</span>
                           ) : "—"}
                         </TableCell>
-                        <TableCell className="text-sm">{a.responsavel || "—"}</TableCell>
+                        <TableCell className="text-sm"><NomeOrganizacional pessoaId={a.responsavel_pessoa_id} texto={a.responsavel} /></TableCell>
                         <TableCell>
                           <Input type="date" value={a.dataPrevista ?? ""} onChange={e => updateAcao(a.id, { dataPrevista: e.target.value })} className="h-8 text-xs" />
                         </TableCell>
@@ -868,7 +869,7 @@ export default function MelhoriaContinua() {
                     </TableCell>
 
                     <TableCell className="text-sm text-muted-foreground">{r.acaoMitigadora || "—"}</TableCell>
-                    <TableCell className="text-sm">{r.responsavel || "—"}</TableCell>
+                    <TableCell className="text-sm"><NomeOrganizacional pessoaId={r.responsavel_pessoa_id} texto={r.responsavel} /></TableCell>
                     <TableCell>
                       <Input type="date" value={r.prazo ?? ""} onChange={e => updateRisco(r.id, { prazo: e.target.value })} className="h-8 text-xs" />
                     </TableCell>
