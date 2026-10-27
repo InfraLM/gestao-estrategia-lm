@@ -17,7 +17,7 @@ export const PERSPECTIVAS=['Aprendizado e Crescimento','Processos','Clientes','F
 export const CAMPOS_FRASE:Campo[]=[t('Competência',{placeholder:'competência'}),t('Processo',{placeholder:'qual processo'}),t('O que o aluno percebe',{placeholder:'o quê'}),t('Como o caixa ganha',{placeholder:'como'})];
 export const montarFrase=(v:any)=>{const x=v&&typeof v==='object'?v:{};const f=(k:string)=>String(x[k]??'').trim()||'…';return `Se a minha área desenvolver ${f('Competência')}, o processo ${f('Processo')} melhora, o aluno percebe ${f('O que o aluno percebe')} e o caixa ganha ${f('Como o caixa ganha')}.`;};
 export const PADRAO:Config={
-versao:'v3.12',
+versao:'v3.13',
 titulo:'Formulário Pré-Off-site 2027 — Diretoria Executiva',
 organizacao:'Liberdade Médica',
 tempo:'80 a 95 minutos',
@@ -57,10 +57,9 @@ diretrizes:[
 ['Mandato claro e experimento antes de estrutura','Cada cadeira tem mandato escrito. Toda frente nova começa como experimento, com teto de gasto e critério de parada.','estrutura fixa criada antes de provar retorno é a principal fonte de custo que não volta.'],
 ['Variável ligado ao caixa e ao valor presente','O variável da liderança só é pago se a meta de caixa for atingida; o do comercial, pela meta medida em valor presente da venda.','em 2027, ninguém deve ganhar se a empresa não gerar caixa.']].map(([titulo,descricao,porque],i)=>({id:String(i+1),titulo,descricao,porque})),
 projetos:[
-{id:'v311-receita',selo:'Estruturante',titulo:'Receita inteligente',descricao:'Agentes de IA sobre a reunião de vendas para aumentar o valor presente de cada venda e a fatia no cartão ou à vista: gravação e transcrição das reuniões, agentes de pós-reunião, apoio à forma de pagamento e recuperação de alunos em “Perdidos”.'},
-{id:'v311-caixa',selo:'Estruturante',titulo:'Caixa em tempo real',descricao:'DRE, caixa e balanço ligados à operação, com forecast e travas de gasto que fazem o piso de caixa valer no sistema. A base de dados única (Foundation, LM Brain e CRM próprio) faz parte deste projeto.'},
+{id:'v311-hospital',selo:'Condicionado',titulo:'Hospital LM: centro de simulação + cadáver lab',descricao:'Centro de simulação e cadáver lab próprios, em fases. Só começa com parecer regulatório favorável, caso de negócio com DRE e caixa acima do piso no cenário pessimista.'},
 {id:'v311-metodo',selo:'Estruturante',titulo:'Método LM',descricao:'Definir, documentar e implantar o padrão LM de ensino e de prática: protocolos, régua de qualificação, formação de docentes e preceptores e conteúdo com aplicação no plantão. É o padrão que parcerias hospitalares e imersões passam a seguir. Selo e venda do método ao mercado ficam para depois de 2027.'},
-{id:'v311-hospital',selo:'Condicionado',titulo:'Hospital LM, fase 1',descricao:'Cenário próprio de prática com cadáver lab enxuto em São Paulo, em fases. Só começa com parecer regulatório favorável, caso de negócio com DRE e caixa acima do piso no cenário pessimista.'}],
+{id:'v312-sede-goiania',selo:'A definir',titulo:'Sede LM Goiânia',descricao:'Descrição a definir.'}],
 andamento:[],
 produtos:[{id:'prod0',titulo:'Pós em POCUS'},{id:'prod1',titulo:'Pós em Cuidados Paliativos'},{id:'prod4',titulo:'Outro'}],
 escolhas:[
@@ -70,7 +69,7 @@ escolhas:[
 {id:'5.7',titulo:'Arquitetura do portfólio em 2027: o núcleo duro (ACLS, FPG e PPG) concentra o foco; os produtos que reforçam o núcleo e a escada de ascensão, como Fellowship e Método LM, ficam sob um dono único; e os novos negócios ficam numa avenida separada e pequena, sempre como experimento e sem caixa do núcleo. Que risco você vê nessa divisão, e como mitigaria?'}],
 temas:[],
 caixas:{
-'4A':'Em 2026 tínhamos 11 projetos chamados de estratégicos, e na prática nenhum recebia a atenção necessária. Para 2027, os projetos foram comparados por uma régua única, com pesos: quanto ajudam a converter venda em caixa (40%), o tamanho da lacuna que fecham (20%), o efeito no caixa no cenário pessimista (15%), a dependência com outros projetos (15%) e a existência de um dono (10%). O teto é de 3 a 4 projetos. Ficaram 3 estruturantes e 1 condicionado. Cada dono tem 20% do tempo protegido para o projeto, e a Naira acompanha o portfólio na diretoria de Gente & Gestão.',
+'4A':'Em 2026 tínhamos 11 projetos chamados de estratégicos, e na prática nenhum recebia a atenção necessária. Para 2027, os projetos foram comparados por uma régua única, com pesos: quanto ajudam a converter venda em caixa (40%), o tamanho da lacuna que fecham (20%), o efeito no caixa no cenário pessimista (15%), a dependência com outros projetos (15%) e a existência de um dono (10%). O teto é de 3 a 4 projetos. Ficaram 3 projetos. Cada dono tem 20% do tempo protegido para o projeto, e a Naira acompanha o portfólio na diretoria de Gente & Gestão.',
 '4C':'Pausar não é encerrar: o destino final será decidido no off-site. As opções são encerrar ou manter como complemento de baixo contato da PPG, online e vendido a quem já é aluno.'},
 notas:{
 'b0':BLOCO0_ABERTURA,

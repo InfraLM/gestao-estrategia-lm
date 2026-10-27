@@ -1,3 +1,4 @@
+import { PROJETOS_HISTORICOS } from './presentation';
 import { respostasBloco0, bloco0Completo, perguntaPara } from './bloco0';
 import { z } from 'zod';
 import type { Config } from './config';
@@ -50,7 +51,7 @@ export function resumoResposta(r:Respostas,p:string,c:Config):any{
  if(p==='3.3')return lista(r,'3.selecionadas').map(id=>({Diretriz:c.diretrizes.find(d=>d.id===id)?.titulo,...r[`3.detalhe.${id}`]}));
  if(p==='3.4')return c.diretrizes.filter(d=>r[`3.ajuste.${d.id}`]).map(d=>({Diretriz:d.titulo,Ajuste:r[`3.ajuste.${d.id}`]}));
  if(p==='3.5')return{Objetivos:r['3.5.objetivos'],Texto:r['3.5.texto']};
- if(['4A','4C'].includes(p)){const items=p==='4A'?c.projetos:c.produtos;return items.map(d=>({Item:d.titulo,...r[`${p}.${d.id}`]}));}
+ if(['4A','4C'].includes(p)){const items=p==='4A'?[...c.projetos,...PROJETOS_HISTORICOS.filter(d=>r[`4A.${d.id}`])]:c.produtos;return items.map(d=>({Item:d.titulo,...(p==='4A'&&PROJETOS_HISTORICOS.some(h=>h.id===d.id)?{Registro:'Histórico — removido do formulário'}:{}),...r[`${p}.${d.id}`]}));}
  if(p==='4.1'||p==='4.2')return{Seleção:r[p],Justificativa:r[`${p}.porque`]};
  if(p==='5.riscos')return c.escolhas.map(d=>({Escolha:d.titulo,...r[d.id]}));return r[p];
 }
