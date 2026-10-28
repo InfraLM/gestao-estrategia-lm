@@ -7,7 +7,7 @@ const cfg = (extra: any[] = [], arquivada = false) => JSON.stringify({ versao: '
 async function setup() {
   const p = new PGlite();
   await p.exec(`CREATE ROLE authenticated;CREATE ROLE anon;CREATE ROLE service_role;CREATE SCHEMA auth;CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$SELECT nullif(current_setting('test.uid',true),'')::uuid$$;CREATE TABLE mt_usuarios(user_id uuid,cadeira_id uuid,perfil text);CREATE TABLE mt_cadeiras(id uuid,diretor_user_id uuid,ativo boolean);CREATE TABLE profiles(user_id uuid,display_name text);INSERT INTO mt_usuarios VALUES('${D}','${C}','diretor');INSERT INTO profiles VALUES('${D}','Diretor fictício');`);
-  for (const f of ['0058_pre_offsite_2027_privado', '0061_pre_offsite_promocao_nome', '0062_pre_offsite_cadeira_vinculada', '0088_offsite_config_editor_estruturado']) await p.exec(readFileSync(`drizzle/migrations/${f}.sql`, 'utf8'));
+  for (const f of ['0058_pre_offsite_2027_privado', '0061_pre_offsite_promocao_nome', '0062_pre_offsite_cadeira_vinculada', '0063_pre_offsite_config_estavel', '0088_offsite_config_editor_estruturado']) await p.exec(readFileSync(`drizzle/migrations/${f}.sql`, 'utf8'));
   await p.exec(`INSERT INTO offsite_admins VALUES('${A}')`);
   await p.query(`INSERT INTO offsite_config(id,conteudo) VALUES('2027',$1::jsonb)`, [cfg()]);
   return p;
