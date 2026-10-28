@@ -18,3 +18,10 @@ export function perspectivaClasse(p: Pergunta) {
   const code = p.objetivos?.[0] ?? '';
   return code.startsWith('AC') ? 'offsite-aprendizado' : code.startsWith('P.') ? 'offsite-processos' : code.startsWith('C.') ? 'offsite-clientes' : 'offsite-financeira';
 }
+const ORDEM_PERSPECTIVA=['f','c','p','ac'];
+const perspectivaKpi=(codigo:string)=>{const c=String(codigo??'').toLowerCase();return c.startsWith('ac')?3:c.startsWith('p')?2:c.startsWith('c')?1:0;};
+/** Exibição da árvore de KPIs: só o código e o nome da árvore (o nome já traz o código), sem o código interno. */
+export const rotuloKpi=(k:{nome?:string;codigo?:string})=>String(k?.nome??k?.codigo??'').trim();
+export const ordenarKpis=<T extends {codigo?:string;nome?:string}>(ks:T[])=>[...(ks??[])].sort((a,b)=>perspectivaKpi(a.codigo??'')-perspectivaKpi(b.codigo??'')||String(a.codigo).localeCompare(String(b.codigo),'pt-BR',{numeric:true}));
+export const kpisSelecionados=(v:any):string[]=>Array.isArray(v)?v.filter((x:any)=>typeof x==='string'&&x):typeof v==='string'&&v?[v]:[];
+export {ORDEM_PERSPECTIVA};
