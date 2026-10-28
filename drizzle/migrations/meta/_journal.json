@@ -610,6 +610,13 @@
       "when": 1793140800528,
       "tag": "0086_pre_offsite_config_troca_versao",
       "breakpoints": true
+    },
+    {
+      "idx": 87,
+      "version": "7",
+      "when": 1793145215013,
+      "tag": "0087_pre_offsite_projetos_versionados",
+      "breakpoints": true
     }
   ]
 }

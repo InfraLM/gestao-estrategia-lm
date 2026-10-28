@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,700;1,900&display=swap');
+
 
 @tailwind base;
 @tailwind components;
@@ -174,3 +174,97 @@
   .freeze-col-1, .freeze-col-2 { box-shadow: 1px 0 0 0 hsl(var(--border)); }
 }
 
+
+/* Pré-Offsite: scoped approved reference palette; application fonts preserved. */
+.offsite-form {
+  --offsite-background: 216.00 17.24% 94.31%;
+  --offsite-foreground: 222.86 28.00% 14.71%;
+  --offsite-card: 0.00 0.00% 100.00%;
+  --offsite-border: 218.18 16.92% 87.25%;
+  --offsite-muted: 220.00 20.00% 97.06%;
+  --offsite-muted-foreground: 220.00 11.43% 41.18%;
+  --offsite-primary: 355.26 61.29% 48.63%;
+  --offsite-primary-soft: 352.94 68.00% 95.10%;
+  --offsite-navy: 220.00 45.00% 15.69%;
+  --offsite-navy-soft: 220.00 31.58% 92.55%;
+  --offsite-decision: 45.00 35.29% 93.33%;
+  --offsite-learning: 215.29 6.94% 51.96%;
+  --offsite-process: 216.92 8.84% 28.82%;
+  --offsite-closing: 200.62 50.53% 37.25%;
+  --background: var(--offsite-background);
+  --foreground: var(--offsite-foreground);
+  --card: var(--offsite-card);
+  --border: var(--offsite-border);
+  --muted: var(--offsite-muted);
+  --muted-foreground: var(--offsite-muted-foreground);
+  --primary: var(--offsite-primary);
+  --input: var(--offsite-border); --ring: var(--offsite-primary); --card-foreground: var(--offsite-foreground); --offsite-perspective: var(--offsite-primary);
+}
+.dark .offsite-form {
+  --offsite-background: 220.00 27.27% 8.63%;
+  --offsite-foreground: 220.00 23.08% 92.35%;
+  --offsite-card: 218.82 26.15% 12.75%;
+  --offsite-border: 218.40 21.37% 22.94%;
+  --offsite-muted: 219.00 24.39% 16.08%;
+  --offsite-muted-foreground: 219.13 14.29% 68.43%;
+  --offsite-primary: 354.82 70.56% 61.37%;
+  --offsite-primary-soft: 347.14 31.82% 17.25%;
+  --offsite-navy: 218.64 44.36% 73.92%;
+  --offsite-navy-soft: 220.00 34.74% 18.63%;
+  --offsite-decision: 48.00 13.51% 14.51%;
+  --offsite-learning: 219.13 14.29% 68.43%;
+  --offsite-process: 219.13 14.29% 68.43%;
+  --offsite-closing: 199.06 52.15% 68.04%;
+  --background: var(--offsite-background);
+  --foreground: var(--offsite-foreground);
+  --card: var(--offsite-card);
+  --border: var(--offsite-border);
+  --muted: var(--offsite-muted);
+  --muted-foreground: var(--offsite-muted-foreground);
+  --primary: var(--offsite-primary);
+  --input: var(--offsite-border); --ring: var(--offsite-primary); --card-foreground: var(--offsite-foreground); --offsite-perspective: var(--offsite-primary);
+}
+
+.offsite-form { background: hsl(var(--background)); color: hsl(var(--foreground)); letter-spacing: 0; padding: 1rem; min-width: 0; }
+.offsite-form h2, .offsite-form h3 { letter-spacing: 0; }
+.offsite-hero { background: hsl(var(--offsite-navy)); color: hsl(var(--offsite-card)); padding: 2rem; }
+.dark .offsite-hero { background: hsl(var(--offsite-navy-soft)); color: hsl(var(--foreground)); }
+.offsite-hero-pill { border: 1px solid currentColor; border-radius: 999px; padding: .4rem .8rem; font-size: .875rem; }
+.offsite-nav { position: sticky; top: 0; z-index: 25; background: hsl(var(--card)); border-bottom: 1px solid hsl(var(--border)); padding: .75rem; }
+.offsite-question { border: 1px solid hsl(var(--border)); border-radius: 8px; background: hsl(var(--card)); padding: 1.25rem; min-width: 0; }
+.offsite-directed { box-shadow: inset 4px 0 hsl(var(--offsite-navy)); }
+.offsite-apenas { color: hsl(var(--offsite-navy)); background: hsl(var(--offsite-navy-soft)); border-color: hsl(var(--offsite-navy-soft)); white-space: normal; }
+.offsite-private { color: hsl(var(--primary)); background: hsl(var(--offsite-primary-soft)); border-color: hsl(var(--offsite-primary-soft)); white-space: normal; }
+.offsite-support { background: hsl(var(--muted)); padding: 1rem; border-radius: 6px; }
+.offsite-decision { background: hsl(var(--offsite-decision)); padding: 1rem; border-radius: 6px; }
+.offsite-thesis { background: hsl(var(--offsite-navy-soft)); border-left: 4px solid hsl(var(--offsite-navy)); padding: 1.5rem; }
+.offsite-block-heading { border-left: 6px solid hsl(var(--primary)); padding-left: 1rem; display:flex; align-items:center; gap:1rem; }
+.offsite-block-heading > span { font-size: 2.5rem; font-weight: 800; color: hsl(var(--primary)); }
+.offsite-aprendizado { --offsite-perspective: var(--offsite-learning); }
+.offsite-processos { --offsite-perspective: var(--offsite-process); }
+.offsite-clientes { --offsite-perspective: var(--offsite-primary); }
+.offsite-financeira { --offsite-perspective: var(--offsite-navy); }
+.offsite-fechamento { --offsite-perspective: var(--offsite-closing); }
+.offsite-question-id { color: hsl(var(--offsite-perspective)); font-weight:800; font-size:1.25rem; }
+.offsite-objective { border-color: hsl(var(--offsite-perspective)); }
+.offsite-perspective-heading { border-left: 4px solid hsl(var(--offsite-perspective)); padding-left: 1rem; }
+.offsite-table-scroll { overflow-x:auto; max-width:100%; border:1px solid hsl(var(--border)); border-radius:6px; }
+.offsite-table { width:100%; border-collapse:collapse; text-align:left; font-size:.875rem; }
+.offsite-table th { background:hsl(var(--muted)); font-weight:600; }
+.offsite-table th, .offsite-table td { padding:.75rem; border-bottom:1px solid hsl(var(--border)); vertical-align:top; min-width:10rem; }
+.offsite-table td:first-child { min-width:14rem; }
+.offsite-table .offsite-radio-cell { min-width:7rem; text-align:center; vertical-align:middle; }
+.offsite-table td textarea { min-width:12rem; }
+.offsite-segment[aria-checked=true] { color:hsl(var(--primary)); background:hsl(var(--offsite-primary-soft)); border-color:hsl(var(--primary)); }
+.offsite-form textarea { resize:vertical; }
+.offsite-inline { field-sizing:content; width:14ch; min-width:8ch; max-width:100%; display:inline-block; margin:.25rem; border-bottom:2px solid hsl(var(--border)); border-radius:0; }
+.offsite-footer { padding-bottom:max(.75rem, env(safe-area-inset-bottom)); }
+.offsite-form section[id] { scroll-margin-top:9rem; }
+@media(max-width:639px) { .offsite-form { padding:.5rem; } .offsite-hero { padding:1.25rem; } .offsite-question { padding:1rem; } .offsite-block-heading { align-items:flex-start; } }
+.offsite-form { overflow-x: clip; }
+.offsite-nav { top: 4rem; }
+@media (max-width:639px) { .offsite-nav { top: 6.25rem; } }
+.offsite-table-scroll, .offsite-nav nav { contain: inline-size; }
+.offsite-table-scroll { position: relative; overflow: auto; contain: layout paint; }
+.offsite-form section[id] { scroll-margin-top: 14rem; }
+@media(max-width:639px) { .offsite-form section[id] { scroll-margin-top: 25rem; } }
