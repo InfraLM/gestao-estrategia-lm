@@ -3234,6 +3234,33 @@ export type Database = {
         }
         Relationships: []
       }
+      offsite_config_rascunhos: {
+        Row: {
+          atualizado_em: string
+          autor: string | null
+          base_atualizado_em: string | null
+          conteudo: Json
+          id: string
+          mapeamentos: Json
+        }
+        Insert: {
+          atualizado_em?: string
+          autor?: string | null
+          base_atualizado_em?: string | null
+          conteudo: Json
+          id: string
+          mapeamentos?: Json
+        }
+        Update: {
+          atualizado_em?: string
+          autor?: string | null
+          base_atualizado_em?: string | null
+          conteudo?: Json
+          id?: string
+          mapeamentos?: Json
+        }
+        Relationships: []
+      }
       offsite_historico: {
         Row: {
           acao: string
@@ -6201,6 +6228,10 @@ export type Database = {
       offsite_acesso: { Args: never; Returns: Json }
       offsite_admin: { Args: never; Returns: boolean }
       offsite_cadeira: { Args: never; Returns: string }
+      offsite_config_publicar: {
+        Args: { _base: string; _conteudo: Json; _respostas?: Json }
+        Returns: string
+      }
       offsite_indicadores: { Args: never; Returns: Json }
       offsite_promover: {
         Args: { _id: string; _indice: number }
