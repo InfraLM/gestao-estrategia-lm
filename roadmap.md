@@ -5,7 +5,7 @@
 - [ ] Publicar — ação da Naira, não solicitado nesta rodada.
 
 # Base única da estrutura organizacional
-- [ ] Aprovação integral 28/10: revalidar e completar incrementos 1–4 do plano arquivado, testes isolados por etapa, cobertura dos dois fluxos de projetos/status legado e contagens finais; zero aprovações reais.
+- [x] Aprovação integral 28/10: incrementos 1–4 revalidados e lacunas legadas completadas; 77 testes isolados, salvar/reler fictícios com falha/repetição, revisão real somente leitura. 145 cargos sem pessoa; pessoas sem cadeira/cargo/usuário 131/139/137; sugestões 445 altas/0 médias/255 baixas, zero aprovações reais.
 - [x] Incremento 0: diagnóstico numérico de fontes, campos textuais/referências e variações; plano seguro preparado, sem alterações nos registros/acessos.
 - [x] Incremento 1: base de cadeiras, cargos e 139 pessoas com vigência, revisão e auditoria; Gov/CEO editam, diretores leem base mínima.
 - [x] Incremento 2: 700 correspondências sugeridas (445 candidatos), revisão explícita em massa; zero aprovadas, textos antigos preservados.

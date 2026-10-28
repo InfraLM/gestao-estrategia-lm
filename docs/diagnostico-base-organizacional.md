@@ -91,3 +91,11 @@ O novo diretório não confere acesso a módulos, não altera `mt_usuarios`, con
 - Fit Finder mantém diretorias agregadas e confirmação própria; processos externos permanecem desligados. Sócios e Pré-Offsite mantêm participantes e respostas separados, sem inferir acesso pelo nome.
 - A tela legada de Submissão com IA já não persistia projetos; o seletor foi atualizado, mas transformar sua simulação em cadastro real não foi incluído. As duas telas existentes de gestão de projetos persistem referências.
 - Correspondência de nomes de Governança complementa, mas não substitui, o endereçamento operacional de atas por pares de cadeira. Não aprovar pares automaticamente.
+
+## Revalidação da aprovação integral — 28/10/2026
+
+- Incremento 1: manutenção existente revalidada em banco isolado, com testes adicionais de hierarquias sem ciclos e negação de revisão/manutenção/escrita direta por diretor.
+- Incremento 2: revisão administrativa ganhou filtro de confiança e contagem por faixa (alta ≥90%, média ≥70% e <90%, baixa <70%); troca de filtros limpa seleção. Sugestões permanecem sem aprovação automática.
+- Incremento 3: portfólio legado agora permite pesquisar e salvar IDs de diretor/gerente contra UUID do projeto, preservando texto original e cadeira principal. Projeções compartilhadas têm identidade estável; os dois caminhos de projetos continuam separados. Removido helper não utilizado que inferia projetos pelo primeiro nome no status mensal; a seleção existente por cadeira confirmada permanece.
+- Incremento 4: 77 testes passaram; banco isolado verifica renomeação versus ciclo enviado, papéis/convites inalterados, rejeição persistente e CRO do Fit Finder sem confirmação. Naira acessou revisão real somente leitura. Navegador com dados fictícios interceptados verificou salvar/reler após recarga, falha/repetição no portfólio e abertura do status report legado; computador/celular sem erros, nenhuma gravação real.
+- Contagem final: 139 pessoas; 145 cargos sem pessoa; pessoas sem cadeira/cargo/usuário: 131/139/137. 700 sugestões pendentes: 445 altas, 0 médias, 255 baixas; 0 aprovadas. Preenchimento e aprovação continuam dependendo da Naira. Publicação não executada.
