@@ -1,3 +1,4 @@
+import { camposProjeto, camposRiscos } from './editorConfig';
 import PerguntaBloco0, { Apenas, ApoioPergunta } from './PerguntaBloco0';
 import { perspectivaClasse } from './presentation';
 import { CHAVE_BLOCO0, respostasBloco0, perguntaPara } from './bloco0';
@@ -25,16 +26,17 @@ export default function Bloco({index,r,set,refs,c,disabled,cadeiraId,admin=false
  case '3.3':return <div className="space-y-4">{lista(r,'3.selecionadas').map(id=><div className="border rounded-md p-4 space-y-4" key={id}><h3 className="font-semibold">{c.diretrizes.find(d=>d.id===id)?.titulo}</h3><Field campo={{nome:'Diretriz',tipo:'diretriz'}} value={id} onChange={v=>{if(!v||lista(r,'3.selecionadas').includes(v))return;set('3.selecionadas',lista(r,'3.selecionadas').map(x=>x===id?v:x));if(!r[`3.detalhe.${v}`])set(`3.detalhe.${v}`,r[`3.detalhe.${id}`]??{});}} refs={refs} config={c} disabled={disabled}/>{grupo([texto('Objeção mais forte','Qual é a objeção mais forte que alguém faria a ela?'),texto('O que precisa ser verdade','O que precisa ser verdade para dar certo?'),texto('O que sua área vai fazer','O que a sua área vai fazer por ela?'),{nome:'KPI',rotulo:'Qual indicador do BSC Rev.03 a sua área move com ela?',tipo:'kpi'},texto('Quanto espera mover em 2027','E quanto espera mover em 2027?')],`3.detalhe.${id}`)}</div>)}{!lista(r,'3.selecionadas').length&&<p className="text-sm text-muted-foreground">Selecione suas diretrizes em 3.2.</p>}</div>;
  case '3.4':return <div className="space-y-4">{c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])&&!lista(r,'3.selecionadas').includes(d.id)).map(d=><div key={d.id}>{field(texto(`${d.titulo} · Qual o ajuste?`),`3.ajuste.${d.id}`)}</div>)}</div>;
  case '3.5':return <div className="space-y-4">{multi('3.5.objetivos',refs.objetivos.map(o=>({id:o.id,titulo:`${o.codigo} · ${o.nome}`})))}{field(texto('O que falta cobrir?'),'3.5.texto')}</div>;
- case '4A':return cards(c.projetos,id=>grupo([texto('Por que fracassou','Por que ele fracassou?'),texto('Ponto cego da ficha'),escolha('Impacto',['Ajuda','Atrapalha','Neutro']),texto('Comentário','Comentário sobre o impacto na sua área')],`4A.${id}`));
- case '4.1':return <div className="space-y-4">{multi('4.1',c.projetos,2)}{field(texto('Por quê?'),'4.1.porque')}</div>;
+ case '4A':return cards(c.projetos,id=>grupo(camposProjeto(c,c.projetos.find(d=>d.id===id)!),`4A.${id}`));
+ case '4.1':return <div className="space-y-4">{multi('4.1',c.projetos,p.limite??2)}{field(texto('Por quê?'),'4.1.porque')}</div>;
  case '4.2':return <div className="space-y-4">{field({nome:'Projeto a adiar',tipo:'projeto'},'4.2')}{field(texto('O que o faria voltar à pauta?'),'4.2.porque')}</div>;
  case '4C':return cards(c.produtos,id=>grupo([...(c.produtos.find(d=>d.id===id)?.titulo==='Outro'?[texto('Nome')]:[]),escolha('Posição',POSICOES_PRODUTO),texto('Impacto na sua área e o que garantir na transição','Impacto na sua área e o que garantir na transição (alunos ativos, contratos, receita prevista)')],`4C.${id}`));
- case '5.riscos':return <div className="space-y-5">{c.escolhas.map(d=><div className="border rounded-md p-4 space-y-4" key={d.id}><h3 className="font-medium">{d.id} · {d.titulo}</h3><CaixaDecisao texto={d.caixa}/>{grupo([texto('Risco','Risco que você vê'),texto('Como mitigaria')],d.id)}</div>)}</div>;
+ case '5.riscos':return <div className="space-y-5">{c.escolhas.map(d=><div className="border rounded-md p-4 space-y-4" key={d.id}><h3 className="font-medium">{d.id} · {d.titulo}</h3><CaixaDecisao texto={d.caixa}/>{grupo(camposRiscos(c),d.id)}</div>)}</div>;
  }
  if(p.tipo==='frase')return <div className="space-y-3">{grupo(p.campos??[],p.id)}<p className="rounded-md border-l-4 border-primary bg-muted/50 p-3 text-sm" aria-live="polite">{montarFrase(r[p.id])}</p></div>;
  if(p.tipo==='grupo')return grupo(p.campos??[],p.id);
  if(p.tipo==='lista')return <Lista p={p} r={r} set={set} refs={refs} config={c} disabled={disabled}/>;
  if(p.tipo==='escolha')return field(escolha('Sua escolha',p.opcoes??[]),p.id);
+ if(p.tipo==='multipla')return <div className="space-y-2">{p.limite&&<p className="text-sm text-muted-foreground">Escolha até {p.limite}</p>}{multi(p.id,(p.opcoes??[]).map(o=>({id:o,titulo:o})),p.limite)}</div>;
  if(p.tipo==='processo')return grupo([{nome:'Processo',tipo:'processo'},texto('Texto')],p.id);
  return field(texto(c.notas[p.id]??'Sua resposta'),p.id);
  };

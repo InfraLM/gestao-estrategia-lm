@@ -73,7 +73,7 @@ export function converterRespostasV312(r0:Record<string,any>):Record<string,any>
  if(typeof r['7.2']==='string')r['7.2']={'O que mudaria primeiro com 15% menos custo de estrutura':r['7.2']};
  return r;
 }
-export function respostasBloco0(r0:Record<string,any>){const r=converterRespostasV312(r0);const next={...r};for(const key of Object.keys(next))if(key.startsWith('0.'))delete next[key];for(const p of NOVO_BLOCO0)next[p.id]=r[CHAVE_BLOCO0+p.id];return next;}
+export function respostasBloco0(r0:Record<string,any>){const r=converterRespostasV312(r0);const next={...r};for(const key of Object.keys(next))if(key.startsWith('0.'))delete next[key];for(const p of NOVO_BLOCO0)next[p.id]=r[CHAVE_BLOCO0+p.id];for(const key of Object.keys(r))if(key.startsWith(CHAVE_BLOCO0))next[key.slice(CHAVE_BLOCO0.length)]=r[key];return next;}
 export const codigoNormalizado=(s:string)=>s.toUpperCase().replace(/[^A-Z0-9]/g,'');
 export function configBloco0(c:Config):Config {const atual=c.perguntas?.[0]?.some(p=>p.id==='0.18');return {...c,blocos:c.blocos.map((b,i)=>i===0?BLOCO0_TITULO:b),perguntas:c.perguntas.map((ps,i)=>i===0?(atual?ps:NOVO_BLOCO0).map(p=>p.id==='0.1'?{...p,campos:p.campos?.map(f=>f.nome==='Avaliação'?{...f,opcoes:ESCALA_COMPETENCIAS}:f)}:p):ps),notas:{...c.notas,b0:BLOCO0_ABERTURA}};}
 export function linhasMatriz(p:Pergunta,v:any):Record<string,any>[] {const rows=Array.isArray(v?.itens)?v.itens:[];const fixos=(p.itens??[]).filter(n=>n!=='Outro');const ocultos=p.ocultos??[];return fixos.map(Item=>({Item,...rows.find((r:any)=>r.Item===Item)})).concat(rows.filter((r:any)=>r.Outro===true?(p.itens??[]).includes('Outro'):(!fixos.includes(r.Item)&&!ocultos.includes(r.Item))));}
