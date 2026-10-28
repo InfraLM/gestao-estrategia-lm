@@ -57,9 +57,9 @@ diretrizes:[
 ['Mandato claro e experimento antes de estrutura','Cada cadeira tem mandato escrito. Toda frente nova começa como experimento, com teto de gasto e critério de parada.','estrutura fixa criada antes de provar retorno é a principal fonte de custo que não volta.'],
 ['Variável ligado ao caixa e ao valor presente','O variável da liderança só é pago se a meta de caixa for atingida; o do comercial, pela meta medida em valor presente da venda.','em 2027, ninguém deve ganhar se a empresa não gerar caixa.']].map(([titulo,descricao,porque],i)=>({id:String(i+1),titulo,descricao,porque})),
 projetos:[
-{id:'v311-hospital',selo:'Condicionado',titulo:'Hospital LM: centro de simulação + cadáver lab',descricao:'Centro de simulação e cadáver lab próprios, em fases. Só começa com parecer regulatório favorável, caso de negócio com DRE e caixa acima do piso no cenário pessimista.'},
+{id:'v311-hospital',selo:'Condicionado',titulo:'Hospital LM: centro de simulação + cadáver lab',descricao:'Centro de simulação e cadáver lab próprios em São Paulo, em fases. Só começa com parecer regulatório favorável, caso de negócio com DRE e caixa acima do piso no cenário pessimista.'},
 {id:'v311-metodo',selo:'Estruturante',titulo:'Método LM',descricao:'Definir, documentar e implantar o padrão LM de ensino e de prática: protocolos, régua de qualificação, formação de docentes e preceptores e conteúdo com aplicação no plantão. É o padrão que parcerias hospitalares e imersões passam a seguir. Selo e venda do método ao mercado ficam para depois de 2027.'},
-{id:'v312-sede-goiania',selo:'A definir',titulo:'Sede LM Goiânia',descricao:'Descrição a definir.'}],
+{id:'v312-sede-goiania',selo:'Estruturante',titulo:'Sede LM Goiânia',descricao:'Um local apropriado para o time trabalhar de forma eficiente e produtiva, sem comprometer a operação das imersões de fim de semana, que também exigem organização ao longo da semana.'}],
 andamento:[],
 produtos:[{id:'prod0',titulo:'Pós em POCUS'},{id:'prod1',titulo:'Pós em Cuidados Paliativos'},{id:'prod4',titulo:'Outro'}],
 escolhas:[
@@ -69,7 +69,7 @@ escolhas:[
 {id:'5.7',titulo:'Arquitetura do portfólio em 2027: o núcleo duro (ACLS, FPG e PPG) concentra o foco; os produtos que reforçam o núcleo e a escada de ascensão, como Fellowship e Método LM, ficam sob um dono único; e os novos negócios ficam numa avenida separada e pequena, sempre como experimento e sem caixa do núcleo. Que risco você vê nessa divisão, e como mitigaria?'}],
 temas:[],
 caixas:{
-'4A':'Em 2026 tínhamos 11 projetos chamados de estratégicos, e na prática nenhum recebia a atenção necessária. Para 2027, os projetos foram comparados por uma régua única, com pesos: quanto ajudam a converter venda em caixa (40%), o tamanho da lacuna que fecham (20%), o efeito no caixa no cenário pessimista (15%), a dependência com outros projetos (15%) e a existência de um dono (10%). O teto é de 3 a 4 projetos. Ficaram 3 projetos. Cada dono tem 20% do tempo protegido para o projeto, e a Naira acompanha o portfólio na diretoria de Gente & Gestão.',
+'4A':'Em 2026 tínhamos 11 projetos chamados de estratégicos, e na prática nenhum recebia a atenção necessária. Para 2027, os projetos foram comparados por uma régua única, com pesos: quanto ajudam a converter venda em caixa (40%), o tamanho da lacuna que fecham (20%), o efeito no caixa no cenário pessimista (15%), a dependência com outros projetos (15%) e a existência de um dono (10%). O teto é de 3 a 4 projetos. Ficaram 2 estruturantes e 1 condicionado. Cada dono tem 20% do tempo protegido para o projeto, e a Naira acompanha o portfólio na diretoria de Gente & Gestão.',
 '4C':'Pausar não é encerrar: o destino final será decidido no off-site. As opções são encerrar ou manter como complemento de baixo contato da PPG, online e vendido a quem já é aluno.'},
 notas:{
 'b0':BLOCO0_ABERTURA,
