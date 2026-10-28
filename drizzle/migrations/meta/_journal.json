@@ -617,6 +617,13 @@
       "when": 1793145215013,
       "tag": "0087_pre_offsite_projetos_versionados",
       "breakpoints": true
+    },
+    {
+      "idx": 88,
+      "version": "7",
+      "when": 1793218981382,
+      "tag": "0088_offsite_config_editor_estruturado",
+      "breakpoints": true
     }
   ]
 }
