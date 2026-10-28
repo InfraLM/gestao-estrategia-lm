@@ -10,6 +10,7 @@ async function setup() {
  await pg.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role; CREATE SCHEMA auth;
  CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$SELECT '${uid}'::uuid$$;
  CREATE FUNCTION auth.role() RETURNS text LANGUAGE sql AS $$SELECT 'authenticated'$$;
+ GRANT USAGE ON SCHEMA auth TO authenticated;
  CREATE FUNCTION public.proj_gov_ou_ceo(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT coalesce(current_setting('test.gov',true),'false')='true' OR coalesce(current_setting('test.ceo',true),'false')='true'$$;
  CREATE FUNCTION public.mt_is_governanca(uuid) RETURNS boolean LANGUAGE sql AS $$SELECT coalesce(current_setting('test.gov',true),'false')='true'$$;
  CREATE FUNCTION public.mt_cadeira_do_usuario(uuid) RETURNS uuid LANGUAGE sql AS $$SELECT '${cadeira}'::uuid$$;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { projetos as mockProjetos, type Projeto } from "@/data/mockData";
 import { useRefetchOnFocus } from "./useRefetchOnFocus";
@@ -78,7 +78,7 @@ export function useProjetosDB() {
 
   useRefetchOnFocus(fetchProjetos);
 
-  const projetados = data.map(p => ({ ...p, diretor: nomeVinculado(refs[p.id]?.diretor, p.diretor, org.diretorio.pessoas), gerente: nomeVinculado(refs[p.id]?.gerente, p.gerente, org.diretorio.pessoas) || undefined }));
+  const projetados = useMemo(() => data.map(p => ({ ...p, diretor: nomeVinculado(refs[p.id]?.diretor, p.diretor, org.diretorio.pessoas), gerente: nomeVinculado(refs[p.id]?.gerente, p.gerente, org.diretorio.pessoas) || undefined })), [data, refs, org.diretorio.pessoas]);
   return { data: projetados, loading, usingDB, referencias: refs, refetch: fetchProjetos };
 }
 
