@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FileText, Paperclip, Save, Download } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { projetos } from "@/data/mockData";
 import { useProjetosGestao } from '@/hooks/useProjetosGestao';
 
 const db = supabase as any;
@@ -22,14 +21,6 @@ export type StatusProjeto = {
   saude: string | null; pct_cronograma: number | null; entregas: string | null; custo_realizado: number | null;
   equipe: string | null; recursos: string | null; avancos: string | null; desvios: string | null;
   arquivo_path: string | null; arquivo_nome: string | null; enviado_por_nome: string | null; updated_at?: string;
-};
-
-const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-/** Projetos do portfólio cujo diretor corresponde ao diretor da cadeira (primeiro nome). */
-export const projetosDoDiretor = (diretorNome: string | null | undefined) => {
-  if (!diretorNome) return [];
-  const p = norm(diretorNome.split(" ")[0]);
-  return projetos.filter((x) => x.diretor && norm(x.diretor).split(/\s+/).includes(p));
 };
 
 export function useStatusProjeto(projetoCodigo: string) {
@@ -212,7 +203,7 @@ export function StatusReportTab({ lista }: { lista: StatusProjeto[] }) {
               {(r as any).farol_escopo || (r as any).farol_custo || (r as any).farol_cronograma
                 ? <span className="text-muted-foreground">Escopo {(r as any).farol_escopo ?? "—"} · Custo {(r as any).farol_custo ?? "—"} · Cronograma {(r as any).farol_cronograma ?? "—"}{(r as any).comentario ? ` · ${(r as any).comentario}` : ""}</span>
                 : <span className="text-muted-foreground">Cronograma {r.pct_cronograma ?? "—"}% · Custo {brl(r.custo_realizado)}</span>}
-              {r.arquivo_path && <Button size="sm" variant="ghost" className="ml-auto" onClick={() => baixar(r.arquivo_path!)}><Download className="h-4 w-4 mr-1" /> {r.arquivo_nome}</Button>}
+              {r.arquivo_path && <Button size="sm" variant="ghost" className="ml-auto" onClick={() => baixar(r.arquivo_path ?? "")}><Download className="h-4 w-4 mr-1" /> {r.arquivo_nome}</Button>}
             </div>
           ))}
         </div>
