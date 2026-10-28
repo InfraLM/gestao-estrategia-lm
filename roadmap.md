@@ -1,7 +1,8 @@
 # Pré-Offsite v3.13
-- [ ] Conteúdo no código e configuração salva; projetos removidos só no histórico, prazo/respostas preservados.
-- [ ] Formulário contínuo, visual aprovado, tabelas e prévia por diretor sem gravar por outro usuário.
-- [ ] Testes isolados, conferência de roteamento e rascunho real somente leitura; lembrar Publicar.
+- [x] Conteúdo no código e configuração salva v3.13; projetos removidos só no histórico, prazo 28/10 e assinatura da resposta preservados.
+- [x] Formulário contínuo, visual local aprovado claro/escuro, tabelas contidas e prévia por diretor sem gravar por outro usuário; fontes Roboto preservadas.
+- [x] 66 testes isolados, compilação automática OK, roteamento Yuri/Bruno/Guilherme e rascunho real somente leitura conferidos; zero salvamentos reais.
+- [ ] Publicar — ação da Naira, não solicitado nesta rodada.
 
 # Base única da estrutura organizacional
 - [x] Incremento 0: diagnóstico numérico de fontes, campos textuais/referências e variações; plano seguro preparado, sem alterações nos registros/acessos.
