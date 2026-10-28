@@ -22,3 +22,12 @@ export function pendenciasBase(d: DiretorioOrg) {
     pessoasSemUsuario: d.pessoas.filter(p => !p.user_id).length, cargosSemPessoa: d.cargos.filter(c => !c.pessoa_id).length,
     pessoasRevisao: d.pessoas.filter(p => p.revisao_pendente).length };
 }
+export type ConfiancaOrg = 'alta' | 'media' | 'baixa';
+export function faixaConfianca(valor: number): ConfiancaOrg {
+  return valor >= 0.9 ? 'alta' : valor >= 0.7 ? 'media' : 'baixa';
+}
+export function pendenciasCorrespondencias(itens: { status: string; confianca: number }[]) {
+  const totais = { alta: 0, media: 0, baixa: 0 };
+  for (const item of itens) if (item.status === 'sugerido') totais[faixaConfianca(Number(item.confianca))]++;
+  return totais;
+}

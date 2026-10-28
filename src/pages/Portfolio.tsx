@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, LayoutList, Columns3, Search, X, Edit, Eye, Archive, ChevronDown, ChevronRight, Layers, ChevronUp } from "lucide-react";
-import { type Projeto, type CategoriaEstrategica, diretores, objetivosBSC, okrs, categoriasEstrategicas } from "@/data/mockData";
+import { type Projeto, type CategoriaEstrategica, objetivosBSC, okrs, categoriasEstrategicas } from "@/data/mockData";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
 import BaseSubmissaoIA from "@/components/BaseSubmissaoIA";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -38,6 +38,10 @@ const categoriaCor: Record<CategoriaEstrategica, string> = {
 };
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
+import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
+import { useModuleAccess } from '@/hooks/useModuleAccess';
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 const statusCols: Projeto["status"][] = ["Backlog", "A Iniciar", "Em Andamento", "Validação", "Encerramento", "Concluído"];
 
@@ -45,7 +49,25 @@ export default function Portfolio() {
   
   const [view, setView] = useState<"tabela" | "kanban">("tabela");
   const [submitOpen, setSubmitOpen] = useState(false);
-  const { data: initial } = useProjetosDB();
+  const { data: initial, referencias, usingDB, refetch } = useProjetosDB();
+  const org = useBaseOrganizacional();
+  const access = useModuleAccess();
+  const podeResponsavel = usingDB && access.canWrite('pmo');
+  const [salvandoResponsavel, setSalvandoResponsavel] = useState<string | null>(null);
+  const [responsaveisDraft, setResponsaveisDraft] = useState<{ diretor: string | null; gerente: string | null } | null>(null);
+  const diretores = [...new Set([...org.diretorio.pessoas.filter(p => p.ativo).map(p => p.nome), ...initial.map(p => p.diretor)])];
+  const salvarResponsaveis = async (codigo: string, patch: { diretor_pessoa_id?: string | null; gerente_pessoa_id?: string | null }) => {
+    const ref = referencias[codigo];
+    if (!ref || !podeResponsavel || salvandoResponsavel) return false;
+    setSalvandoResponsavel(codigo);
+    try {
+      const { data: row, error } = await supabase.from('projetos').update(patch).eq('id', ref.uuid).select('id').single();
+      if (error || !row) throw error ?? new Error('Não foi possível salvar o responsável.');
+      await refetch(); toast.success('Responsáveis salvos; cadeira principal e textos originais preservados'); return true;
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Não foi possível salvar o responsável.'); return false; }
+    finally { setSalvandoResponsavel(null); }
+  };
+
   const [data, setData] = useState<Projeto[]>([]);
   useEffect(() => { setData(initial); }, [initial]);
   const [search, setSearch] = useState("");
@@ -58,6 +80,7 @@ export default function Portfolio() {
   const [filterPeriodo, setFilterPeriodo] = useState<string[]>([]);
   const [filterCategoria, setFilterCategoria] = useState<string[]>([]);
   const [editing, setEditing] = useState<Projeto | null>(null);
+  useEffect(() => { setResponsaveisDraft(editing ? {diretor: referencias[editing.id]?.diretor ?? null, gerente: referencias[editing.id]?.gerente ?? null} : null); }, [editing?.id]);
   const [groupBy, setGroupBy] = useState<"none" | "wave" | "periodo" | "diretor" | "classificacao" | "categoria" | "status" | "statusBC">("none");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const toggleGroup = (k: string) => setCollapsed(c => ({ ...c, [k]: !c[k] }));
@@ -307,9 +330,7 @@ export default function Portfolio() {
                     <td className="px-4 py-3 overflow-hidden text-xs text-muted-foreground tabular-nums">{p.id}</td>
                     <td className="px-4 py-3 overflow-hidden"><Link to={`/gestao/${p.id}`} className="font-semibold text-foreground hover:text-primary">{p.nome}</Link></td>
                     <td className="px-4 py-3 overflow-hidden">
-                      <InlineSelect value={p.diretor} options={diretores} onChange={(v) => updateProject(p.id, { diretor: v })}>
-                        <div className="flex items-center gap-2"><div className="h-7 w-7 rounded-full bg-gradient-primary text-primary-foreground grid place-items-center text-xs font-semibold">{p.diretor.split(" ").map(n => n[0]).slice(0,2).join("")}</div><span className="whitespace-nowrap">{p.diretor}</span></div>
-                      </InlineSelect>
+                      <PessoaSelect label={`Diretor · ${p.id}`} value={referencias[p.id]?.diretor} texto={p.diretor} disabled={!podeResponsavel || salvandoResponsavel !== null} onChange={pessoa => salvarResponsaveis(p.id, {diretor_pessoa_id: pessoa?.id ?? null})} />
                     </td>
                     <td className="px-4 py-3 overflow-hidden">
                       <InlineSelect value={p.classificacao} options={classOpts} onChange={(v) => updateProject(p.id, { classificacao: v as Projeto["classificacao"] })}>
@@ -469,15 +490,15 @@ export default function Portfolio() {
               <div><Label>Nome</Label><Input defaultValue={editing.nome} className="mt-1" /></div>
               <div><Label>Descrição</Label><Textarea defaultValue={editing.descricao} className="mt-1" rows={3} /></div>
               <div className="grid grid-cols-2 gap-3">
-                <div><Label>Diretor</Label><Input defaultValue={editing.diretor} className="mt-1" /></div>
-                <div><Label>Gerente</Label><Input defaultValue={editing.gerente ?? ""} className="mt-1" /></div>
+                <div><Label>Diretor</Label><PessoaSelect label="Diretor do projeto" value={responsaveisDraft?.diretor} texto={editing.diretor} disabled={!podeResponsavel || salvandoResponsavel !== null} onChange={p => setResponsaveisDraft(d => ({diretor:p?.id ?? null,gerente:d?.gerente ?? null}))} /></div>
+                <div><Label>Gerente</Label><PessoaSelect label="Gerente do projeto" value={responsaveisDraft?.gerente} texto={editing.gerente} disabled={!podeResponsavel || salvandoResponsavel !== null} onChange={p => setResponsaveisDraft(d => ({diretor:d?.diretor ?? null,gerente:p?.id ?? null}))} /></div>
                 <div><Label>Início</Label><Input defaultValue={editing.inicio} className="mt-1" /></div>
                 <div><Label>Término</Label><Input defaultValue={editing.termino} className="mt-1" /></div>
                 <div><Label>Budget (R$)</Label><Input type="number" defaultValue={editing.budget} className="mt-1" /></div>
                 <div><Label>ICE</Label><Input type="number" step="0.1" defaultValue={editing.ice} className="mt-1" /></div>
               </div>
               <div className="flex gap-2 pt-4 border-t border-border sticky bottom-0 bg-background">
-                <Button onClick={() => { toast.success("Alterações salvas"); setEditing(null); }} className="flex-1">Salvar Alterações</Button>
+                <Button disabled={!podeResponsavel || salvandoResponsavel !== null} onClick={async () => { if (responsaveisDraft && await salvarResponsaveis(editing.id, {diretor_pessoa_id:responsaveisDraft.diretor, gerente_pessoa_id:responsaveisDraft.gerente})) setEditing(null); }} className="flex-1">{salvandoResponsavel ? 'Salvando…' : 'Salvar responsáveis'}</Button>
                 <Button variant="outline" onClick={() => setEditing(null)}>Cancelar</Button>
               </div>
             </div>
