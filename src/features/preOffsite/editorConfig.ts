@@ -6,11 +6,23 @@ export const LISTAS_FIXAS = ['diretrizes', 'projetos', 'andamento', 'produtos', 
 export type ListaFixa = typeof LISTAS_FIXAS[number];
 export const ROTULO_LISTA: Record<ListaFixa, string> = { diretrizes: 'Diretrizes (3.2–3.4)', projetos: 'Projetos da 4A', andamento: 'Andamento (4B)', produtos: 'Produtos fora do núcleo (4C)', escolhas: 'Grandes escolhas (bloco 5)' };
 export const CAMPOS_4A: Campo[] = [
-  { nome: 'Por que fracassou', rotulo: 'Por que ele fracassou?', tipo: 'texto' },
-  { nome: 'Ponto cego da ficha', tipo: 'texto' },
-  { nome: 'Impacto', tipo: 'escolha', opcoes: ['Ajuda', 'Atrapalha', 'Neutro'] },
-  { nome: 'Comentário', rotulo: 'Comentário sobre o impacto na sua área', tipo: 'texto' },
+  { nome: 'Impacto', rotulo: 'Impacto na sua área', tipo: 'escolha', opcoes: ['Ajuda', 'Atrapalha', 'Neutro'] },
+  { nome: 'Premissa', rotulo: 'Que premissa precisa ser verdade para este projeto valer a pena em 2027?', tipo: 'texto' },
+  { nome: 'Motivo provável', rotulo: 'Imagine dezembro de 2027 e o projeto não entregou o que prometia. Qual o motivo mais provável?', tipo: 'texto' },
+  { nome: 'O que a área entrega ou cede', rotulo: 'O que a sua área precisa entregar ou ceder para ele dar certo?', tipo: 'texto' },
+  { nome: 'Sinal em 90 dias', rotulo: 'Que sinal, em até 90 dias, mostraria que ele está no caminho certo?', tipo: 'texto', opcional: true },
 ];
+/** Old 4A "Por que fracassou" moves to "Motivo provável"; "Ponto cego da ficha" and "Comentário" stay as history. Idempotent. */
+export function converterRespostas4A(r: Record<string, any>): Record<string, any> {
+  let out = r;
+  for (const k of Object.keys(r)) {
+    const v = r[k];
+    if (!k.startsWith('4A.') || !v || typeof v !== 'object' || Array.isArray(v) || !('Por que fracassou' in v)) continue;
+    const { 'Por que fracassou': antigo, ...resto } = v;
+    out = { ...out, [k]: { ...resto, 'Motivo provável': resto['Motivo provável'] || antigo } };
+  }
+  return out;
+}
 export const CAMPOS_RISCOS: Campo[] = [
   { nome: 'Risco', rotulo: 'Risco que você vê', tipo: 'texto' },
   { nome: 'Como mitigaria', tipo: 'texto' },
