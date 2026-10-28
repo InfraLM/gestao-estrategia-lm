@@ -266,3 +266,5 @@
 @media (max-width:639px) { .offsite-nav { top: 6.25rem; } }
 .offsite-table-scroll, .offsite-nav nav { contain: inline-size; }
 .offsite-table-scroll { position: relative; overflow: auto; contain: layout paint; }
+.offsite-form section[id] { scroll-margin-top: 14rem; }
+@media(max-width:639px) { .offsite-form section[id] { scroll-margin-top: 25rem; } }
