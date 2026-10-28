@@ -25,12 +25,12 @@ describe('Pré-Offsite · publicação do editor (banco isolado)', () => {
 
   it('admin publica pergunta nova e arquivamento, migra resposta sem mudar status e registra histórico', async () => {
     const p = await setup(); try {
-      await como(p, D); await p.query(`SELECT offsite_salvar('{"1.1":"velho"}',0,true)`);
+      await como(p, D); await p.query(`SELECT offsite_salvar('{"1.3":"velho"}',0,true)`);
       const r = (await p.query<any>('SELECT id,revisao,status,enviado_em FROM offsite_respostas')).rows[0];
       await como(p, A);
-      await p.query(`SELECT offsite_config_publicar($1::jsonb,$2,$3::jsonb)`, [cfg([{ id: '1.9', texto: 'n' }], true), await base(p), JSON.stringify([{ id: r.id, revisao: r.revisao, respostas: { '1.1': 'novo' } }])]);
+      await p.query(`SELECT offsite_config_publicar($1::jsonb,$2,$3::jsonb)`, [cfg([{ id: '1.9', texto: 'n' }], true), await base(p), JSON.stringify([{ id: r.id, revisao: r.revisao, respostas: { '1.3': 'novo' } }])]);
       const depois = (await p.query<any>('SELECT respostas,status,enviado_em,revisao FROM offsite_respostas')).rows[0];
-      expect(depois.respostas).toEqual({ '1.1': 'novo' }); expect(depois.status).toBe('enviado'); expect(depois.enviado_em).toEqual(r.enviado_em); expect(depois.revisao).toBe(r.revisao + 1);
+      expect(depois.respostas).toEqual({ '1.3': 'novo' }); expect(depois.status).toBe('enviado'); expect(depois.enviado_em).toEqual(r.enviado_em); expect(depois.revisao).toBe(r.revisao + 1);
       const c = (await p.query<any>(`SELECT conteudo FROM offsite_config`)).rows[0].conteudo;
       expect(c.revisao_config).toBe(1); expect(c.perguntas[0][0].arquivada).toBe(true);
       const h = (await p.query<any>(`SELECT acao FROM offsite_historico ORDER BY criado_em`)).rows.map(x => x.acao);
