@@ -264,3 +264,4 @@
 .offsite-form { overflow-x: clip; }
 .offsite-nav { top: 4rem; }
 @media (max-width:639px) { .offsite-nav { top: 6.25rem; } }
+.offsite-table-scroll, .offsite-nav nav { contain: inline-size; }
