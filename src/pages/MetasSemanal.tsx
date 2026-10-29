@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { doMapaArvore } from "@/lib/bscRev03";
 import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
 import { nomeVinculado } from '@/lib/baseOrganizacional';
 import { useTransparencia, AvisoTransparencia } from "@/hooks/useTransparencia";
@@ -149,7 +150,7 @@ export default function MetasSemanal() {
   const load = async () => {
     if (!cad) return;
     clearTimeout(timer.current); sujo.current = { checkin: false, checkout: false };
-    const [{ data }, { data: rs }, { data: cts }, { data: reg }, { data: arv }, { data: prj }, { data: cg }] = await Promise.all([
+    const [{ data }, { data: rs }, { data: cts }, { data: reg }, { data: arv }, { data: prj }, { data: cg }, { data: indsRev }] = await Promise.all([
       // Todo o histórico da cadeira: prioridades em aberto empilham de todas as semanas.
       db.from("mt_checkins").select("*").eq("cadeira_id", cad).lte("semana", sem),
       db.from("mt_rotina_riscos").select("*").eq("cadeira_id", cad).order("created_at"),
@@ -158,12 +159,14 @@ export default function MetasSemanal() {
       db.from("conteudo_editavel").select("valor,updated_at").eq("chave", "bsc.rev02").maybeSingle(),
       db.from("projetos").select("id,codigo,nome,objetivos,krs").order("codigo"),
       db.from("org_organograma_cargos").select("id").eq("mt_cadeira_id", cad).eq("ativo", true),
+      db.from("mt_indicadores").select("nome,nome_anterior").eq("origem", "bsc").not("nome_anterior", "is", null),
     ]);
     setProjetos(prj ?? []);
     const ids = (cg ?? []).map((x: any) => x.id);
     if (ids.length) { const { data: f } = await db.from("org_organograma_cargos").select("id,nome,ocupante_nome").in("parent_id", ids).eq("ativo", true).order("ordem"); setLideres(f ?? []); } else setLideres([]);
     const mapa: Record<string, string> = {};
     for (const o of ((arv?.valor ?? rev02) as any[])) for (const k of o.kpis ?? []) if (k.situacaoAtual) mapa[String(k.kpi).trim()] = k.situacaoAtual;
+    for (const i of indsRev ?? []) { const v = doMapaArvore(mapa, i); if (v && !mapa[String(i.nome).trim()]) mapa[String(i.nome).trim()] = v; }
     setArvore({ mapa, data: arv?.updated_at ?? null });
     const atual = (data ?? []).filter((r: any) => (r.semana === sem && r.tipo === "checkin") || (r.semana === semOut && r.tipo === "checkout"));
     setRows(atual); setHist(data ?? []); setRiscos(rs ?? []); setContatos(cts ?? []);

@@ -375,6 +375,344 @@ export type Database = {
         }
         Relationships: []
       }
+      bkp_rev02_mt_indicadores: {
+        Row: {
+          analise_configurada_em: string | null
+          analise_historico: Json | null
+          cadeira_id: string | null
+          codigo: string | null
+          created_at: string | null
+          frequencia: string | null
+          frequencia_editado_em: string | null
+          frequencia_editado_por: string | null
+          frequencia_historico: Json | null
+          frequencia_inicio: string | null
+          frequencia_justificativa: string | null
+          id: string | null
+          mes_ciclo: number | null
+          meta_2030: string | null
+          meta_semestre: number | null
+          meta_texto: string | null
+          nivel: string | null
+          nome: string | null
+          objetivo_id: string | null
+          observacoes: string | null
+          okr_id: string | null
+          origem: string | null
+          origem_frequencia: string | null
+          parent_id: string | null
+          peso: number | null
+          peso_componente: number | null
+          prazo_entrega: string | null
+          regra_consolidacao: string | null
+          semana_mes: number | null
+          sentido: string | null
+          status: string | null
+          status_implantacao_medicao: string | null
+          tipo_apontamento: string | null
+          tolerancia: number | null
+          tratamento: string | null
+          unidade: string | null
+          updated_at: string | null
+          velocidade_mudanca: string | null
+          velocidade_reacao: string | null
+        }
+        Insert: {
+          analise_configurada_em?: string | null
+          analise_historico?: Json | null
+          cadeira_id?: string | null
+          codigo?: string | null
+          created_at?: string | null
+          frequencia?: string | null
+          frequencia_editado_em?: string | null
+          frequencia_editado_por?: string | null
+          frequencia_historico?: Json | null
+          frequencia_inicio?: string | null
+          frequencia_justificativa?: string | null
+          id?: string | null
+          mes_ciclo?: number | null
+          meta_2030?: string | null
+          meta_semestre?: number | null
+          meta_texto?: string | null
+          nivel?: string | null
+          nome?: string | null
+          objetivo_id?: string | null
+          observacoes?: string | null
+          okr_id?: string | null
+          origem?: string | null
+          origem_frequencia?: string | null
+          parent_id?: string | null
+          peso?: number | null
+          peso_componente?: number | null
+          prazo_entrega?: string | null
+          regra_consolidacao?: string | null
+          semana_mes?: number | null
+          sentido?: string | null
+          status?: string | null
+          status_implantacao_medicao?: string | null
+          tipo_apontamento?: string | null
+          tolerancia?: number | null
+          tratamento?: string | null
+          unidade?: string | null
+          updated_at?: string | null
+          velocidade_mudanca?: string | null
+          velocidade_reacao?: string | null
+        }
+        Update: {
+          analise_configurada_em?: string | null
+          analise_historico?: Json | null
+          cadeira_id?: string | null
+          codigo?: string | null
+          created_at?: string | null
+          frequencia?: string | null
+          frequencia_editado_em?: string | null
+          frequencia_editado_por?: string | null
+          frequencia_historico?: Json | null
+          frequencia_inicio?: string | null
+          frequencia_justificativa?: string | null
+          id?: string | null
+          mes_ciclo?: number | null
+          meta_2030?: string | null
+          meta_semestre?: number | null
+          meta_texto?: string | null
+          nivel?: string | null
+          nome?: string | null
+          objetivo_id?: string | null
+          observacoes?: string | null
+          okr_id?: string | null
+          origem?: string | null
+          origem_frequencia?: string | null
+          parent_id?: string | null
+          peso?: number | null
+          peso_componente?: number | null
+          prazo_entrega?: string | null
+          regra_consolidacao?: string | null
+          semana_mes?: number | null
+          sentido?: string | null
+          status?: string | null
+          status_implantacao_medicao?: string | null
+          tipo_apontamento?: string | null
+          tolerancia?: number | null
+          tratamento?: string | null
+          unidade?: string | null
+          updated_at?: string | null
+          velocidade_mudanca?: string | null
+          velocidade_reacao?: string | null
+        }
+        Relationships: []
+      }
+      bkp_rev02_mt_objetivos: {
+        Row: {
+          codigo: string | null
+          created_at: string | null
+          descricao: string | null
+          id: string | null
+          perspectiva: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          codigo?: string | null
+          created_at?: string | null
+          descricao?: string | null
+          id?: string | null
+          perspectiva?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          codigo?: string | null
+          created_at?: string | null
+          descricao?: string | null
+          id?: string | null
+          perspectiva?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      bkp_rev02_mt_okr_objetivos: {
+        Row: {
+          objetivo_id: string | null
+          okr_id: string | null
+        }
+        Insert: {
+          objetivo_id?: string | null
+          okr_id?: string | null
+        }
+        Update: {
+          objetivo_id?: string | null
+          okr_id?: string | null
+        }
+        Relationships: []
+      }
+      bkp_rev02_offsite_config: {
+        Row: {
+          atualizado_em: string | null
+          conteudo: Json | null
+          id: string | null
+          prazo: string | null
+        }
+        Insert: {
+          atualizado_em?: string | null
+          conteudo?: Json | null
+          id?: string | null
+          prazo?: string | null
+        }
+        Update: {
+          atualizado_em?: string | null
+          conteudo?: Json | null
+          id?: string | null
+          prazo?: string | null
+        }
+        Relationships: []
+      }
+      bkp_rev02_portfolio_vinculos: {
+        Row: {
+          confianca: string | null
+          created_at: string | null
+          editado_em: string | null
+          editado_nome: string | null
+          editado_por: string | null
+          fonte_id: string | null
+          fonte_tipo: string | null
+          id: string | null
+          impacto: string | null
+          justificativa: string | null
+          origem: string | null
+          proposto_nome: string | null
+          proposto_por: string | null
+          ref_id: string | null
+          revisar: boolean | null
+          revisar_motivo: string | null
+          status: string | null
+          tipo: string | null
+          updated_at: string | null
+          validado_em: string | null
+          validado_nome: string | null
+          validado_por: string | null
+        }
+        Insert: {
+          confianca?: string | null
+          created_at?: string | null
+          editado_em?: string | null
+          editado_nome?: string | null
+          editado_por?: string | null
+          fonte_id?: string | null
+          fonte_tipo?: string | null
+          id?: string | null
+          impacto?: string | null
+          justificativa?: string | null
+          origem?: string | null
+          proposto_nome?: string | null
+          proposto_por?: string | null
+          ref_id?: string | null
+          revisar?: boolean | null
+          revisar_motivo?: string | null
+          status?: string | null
+          tipo?: string | null
+          updated_at?: string | null
+          validado_em?: string | null
+          validado_nome?: string | null
+          validado_por?: string | null
+        }
+        Update: {
+          confianca?: string | null
+          created_at?: string | null
+          editado_em?: string | null
+          editado_nome?: string | null
+          editado_por?: string | null
+          fonte_id?: string | null
+          fonte_tipo?: string | null
+          id?: string | null
+          impacto?: string | null
+          justificativa?: string | null
+          origem?: string | null
+          proposto_nome?: string | null
+          proposto_por?: string | null
+          ref_id?: string | null
+          revisar?: boolean | null
+          revisar_motivo?: string | null
+          status?: string | null
+          tipo?: string | null
+          updated_at?: string | null
+          validado_em?: string | null
+          validado_nome?: string | null
+          validado_por?: string | null
+        }
+        Relationships: []
+      }
+      bkp_rev02_projeto_vinculos: {
+        Row: {
+          created_at: string | null
+          criado_por: string | null
+          id: string | null
+          projeto_id: string | null
+          ref_id: string | null
+          tipo: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          criado_por?: string | null
+          id?: string | null
+          projeto_id?: string | null
+          ref_id?: string | null
+          tipo?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          criado_por?: string | null
+          id?: string | null
+          projeto_id?: string | null
+          ref_id?: string | null
+          tipo?: string | null
+        }
+        Relationships: []
+      }
+      bsc_metricas_mae: {
+        Row: {
+          created_at: string
+          definicao: string | null
+          fonte: string | null
+          id: string
+          indicador_id: string | null
+          meta_texto: string | null
+          nome: string
+          ordem: number
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          definicao?: string | null
+          fonte?: string | null
+          id?: string
+          indicador_id?: string | null
+          meta_texto?: string | null
+          nome: string
+          ordem?: number
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          definicao?: string | null
+          fonte?: string | null
+          id?: string
+          indicador_id?: string | null
+          meta_texto?: string | null
+          nome?: string
+          ordem?: number
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bsc_metricas_mae_indicador_id_fkey"
+            columns: ["indicador_id"]
+            isOneToOne: false
+            referencedRelation: "mt_indicadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cesta_insights: {
         Row: {
           aderencia: string | null
@@ -2282,8 +2620,10 @@ export type Database = {
         Row: {
           analise_configurada_em: string | null
           analise_historico: Json
+          bsc_revisao: string | null
           cadeira_id: string | null
           codigo: string
+          codigo_anterior: string | null
           created_at: string
           frequencia: string | null
           frequencia_editado_em: string | null
@@ -2291,6 +2631,7 @@ export type Database = {
           frequencia_historico: Json
           frequencia_inicio: string | null
           frequencia_justificativa: string | null
+          fundido_em: string | null
           id: string
           mes_ciclo: number | null
           meta_2030: string | null
@@ -2298,6 +2639,7 @@ export type Database = {
           meta_texto: string | null
           nivel: string | null
           nome: string
+          nome_anterior: string | null
           objetivo_id: string | null
           observacoes: string | null
           okr_id: string | null
@@ -2308,6 +2650,7 @@ export type Database = {
           peso_componente: number | null
           prazo_entrega: string | null
           regra_consolidacao: string
+          sem_status_d091: boolean
           semana_mes: number | null
           sentido: string
           status: string
@@ -2323,8 +2666,10 @@ export type Database = {
         Insert: {
           analise_configurada_em?: string | null
           analise_historico?: Json
+          bsc_revisao?: string | null
           cadeira_id?: string | null
           codigo: string
+          codigo_anterior?: string | null
           created_at?: string
           frequencia?: string | null
           frequencia_editado_em?: string | null
@@ -2332,6 +2677,7 @@ export type Database = {
           frequencia_historico?: Json
           frequencia_inicio?: string | null
           frequencia_justificativa?: string | null
+          fundido_em?: string | null
           id?: string
           mes_ciclo?: number | null
           meta_2030?: string | null
@@ -2339,6 +2685,7 @@ export type Database = {
           meta_texto?: string | null
           nivel?: string | null
           nome: string
+          nome_anterior?: string | null
           objetivo_id?: string | null
           observacoes?: string | null
           okr_id?: string | null
@@ -2349,6 +2696,7 @@ export type Database = {
           peso_componente?: number | null
           prazo_entrega?: string | null
           regra_consolidacao?: string
+          sem_status_d091?: boolean
           semana_mes?: number | null
           sentido?: string
           status?: string
@@ -2364,8 +2712,10 @@ export type Database = {
         Update: {
           analise_configurada_em?: string | null
           analise_historico?: Json
+          bsc_revisao?: string | null
           cadeira_id?: string | null
           codigo?: string
+          codigo_anterior?: string | null
           created_at?: string
           frequencia?: string | null
           frequencia_editado_em?: string | null
@@ -2373,6 +2723,7 @@ export type Database = {
           frequencia_historico?: Json
           frequencia_inicio?: string | null
           frequencia_justificativa?: string | null
+          fundido_em?: string | null
           id?: string
           mes_ciclo?: number | null
           meta_2030?: string | null
@@ -2380,6 +2731,7 @@ export type Database = {
           meta_texto?: string | null
           nivel?: string | null
           nome?: string
+          nome_anterior?: string | null
           objetivo_id?: string | null
           observacoes?: string | null
           okr_id?: string | null
@@ -2390,6 +2742,7 @@ export type Database = {
           peso_componente?: number | null
           prazo_entrega?: string | null
           regra_consolidacao?: string
+          sem_status_d091?: boolean
           semana_mes?: number | null
           sentido?: string
           status?: string
@@ -2408,6 +2761,13 @@ export type Database = {
             columns: ["cadeira_id"]
             isOneToOne: false
             referencedRelation: "mt_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_indicadores_fundido_em_fkey"
+            columns: ["fundido_em"]
+            isOneToOne: false
+            referencedRelation: "mt_indicadores"
             referencedColumns: ["id"]
           },
           {
@@ -2739,24 +3099,30 @@ export type Database = {
       mt_objetivos: {
         Row: {
           codigo: string
+          codigo_anterior: string | null
           created_at: string
           descricao: string
+          descricao_anterior: string | null
           id: string
           perspectiva: string
           updated_at: string
         }
         Insert: {
           codigo: string
+          codigo_anterior?: string | null
           created_at?: string
           descricao: string
+          descricao_anterior?: string | null
           id?: string
           perspectiva: string
           updated_at?: string
         }
         Update: {
           codigo?: string
+          codigo_anterior?: string | null
           created_at?: string
           descricao?: string
+          descricao_anterior?: string | null
           id?: string
           perspectiva?: string
           updated_at?: string
@@ -6111,8 +6477,10 @@ export type Database = {
         Returns: {
           analise_configurada_em: string | null
           analise_historico: Json
+          bsc_revisao: string | null
           cadeira_id: string | null
           codigo: string
+          codigo_anterior: string | null
           created_at: string
           frequencia: string | null
           frequencia_editado_em: string | null
@@ -6120,6 +6488,7 @@ export type Database = {
           frequencia_historico: Json
           frequencia_inicio: string | null
           frequencia_justificativa: string | null
+          fundido_em: string | null
           id: string
           mes_ciclo: number | null
           meta_2030: string | null
@@ -6127,6 +6496,7 @@ export type Database = {
           meta_texto: string | null
           nivel: string | null
           nome: string
+          nome_anterior: string | null
           objetivo_id: string | null
           observacoes: string | null
           okr_id: string | null
@@ -6137,6 +6507,7 @@ export type Database = {
           peso_componente: number | null
           prazo_entrega: string | null
           regra_consolidacao: string
+          sem_status_d091: boolean
           semana_mes: number | null
           sentido: string
           status: string
@@ -6170,8 +6541,10 @@ export type Database = {
         Returns: {
           analise_configurada_em: string | null
           analise_historico: Json
+          bsc_revisao: string | null
           cadeira_id: string | null
           codigo: string
+          codigo_anterior: string | null
           created_at: string
           frequencia: string | null
           frequencia_editado_em: string | null
@@ -6179,6 +6552,7 @@ export type Database = {
           frequencia_historico: Json
           frequencia_inicio: string | null
           frequencia_justificativa: string | null
+          fundido_em: string | null
           id: string
           mes_ciclo: number | null
           meta_2030: string | null
@@ -6186,6 +6560,7 @@ export type Database = {
           meta_texto: string | null
           nivel: string | null
           nome: string
+          nome_anterior: string | null
           objetivo_id: string | null
           observacoes: string | null
           okr_id: string | null
@@ -6196,6 +6571,7 @@ export type Database = {
           peso_componente: number | null
           prazo_entrega: string | null
           regra_consolidacao: string
+          sem_status_d091: boolean
           semana_mes: number | null
           sentido: string
           status: string

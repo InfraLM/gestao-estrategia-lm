@@ -178,3 +178,9 @@
 
 # Pré-Offsite v3.12
 - [x] Bloco 0 (0.18/0.19, 0.16 removida), Blocos 2/4B/6/7/8, roteamento "Apenas", conversão v3.11, roteiro; registro do banco gravado, prazo 28/10. 58 testes; rascunho da Naira abre sem erro; sem publicar.
+
+# BSC Rev.03
+- [x] Migração aprovada (objetivos, KPIs, métricas-mãe, vínculos, OKR1, Pré-Off-site kpis) com retratos Rev.02; conferência 10/47/11/35/1/7/0.
+- [x] Código: indicadores do Pré-Off-site por id, busca pelo nome anterior, BSC com C.02/métricas-mãe/D-091, rótulo de KPI arquivado, 11 propostas de frequência.
+- [ ] Gov/CEO aprovar as 11 propostas de frequência e definir donos dos KPIs novos.
+- [ ] Publicar — ação da Naira.
