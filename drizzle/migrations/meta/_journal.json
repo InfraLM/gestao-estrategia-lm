@@ -645,6 +645,13 @@
       "when": 1793277182243,
       "tag": "0091_bsc_rev03",
       "breakpoints": true
+    },
+    {
+      "idx": 92,
+      "version": "7",
+      "when": 1793277349691,
+      "tag": "0092_offsite_indicadores_por_id_rev03",
+      "breakpoints": true
     }
   ]
 }
