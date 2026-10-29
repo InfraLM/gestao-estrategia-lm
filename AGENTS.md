@@ -4,10 +4,9 @@ Area rules live in nested AGENTS.md files; read the one for the folder before ch
 - `docs/agents/metas-rotina.md` — Metas, OKRs, Cesta, Lançamentos, weekly cycle, transparency, projects (applies to src/pages Metas*/Semanal*/Hubs/Matriz*, src/lib rotina/avaliacao/matriz/projetos, mt_* SQL).
 - `docs/agents/socios-governanca.md` — Desejos dos Sócios, Governança integration, AI planning revisions.
 - `src/components/AGENTS.md` — layout. `src/components/estrutura/AGENTS.md` — organogram and canonical identities; apply directory rules across forms.
+- `src/features/preOffsite/AGENTS.md` — Pré-Offsite config, privacy and answer preservation.
 
 - Phase 1 spaces use six isolated tables and additive `fase1_*` auth helpers; new modules default closed, with owner/director read exceptions enforced server-side without changing legacy module access.
-- Pré-Offsite form structure lives in offsite_config (PADRAO is only fallback). Admin edits use offsite_config_rascunhos + offsite_config_publicar: add/reorder/archive ids, never delete, with audited answer migration; protects answers keyed by names.
-- Pré-Offsite uses isolated offsite_* tables, verified chair participants and protected admins; admin status never authorizes a personal response. Versioned RPCs/config preserve privacy and old answers through new namespaces and retired IDs in history. Shared visibility projections drive empty read-only admin previews, never impersonation; consolidation/Excel stay admin-only with no legacy permission or KPI writes.
 - Cadence calendar (CalendarioApontamento) uses pure draft/load helpers and shared São Paulo next-Monday projections preserving sent cycles; batch saves per row via mt_frequencia_salvar, keeping failed drafts.
 - Strategic reference URLs use linksEstrategicos; Contexto and Insights select sheets from the codigo query parameter using replace navigation and only RLS-visible records, preserving filters and existing access gates.
 - Strategic spaces read via RLS; Contexto, Insights Sócios, Incentivos read-only; CestaInsights edits only adherence fields (incentivos editors/admin). No general exports.
