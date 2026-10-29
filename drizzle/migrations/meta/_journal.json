@@ -624,6 +624,13 @@
       "when": 1793218981382,
       "tag": "0088_offsite_config_editor_estruturado",
       "breakpoints": true
+    },
+    {
+      "idx": 89,
+      "version": "7",
+      "when": 1793239011195,
+      "tag": "0089_pre_offsite_rev03_financeira",
+      "breakpoints": true
     }
   ]
 }
