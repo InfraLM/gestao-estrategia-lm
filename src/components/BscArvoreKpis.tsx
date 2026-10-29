@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { itemArvore } from "@/lib/bscRev03";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,6 +37,7 @@ function KpiLinha({ k }: { k: Kpi }) {
       <button type="button" onClick={() => setOpen(!open)} className="w-full flex items-start gap-2 p-2 text-left">
         {open ? <ChevronDown className="h-3.5 w-3.5 mt-0.5 shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 mt-0.5 shrink-0" />}
         <span className={`flex-1 ${estr ? "font-semibold" : ""}`}>{k.kpi}</span>
+        {(k as any).d091 && <Badge variant="outline" className="text-[10px] shrink-0 border-warning/40 text-warning">Sem status (D-091)</Badge>}
         {(k as any).__atualizado && <Badge variant="outline" className="text-[10px] shrink-0 bg-primary/10 text-primary border-primary/30">atualizado</Badge>}
         <Badge variant="outline" className="text-[10px] shrink-0">{k.nivel}</Badge>
         {k.farol && <Badge variant="outline" className={`text-[10px] shrink-0 ${farolCls(k.farol)}`}>{k.farol}</Badge>}
@@ -60,21 +63,59 @@ export default function BscArvoreKpis({ rev01 }: { rev01: BscRev01 }) {
   const [hist, setHist] = useState(false);
   const { aplicar } = useBaseOverrides("estrategia");
   const base = useConteudo("bsc.rev02", rev02 as Obj[]).data;
-  const objs = (base as Obj[]).map((o) => ({ ...aplicar("objetivo", o.codigo, o), kpis: o.kpis.map((k) => aplicar("kpi", k.kpi, k)) }));
+  const [db, setDb] = useState<{ objetivos: any[]; kpis: any[]; maes: any[] } | null>(null);
+  useEffect(() => {
+    let ativo = true;
+    const c = supabase as any;
+    Promise.all([
+      c.from("mt_objetivos").select("id,codigo,descricao").order("codigo"),
+      c.from("mt_indicadores").select("id,codigo,nome,nome_anterior,nivel,objetivo_id,sem_status_d091").eq("origem", "bsc").eq("status", "ativo").order("codigo"),
+      c.from("bsc_metricas_mae").select("*").order("ordem"),
+    ]).then(([o, i, m]: any[]) => { if (ativo && !o.error && !i.error) setDb({ objetivos: o.data ?? [], kpis: i.data ?? [], maes: m.data ?? [] }); });
+    return () => { ativo = false; };
+  }, []);
+  const fonte: Obj[] = db
+    ? db.objetivos.map((o) => ({
+        codigo: o.codigo, nome: o.descricao,
+        kpis: db.kpis.filter((i) => i.objetivo_id === o.id && (i.nivel === "Estratégico" || i.nivel === "Tático"))
+          .map((i) => ({ ...(itemArvore(base as Obj[], i) ?? {}), kpi: i.nome, nivel: i.nivel, d091: i.sem_status_d091 } as any)),
+      }))
+    : (base as Obj[]);
+  const objs = fonte.map((o) => ({ ...aplicar("objetivo", o.codigo, o), kpis: o.kpis.map((k) => aplicar("kpi", k.kpi, k)) }));
+  const maes = db?.maes ?? [];
   return (
     <div className="space-y-6">
       <BaseSubmissaoIA modulo="estrategia" titulo="Atualizar BSC / Árvore de KPIs com IA" contexto={() => objs} />
-      <div className="rounded-lg bg-card border border-border p-4 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-bold tracking-widest text-primary">BHAG</span>
-          <span className="font-semibold">Salvar 1 milhão de vidas até 2030</span>
+      {maes.length ? (
+        <section aria-label="Métricas-mãe" className="rounded-lg bg-card border border-border p-4 space-y-3">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <h3 className="text-sm font-semibold">Métricas-mãe (acima do BSC)</h3>
+            <span className="text-xs text-muted-foreground">{objs.length} objetivos estratégicos</span>
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {maes.map((m) => (
+              <div key={m.id} className="rounded-md border border-border p-3 text-sm space-y-1">
+                <span className="text-xs font-bold tracking-widest text-primary">{m.tipo === "NSM" ? "NORTH STAR" : m.tipo === "CRITICO" ? "NÚMERO CRÍTICO 2027" : "BHAG"}</span>
+                <p className="font-semibold">{m.nome}</p>
+                {m.meta_texto && <p className="text-xs"><strong>Meta:</strong> {m.meta_texto}</p>}
+                {m.definicao && <p className="text-xs text-muted-foreground">{m.definicao}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <div className="rounded-lg bg-card border border-border p-4 flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold tracking-widest text-primary">BHAG</span>
+            <span className="font-semibold">1 milhão de vidas salvas até 2034</span>
+          </div>
+          <span className="text-xs text-muted-foreground">{objs.length} objetivos estratégicos</span>
         </div>
-        <span className="text-xs text-muted-foreground">Visão sistêmica 2026-2030 · 9 objetivos estratégicos</span>
-      </div>
+      )}
       <div className="flex items-center gap-2 flex-wrap text-xs text-muted-foreground">
-        <Badge className="bg-primary text-primary-foreground">Rev.02 · vigente</Badge>
-        <EditarConteudo chave="bsc.rev02" padrao={rev02 as Obj[]} titulo="BSC Rev.02 · Objetivos e KPIs" />
-        <span>Árvore de KPIs LM · rev. 17.09.26 — apenas KPIs Estratégicos e Táticos (operacionais desconsiderados).</span>
+        <Badge className="bg-primary text-primary-foreground">{db ? "Rev.03 · vigente" : "Rev.02"}</Badge>
+        <EditarConteudo chave="bsc.rev02" padrao={rev02 as Obj[]} titulo="Detalhes dos KPIs (fórmula, situação e metas da Rev.02)" />
+        <span>BSC Rev.03 (proposta 22/10/2026) — apenas KPIs Estratégicos e Táticos; detalhes herdados da árvore Rev.02 quando o KPI foi mantido.</span>
       </div>
       <p className="text-xs text-muted-foreground italic">Leitura de baixo para cima: pessoas, cultura e tecnologia habilitam os processos; processos entregam valor ao cliente; o cliente sustenta o resultado financeiro.</p>
 
@@ -98,6 +139,7 @@ export default function BscArvoreKpis({ rev01 }: { rev01: BscRev01 }) {
                   </div>
                   <div className="space-y-1.5">
                     {o.kpis.map((k) => <KpiLinha key={k.kpi} k={k} />)}
+                    {!o.kpis.length && <p className="text-xs text-muted-foreground">Nenhum KPI ativo.</p>}
                   </div>
                 </div>
               ))}
@@ -113,6 +155,7 @@ export default function BscArvoreKpis({ rev01 }: { rev01: BscRev01 }) {
             <Button size="sm" variant="outline" onClick={() => setHist(!hist)}>{hist ? "Ocultar Rev.01" : "Ver Rev.01"}</Button>
           </div>
           <div className="text-xs text-muted-foreground space-y-0.5 mt-2">
+            <div><strong className="text-foreground">Rev.03</strong> — BSC de 22/10/2026: dez objetivos (novo C.02), métricas-mãe acima do BSC e KPIs novos sem status até entrar no dicionário (D-091). Valores e vínculos dos KPIs mantidos foram preservados.</div>
             <div><strong className="text-foreground">Rev.02</strong> — Árvore de KPIs LM (17.09.26): objetivos reestruturados (F/C/P/AC) com KPIs estratégicos e táticos, diretores, fórmulas e metas.</div>
             <div><strong className="text-foreground">Rev.01</strong> — BSC original do planejamento estratégico (substituída).</div>
           </div>
