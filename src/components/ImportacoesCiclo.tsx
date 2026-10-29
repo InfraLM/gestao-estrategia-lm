@@ -1,4 +1,5 @@
 import { useRef,useState } from 'react';
+import { doMapaArvore } from '@/lib/bscRev03';
 import * as XLSX from 'xlsx';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -22,7 +23,7 @@ export default function ImportacoesCiclo({projetos,indicadores,gov,gestor,onSalv
   const {data,error}=await db.rpc(tipo==='budget'?'orc_importar_modelo':'orc_importar_metas2030',{_itens:payload,_arquivo:fileName});if(error)throw error;
   toast.success(`${data} registros importados${tipo==='budget'?' · centros novos a confirmar':''}.`);setBudgets([]);setMetas([]);onSalvo();window.dispatchEvent(new Event('orc-atualizado'));
  }catch(e){toast.error(e instanceof Error?e.message:'Importação recusada');await db.rpc('orc_registrar_falha',{_modo:tipo==='budget'?'modelo_budget':'metas2030',_mensagem:'Importação recusada',_arquivo:fileName});onSalvo();}finally{setBusy(false);}};
- const faltantes=indicadores.filter(i=>i.origem==='bsc'&&i.status==='ativo'&&!i.parent_id&&!i.meta_2030&&!metas2030Arvore[String(i.nome).trim()]);
+ const faltantes=indicadores.filter(i=>i.origem==='bsc'&&i.status==='ativo'&&!i.parent_id&&!i.meta_2030&&!doMapaArvore(metas2030Arvore as Record<string,any>,i));
  return <section className="space-y-4"><h3 className="font-semibold">Preparação de budgets e metas 2030</h3><div className="flex flex-wrap gap-2">
  {gov&&<><Button variant="outline" disabled={busy||!projetos.length} onClick={modelo}><Download className="mr-2 h-4 w-4"/>Modelo budget / centros ({projetos.length} projetos)</Button><Button variant="outline" disabled={busy} onClick={()=>budgetInput.current?.click()}><Upload className="mr-2 h-4 w-4"/>Importar modelo preenchido</Button></>}
  {gestor&&<Button className="h-auto whitespace-normal text-left" variant="outline" disabled={busy} onClick={()=>metaInput.current?.click()}><Upload className="mr-2 h-4 w-4 shrink-0"/>Importar metas 2030 da Árvore de KPIs (xlsx)</Button>}

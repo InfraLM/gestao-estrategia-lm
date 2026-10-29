@@ -1,4 +1,5 @@
 import { analiseNaData } from "@/lib/analiseMetas";
+import { doMapaArvore } from "@/lib/bscRev03";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { avaliarPorTipo, apontamentoMaisRecente, contarAvaliacoes, mapaArvore, Avaliacao, CheckoutReg, Fonte } from "@/lib/avaliacaoBsc";
@@ -46,7 +47,7 @@ export function useAvaliacoesBsc(competencia: string | null, cadeiras: string[] 
         const fora=!!ind.frequencia&&(!previstoNoMes(ind,competencia)||['trimestral','semestral'].includes(ind.frequencia));
         const todos = (l.data ?? []).filter((x: any) => x.indicador_id === ind.id && (fora||x.competencia===competencia)).sort((a:any,b:any)=>b.competencia.localeCompare(a.competencia)||b.revisao-a.revisao);
         const lanc = todos.find((x: any) => !x.sem_medicao);
-        const sit = ind.origem === "bsc" ? arv[String(ind.nome).trim()] : undefined;
+        const sit = ind.origem === "bsc" ? doMapaArvore(arv, ind) : undefined;
         const cks = (c.data ?? []).filter((x: any) => x.cadeira_id === ind.cadeira_id);
         const vigente=analiseNaData(ind,todos[0]?.updated_at??`${competencia}-31T23:59:59`,todos[0]?.analise_snapshot);
         const tipo = vigente.tipo_apontamento ?? "valor_mensal";
