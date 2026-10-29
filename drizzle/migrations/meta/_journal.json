@@ -631,6 +631,13 @@
       "when": 1793239011195,
       "tag": "0089_pre_offsite_rev03_financeira",
       "breakpoints": true
+    },
+    {
+      "idx": 90,
+      "version": "7",
+      "when": 1793274872573,
+      "tag": "0090_pre_offsite_rev03_objetivos",
+      "breakpoints": true
     }
   ]
 }
