@@ -8,7 +8,7 @@ import { ArrowUp,ArrowDown,Trash2,Plus } from 'lucide-react';
 import type { Campo,Pergunta,Config } from './config';
 import { custoDiverge,lista,type Respostas } from './domain';
 import { seloApenas } from './bloco0';
-export type Refs={cadeiras:any[];objetivos:any[];kpis:any[];processos:any[];indicadores?:import('./bloco0').KpiOffsite[]};
+export type Refs={cadeiras:any[];objetivos:any[];kpis:any[];kpis_arquivados?:any[];processos:any[];indicadores?:import('./bloco0').KpiOffsite[]};
 export function FieldTags({campo}:{campo:Campo}) { return <>{campo.opcional&&<Badge variant="outline" className="ml-2 text-muted-foreground">Opcional</Badge>}{campo.cadeiras?.length&&<Badge className="offsite-apenas ml-2" variant="outline">{seloApenas(campo.cadeiras)}</Badge>}</>; }
 export function Field({campo,value,onChange,refs,config,disabled=false,compact=false}:{campo:Campo;value:any;onChange:(v:any)=>void;refs:Refs;config:Config;disabled?:boolean;compact?:boolean}){
  const id=useId();let options:{id:string;nome:string}[]=[];
