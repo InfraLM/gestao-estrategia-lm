@@ -7111,6 +7111,7 @@ export type Database = {
         }
         Returns: string
       }
+      qw_contexto: { Args: never; Returns: Json }
       qw_enviar: { Args: { _envio: string }; Returns: undefined }
       qw_fechar_ciclo: { Args: { _id: string }; Returns: undefined }
       qw_gov: { Args: { _uid: string }; Returns: boolean }
