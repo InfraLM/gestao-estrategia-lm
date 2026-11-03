@@ -6705,6 +6705,7 @@ export type Database = {
         Args: { _projeto_id: string; _user_id: string }
         Returns: boolean
       }
+      is_lider_restrito: { Args: { _uid: string }; Returns: boolean }
       is_membro_projeto: {
         Args: { _projeto_id: string; _user_id: string }
         Returns: boolean
