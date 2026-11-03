@@ -43,9 +43,10 @@ beforeAll(async () => {
     INSERT INTO public.mt_usuarios VALUES ('${DIRETOR}','diretor',null), ('${GOV}','governanca',null);
     INSERT INTO public.user_roles(user_id, role) VALUES ('${SUPER}','super_admin'), ('${LIDER_COM_PAPEL}','viewer');`);
   // Recria as 36 policies abertas (qual = true) exatamente como estavam antes.
-  for (const t of [...new Set(abertas.map((a) => a.tabela))].filter((t) => !["user_roles", "profiles"].includes(t)))
+  for (const t of [...new Set(abertas.map((a) => a.tabela))].filter((t) => !["user_roles", "profiles", "mt_auditoria"].includes(t)))
     await db.exec(`CREATE TABLE public.${t}(id int); INSERT INTO public.${t} VALUES (1);`);
-  await db.exec(`INSERT INTO public.profiles(user_id) VALUES ('${DIRETOR}');`);
+  await db.exec(`INSERT INTO public.profiles(user_id) VALUES ('${DIRETOR}');
+    INSERT INTO public.mt_auditoria(tabela) VALUES ('seed');`);
   for (const a of abertas) await db.exec(`GRANT SELECT ON public.${a.tabela} TO authenticated; ALTER TABLE public.${a.tabela} ENABLE ROW LEVEL SECURITY; CREATE POLICY ${a.policy} ON public.${a.tabela} FOR SELECT TO authenticated USING (true);`);
   for (const f of ["0094_quick_wins_modulo", "0095_quick_wins_lider_restrito", "0096_quick_wins_policies_lider_restrito", "0097_quick_wins_contexto"])
     await db.exec(readFileSync(`drizzle/migrations/${f}.sql`, "utf8").replaceAll("--> statement-breakpoint", ""));
