@@ -108,12 +108,14 @@ const navGroups: NavGroup[] = [
       { to: "/incentivos", label: "Sistemas de incentivo", icon: Target },
     ],
   },
+  { id: "quick_wins", label: "Quick Wins", icon: Sparkles, children: [{ to: "/quick-wins", label: "Quick Wins", icon: Sparkles }] },
 ];
 
 // Visível só para admin/super_admin (filtrado no componente).
 const integracoesGroup: NavGroup = { id: "integracoes", label: "Integrações", icon: Server, children: [{ to: "/governanca/integracao", label: "Integração Governança", icon: Server }] };
 
 const titles: Record<string, string> = {
+  "/quick-wins": "Quick Wins",
   "/pre-offsite": "Pré-Offsite 2027 · Meu formulário",
   "/pre-offsite/consolidado": "Pré-Offsite 2027 · Consolidado",
   "/pre-offsite/configuracao": "Pré-Offsite 2027 · Configuração e materiais",
@@ -171,6 +173,7 @@ export default function AppLayout() {
   const access = useModuleAccess();
   const isAdmin = access.isSuperAdmin || access.roles.includes("admin");
   const visibleGroups = [...navGroups, ...(isAdmin ? [integracoesGroup] : [])].map(group => ({ ...group, children: group.children.filter(child => {
+    if (access.liderRestrito) return child.to === "/quick-wins";
     const module = moduleForPath(child.to);
     return !module || access.canAccessPath(module, child.to);
   }) })).filter(group => group.children.length > 0);

@@ -11,6 +11,7 @@ export const ACCESS_MODULES = [
   { id: "decisoes", label: "Contexto e decisões" },
   { id: "estrutura", label: "Estrutura organizacional" },
   { id: "incentivos", label: "Sistemas de incentivo e insights da Cesta" },
+  { id: "quick_wins", label: "Quick Wins" },
 ] as const;
 
 export type AccessModule = typeof ACCESS_MODULES[number]["id"] | "repositorios" | "socios";
@@ -20,6 +21,7 @@ export type ModuleGrant = { modulo: string; nivel: AccessLevel };
 export const CLOSED_MODULES: readonly string[] = ["decisoes", "estrutura", "incentivos"];
 
 export function moduleForPath(path: string): AccessModule | null {
+  if (path.startsWith("/quick-wins")) return "quick_wins";
   if (path.startsWith("/pre-offsite")) return "pre_offsite";
   if (path === "/contexto-decisoes") return "decisoes";
   if (path === "/estrutura-organizacional") return "estrutura";
@@ -68,3 +70,15 @@ export function canAccessSocios(p: SocioParticipante, path = "/socios/formulario
   if (path.startsWith("/socios/formulario")) return p.respondente || p.pode_ver_consolidado;
   return p.respondente || p.pode_ver_consolidado;
 }
+
+/** Quick Wins: visível a líderes cadastrados, diretores com líderes e Governança/CEO; override "nenhum" ainda bloqueia. */
+export function canAccessQuickWins(perfil: { lider_id: string | null; diretor: boolean; gov_ceo: boolean } | null | undefined, grants: ModuleGrant[], superAdmin = false): boolean {
+  if (!perfil) return false;
+  if (superAdmin) return true;
+  if (grants.find(g => g.modulo === "quick_wins")?.nivel === "nenhum") return false;
+  return !!perfil.lider_id || perfil.diretor || perfil.gov_ceo;
+}
+
+/** Líder restrito só navega no Quick Wins. */
+export const QW_ROTA = "/quick-wins";
+export function rotaPermitidaLiderRestrito(path: string) { return path === QW_ROTA || path.startsWith(QW_ROTA + "/"); }
