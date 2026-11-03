@@ -97,7 +97,7 @@ function Execucao({ item, aoSalvar }: { item: QwItem; aoSalvar: () => void }) {
   const [res, setRes] = useState(item.resultado_medido ?? "");
   const salvar = async () => { const { error } = await db.rpc("qw_atualizar_execucao", { _item: item.id, _status: st, _resultado: res }); if (error) return erro(error); toast({ title: "Execução atualizada" }); aoSalvar(); };
   return <div className="grid gap-3 rounded-md border p-3 md:grid-cols-[200px_1fr_auto] md:items-end">
-    <FormField id={`ex-${item.id}`} label="Execução"><Seletor value={st} onChange={setSt} opcoes={EXECUCAO} /></FormField>
+    <FormField id={`ex-${item.id}`} label="Execução"><Seletor<StatusExecucao> value={st} onChange={setSt} opcoes={EXECUCAO} /></FormField>
     <FormField id={`res-${item.id}`} label="Resultado medido" required={st === "concluido"}><Input value={res} onChange={(e) => setRes(e.target.value)} /></FormField>
     <Button size="sm" onClick={salvar}>Salvar</Button>
   </div>;
