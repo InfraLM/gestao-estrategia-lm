@@ -673,6 +673,13 @@
       "when": 1793739301720,
       "tag": "0095_quick_wins_lider_restrito",
       "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "7",
+      "when": 1793739325385,
+      "tag": "0096_quick_wins_policies_lider_restrito",
+      "breakpoints": true
     }
   ]
 }
