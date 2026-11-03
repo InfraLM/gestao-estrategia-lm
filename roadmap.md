@@ -1,7 +1,7 @@
 # Pré-Offsite v3.14 · rascunho do editor
 - [x] Método mantém v311-metodo e selo; nova descrição com andragogia. FIDC LM adicionado com campos compartilhados; caixa 4A ajustada; histórico do rascunho registrado.
 - [x] Publicada v3.13, prazo e respostas preservados; prévia v3.14 abriu como Naira, FIDC presente nas opções 4.1/4.2.
-- [ ] Rodar testes do Pré-Offsite e verificar Excel com dados fictícios.
+- [x] 102 testes do Pré-Offsite aprovados, incluindo Excel e consolidado com FIDC fictício; assinatura da resposta real inalterada.
 - [ ] Naira confere a prévia e publica pelo editor — não publicar nesta rodada.
 
 # Pré-Offsite v3.13
