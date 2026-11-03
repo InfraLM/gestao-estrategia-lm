@@ -5410,6 +5410,287 @@ export type Database = {
           },
         ]
       }
+      qw_avisos: {
+        Row: {
+          criado_em: string
+          destinatario_email: string | null
+          destinatario_user_id: string | null
+          enviado_em: string | null
+          envio_id: string | null
+          id: string
+          item_id: string | null
+          status: string
+          tipo: string
+        }
+        Insert: {
+          criado_em?: string
+          destinatario_email?: string | null
+          destinatario_user_id?: string | null
+          enviado_em?: string | null
+          envio_id?: string | null
+          id?: string
+          item_id?: string | null
+          status?: string
+          tipo: string
+        }
+        Update: {
+          criado_em?: string
+          destinatario_email?: string | null
+          destinatario_user_id?: string | null
+          enviado_em?: string | null
+          envio_id?: string | null
+          id?: string
+          item_id?: string | null
+          status?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qw_avisos_envio_id_fkey"
+            columns: ["envio_id"]
+            isOneToOne: false
+            referencedRelation: "qw_envios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qw_avisos_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "qw_itens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qw_ciclos: {
+        Row: {
+          ano: number
+          created_at: string
+          data_abertura: string | null
+          data_fechamento: string | null
+          id: string
+          limite_investimento: number
+          prazo_max_dias: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          ano: number
+          created_at?: string
+          data_abertura?: string | null
+          data_fechamento?: string | null
+          id?: string
+          limite_investimento?: number
+          prazo_max_dias?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          data_abertura?: string | null
+          data_fechamento?: string | null
+          id?: string
+          limite_investimento?: number
+          prazo_max_dias?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      qw_envios: {
+        Row: {
+          ciclo_id: string
+          created_at: string
+          enviado_em: string | null
+          id: string
+          lider_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          ciclo_id: string
+          created_at?: string
+          enviado_em?: string | null
+          id?: string
+          lider_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          ciclo_id?: string
+          created_at?: string
+          enviado_em?: string | null
+          id?: string
+          lider_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qw_envios_ciclo_id_fkey"
+            columns: ["ciclo_id"]
+            isOneToOne: false
+            referencedRelation: "qw_ciclos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qw_envios_lider_id_fkey"
+            columns: ["lider_id"]
+            isOneToOne: false
+            referencedRelation: "qw_lideres"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qw_itens: {
+        Row: {
+          acao_proposta: string
+          aprovacao_necessaria: string
+          classificacao: string
+          comentario_diretor: string | null
+          concluido_em: string | null
+          created_at: string
+          envio_id: string
+          faixa_investimento: string
+          id: string
+          indicador: string
+          mudanca_maior: string
+          objetivo_id: string | null
+          observacao: string
+          ordem: number
+          prazo_resultado: string
+          responsavel_execucao: string
+          resultado_medido: string | null
+          status_execucao: string
+          status_triagem: string
+          titulo: string
+          triado_em: string | null
+          triado_por: string | null
+          updated_at: string
+          valor_alvo: string
+          valor_atual: string | null
+        }
+        Insert: {
+          acao_proposta?: string
+          aprovacao_necessaria?: string
+          classificacao?: string
+          comentario_diretor?: string | null
+          concluido_em?: string | null
+          created_at?: string
+          envio_id: string
+          faixa_investimento?: string
+          id?: string
+          indicador?: string
+          mudanca_maior?: string
+          objetivo_id?: string | null
+          observacao?: string
+          ordem: number
+          prazo_resultado?: string
+          responsavel_execucao?: string
+          resultado_medido?: string | null
+          status_execucao?: string
+          status_triagem?: string
+          titulo?: string
+          triado_em?: string | null
+          triado_por?: string | null
+          updated_at?: string
+          valor_alvo?: string
+          valor_atual?: string | null
+        }
+        Update: {
+          acao_proposta?: string
+          aprovacao_necessaria?: string
+          classificacao?: string
+          comentario_diretor?: string | null
+          concluido_em?: string | null
+          created_at?: string
+          envio_id?: string
+          faixa_investimento?: string
+          id?: string
+          indicador?: string
+          mudanca_maior?: string
+          objetivo_id?: string | null
+          observacao?: string
+          ordem?: number
+          prazo_resultado?: string
+          responsavel_execucao?: string
+          resultado_medido?: string | null
+          status_execucao?: string
+          status_triagem?: string
+          titulo?: string
+          triado_em?: string | null
+          triado_por?: string | null
+          updated_at?: string
+          valor_alvo?: string
+          valor_atual?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qw_itens_envio_id_fkey"
+            columns: ["envio_id"]
+            isOneToOne: false
+            referencedRelation: "qw_envios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qw_itens_objetivo_id_fkey"
+            columns: ["objetivo_id"]
+            isOneToOne: false
+            referencedRelation: "mt_objetivos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qw_lideres: {
+        Row: {
+          ativo: boolean
+          cadeira_id: string | null
+          cargo: string
+          created_at: string
+          diretor_user_id: string | null
+          email: string
+          id: string
+          nome: string
+          revisao_pendente: boolean
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          cadeira_id?: string | null
+          cargo: string
+          created_at?: string
+          diretor_user_id?: string | null
+          email: string
+          id?: string
+          nome: string
+          revisao_pendente?: boolean
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          cadeira_id?: string | null
+          cargo?: string
+          created_at?: string
+          diretor_user_id?: string | null
+          email?: string
+          id?: string
+          nome?: string
+          revisao_pendente?: boolean
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qw_lideres_cadeira_id_fkey"
+            columns: ["cadeira_id"]
+            isOneToOne: false
+            referencedRelation: "org_cadeiras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       repositorio_documentos: {
         Row: {
           aprovado_em: string | null
@@ -6803,6 +7084,49 @@ export type Database = {
         }
         Returns: string
       }
+      qw_abrir_ciclo: { Args: { _id: string }; Returns: undefined }
+      qw_atualizar_execucao: {
+        Args: { _item: string; _resultado: string; _status: string }
+        Returns: undefined
+      }
+      qw_audit: {
+        Args: {
+          _antes: string
+          _campo: string
+          _depois: string
+          _id: string
+          _tabela: string
+        }
+        Returns: undefined
+      }
+      qw_cancelar_item: { Args: { _id: string }; Returns: undefined }
+      qw_ciclo_salvar: { Args: { _dados: Json; _id: string }; Returns: string }
+      qw_classificar: {
+        Args: {
+          _aprov: string
+          _faixa: string
+          _limite: number
+          _prazo: string
+        }
+        Returns: string
+      }
+      qw_enviar: { Args: { _envio: string }; Returns: undefined }
+      qw_fechar_ciclo: { Args: { _id: string }; Returns: undefined }
+      qw_gov: { Args: { _uid: string }; Returns: boolean }
+      qw_lider_ativar: {
+        Args: { _ativo: boolean; _id: string }
+        Returns: undefined
+      }
+      qw_lider_salvar: { Args: { _dados: Json; _id: string }; Returns: string }
+      qw_meu_perfil: { Args: never; Returns: Json }
+      qw_pode_ler_envio: { Args: { _envio: string }; Returns: boolean }
+      qw_pode_ler_lider: { Args: { _lider: string }; Returns: boolean }
+      qw_salvar_item: { Args: { _dados: Json; _id: string }; Returns: string }
+      qw_triar: {
+        Args: { _acao: string; _comentario: string; _item: string }
+        Returns: undefined
+      }
+      qw_vincular: { Args: never; Returns: boolean }
       revisao_aprovar_pendentes: {
         Args: { _revisao_id: string }
         Returns: number

@@ -659,6 +659,13 @@
       "when": 1793734385490,
       "tag": "0093_pre_offsite_prazo_12_novembro",
       "breakpoints": true
+    },
+    {
+      "idx": 94,
+      "version": "7",
+      "when": 1793739280763,
+      "tag": "0094_quick_wins_modulo",
+      "breakpoints": true
     }
   ]
 }
