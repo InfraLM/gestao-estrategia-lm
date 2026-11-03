@@ -36,7 +36,7 @@ export function useModuleAccess() {
   const offsite = useQuery({queryKey: ['offsite-access', user?.id], enabled: !!user, queryFn: async () => { const {data,error} = await (supabase as any).rpc('offsite_acesso'); if(error) throw error; return data as {admin:boolean;permitido:boolean}; }, refetchOnWindowFocus:true});
   const qw = useQwPerfil();
   const liderRestrito = qw.data?.lider_restrito === true;
-  const allowed = (module: string, edit = false) => !!user && !!query.data && (module === "quick_wins" ? canAccessQuickWins(qw.data, query.data.grants, query.data.superAdmin) : liderRestrito ? false : module === "pre_offsite" ? offsite.data?.permitido === true : module === "socios" ? canAccessSocios(query.data.socio) : canAccessModule(query.data.grants, module, edit, query.data.superAdmin, query.data.roles.includes("admin"))));
+  const allowed = (module: string, edit = false) => !!user && !!query.data && (module === "quick_wins" ? canAccessQuickWins(qw.data, query.data.grants, query.data.superAdmin) : liderRestrito ? false : module === "pre_offsite" ? offsite.data?.permitido === true : module === "socios" ? canAccessSocios(query.data.socio) : canAccessModule(query.data.grants, module, edit, query.data.superAdmin, query.data.roles.includes("admin")));
   return {
     loading: authLoading || (!!user && (query.isPending || offsite.isPending || qw.isPending)),
     liderRestrito, qwPerfil: qw.data ?? null, error: query.isError,
