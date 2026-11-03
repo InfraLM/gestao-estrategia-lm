@@ -659,6 +659,34 @@
       "when": 1793734385490,
       "tag": "0093_pre_offsite_prazo_12_novembro",
       "breakpoints": true
+    },
+    {
+      "idx": 94,
+      "version": "7",
+      "when": 1793739280763,
+      "tag": "0094_quick_wins_modulo",
+      "breakpoints": true
+    },
+    {
+      "idx": 95,
+      "version": "7",
+      "when": 1793739301720,
+      "tag": "0095_quick_wins_lider_restrito",
+      "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "7",
+      "when": 1793739325385,
+      "tag": "0096_quick_wins_policies_lider_restrito",
+      "breakpoints": true
+    },
+    {
+      "idx": 97,
+      "version": "7",
+      "when": 1793739437815,
+      "tag": "0097_quick_wins_contexto",
+      "breakpoints": true
     }
   ]
 }

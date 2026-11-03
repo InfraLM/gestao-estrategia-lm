@@ -1,3 +1,4 @@
+import QuickWins from "./pages/QuickWins";
 import PreOffsiteFormulario from "./features/preOffsite/Formulario";
 import PreOffsiteAdmin from "./features/preOffsite/Admin";
 import PortfolioNovosVinculos from "./components/PortfolioNovosVinculos";
@@ -64,6 +65,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/responder/:token" element={<SociosResponder />} />
             <Route element={<ModuleAccessGate><AppLayout /></ModuleAccessGate>}>
+              <Route path="/quick-wins" element={<QuickWins />} />
               <Route path="/pre-offsite" element={<PreOffsiteFormulario />} />
               <Route path="/pre-offsite/consolidado" element={<PreOffsiteAdmin />} />
               <Route path="/pre-offsite/configuracao" element={<PreOffsiteAdmin modo="configuracao" />} />
