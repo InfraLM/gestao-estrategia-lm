@@ -16,6 +16,17 @@ const como = (p: PGlite, u: string) => p.exec(`RESET ROLE;SELECT set_config('tes
 const base = async (p: PGlite) => (await p.query<any>(`SELECT atualizado_em FROM offsite_config WHERE id='2027'`)).rows[0].atualizado_em;
 
 describe('Pré-Offsite · publicação do editor (banco isolado)', () => {
+  it('publicar o rascunho v3.14 mantém o prazo compartilhado de 12/11/2026', async () => {
+    const p = await setup(); try {
+      await como(p, A);
+      await p.query(`UPDATE offsite_config SET prazo=DATE '2026-11-12' WHERE id='2027'`);
+      const conteudo = { ...JSON.parse(cfg()), versao: 'v3.14' };
+      await p.query(`INSERT INTO offsite_config_rascunhos(id,conteudo,base_atualizado_em) VALUES('2027',$1::jsonb,$2)`, [JSON.stringify(conteudo), await base(p)]);
+      await p.query(`SELECT offsite_config_publicar($1::jsonb,$2,'[]')`, [JSON.stringify(conteudo), await base(p)]);
+      expect((await p.query<any>(`SELECT prazo::text AS prazo,conteudo->>'versao' AS versao FROM offsite_config WHERE id='2027'`)).rows[0]).toEqual({ prazo: '2026-11-12', versao: 'v3.14' });
+    } finally { await p.close(); }
+  }, 30000);
+
   it('gravação direta continua sem poder apagar ou trocar perguntas', async () => {
     const p = await setup(); try {
       await como(p, A);
