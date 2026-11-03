@@ -1,68 +1,94 @@
-# BSC Rev.02 → Rev.03 no app — análise de impacto e plano
+# Módulo Quick Wins — plano
 
-Nada foi alterado. Os números abaixo vêm de uma leitura do banco em 29/10/2026.
+Regras lidas: AGENTS.md raiz, docs/agents/metas-rotina.md, src/components/AGENTS.md, src/components/estrutura/AGENTS.md e planos em .lovable/plan/. Última migration confirmada: 0093.
 
-## Situação atual (conferida)
-- 9 objetivos em `mt_objetivos` (F.01, F.02, C.01, P.01–P.03, AC.01–AC.03). **C.02 não existe.**
-- 43 KPIs `origem='bsc'`, todos com status `ativo`. Existem também 23 KPIs de Cesta e 13 de OKR.
-- O código que aparece na tela fica no começo do **nome** (ex.: "F02.02 Despesas adm / ROL"). A coluna `codigo` guarda um código interno diferente (ex.: `f.02.03`). Ou seja, existem dois códigos, e os dois precisam ser tratados.
-- Dados ligados aos KPIs do BSC: 186 metas mensais, 0 lançamentos, 0 desvios, 2 vigências de peso, 36 propostas de frequência, 408 vínculos de portfólio (só 1 validado; o resto é proposta) e 2 check-ins. Nada de orçamento ou meta 2030 está preenchido.
-- Outros dados que dependem dos objetivos: 295 vínculos de portfólio com objetivos (4 validados) e 9 ligações entre OKR e objetivo.
-- Quase tudo aponta para o KPI pelo **id interno**: metas, lançamentos, pesos, frequência, desvios, iniciativas, vínculos, check-ins e respostas do Pré-Off-site.
-- Existe uma estrutura Rev.02 fixa no código, usada como reserva para situação atual e meta 2026. Ela é lida pelo nome do KPI em `useKpisObjetivo`, no Pré-Off-site, em MetasSemanal, na Matriz e na árvore do BSC.
+## Estado atual verificado
+- `acesso_modulo` hoje: `_uid IS NOT NULL AND (is_super_admin(_uid) OR COALESCE((nivel em usuario_acessos), true))`.
+- As 36 policies abertas existem exatamente como listado abaixo (35 SELECT com `qual = true`; 1 ALL em `user_roles`).
 
-## a) Onde objetivos e KPIs são usados e o efeito de cada operação
-| Módulo | Como liga | Renomear / recodificar (mesmo id) | Fundir | Criar | Inativar |
-|---|---|---|---|---|---|
-| BSC / árvore / avaliações | objetivo_id, nome, Rev.02 fixa | Nome novo aparece; a reserva Rev.02 deixa de bater pelo nome | Precisa escolher o KPI sobrevivente | Aparece sem histórico, "sem status" | Some das telas, histórico fica |
-| Metas mensais, lançamentos, pesos | indicador_id | Preserva tudo | Histórico do KPI absorvido não soma sozinho | Vazio | Fica no histórico; apagar levaria os dados junto |
-| Rotina semanal, check-in/checkout, calendário, desvios | indicador_id e retrato do ciclo | Ciclos enviados preservados | Leituras antigas ficam no KPI de origem | Entra no calendário só com cadência definida | Sai dos próximos ciclos |
-| OKRs e Cesta | objetivo_id, ligação OKR↔objetivo | Preserva | — | — | Inativar um objetivo deixa OKRs e Cesta sem pai |
-| Vínculos de portfólio, impacto de projetos, sugestões de IA | ref_id | Preserva | Vínculos precisam ser movidos, com auditoria | Sem vínculos | Vínculo fica "a revisar" |
-| Financeiro por objetivo, meta 2030 | objetivo_id e campos do KPI | Preserva (hoje vazio) | — | — | — |
-| Processos e Zeev | tabela de correspondência (0 linhas) | Sem impacto hoje | — | — | — |
-| Incentivos, Dashboard, Estratégia, funções de IA | leem os KPIs ativos | Mostram o nome novo | — | Entra nas listas | Sai das listas |
-| Pré-Off-site | ver item d | | | | |
+## O que será criado
 
-## b) Como preservar o histórico
-- **Regra recomendada:** KPI que só muda de código ou nome **mantém o id interno**, com nome e código novos e o anterior registrado em histórico e auditoria. Isso preserva metas, vínculos e ciclos.
-- **KPI novo ou com definição diferente:** cria-se um KPI novo, "sem status" pela regra D-091. O antigo é **inativado, nunca apagado**. Na Rev.03 isso vale para F01 (novo), F02 (NRR), C01-A, AC02 e AC03 estratégicos, e os itens marcados "novo".
-- **Fusões** (AC02+AC02.02, AC02.01+AC02.06, P03-a+P03-b): o KPI novo recebe id novo e os de origem são inativados, guardando a referência "fundido em". Metas e leituras antigas ficam nos de origem, consultáveis. Os vínculos de projeto são **copiados como proposta** para o novo, para revisão; não são movidos já validados.
-- **Recodificações em cadeia** (F02↔F01, AC01↔AC03, F01.01→F02.01…): todas as trocas no mesmo passo, com mapeamento simultâneo, para nenhum código ser trocado duas vezes. KPIs que mudam de objetivo trocam `objetivo_id`.
-- **Objetivos:** renomear as 9 linhas mantendo o id (AC.01/AC.02/AC.03 trocam de nome entre si, sempre pelo mapeamento simultâneo) e criar C.02. Os vínculos validados com objetivo (4) e os propostos precisam de revisão onde o sentido mudou, principalmente C.01 → C.01/C.02.
-- **NSM** (F01.02): o KPI é inativado como objetivo e o histórico fica preservado. Ele passa a ser a métrica-mãe, ligada ao mesmo id.
-- **Itens "a confirmar"** (P02.02, AC02.04, AC03.02, C02-a.04 faturamento): ficam inativos até a Naira decidir. Nada é removido.
+### Migration 0094 — tabelas, triggers e RPCs
+- `qw_lideres`, `qw_ciclos`, `qw_envios`, `qw_itens` conforme o pedido (FK para `org_cadeiras` e `mt_objetivos`; `user_id` sem FK para auth.users, conforme regra do projeto). GRANT a authenticated/service_role; sem anon.
+- Triggers: limite de 10 itens por envio; classificação automática (quick_win x iniciativa_maior, usando `limite_investimento` do ciclo); bloqueio de edição direta (envio enviado só edita itens em ajustar/devolvido; ciclo fechado só execução/resultado de aprovados); um ciclo aberto por vez; e-mail do líder só `@liberdademedicaedu.com.br`.
+- RPCs SECURITY DEFINER auditadas em `mt_auditoria`: `qw_salvar_item`, `qw_enviar` (mín. 1 item), `qw_triar` (aprovar|ajustar|devolver|converter; comentário obrigatório exceto aprovar), `qw_atualizar_execucao`, `qw_abrir_ciclo`, `qw_fechar_ciclo`, `qw_lider_salvar`/`qw_lider_inativar` (Governança). Cancelar = status; nada é apagado.
+- `qw_vincular_lider()` chamado no 1º login com e-mail verificado: grava `user_id` pelo e-mail (mesmo padrão dos convites verificados).
+- RLS: líder vê só o próprio registro/envio/itens; diretor lê os líderes com `diretor_user_id = auth.uid()`; Governança (`mt_is_governanca`), admin e super_admin leem tudo. Escritas só via RPC.
+- Pré-carga de `qw_lideres` a partir de `org_pessoas` (cargo contendo coordenador/supervisor/gerente; diretor = `user_id` do gestor), marcada para revisão da Governança. Seed: ciclo 2026 em rascunho (limite 20000, 90 dias).
 
-## c) Métricas-mãe
-Hoje o app não tem um nível acima dos objetivos. BHAG, NSM e número crítico existem só como texto. Para ter métricas-mãe é preciso uma mudança pequena no modelo: uma tabela nova de métricas-mãe (nome, meta, tipo BHAG/NSM/crítico, KPI opcional para reaproveitar a NSM) e um bloco no topo do BSC. Ela não entra na conformidade nem no calendário até a Naira decidir.
+### Migration 0095 — restrição de líder
+- `is_lider_restrito(_uid)`: true se `qw_lideres` ativo com esse user_id E sem linha em `user_roles` E sem linha em `mt_usuarios`.
+- `acesso_modulo` passa a: se `is_lider_restrito(_uid)` → `_modulo = 'quick_wins'`; senão, expressão atual idêntica.
 
-## d) Impacto no Pré-Off-site
-- As respostas guardam o KPI pelo **id interno**: a 2.1 com várias escolhas e a área de indicadores do Bloco 0. Mantendo os ids, as respostas continuam válidas. KPIs inativados saem das listas de escolha, e as respostas antigas viram "KPI arquivado"; esse tratamento precisa ser criado para não aparecer um id solto.
-- A lista de KPIs e de objetivos que o formulário recebe mostra só KPIs ativos, então ela muda na hora em que o cadastro muda.
-- As perguntas do Bloco 0 citam os KPIs pelo código antigo da tela (ex.: "AC02.02"). Esses códigos precisam ser traduzidos no código do app e na configuração salva, no mesmo passo. Os nomes dos objetivos já estão na Rev.03.
-- A função que monta a área de indicadores define dono e apoios pelo código interno antigo, fixo dentro dela, e precisa ser reescrita para os KPIs novos.
-- A reserva Rev.02 (situação atual e meta 2026, buscada pelo nome) precisa de uma versão Rev.03, ou deixa de preencher esses campos.
-- Hoje há 1 resposta salva, o rascunho da Naira. O prazo das respostas já passou (28/10) e o off-site é em 27 e 28/11.
+### Migration 0096 — 36 policies
+Em cada uma, o texto passa de `X` para `(X) AND NOT public.is_lider_restrito(auth.uid())`. Antes = `true` em todas; depois = `true AND NOT public.is_lider_restrito(auth.uid())` (na `user_roles`, `with_check` permanece igual).
 
-## e) Plano passo a passo
-1. **Aprovação do mapa:** tabela final com cada KPI (manter id, criar ou inativar), dono por cadeira, cadência e itens "a confirmar". Nada roda antes disso.
-2. **Retrato de segurança:** cópia completa de objetivos, KPIs e configuração do Pré-Off-site, marcada "Rev.02", para poder desfazer.
-3. **Estrutura:** campos de versão do BSC, "fundido em" e "código anterior" nos KPIs; tabela de métricas-mãe. Tudo aditivo.
-4. **Objetivos:** renomear os 9, criar C.02, registrar na auditoria.
-5. **KPIs:** recodificar mantendo os ids (troca simultânea), criar os novos "sem status", inativar fundidos e removidos. Os 43 BSC viram um total novo; o número exato sai do mapa aprovado.
-6. **Ajustes no app:** reserva Rev.03, árvore do BSC, função de indicadores do Pré-Off-site, códigos do Bloco 0, aviso de "KPI arquivado".
-7. **Rotina:** calendário e cadência dos KPIs novos entram como **proposta** para Gov/CEO aprovar. O efeito vale só a partir do próximo ciclo; ciclos enviados ficam intactos.
-8. **Vínculos:** copiar como proposta para os KPIs novos e marcar "a revisar" os vínculos de KPIs inativados. Nada é validado automaticamente.
-9. **Testes isolados** (sem dados reais): histórico preservado, ciclos enviados intactos, rascunho do Pré-Off-site abre e exporta, contagens batem.
-10. **Desfazer:** restaurar o retrato do passo 2. KPIs criados ficam inativos, nunca apagados.
+| Tabela | Policy | Cmd |
+|---|---|---|
+| admin_modulos | am_select_auth | SELECT |
+| backlog_propostas_ia | bprop_select_auth | SELECT |
+| backlog_submissoes | bsub_select_auth | SELECT |
+| base_propostas_ia | ler propostas | SELECT |
+| base_submissoes | ler submissoes | SELECT |
+| bc_scorecard_submissoes | bc_sc_select_auth | SELECT |
+| conteudo_editavel | ler conteudo | SELECT |
+| cronograma_itens | cron_select_authenticated | SELECT |
+| departamentos | dep_select_auth | SELECT |
+| diagnostico_insights | di_select_auth | SELECT |
+| eap_itens | eap_select_authenticated | SELECT |
+| entrega_submissoes | sub_select_authenticated | SELECT |
+| estrategia_insights | ei_select_auth | SELECT |
+| gmail_processados | gmail_proc_select_auth | SELECT |
+| infra_tasks | infra_tasks_select_auth | SELECT |
+| melhoria_business_case | mbc_select_auth | SELECT |
+| mt_auditoria | mt ler | SELECT |
+| mt_competencias | mt ler | SELECT |
+| mt_lancamentos | mt ler | SELECT |
+| mt_parametros | mt ler | SELECT |
+| mt_status_projetos | msp_select | SELECT |
+| mt_status_projetos_versoes | mspv_select | SELECT |
+| processos | processos_select_auth | SELECT |
+| profiles | profiles_select_all_auth | SELECT |
+| projeto_cadeiras_apoio | pca_select | SELECT |
+| projeto_decisoes | pd_select | SELECT |
+| projeto_membros | pm_select_auth | SELECT |
+| projeto_reunioes | reunioes_select_auth | SELECT |
+| projeto_vinculos | pv_select | SELECT |
+| projetos | projetos_select_authenticated | SELECT |
+| repositorio_documentos | rd_select_auth | SELECT |
+| riscos_institucionais | ri_select_auth | SELECT |
+| rotina_transparencia | transp ler | SELECT |
+| status_report_drafts | drafts_select_auth | SELECT |
+| status_reports | sr_select_authenticated | SELECT |
+| user_roles | roles_controle_seguro | ALL |
 
-**Riscos:** troca dupla de códigos (AC e F); a reserva Rev.02 parar de preencher valores; ciclo semanal em andamento com KPIs trocados no meio; vínculos com sentido diferente (C.01); respostas do Pré-Off-site apontando para KPI inativado; IA e relatórios citando nomes antigos.
+Aplicado com `ALTER POLICY ... USING (...)` (sem drop/recriação). Para não-líderes o resultado é idêntico.
 
-**Complexidade:** alta. São cerca de 45 KPIs envolvidos, 3 fusões, cerca de 15 novos e 10 módulos. Estimativa de 3 a 4 rodadas de trabalho, mais a revisão da Naira.
+## Front-end
+- `src/pages/QuickWins.tsx` com abas (AbasPagina): Meus quick wins (líder), Triagem (diretor), Painel e Administração (Governança/CEO). Hook `src/hooks/useQuickWins.ts`, regras puras em `src/lib/quickWins.ts` (classificação ao vivo, "x de 10", CSV).
+- Reuso: FormField, SaveFeedback, componentes ui, guarda de alterações não salvas.
+- Rota `/quick-wins`; guarda global: líder restrito é redirecionado para `/quick-wins` em qualquer outra rota; menu mostra só esse item. Módulo `quick_wins` adicionado em moduleAccess, tela de acessos e convites.
+- Auth: login do líder exige e-mail corporativo cadastrado; caso contrário, mensagem e sem acesso.
 
-**Recomendação:** fazer **depois do off-site (27 e 28/11)**. O consolidado, o Excel e a área de indicadores do off-site foram montados sobre a Rev.02, e as metas de 2027 sairão de lá. Até o off-site, só os textos (já feito no formulário) e, se a Naira quiser, a criação das métricas-mãe como mostrador, sem efeito em mais nada. A troca completa entraria no primeiro ciclo depois do off-site, já com as metas de 2027.
+## E-mails
+- Envio → diretor; ajustar/devolver → líder. Entram na mesma fila de saída existente, **desligados**: o envio real depende do domínio de e-mail ainda não configurado (mesma pendência da rotina semanal). Nenhum e-mail real será enviado.
 
-## Detalhes técnicos
-- As ligações de metas, lançamentos e pesos apagam os dados junto se o KPI for excluído; por isso nunca excluir, só mudar o status.
-- O "sem status" da D-091 pode reaproveitar o campo de status de implantação da medição, com bloqueio na avaliação.
-- O texto final de cada KPI deve ficar só no `nome`, com `codigo` alinhado; hoje os dois divergem.
+## Testes (vitest)
+- Limite de 10 (11º bloqueado); classificação automática nos 3 critérios.
+- Logado como líder fictício isolado: sem leitura nas 36 tabelas; `acesso_modulo` falso fora de quick_wins; rotas redirecionadas.
+- Diretor, Governança e super_admin: mesmo resultado de antes nas 36 tabelas e em `acesso_modulo`.
+- Triagem/RLS: diretor só vê seus líderes; comentário obrigatório; ciclo fechado.
+- Dados de teste criados e removidos só em isolamento; nada real alterado.
+
+## Docs
+- `docs/agents/quick-wins.md` com as regras; ponteiro curto no AGENTS.md raiz (mantido abaixo de 8 KB).
+
+## Impacto e o que NÃO muda
+- Nenhum dado existente é alterado ou apagado; só inclusão de líderes pré-carregados e ciclo 2026.
+- Quem já tem `user_roles` ou `mt_usuarios` não é afetado; demais módulos, rotas, BSC, rotina semanal, Sócios e Pré-Offsite intactos. Nenhum acesso é ampliado.
+- Rotas antigas permanecem.
+
+## Pontos para confirmar
+1. Diretores e Governança verão o item Quick Wins no menu; demais usuários sem papel não verão (o módulo fica fechado por padrão para quem não é líder, diretor ou Governança/CEO). Ok?
+2. Pré-carga: líderes cujo cargo em org_pessoas não seja claramente coordenador/supervisor/gerente ficam de fora até a Governança cadastrar.
+3. Políticas que já usam `acesso_modulo` (ex.: tabelas por módulo) também ficam fechadas para o líder automaticamente — é o efeito esperado.
