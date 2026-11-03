@@ -5,6 +5,7 @@ Area rules live in nested AGENTS.md files; read the one for the folder before ch
 - `docs/agents/socios-governanca.md` — Desejos dos Sócios, Governança integration, AI planning revisions.
 - `src/components/AGENTS.md` — layout. `src/components/estrutura/AGENTS.md` — organogram and canonical identities; apply directory rules across forms.
 - `src/features/preOffsite/AGENTS.md` — Pré-Offsite config, privacy and answer preservation.
+- `docs/agents/quick-wins.md` — Quick Wins, restricted leaders (src/pages/QuickWins, src/lib/quickWins, qw_* SQL).
 
 - Phase 1 spaces use six isolated tables and additive `fase1_*` auth helpers; new modules default closed, with owner/director read exceptions enforced server-side without changing legacy module access.
 - Cadence calendar (CalendarioApontamento) uses pure draft/load helpers and shared São Paulo next-Monday projections preserving sent cycles; batch saves per row via mt_frequencia_salvar, keeping failed drafts.
