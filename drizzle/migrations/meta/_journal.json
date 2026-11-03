@@ -652,6 +652,13 @@
       "when": 1793277349691,
       "tag": "0092_offsite_indicadores_por_id_rev03",
       "breakpoints": true
+    },
+    {
+      "idx": 93,
+      "version": "7",
+      "when": 1793734385490,
+      "tag": "0093_pre_offsite_prazo_12_novembro",
+      "breakpoints": true
     }
   ]
 }
