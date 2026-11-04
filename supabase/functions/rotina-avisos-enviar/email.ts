@@ -4,7 +4,7 @@ export type TipoAviso = "abertura" | "lembrete" | "manual";
 export type Aviso = { nome: string; ciclo: string; tipo: TipoAviso; pendencias: Pendencias; teste?: boolean };
 
 export const APP_URL = "https://gestao-estrategia-lm.lovable.app";
-export const REMETENTE_PADRAO = "Gestão Estratégica LM <no-reply@liberdademedicaedu.com.br>";
+export const REMETENTE_PADRAO = "Gestão Estratégica LM <no-reply@gestao.liberdademedicaedu.com.br>";
 
 /** Missing/empty secrets must never authorize scheduled requests. */
 export function tokenValido(recebido: string | null, esperado: string | undefined): boolean {
