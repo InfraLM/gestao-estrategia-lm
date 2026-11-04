@@ -1,4 +1,4 @@
--- Weekly check-in/checkout e-mails through Resend. Additive only: no existing row is updated or deleted.
+-- Weekly check-in/checkout e-mails through the Gmail API (Google Workspace). Additive only: no existing row is updated or deleted.
 -- 1) Optional recipient allowlist (NULL keeps every eligible chair, preserving current behaviour).
 ALTER TABLE public.rotina_avisos_config ADD COLUMN IF NOT EXISTS destinatarios_permitidos text[];
 
@@ -44,7 +44,7 @@ CREATE TRIGGER rotina_avisos_acordar_remetente AFTER INSERT ON public.rotina_avi
 REVOKE ALL ON FUNCTION public.rotina_avisos_filtrar_permitidos() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.rotina_avisos_acordar_remetente() FROM PUBLIC, anon, authenticated;
 
--- 5) Connect the Resend sender (called only by the rotina-avisos-enviar edge function with service role).
+-- 5) Connect the Gmail sender (called only by the rotina-avisos-enviar edge function with service role).
 CREATE OR REPLACE FUNCTION public.rotina_avisos_remetente_configurar(_token text, _url text, _uid uuid) RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
 DECLARE anterior jsonb;
 BEGIN
@@ -59,7 +59,7 @@ BEGIN
  INSERT INTO public.rotina_avisos_config(id,remetente_pronto,atualizado_por) VALUES(true,true,_uid)
  ON CONFLICT(id) DO UPDATE SET remetente_pronto=true, atualizado_por=_uid, atualizado_em=now();
  INSERT INTO public.mt_auditoria(tabela,registro_id,campo,valor_anterior,valor_novo,alterado_por)
- VALUES('rotina_avisos_config','true','remetente_pronto',coalesce(anterior->>'remetente_pronto','false'),'true (Resend)',_uid);
+ VALUES('rotina_avisos_config','true','remetente_pronto',coalesce(anterior->>'remetente_pronto','false'),'true (Gmail API)',_uid);
 END $$;
 REVOKE ALL ON FUNCTION public.rotina_avisos_remetente_configurar(text,text,uuid) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.rotina_avisos_remetente_configurar(text,text,uuid) TO service_role;
@@ -85,4 +85,4 @@ END $$;
 REVOKE ALL ON FUNCTION public.rotina_avisos_permitidos_salvar(text[]) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.rotina_avisos_permitidos_salvar(text[]) TO authenticated;
 
-COMMENT ON TABLE public.rotina_avisos_envios IS 'Channel-ready notification outbox. Weekly notices (abertura/lembrete/manual) are delivered through Resend by the rotina-avisos-enviar edge function, woken after enqueue; impediment notices stay queued until their own template exists. Open tracking stays null.';
+COMMENT ON TABLE public.rotina_avisos_envios IS 'Channel-ready notification outbox. Weekly notices (abertura/lembrete/manual) are delivered through the Gmail API by the rotina-avisos-enviar edge function, woken after enqueue; impediment notices stay queued until their own template exists. Open tracking stays null.';

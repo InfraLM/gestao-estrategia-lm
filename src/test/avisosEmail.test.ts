@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { cicloAtual, montarEmail, tokenValido } from "../../supabase/functions/rotina-avisos-enviar/email";
+import { base64url, cicloAtual, mensagemMime, montarEmail, tokenValido } from "../../supabase/functions/rotina-avisos-enviar/email";
 import { alternarPermitido, recebeAutomatico } from "@/lib/avisosCiclo";
 
 const p = { prioridades: 1, kpis: 3, atas: 2, status_reports: 0 };
-describe("E-mails semanais via Resend", () => {
+describe("E-mails semanais via Gmail", () => {
   it("sexta 08:00 SP aponta para o ciclo da segunda seguinte", () => expect(cicloAtual(new Date("2026-11-06T11:00:00Z"))).toBe("2026-11-09"));
   it("segunda 09:00 SP usa o próprio ciclo", () => expect(cicloAtual(new Date("2026-11-09T12:00:00Z"))).toBe("2026-11-09"));
   it("domingo à noite SP continua no ciclo de segunda", () => expect(cicloAtual(new Date("2026-11-09T01:00:00Z"))).toBe("2026-11-09"));
@@ -36,4 +36,15 @@ describe("E-mails semanais via Resend", () => {
     expect(alternarPermitido(null, ["a@x.com", "b@x.com"], "B@x.com", false)).toEqual(["a@x.com"]);
     expect(recebeAutomatico("b@x.com", ["a@x.com"])).toBe(false);
   });
+  it("MIME do Gmail codifica assunto/corpo em UTF-8 e bloqueia injeção de cabeçalho", () => {
+    const m = montarEmail({ nome: "Naira", ciclo: "2026-11-09", tipo: "abertura", pendencias: p });
+    const raw = mensagemMime({ nome: "Gestão Estratégica LM", email: "gestao@liberdademedicaedu.com.br" }, "naira@x.com", { ...m, subject: "Olá\r\nBcc: x@evil.com" });
+    expect(raw).toContain("To: <naira@x.com>");
+    expect(raw).not.toMatch(/^Bcc:/m);
+    const assunto = raw.match(/^Subject: =\?UTF-8\?B\?(.+)\?=$/m)![1];
+    expect(new TextDecoder().decode(Uint8Array.from(atob(assunto), c => c.charCodeAt(0)))).toBe("Olá Bcc: x@evil.com");
+    expect(raw.split("\r\n").every(l => l.length <= 998)).toBe(true);
+    expect(() => mensagemMime({ nome: "x", email: "gestao@x.com" }, "a@x.com>\r\nBcc: b@x.com", m)).toThrow();
+  });
+  it("base64url sem padding", () => expect(base64url(new Uint8Array([251, 255]))).toBe("-_8"));
 });

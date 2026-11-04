@@ -4,7 +4,7 @@ export type TipoAviso = "abertura" | "lembrete" | "manual";
 export type Aviso = { nome: string; ciclo: string; tipo: TipoAviso; pendencias: Pendencias; teste?: boolean };
 
 export const APP_URL = "https://gestao-estrategia-lm.lovable.app";
-export const REMETENTE_PADRAO = "Gestão Estratégica LM <no-reply@gestao.liberdademedicaedu.com.br>";
+export const REMETENTE_NOME_PADRAO = "Gestão Estratégica LM";
 
 /** Missing/empty secrets must never authorize scheduled requests. */
 export function tokenValido(recebido: string | null, esperado: string | undefined): boolean {
@@ -54,4 +54,26 @@ export function montarEmail(a: Aviso) {
 <p><a href="${url}" style="display:inline-block;background:#1d4ed8;color:#fff;text-decoration:none;padding:10px 18px;border-radius:6px">Abrir meu check-in/checkout</a></p>
 ${a.teste ? '<p style="color:#6b7280;font-size:12px">Este é um e-mail de teste.</p>' : ""}</div>`;
   return { subject, text, html };
+}
+
+// ---- MIME for the Gmail API (RFC 2822 + RFC 2047), no Deno APIs. ----
+const base64 = (bytes: Uint8Array) => { let b = ""; for (let i = 0; i < bytes.length; i += 0x8000) b += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(b); };
+export const base64url = (bytes: Uint8Array) => base64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const utf8 = (s: string) => new TextEncoder().encode(s);
+const CRLF = "\r\n";
+const semQuebra = (s: string) => s.replace(/[\r\n]+/g, " ").trim();
+const palavra = (s: string) => `=?UTF-8?B?${base64(utf8(semQuebra(s)))}?=`;
+const linhas76 = (s: string) => s.replace(/.{1,76}/g, `$&${CRLF}`);
+export const EMAIL_VALIDO = /^[^@\s<>"]+@[^@\s<>"]+\.[^@\s<>"]+$/;
+
+export function mensagemMime(de: { nome: string; email: string }, para: string, m: { subject: string; text: string; html: string }) {
+  if (!EMAIL_VALIDO.test(de.email) || !EMAIL_VALIDO.test(para)) throw new Error("E-mail inválido");
+  const limite = `lm-${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+  return [
+    `From: ${palavra(de.nome)} <${de.email}>`, `To: <${para}>`, `Subject: ${palavra(m.subject)}`, "MIME-Version: 1.0",
+    `Content-Type: multipart/alternative; boundary="${limite}"`, "",
+    `--${limite}`, "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64", "", linhas76(base64(utf8(m.text))),
+    `--${limite}`, "Content-Type: text/html; charset=UTF-8", "Content-Transfer-Encoding: base64", "", linhas76(base64(utf8(m.html))),
+    `--${limite}--`, "",
+  ].join(CRLF);
 }

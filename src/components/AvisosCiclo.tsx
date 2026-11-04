@@ -74,7 +74,7 @@ export default function AvisosCiclo() {
   };
   const conectar = async () => {
     const r = await funcao({ acao: "configurar" });
-    if (r) { toast.success("Remetente Resend conectado"); void load(); }
+    if (r) { toast.success("Remetente Gmail conectado"); void load(); }
   };
   const salvarLista = async () => {
     setBusy(true);
@@ -88,7 +88,7 @@ export default function AvisosCiclo() {
   return <section className="space-y-4 border-t pt-5" aria-label="E-mails do ciclo semanal">
     <div className="flex flex-wrap justify-between gap-3 items-center"><h2 className="font-semibold flex gap-2 items-center"><Mail className="h-5 w-5" />E-mails do ciclo semanal</h2><Button size="sm" variant="outline" onClick={load}><RefreshCw className="h-4 w-4 mr-2" />Atualizar</Button></div>
     {erro && <p role="alert" className="text-destructive text-sm">{erro}</p>}
-    {!config.remetente_pronto && <div role="status" className="text-sm text-warning bg-warning-soft border border-warning/30 rounded p-3 flex flex-wrap items-center justify-between gap-2"><span>Envio automático desligado · conecte o remetente (Resend) depois de testar.</span><Button size="sm" variant="outline" disabled={busy || !carregado} onClick={conectar}><PlugZap className="h-4 w-4 mr-2" />Conectar remetente</Button></div>}
+    {!config.remetente_pronto && <div role="status" className="text-sm text-warning bg-warning-soft border border-warning/30 rounded p-3 flex flex-wrap items-center justify-between gap-2"><span>Envio automático desligado · conecte o remetente (Gmail) depois de testar.</span><Button size="sm" variant="outline" disabled={busy || !carregado} onClick={conectar}><PlugZap className="h-4 w-4 mr-2" />Conectar remetente</Button></div>}
     <div className="flex items-center gap-3"><Switch id="avisos-ativo" checked={config.ativo} disabled={!config.remetente_pronto || busy || !carregado} onCheckedChange={ativo => setConfig({ ...config, ativo })} /><Label htmlFor="avisos-ativo">Disparo {config.ativo ? "ligado" : "desligado"}</Label><Badge variant="outline">São Paulo</Badge></div>
     <div className="grid sm:grid-cols-2 gap-4">{(["abertura", "lembrete"] as const).map(tipo => <div key={tipo} className="space-y-2"><h3 className="text-sm font-medium">{tipo === "abertura" ? "Abertura" : "Lembrete dos não enviados"}</h3><div className="flex gap-2"><Select value={String(config[`${tipo}_dia`])} onValueChange={v => setConfig({ ...config, [`${tipo}_dia`]: Number(v) })}><SelectTrigger className="flex-1" aria-label={`Dia de ${tipo}`}><SelectValue /></SelectTrigger><SelectContent>{DIAS.map((dia, i) => <SelectItem key={dia} value={String(i)}>{dia}</SelectItem>)}</SelectContent></Select><Input className="w-32" type="time" aria-label={`Horário de ${tipo}`} value={config[`${tipo}_hora`]} onChange={e => setConfig({ ...config, [`${tipo}_hora`]: e.target.value })} /></div></div>)}</div>
     <div className="flex flex-wrap gap-2"><Button disabled={busy || !carregado} onClick={save}><Save className="h-4 w-4 mr-2" />Salvar horários</Button><Button variant="outline" disabled={busy || !config.remetente_pronto || !prontos.some(d => !d.enviado)} onClick={() => setConfirmar("todos")}><Mail className="h-4 w-4 mr-2" />Reenviar aos pendentes</Button></div>

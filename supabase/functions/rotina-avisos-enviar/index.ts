@@ -1,8 +1,9 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { cicloAtual, cicloValido, montarEmail, REMETENTE_PADRAO, tokenValido, type Aviso } from "./email.ts";
+import { cicloAtual, cicloValido, EMAIL_VALIDO, montarEmail, REMETENTE_NOME_PADRAO, tokenValido, type Aviso } from "./email.ts";
+import { credencialGmail, enviarGmail } from "./gmail.ts";
 
-// Weekly check-in/checkout e-mails through Resend.
+// Weekly check-in/checkout e-mails through the Gmail API (Google Workspace).
 // - x-cron-token (wake-on-enqueue trigger): delivers queued abertura/lembrete/manual rows.
 // - Governança JWT + {acao:"teste", cadeira_id}: sends one preview to that director; writes nothing.
 // - Governança JWT + {acao:"configurar"}: registers this endpoint for the trigger and marks the sender ready.
@@ -19,23 +20,18 @@ Deno.serve(async req => {
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const cronToken = Deno.env.get("ROTINA_AVISOS_CRON_TOKEN");
-  const resendKey = Deno.env.get("RESEND_API_KEY");
-  const remetente = Deno.env.get("ROTINA_AVISOS_REMETENTE") || REMETENTE_PADRAO;
+  const remetente = { nome: Deno.env.get("GMAIL_REMETENTE_NOME") || REMETENTE_NOME_PADRAO, email: (Deno.env.get("GMAIL_REMETENTE") ?? "").trim().toLowerCase() };
+  let credencial: ReturnType<typeof credencialGmail> = null;
+  let erroCredencial = "";
+  try { credencial = credencialGmail(k => Deno.env.get(k)); } catch (e) { erroCredencial = String((e as Error).message); }
+  const faltaGmail = () => erroCredencial || (!credencial ? "Cadastre GMAIL_SERVICE_ACCOUNT_JSON (ou GMAIL_CLIENT_ID/SECRET/REFRESH_TOKEN)" : !EMAIL_VALIDO.test(remetente.email) ? "Cadastre GMAIL_REMETENTE (caixa que envia)" : "");
   if (!url || !anonKey || !serviceKey) return out({ error: "Configuração ausente" }, 503);
   const db = createClient(url, serviceKey, { auth: { persistSession: false } });
 
-  const enviar = async (para: string, aviso: Aviso, idempotencia?: string) => {
-    if (!resendKey) throw new Error("RESEND_API_KEY ausente");
-    const m = montarEmail(aviso);
-    const r = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json", ...(idempotencia ? { "Idempotency-Key": idempotencia } : {}) },
-      body: JSON.stringify({ from: remetente, to: [para], subject: m.subject, text: m.text, html: m.html }),
-      signal: AbortSignal.timeout(20000),
-    });
-    const corpo = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(`Resend ${r.status}: ${String(corpo?.message ?? corpo?.name ?? "erro").slice(0, 300)}`);
-    return String(corpo?.id ?? "");
+  const enviar = async (para: string, aviso: Aviso) => {
+    const falta = faltaGmail();
+    if (falta || !credencial) throw new Error(falta);
+    return await enviarGmail(credencial, remetente, para, montarEmail(aviso));
   };
 
   const processar = async () => {
@@ -50,14 +46,14 @@ Deno.serve(async req => {
       const { data: claim } = await db.from("rotina_avisos_envios").update({ status: "processando" }).eq("id", item.id).eq("status", "aguardando").select("id");
       if (!claim?.length) continue;
       try {
-        const id = await enviar(item.destinatario, { nome: item.nome, ciclo: item.ciclo, tipo: item.tipo, pendencias: item.pendencias }, `rotina-aviso-${item.id}`);
+        const id = await enviar(item.destinatario, { nome: item.nome, ciclo: item.ciclo, tipo: item.tipo, pendencias: item.pendencias });
         await db.from("rotina_avisos_envios").update({ status: "enviado", enviado_em: new Date().toISOString(), provedor_id: id || null, erro: null }).eq("id", item.id);
         enviados++;
       } catch (e) {
         await db.from("rotina_avisos_envios").update({ status: "falhou", erro: String((e as Error).message ?? e).slice(0, 500) }).eq("id", item.id);
         falhas++;
       }
-      await new Promise(r => setTimeout(r, 600)); // Resend default limit: 2 req/s
+      await new Promise(r => setTimeout(r, 300)); // gentle pacing for the Gmail API
     }
     return { enviados, falhas };
   };
@@ -97,7 +93,7 @@ Deno.serve(async req => {
   }
 
   if (acao === "configurar") {
-    if (!resendKey) return out({ error: "Cadastre o secret RESEND_API_KEY antes de conectar" }, 503);
+    if (faltaGmail()) return out({ error: faltaGmail() }, 503);
     if (!cronToken || cronToken.length < 32) return out({ error: "Cadastre o secret ROTINA_AVISOS_CRON_TOKEN (mín. 32 caracteres)" }, 503);
     const { error } = await db.rpc("rotina_avisos_remetente_configurar", { _token: cronToken, _url: `${url}/functions/v1/rotina-avisos-enviar`, _uid: uid });
     if (error) return out({ error: "Não foi possível conectar o remetente" }, 500);
