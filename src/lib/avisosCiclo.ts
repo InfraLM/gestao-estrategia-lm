@@ -20,4 +20,12 @@ export function mensagemAviso(d: DestinatarioAviso, ciclo: string) {
   const p = d.pendencias;
   const text = `Olá, ${d.nome}.\nCiclo de ${ciclo}. Prazo: segunda-feira, ${ciclo}, às 23h59 (São Paulo).\nPendentes: ${p.prioridades} prioridade(s), ${p.kpis} KPI(s), ${p.atas} pendência(s) de atas e ${p.status_reports} status report(s).\nAbrir meu check-in/checkout: ${url}`;
   return { subject: `Check-in/checkout · ciclo ${ciclo}`, text, html: `<p>Olá, ${escape(d.nome)}.</p><p>Ciclo de ${ciclo}. Prazo: segunda-feira às 23h59 (São Paulo).</p><p>Pendentes: ${p.prioridades} prioridade(s), ${p.kpis} KPI(s), ${p.atas} pendência(s) de atas e ${p.status_reports} status report(s).</p><p><a href="${url}">Abrir meu check-in/checkout</a></p>` };
+}/** Weekly e-mail allowlist: null = every eligible chair receives automatic notices. */
+export const recebeAutomatico = (email: string | null, lista: string[] | null) => !!email && (lista === null || lista.includes(email.trim().toLowerCase()));
+/** Toggling starts from "everyone eligible" when no list exists yet; result is normalized and sorted. */
+export function alternarPermitido(lista: string[] | null, elegiveis: string[], email: string, recebe: boolean): string[] {
+  const base = new Set((lista ?? elegiveis).map(e => e.trim().toLowerCase()));
+  const alvo = email.trim().toLowerCase();
+  if (recebe) base.add(alvo); else base.delete(alvo);
+  return [...base].filter(Boolean).sort();
 }

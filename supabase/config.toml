@@ -1,1 +1,4 @@
 project_id = "kqnzstflzngfelftnplx"
+
+[functions.rotina-avisos-enviar]
+verify_jwt = false
