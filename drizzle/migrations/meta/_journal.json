@@ -687,6 +687,13 @@
       "when": 1793739437815,
       "tag": "0097_quick_wins_contexto",
       "breakpoints": true
+    },
+    {
+      "idx": 98,
+      "version": "7",
+      "when": 1793803012755,
+      "tag": "0098_quick_wins_diretores_areas",
+      "breakpoints": true
     }
   ]
 }
