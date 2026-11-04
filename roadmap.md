@@ -1,7 +1,9 @@
 # Quick Wins · ajustes de diretores e áreas
-- [ ] Aprovar plano curto antes da implementação, conforme regra do projeto.
-- [ ] Aplicar schema a partir da 0098, resolução e segurança por área, identidade por e-mail e carga de 26 pessoas.
-- [ ] Atualizar cadastro, filtros, triagem e alertas; testar regras e acessos com vitest e conferir telas sem publicação.
+- [x] Plano aprovado; migrations 0098/0099 aplicadas sem editar anteriores; carga transacional auditada de 26 pessoas e dois vínculos de Marcya, sem duplicar registros.
+- [x] Diretor não restrito, resolução por cadastro/login, RLS e triagem por área, identidade por e-mail sem pontos e alertas de envio pendente; Yuri ligado à conta existente sem alterar roles ou mt_usuarios.
+- [x] Cadastro, filtros e áreas atualizados; 630 testes da suíte passaram com maxWorkers=2 e 21 testes Quick Wins finais passaram. Naira abriu Administração em computador/celular, áreas e salvar interceptado conferidos sem gravação real, sem erros ou transbordamento. Build OK.
+- [ ] Governança define diretores das áreas Jurídico/Governança de Marcya e de Rany; 23 pessoas aguardam conta verificada/primeiro login, incluindo Bruno/Guilherme/Iuri/Felipe (14 outros líderes dependem dessas contas para triagem).
+- [ ] Envio de e-mails depende da configuração de remetente; continua desligado. Não publicado, conforme pedido.
 
 # Pré-Offsite v3.14 · rascunho do editor
 - [x] Método mantém v311-metodo e selo; nova descrição com andragogia. FIDC LM adicionado com campos compartilhados; caixa 4A ajustada; histórico do rascunho registrado.

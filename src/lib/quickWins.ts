@@ -12,7 +12,7 @@ export type StatusExecucao = "nao_iniciado" | "em_execucao" | "concluido" | "can
 export const FAIXAS: Record<Faixa, string> = { sem_custo: "Sem custo", ate_5k: "Até R$ 5 mil", "5k_20k": "R$ 5 mil a R$ 20 mil", acima_20k: "Acima de R$ 20 mil" };
 export const APROVACOES: Record<Aprovacao, string> = { proprio_lider: "O próprio líder", diretor: "Diretor", comite_ceo: "Comitê / CEO" };
 export const PRAZOS: Record<Prazo, string> = { ate_30: "Até 30 dias", "31_60": "31 a 60 dias", "61_90": "61 a 90 dias", acima_90: "Acima de 90 dias" };
-export const CARGOS: Record<string, string> = { coordenador: "Coordenador(a)", supervisor: "Supervisor(a)", gerente: "Gerente" };
+export const CARGOS: Record<string, string> = { diretor: "Diretor(a)", gerente: "Gerente", coordenador: "Coordenador(a)", supervisor: "Supervisor(a)", outro: "Outro" };
 export const TRIAGEM: Record<StatusTriagem, string> = { pendente: "Aguardando triagem", aprovado: "Aprovado", ajustar: "Ajustar", devolvido: "Devolvido", convertido_iniciativa: "Convertido em iniciativa" };
 export const EXECUCAO: Record<StatusExecucao, string> = { nao_iniciado: "Não iniciado", em_execucao: "Em execução", concluido: "Concluído", cancelado: "Cancelado" };
 export const CLASSIFICACAO: Record<Classificacao, string> = { quick_win: "Quick win", iniciativa_maior: "Iniciativa maior" };
@@ -27,7 +27,7 @@ export function classificar(faixa: Faixa, aprovacao: Aprovacao, prazo: Prazo, li
 }
 
 export type QwItem = {
-  id: string; envio_id: string; ordem: number; titulo: string; observacao: string; acao_proposta: string; indicador: string;
+  area_rotulo?: string | null; id: string; envio_id: string; ordem: number; titulo: string; observacao: string; acao_proposta: string; indicador: string;
   valor_atual: string | null; valor_alvo: string; objetivo_id: string | null; faixa_investimento: Faixa; aprovacao_necessaria: Aprovacao;
   prazo_resultado: Prazo; mudanca_maior: string; responsavel_execucao: string; classificacao: Classificacao; status_triagem: StatusTriagem;
   comentario_diretor: string | null; triado_em: string | null; status_execucao: StatusExecucao; resultado_medido: string | null; concluido_em: string | null;
@@ -35,8 +35,10 @@ export type QwItem = {
 
 export const CAMPOS_OBRIGATORIOS: (keyof QwItem)[] = ["titulo", "observacao", "acao_proposta", "indicador", "valor_alvo", "objetivo_id", "mudanca_maior", "responsavel_execucao"];
 
-export function camposFaltando(i: Partial<QwItem>): string[] {
-  return CAMPOS_OBRIGATORIOS.filter((k) => !String(i[k] ?? "").trim()) as string[];
+export function camposFaltando(i: Partial<QwItem>, areaObrigatoria = false): string[] {
+  const campos: string[] = CAMPOS_OBRIGATORIOS.filter((k) => !String(i[k] ?? "").trim());
+  if (areaObrigatoria && !i.area_rotulo?.trim()) campos.push("area_rotulo");
+  return campos;
 }
 
 export const ativos = (itens: QwItem[]) => itens.filter((i) => i.status_execucao !== "cancelado");
@@ -64,8 +66,8 @@ export function indicadores(totalLideres: number, lideresQueEnviaram: number, it
 
 const esc = (v: unknown) => { const s = String(v ?? ""); return /[";\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 export function csv(linhas: LinhaPainel[], objetivos: Record<string, string>): string {
-  const head = ["Líder", "Cargo", "Cadeira", "Ordem", "Título", "Objetivo BSC", "Indicador", "Valor atual", "Valor alvo", "Investimento", "Aprovação", "Prazo", "Classificação", "Triagem", "Comentário do diretor", "Execução", "Resultado medido"];
-  const rows = linhas.map(({ item: i, lider: l }) => [l.nome, CARGOS[l.cargo] ?? l.cargo, l.cadeira, i.ordem, i.titulo, i.objetivo_id ? objetivos[i.objetivo_id] ?? "" : "", i.indicador, i.valor_atual, i.valor_alvo,
+  const head = ["Líder", "Cargo", "Cadeira", "Área", "Ordem", "Título", "Objetivo BSC", "Indicador", "Valor atual", "Valor alvo", "Investimento", "Aprovação", "Prazo", "Classificação", "Triagem", "Comentário do diretor", "Execução", "Resultado medido"];
+  const rows = linhas.map(({ item: i, lider: l }) => [l.nome, CARGOS[l.cargo] ?? l.cargo, l.cadeira, i.area_rotulo, i.ordem, i.titulo, i.objetivo_id ? objetivos[i.objetivo_id] ?? "" : "", i.indicador, i.valor_atual, i.valor_alvo,
     FAIXAS[i.faixa_investimento], APROVACOES[i.aprovacao_necessaria], PRAZOS[i.prazo_resultado], CLASSIFICACAO[i.classificacao], TRIAGEM[i.status_triagem], i.comentario_diretor, EXECUCAO[i.status_execucao], i.resultado_medido]);
   return "\uFEFF" + [head, ...rows].map((r) => r.map(esc).join(";")).join("\n");
 }

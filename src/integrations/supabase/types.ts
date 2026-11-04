@@ -5499,6 +5499,7 @@ export type Database = {
       }
       qw_envios: {
         Row: {
+          aguardando_diretor: boolean
           ciclo_id: string
           created_at: string
           enviado_em: string | null
@@ -5508,6 +5509,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          aguardando_diretor?: boolean
           ciclo_id: string
           created_at?: string
           enviado_em?: string | null
@@ -5517,6 +5519,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          aguardando_diretor?: boolean
           ciclo_id?: string
           created_at?: string
           enviado_em?: string | null
@@ -5546,6 +5549,7 @@ export type Database = {
         Row: {
           acao_proposta: string
           aprovacao_necessaria: string
+          area_rotulo: string | null
           classificacao: string
           comentario_diretor: string | null
           concluido_em: string | null
@@ -5573,6 +5577,7 @@ export type Database = {
         Insert: {
           acao_proposta?: string
           aprovacao_necessaria?: string
+          area_rotulo?: string | null
           classificacao?: string
           comentario_diretor?: string | null
           concluido_em?: string | null
@@ -5600,6 +5605,7 @@ export type Database = {
         Update: {
           acao_proposta?: string
           aprovacao_necessaria?: string
+          area_rotulo?: string | null
           classificacao?: string
           comentario_diretor?: string | null
           concluido_em?: string | null
@@ -5641,17 +5647,67 @@ export type Database = {
           },
         ]
       }
+      qw_lider_diretores: {
+        Row: {
+          area_rotulo: string
+          ativo: boolean
+          created_at: string
+          diretor_lider_id: string | null
+          diretor_user_id: string | null
+          id: string
+          lider_id: string
+          updated_at: string
+        }
+        Insert: {
+          area_rotulo: string
+          ativo?: boolean
+          created_at?: string
+          diretor_lider_id?: string | null
+          diretor_user_id?: string | null
+          id?: string
+          lider_id: string
+          updated_at?: string
+        }
+        Update: {
+          area_rotulo?: string
+          ativo?: boolean
+          created_at?: string
+          diretor_lider_id?: string | null
+          diretor_user_id?: string | null
+          id?: string
+          lider_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qw_lider_diretores_diretor_lider_id_fkey"
+            columns: ["diretor_lider_id"]
+            isOneToOne: false
+            referencedRelation: "qw_lideres"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qw_lider_diretores_lider_id_fkey"
+            columns: ["lider_id"]
+            isOneToOne: false
+            referencedRelation: "qw_lideres"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       qw_lideres: {
         Row: {
           ativo: boolean
           cadeira_id: string | null
           cargo: string
           created_at: string
+          diretor_lider_id: string | null
           diretor_user_id: string | null
           email: string
           id: string
           nome: string
           revisao_pendente: boolean
+          triagem_governanca: boolean
           updated_at: string
           user_id: string | null
         }
@@ -5660,11 +5716,13 @@ export type Database = {
           cadeira_id?: string | null
           cargo: string
           created_at?: string
+          diretor_lider_id?: string | null
           diretor_user_id?: string | null
           email: string
           id?: string
           nome: string
           revisao_pendente?: boolean
+          triagem_governanca?: boolean
           updated_at?: string
           user_id?: string | null
         }
@@ -5673,11 +5731,13 @@ export type Database = {
           cadeira_id?: string | null
           cargo?: string
           created_at?: string
+          diretor_lider_id?: string | null
           diretor_user_id?: string | null
           email?: string
           id?: string
           nome?: string
           revisao_pendente?: boolean
+          triagem_governanca?: boolean
           updated_at?: string
           user_id?: string | null
         }
@@ -5687,6 +5747,13 @@ export type Database = {
             columns: ["cadeira_id"]
             isOneToOne: false
             referencedRelation: "org_cadeiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qw_lideres_diretor_lider_id_fkey"
+            columns: ["diretor_lider_id"]
+            isOneToOne: false
+            referencedRelation: "qw_lideres"
             referencedColumns: ["id"]
           },
         ]
@@ -7086,6 +7153,7 @@ export type Database = {
         Returns: string
       }
       qw_abrir_ciclo: { Args: { _id: string }; Returns: undefined }
+      qw_atualizar_encaminhamentos: { Args: never; Returns: undefined }
       qw_atualizar_execucao: {
         Args: { _item: string; _resultado: string; _status: string }
         Returns: undefined
@@ -7112,7 +7180,21 @@ export type Database = {
         Returns: string
       }
       qw_contexto: { Args: never; Returns: Json }
+      qw_diretor_do_lider: {
+        Args: { _lider: string; _uid: string }
+        Returns: boolean
+      }
+      qw_diretor_item: {
+        Args: { _area: string; _lider: string }
+        Returns: string
+      }
+      qw_diretor_salvar: {
+        Args: { _dados: Json; _id: string; _lider: string }
+        Returns: string
+      }
+      qw_email_chave: { Args: { _email: string }; Returns: string }
       qw_enviar: { Args: { _envio: string }; Returns: undefined }
+      qw_envio_aguarda: { Args: { _envio: string }; Returns: boolean }
       qw_fechar_ciclo: { Args: { _id: string }; Returns: undefined }
       qw_gov: { Args: { _uid: string }; Returns: boolean }
       qw_lider_ativar: {
@@ -7122,7 +7204,13 @@ export type Database = {
       qw_lider_salvar: { Args: { _dados: Json; _id: string }; Returns: string }
       qw_meu_perfil: { Args: never; Returns: Json }
       qw_pode_ler_envio: { Args: { _envio: string }; Returns: boolean }
+      qw_pode_ler_item: { Args: { _item: string }; Returns: boolean }
       qw_pode_ler_lider: { Args: { _lider: string }; Returns: boolean }
+      qw_pode_triar_item: { Args: { _item: string }; Returns: boolean }
+      qw_resolver_diretor: {
+        Args: { _lider: string; _user: string }
+        Returns: string
+      }
       qw_salvar_item: { Args: { _dados: Json; _id: string }; Returns: string }
       qw_triar: {
         Args: { _acao: string; _comentario: string; _item: string }
