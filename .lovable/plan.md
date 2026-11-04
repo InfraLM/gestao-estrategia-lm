@@ -1,7 +1,7 @@
 # Quick Wins — ajustes de diretores, áreas e cadastro
 
 ## Alterações
-- Aceitar os cinco cargos solicitados. Diretor nunca será líder restrito; Yuri Garcia será vinculado à conta existente `yuri.garcia@liberdademicaedu.com.br` (domínio efetivo: `liberdademedicaedu.com.br`), preservando seus acessos anteriores.
+- Aceitar os cinco cargos solicitados. Diretor nunca será líder restrito; Yuri Garcia será vinculado à conta existente `yuri.garcia@liberdademedicaedu.com.br`, preservando seus acessos anteriores.
 - Adicionar diretor pré-cadastrado e vínculos múltiplos por área. Resolver o diretor por `diretor_user_id`, com alternativa no `user_id` de `diretor_lider_id`. Se houver vínculos ativos por área, eles determinam a triagem; dois vínculos exigem Área no item.
 - Diretores veem e triam somente itens das suas áreas; Governança/CEO mantêm a visão total. Cadastro e edição dos vínculos serão auditados, com inativação em vez de exclusão.
 - Comparar e-mails sem distinção de maiúsculas ou pontos antes do @, somente no Quick Wins; vinculação no login exige e-mail verificado e não sobrescreve contas vinculadas. Correspondências ambíguas serão sinalizadas, não escolhidas arbitrariamente.
