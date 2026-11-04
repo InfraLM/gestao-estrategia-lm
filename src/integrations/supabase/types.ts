@@ -7188,6 +7188,10 @@ export type Database = {
         Args: { _area: string; _lider: string }
         Returns: string
       }
+      qw_diretor_salvar: {
+        Args: { _dados: Json; _id: string; _lider: string }
+        Returns: string
+      }
       qw_email_chave: { Args: { _email: string }; Returns: string }
       qw_enviar: { Args: { _envio: string }; Returns: undefined }
       qw_envio_aguarda: { Args: { _envio: string }; Returns: boolean }

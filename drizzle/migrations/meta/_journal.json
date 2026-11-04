@@ -694,6 +694,13 @@
       "when": 1793803012755,
       "tag": "0098_quick_wins_diretores_areas",
       "breakpoints": true
+    },
+    {
+      "idx": 99,
+      "version": "7",
+      "when": 1793803076785,
+      "tag": "0099_quick_wins_resolucao_rpcs",
+      "breakpoints": true
     }
   ]
 }
