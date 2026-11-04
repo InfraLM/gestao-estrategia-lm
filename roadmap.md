@@ -1,3 +1,8 @@
+# Quick Wins · ajustes de diretores e áreas
+- [ ] Aprovar plano curto antes da implementação, conforme regra do projeto.
+- [ ] Aplicar schema a partir da 0098, resolução e segurança por área, identidade por e-mail e carga de 26 pessoas.
+- [ ] Atualizar cadastro, filtros, triagem e alertas; testar regras e acessos com vitest e conferir telas sem publicação.
+
 # Pré-Offsite v3.14 · rascunho do editor
 - [x] Método mantém v311-metodo e selo; nova descrição com andragogia. FIDC LM adicionado com campos compartilhados; caixa 4A ajustada; histórico do rascunho registrado.
 - [x] Publicada v3.13, prazo e respostas preservados; prévia v3.14 abriu como Naira, FIDC presente nas opções 4.1/4.2.
