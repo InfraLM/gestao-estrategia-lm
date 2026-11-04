@@ -1,8 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { canAccessModule, canAccessQuickWins, moduleForPath, rotaPermitidaLiderRestrito } from "@/lib/moduleAccess";
-import { classificar, comentarioObrigatorio, contagem, podeEditarItem, type QwItem } from "@/lib/quickWins";
+import { camposFaltando, classificar, comentarioObrigatorio, contagem, podeEditarItem, type QwItem } from "@/lib/quickWins";
 
 describe("Quick Wins: regras de tela", () => {
+  it("área é obrigatória apenas para líderes com mais de um vínculo", () => {
+    const item = { titulo: "T", observacao: "O", acao_proposta: "A", indicador: "I", valor_alvo: "10", objetivo_id: "objetivo", mudanca_maior: "M", responsavel_execucao: "R" };
+    expect(camposFaltando(item, false)).toEqual([]);
+    expect(camposFaltando(item, true)).toEqual(["area_rotulo"]);
+    expect(camposFaltando({ ...item, area_rotulo: "Jurídico" }, true)).toEqual([]);
+  });
   it("classificação ao vivo segue os 3 critérios", () => {
     expect(classificar("5k_20k", "diretor", "61_90", 20000)).toBe("quick_win");
     expect(classificar("acima_20k", "proprio_lider", "ate_30", 20000)).toBe("iniciativa_maior");
