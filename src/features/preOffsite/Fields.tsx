@@ -14,7 +14,7 @@ export function Field({campo,value,onChange,refs,config,disabled=false,compact=f
  const id=useId();let options:{id:string;nome:string}[]=[];
  if(campo.tipo==='escolha')options=(campo.opcoes??[]).map(x=>({id:x,nome:x}));
  if(campo.tipo==='cadeira')options=refs.cadeiras;
- if(campo.tipo==='objetivo')options=refs.objetivos.map(x=>({id:x.id,nome:`${x.codigo} · ${x.nome}`}));
+ if(campo.tipo==='objetivo')options=refs.objetivos.filter(x=>!x.oculto||x.id===value).map(x=>({id:x.id,nome:`${x.codigo} · ${x.nome}`}));
  if(campo.tipo==='processo')options=refs.processos;
  if(campo.tipo==='diretriz')options=config.diretrizes.map(x=>({id:x.id,nome:`${x.id} · ${x.titulo}`}));
  if(campo.tipo==='projeto')options=config.projetos.map(x=>({id:x.id,nome:x.titulo}));
@@ -30,7 +30,7 @@ export function Lista({p,r,set,refs,config,disabled}:{p:Pergunta;r:Respostas;set
 }
 
 export function KpiCampo({id,campo,label,value,onChange,kpis,arquivados=[],disabled,compact}:{id:string;campo:Campo;label:string;value:any;onChange:(v:any)=>void;kpis:any[];arquivados?:any[];disabled?:boolean;compact?:boolean}){
- const [busca,setBusca]=useState('');const todos=ordenarKpis(kpis);const termo=busca.trim().toLowerCase();const filtrados=termo?todos.filter(k=>rotuloKpi(k).toLowerCase().includes(termo)):todos;
+ const [busca,setBusca]=useState('');const sel0=Array.isArray(value)?value:[value];const todos=ordenarKpis(kpis.filter(k=>!k.oculto||sel0.includes(k.id)));const termo=busca.trim().toLowerCase();const filtrados=termo?todos.filter(k=>rotuloKpi(k).toLowerCase().includes(termo)):todos;
  const head=<label htmlFor={id} className={compact?'sr-only':'block text-sm font-semibold'}>{label}<FieldTags campo={campo}/></label>;
  const buscaInput=<Input aria-label={`Buscar indicador · ${label}`} placeholder="Buscar indicador…" value={busca} disabled={disabled} onChange={e=>setBusca(e.target.value)}/>;
  if(!campo.multipla){const atual=typeof value==='string'?value:'';const lista=atual&&!filtrados.some(k=>k.id===atual)?[...(todos.some(k=>k.id===atual)?todos.filter(k=>k.id===atual):[{id:atual,nome:rotuloKpiId(atual,kpis,arquivados)}]),...filtrados]:filtrados;return <div className="space-y-2 min-w-0">{head}{buscaInput}<select id={id} aria-label={label} value={atual} disabled={disabled} onChange={e=>onChange(e.target.value)} className="flex w-full min-w-0 rounded-md border border-input bg-background p-2 text-sm"><option value="">Selecionar…</option>{lista.map(k=><option key={k.id} value={k.id}>{rotuloKpi(k)}</option>)}</select></div>;}
