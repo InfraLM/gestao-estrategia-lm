@@ -45,6 +45,6 @@ export function aplicarBsc2027<R extends { objetivos: any[]; kpis: any[] }>(refs
   return {
     ...refs,
     objetivos: [...b.objetivos.map(o => ({ id: idBsc2027(o.codigo), codigo: o.codigo, nome: o.nome })), ...refs.objetivos.map(anterior)],
-    kpis: [...b.kpis.map(k => ({ id: idBsc2027(k.codigo, k.nome), codigo: k.codigo, nome: k.nome })), ...refs.kpis.map(anterior)],
+    kpis: [...b.kpis.map(k => ({ id: idBsc2027(k.codigo, k.nome), codigo: k.codigo, nome: `${k.codigo} · ${k.nome}` })), ...refs.kpis.map(anterior)],
   };
 }
