@@ -1,6 +1,7 @@
 export const APP_ORIGIN = 'https://gestao-estrategia-lm.lovable.app';
 
 export function authFeedback(error: { code?: string; message?: string }): string {
+  if (error.message?.includes('This email address is not allowed')) return 'Use um e-mail real que possa receber mensagens. Endereços fictícios ou domínios inválidos não são aceitos.';
   if (error.code === 'email_not_confirmed') return 'Confirme seu e-mail pelo link enviado. Você pode reenviar a confirmação abaixo.';
   if (error.code === 'invalid_credentials') return 'E-mail ou senha incorretos. Confira o e-mail ou recupere sua senha.';
   if (error.code === 'over_email_send_rate_limit' || error.code === 'over_request_rate_limit') return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';

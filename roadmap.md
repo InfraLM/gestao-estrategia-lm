@@ -1,7 +1,9 @@
 # Primeiro acesso Pré-Offsite · confirmação de e-mail
-- [ ] Diagnosticar confirmação/envio; confirmar somente Bruno via administração autorizada e auditada, sem senha ou respostas.
-- [ ] Reenvio, recuperação pública e mensagens pt-BR; manter confirmação obrigatória e convites por identidade verificada.
-- [ ] Testar conta fictícia e CFO; informar limites de entrega/publicação, sem publicar.
+- [x] Causa confirmada: CHECK de usuario_acessos não aceitava quick_wins já usado no convite e revertia a confirmação. Migrations 0101/0102; Bruno confirmado 05/11 19:23 UTC com auditoria, convite aceito e CFO diretor verificado, sem senha/respostas.
+- [x] Reenvio, recuperação pública e mensagens pt-BR; confirmação obrigatória preservada. Remetente padrão ativo, envio próprio sem domínio; URL antiga do remetente de convites corrigida.
+- [x] 19 testes passaram, incluindo regressão isolada com confirmação, senha preservada e acessos exatos. Prévia verificou reenvio/recuperação HTTP 200 e guarda pública de reset; compilação OK. Nada publicado.
+- [ ] Entrega e primeiro acesso completos aguardam caixa de e-mail fictícia real/controlada: Cloud rejeita example.test. Login de Bruno não pôde ser exercitado, pois autorização de sessão como terceiro estava indisponível; CFO/convite confirmados no banco.
+- [ ] Publicar app para disponibilizar botões e página de recuperação; confirmação Bruno e correção no banco já vigentes. Domínio próprio opcional depende de configuração DNS pela Naira.
 
 # Quick Wins · ajustes de diretores e áreas
 - [x] Plano aprovado; migrations 0098/0099 aplicadas sem editar anteriores; carga transacional auditada de 26 pessoas e dois vínculos de Marcya, sem duplicar registros.
