@@ -1,3 +1,8 @@
+# Primeiro acesso Pré-Offsite · confirmação de e-mail
+- [ ] Diagnosticar confirmação/envio; confirmar somente Bruno via administração autorizada e auditada, sem senha ou respostas.
+- [ ] Reenvio, recuperação pública e mensagens pt-BR; manter confirmação obrigatória e convites por identidade verificada.
+- [ ] Testar conta fictícia e CFO; informar limites de entrega/publicação, sem publicar.
+
 # Quick Wins · ajustes de diretores e áreas
 - [x] Plano aprovado; migrations 0098/0099 aplicadas sem editar anteriores; carga transacional auditada de 26 pessoas e dois vínculos de Marcya, sem duplicar registros.
 - [x] Diretor não restrito, resolução por cadastro/login, RLS e triagem por área, identidade por e-mail sem pontos e alertas de envio pendente; Yuri ligado à conta existente sem alterar roles ou mt_usuarios.
