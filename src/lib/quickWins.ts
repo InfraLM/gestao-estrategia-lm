@@ -27,13 +27,18 @@ export function classificar(faixa: Faixa, aprovacao: Aprovacao, prazo: Prazo, li
 }
 
 export type QwItem = {
-  area_rotulo?: string | null; id: string; envio_id: string; ordem: number; titulo: string; observacao: string; acao_proposta: string; indicador: string;
+  area_rotulo?: string | null; investimento_estimado?: string | null; id: string; envio_id: string; ordem: number; titulo: string; observacao: string; acao_proposta: string; indicador: string;
   valor_atual: string | null; valor_alvo: string; objetivo_id: string | null; faixa_investimento: Faixa; aprovacao_necessaria: Aprovacao;
   prazo_resultado: Prazo; mudanca_maior: string; responsavel_execucao: string; classificacao: Classificacao; status_triagem: StatusTriagem;
   comentario_diretor: string | null; triado_em: string | null; status_execucao: StatusExecucao; resultado_medido: string | null; concluido_em: string | null;
 };
 
-export const CAMPOS_OBRIGATORIOS: (keyof QwItem)[] = ["titulo", "observacao", "acao_proposta", "indicador", "valor_alvo", "objetivo_id", "mudanca_maior", "responsavel_execucao"];
+/** Formulário simplificado do líder: só iniciativa e problema/oportunidade são obrigatórios. */
+export const CAMPOS_OBRIGATORIOS: (keyof QwItem)[] = ["acao_proposta", "observacao"];
+export const ROTULOS = { acao_proposta: "Iniciativa proposta", observacao: "Problema ou oportunidade que sanaria", investimento_estimado: "Investimento estimado (se aplicável)" };
+export const PERGUNTA = "Quais os quick wins você enxerga para a sua área de atuação e para a empresa? Liste no máximo 10.";
+export const EXPLICACAO = "Quick wins são ações de baixo esforço e bom impacto, com resultados visíveis em curto prazo, que geram tração e moral para o time.";
+export const tituloAutomatico = (iniciativa: string) => iniciativa.trim().slice(0, 80);
 
 export function camposFaltando(i: Partial<QwItem>, areaObrigatoria = false): string[] {
   const campos: string[] = CAMPOS_OBRIGATORIOS.filter((k) => !String(i[k] ?? "").trim());
@@ -65,9 +70,8 @@ export function indicadores(totalLideres: number, lideresQueEnviaram: number, it
 }
 
 const esc = (v: unknown) => { const s = String(v ?? ""); return /[";\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
-export function csv(linhas: LinhaPainel[], objetivos: Record<string, string>): string {
-  const head = ["Líder", "Cargo", "Cadeira", "Área", "Ordem", "Título", "Objetivo BSC", "Indicador", "Valor atual", "Valor alvo", "Investimento", "Aprovação", "Prazo", "Classificação", "Triagem", "Comentário do diretor", "Execução", "Resultado medido"];
-  const rows = linhas.map(({ item: i, lider: l }) => [l.nome, CARGOS[l.cargo] ?? l.cargo, l.cadeira, i.area_rotulo, i.ordem, i.titulo, i.objetivo_id ? objetivos[i.objetivo_id] ?? "" : "", i.indicador, i.valor_atual, i.valor_alvo,
-    FAIXAS[i.faixa_investimento], APROVACOES[i.aprovacao_necessaria], PRAZOS[i.prazo_resultado], CLASSIFICACAO[i.classificacao], TRIAGEM[i.status_triagem], i.comentario_diretor, EXECUCAO[i.status_execucao], i.resultado_medido]);
+export function csv(linhas: LinhaPainel[]): string {
+  const head = ["Líder", "Cargo", "Cadeira", "Área", "Ordem", ROTULOS.acao_proposta, ROTULOS.observacao, ROTULOS.investimento_estimado, "Triagem", "Comentário do diretor", "Execução", "Resultado medido"];
+  const rows = linhas.map(({ item: i, lider: l }) => [l.nome, CARGOS[l.cargo] ?? l.cargo, l.cadeira, i.area_rotulo, i.ordem, i.acao_proposta, i.observacao, i.investimento_estimado, TRIAGEM[i.status_triagem], i.comentario_diretor, EXECUCAO[i.status_execucao], i.resultado_medido]);
   return "\uFEFF" + [head, ...rows].map((r) => r.map(esc).join(";")).join("\n");
 }
