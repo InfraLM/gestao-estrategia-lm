@@ -59,8 +59,8 @@ describe('Pré-Offsite v3.15 · rascunho', () => {
     const c = config();
     const refs = aplicarBsc2027({ objetivos: [{ id: 'u1', codigo: 'AC.03', nome: 'Execução' }], kpis: [{ id: 'k1', codigo: 'F01', nome: 'Antigo' }] }, c);
     expect(refs.objetivos.filter((o: any) => !o.oculto).map((o: any) => o.codigo)).toEqual(['F.01', 'F.02', 'C.01', 'C.02', 'P.01', 'P.02', 'P.03', 'AC.01', 'AC.02']);
-    expect(refs.objetivos.find((o: any) => o.id === 'u1')?.oculto).toBe(true);
-    expect(refs.kpis.find((k: any) => k.id === 'k1')?.oculto).toBe(true);
+    expect((refs.objetivos.find((o: any) => o.id === 'u1') as any)?.oculto).toBe(true);
+    expect((refs.kpis.find((k: any) => k.id === 'k1') as any)?.oculto).toBe(true);
     expect(camposDetalhe32(c).find(f => f.nome === 'KPI')?.rotulo).toContain('BSC 2027 (Rev.04.1)');
   });
 
