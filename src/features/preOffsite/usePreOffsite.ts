@@ -1,3 +1,4 @@
+import { aplicarBsc2027 } from './presentation';
 import rev02 from '@/data/bscRev02.json';
 import {converterRespostasV312, type KpiOffsite} from './bloco0';
 import { prepararConfig, converterRespostas4A } from './editorConfig';
@@ -14,6 +15,7 @@ export function usePreOffsite(){
  for(const x of[c,r,m,refs,p,k])if(x.error)throw x.error;
  const pedePrevia=a.data?.admin&&new URLSearchParams(window.location.search).get('previa')==='rascunho';const rasc=pedePrevia?await db.from('offsite_config_rascunhos').select('conteudo').eq('id','2027').maybeSingle():null;const previa=!!rasc?.data;const configBruta={...PADRAO,...c.data.conteudo} as Config;
  const respondentes=p.data.map((participante:{nome:string;cadeira_id:string})=>({...refs.data.cadeiras.find((ch:{id:string})=>ch.id===participante.cadeira_id),id:participante.cadeira_id,diretor_nome:participante.nome}));
- return{userId:user?.id,acesso:a.data as{admin:boolean;cadeira_id:string|null},config:prepararConfig(previa?{...PADRAO,...rasc.data.conteudo} as Config:configBruta),configBruta,configAtualizadaEm:c.data.atualizado_em as string,previa,prazo:c.data.prazo as string,respostas:(r.data as Resposta[]).map(x=>({...x,respostas:converterRespostas4A(converterRespostasV312(x.respostas??{}))})),materiais:m.data as any[],refs:{...refs.data,respondentes,indicadores:(k.data as KpiOffsite[]).map(k=>{const base=rev02.flatMap(o=>o.kpis).find(x=>[k.nome,(k as any).nome_anterior].some(n=>n&&x.kpi.trim()===String(n).trim()));return {...k,situacao_atual:k.situacao_atual??base?.situacaoAtual??null,meta_2026:k.meta_2026??base?.meta2026??null};})} as{cadeiras:any[];respondentes:any[];objetivos:any[];kpis:any[];kpis_arquivados?:any[];processos:any[];indicadores:KpiOffsite[]}};
+ const cfg=prepararConfig(previa?{...PADRAO,...rasc.data.conteudo} as Config:configBruta);
+ return{userId:user?.id,acesso:a.data as{admin:boolean;cadeira_id:string|null},config:cfg,configBruta,configAtualizadaEm:c.data.atualizado_em as string,previa,prazo:c.data.prazo as string,respostas:(r.data as Resposta[]).map(x=>({...x,respostas:converterRespostas4A(converterRespostasV312(x.respostas??{}))})),materiais:m.data as any[],refs:aplicarBsc2027({...refs.data,respondentes,indicadores:(k.data as KpiOffsite[]).map(k=>{const base=rev02.flatMap(o=>o.kpis).find(x=>[k.nome,(k as any).nome_anterior].some(n=>n&&x.kpi.trim()===String(n).trim()));return {...k,situacao_atual:k.situacao_atual??base?.situacaoAtual??null,meta_2026:k.meta_2026??base?.meta2026??null};})} as any,cfg) as{cadeiras:any[];respondentes:any[];objetivos:any[];kpis:any[];kpis_arquivados?:any[];processos:any[];indicadores:KpiOffsite[]}};
  }});
 }
