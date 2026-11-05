@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, Download, Loader2, Plus, Send } from "lucide-react";
+import { Download, Loader2, Plus, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AbasPagina, { type Aba } from "@/components/AbasPagina";
 import { FormField } from "@/components/FormField";
@@ -15,8 +15,8 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import { useQwPerfil } from "@/hooks/useQuickWins";
 import {
-  APROVACOES, AVISO_INICIATIVA, CARGOS, CLASSIFICACAO, CRITERIOS, EXECUCAO, FAIXAS, PRAZOS, QW_LIMITE_ITENS, TRIAGEM,
-  ativos, camposFaltando, classificar, comentarioObrigatorio, contagem, csv, indicadores, podeEditarItem,
+  CARGOS, CRITERIOS, EXECUCAO, EXPLICACAO, PERGUNTA, QW_LIMITE_ITENS, ROTULOS, TRIAGEM,
+  ativos, camposFaltando, comentarioObrigatorio, contagem, csv, indicadores, podeEditarItem, tituloAutomatico,
   type LinhaPainel, type QwItem, type StatusExecucao,
 } from "@/lib/quickWins";
 
@@ -57,39 +57,24 @@ function Seletor<T extends string>({ id, value, onChange, opcoes, disabled }: { 
   </Select>;
 }
 
-function ItemEditor({ item, editavel, limite, objetivos, aoSalvar, areas = [] }: { item: QwItem; editavel: boolean; limite: number; objetivos: Record<string, string>; aoSalvar: () => void; areas?: Area[] }) {
+function ItemEditor({ item, editavel, aoSalvar, areas = [] }: { item: QwItem; editavel: boolean; aoSalvar: () => void; areas?: Area[] }) {
   const [f, setF] = useState<QwItem>(item);
   const [estado, setEstado] = useState<SaveState>({ estado: "ocioso" });
   const set = (k: keyof QwItem, v: any) => { setF((p) => ({ ...p, [k]: v })); setEstado({ estado: "alterado" }); };
-  const cls = classificar(f.faixa_investimento, f.aprovacao_necessaria, f.prazo_resultado, limite);
   const salvar = async () => {
     setEstado({ estado: "salvando" });
-    const { titulo, observacao, acao_proposta, indicador, valor_atual, valor_alvo, objetivo_id, faixa_investimento, aprovacao_necessaria, prazo_resultado, mudanca_maior, responsavel_execucao, area_rotulo } = f;
-    const { error } = await db.rpc("qw_salvar_item", { _id: item.id, _dados: { titulo, observacao, acao_proposta, indicador, valor_atual, valor_alvo, objetivo_id: objetivo_id ?? "", faixa_investimento, aprovacao_necessaria, prazo_resultado, mudanca_maior, responsavel_execucao, area_rotulo } });
+    const dados: Record<string, string | null | undefined> = { acao_proposta: f.acao_proposta, titulo: tituloAutomatico(f.acao_proposta ?? ""), observacao: f.observacao, investimento_estimado: f.investimento_estimado ?? "" };
+    if (areas.length > 1) dados.area_rotulo = f.area_rotulo ?? "";
+    const { error } = await db.rpc("qw_salvar_item", { _id: item.id, _dados: dados });
     if (error) { setEstado({ estado: "erro", erro: error.message }); erro(error); return; }
     setEstado({ estado: "salvo", em: new Date() }); aoSalvar();
   };
   const p = `qw-${item.id}`;
-  const txt = (k: keyof QwItem, label: string, req = true, area = false, max?: number) => <FormField id={`${p}-${k}`} label={label} required={req}>
-    {area ? <Textarea value={(f[k] as string) ?? ""} onChange={(e) => set(k, e.target.value)} disabled={!editavel} rows={2} />
-      : <Input value={(f[k] as string) ?? ""} maxLength={max} onChange={(e) => set(k, e.target.value)} disabled={!editavel} />}
-  </FormField>;
   return <div className="space-y-3">
-    <div className="grid gap-3 md:grid-cols-2">
-      {areas.length > 0 && <FormField id={`${p}-area`} label="Área" required={areas.length > 1}><Seletor value={f.area_rotulo ?? ""} onChange={(v) => set("area_rotulo", v)} opcoes={Object.fromEntries(areas.map((a) => [a.area_rotulo, a.area_rotulo]))} disabled={!editavel} /></FormField>}
-      {txt("titulo", `Título (${f.titulo.length}/80)`, true, false, 80)}
-      <FormField id={`${p}-obj`} label="Objetivo do BSC" required><Seletor value={f.objetivo_id ?? ""} onChange={(v) => set("objetivo_id", v)} opcoes={objetivos} disabled={!editavel} /></FormField>
-      {txt("observacao", "O que você observou", true, true)}
-      {txt("acao_proposta", "Ação proposta", true, true)}
-      {txt("indicador", "Indicador")}
-      <div className="grid grid-cols-2 gap-3">{txt("valor_atual", "Valor atual", false)}{txt("valor_alvo", "Valor alvo")}</div>
-      <FormField id={`${p}-faixa`} label="Investimento"><Seletor value={f.faixa_investimento} onChange={(v) => set("faixa_investimento", v)} opcoes={FAIXAS} disabled={!editavel} /></FormField>
-      <FormField id={`${p}-aprov`} label="Aprovação necessária"><Seletor value={f.aprovacao_necessaria} onChange={(v) => set("aprovacao_necessaria", v)} opcoes={APROVACOES} disabled={!editavel} /></FormField>
-      <FormField id={`${p}-prazo`} label="Prazo para resultado"><Seletor value={f.prazo_resultado} onChange={(v) => set("prazo_resultado", v)} opcoes={PRAZOS} disabled={!editavel} /></FormField>
-      {txt("responsavel_execucao", "Responsável pela execução")}
-      <div className="md:col-span-2">{txt("mudanca_maior", "Que mudança maior este quick win ajuda a destravar?", true, true)}</div>
-    </div>
-    {cls === "iniciativa_maior" && <p className="flex items-center gap-2 rounded-md border border-warning/40 bg-warning/10 p-2 text-sm" role="status"><AlertTriangle className="h-4 w-4" />{AVISO_INICIATIVA}</p>}
+    {areas.length > 1 && <FormField id={`${p}-area`} label="Área" required><Seletor id={`${p}-area`} value={f.area_rotulo ?? ""} onChange={(v) => set("area_rotulo", v)} opcoes={Object.fromEntries(areas.map((a) => [a.area_rotulo, a.area_rotulo]))} disabled={!editavel} /></FormField>}
+    <FormField id={`${p}-acao`} label={ROTULOS.acao_proposta} required><Textarea id={`${p}-acao`} rows={2} value={f.acao_proposta ?? ""} onChange={(e) => set("acao_proposta", e.target.value)} disabled={!editavel} /></FormField>
+    <FormField id={`${p}-obs`} label={ROTULOS.observacao} required><Textarea id={`${p}-obs`} rows={2} value={f.observacao ?? ""} onChange={(e) => set("observacao", e.target.value)} disabled={!editavel} /></FormField>
+    <FormField id={`${p}-inv`} label={ROTULOS.investimento_estimado}><Input id={`${p}-inv`} value={f.investimento_estimado ?? ""} onChange={(e) => set("investimento_estimado", e.target.value)} disabled={!editavel} placeholder="Ex.: sem custo, R$ 2 mil" /></FormField>
     {editavel && <div className="flex flex-wrap items-center justify-between gap-2"><SaveFeedback state={estado} onRetry={salvar} /><Button size="sm" onClick={salvar} disabled={estado.estado === "salvando"}>Salvar rascunho</Button></div>}
   </div>;
 }
@@ -107,7 +92,6 @@ function Execucao({ item, aoSalvar }: { item: QwItem; aoSalvar: () => void }) {
 
 function StatusItem({ i }: { i: QwItem }) {
   return <div className="flex flex-wrap gap-1.5">
-    <Badge variant={i.classificacao === "quick_win" ? "default" : "secondary"}>{CLASSIFICACAO[i.classificacao]}</Badge>
     <Badge variant="outline">{TRIAGEM[i.status_triagem]}</Badge>
     {i.status_triagem === "aprovado" && <Badge variant="outline">{EXECUCAO[i.status_execucao]}</Badge>}
   </div>;
@@ -135,28 +119,25 @@ function MeusQuickWins({ d, liderId, recarregar }: { d: NonNullable<ReturnType<t
   if (!lider) return <p>Líder não encontrado.</p>;
   return <div className="space-y-4">
     {ctx?.aguardando_diretor && <p className="text-sm text-warning" role="status">Diretor pendente. Você pode preencher e enviar; a Governança acompanha o encaminhamento.</p>}
-    <Card><CardContent className="grid gap-3 pt-6 text-sm md:grid-cols-4">
-      <div><div className="text-muted-foreground">Líder</div><div className="font-medium">{lider.nome}</div></div>
-      <div><div className="text-muted-foreground">Cargo</div><div className="font-medium">{CARGOS[lider.cargo]}</div></div>
-      <div><div className="text-muted-foreground">Cadeira</div><div className="font-medium">{ctx?.cadeira ?? "—"}</div></div>
-      <div><div className="text-muted-foreground">Diretor</div><div className="font-medium">{ctx?.areas.some((a) => a.ativo) ? ctx.areas.filter((a) => a.ativo).map((a) => `${a.area_rotulo}: ${a.diretor ?? "pendente"}`).join(" · ") : ctx?.diretor ?? "Pendente"}</div></div>
+    <Card><CardContent className="space-y-3 pt-6 text-sm">
+      <p>{EXPLICACAO}</p>
+      <p><span className="text-muted-foreground">Critérios:</span> {CRITERIOS.join(" · ").toLowerCase()}</p>
+      <p><span className="text-muted-foreground">Respondendo como:</span> <strong>{lider.nome} · {CARGOS[lider.cargo] ?? lider.cargo}</strong></p>
+      {ciclo?.data_fechamento ? <p><span className="text-muted-foreground">Prazo:</span> <strong>{dataBR(ciclo.data_fechamento)}</strong></p> : !ciclo && <p>Nenhum ciclo aberto no momento.</p>}
     </CardContent></Card>
-    <Card><CardContent className="space-y-2 pt-6 text-sm">
-      {ciclo ? <p><strong>Ciclo {ciclo.ano}</strong> · {aberto ? "aberto" : "fechado"} · prazo {dataBR(ciclo.data_fechamento)} · investimento até R$ {Number(ciclo.limite_investimento).toLocaleString("pt-BR")} · resultado em até {ciclo.prazo_max_dias} dias</p> : <p>Nenhum ciclo aberto no momento.</p>}
-      <ul className="flex flex-wrap gap-2">{CRITERIOS.map((c) => <li key={c}><Badge variant="outline">{c}</Badge></li>)}</ul>
-    </CardContent></Card>
+    <p className="text-lg font-semibold">{PERGUNTA}</p>
     {ciclo && <div className="flex flex-wrap items-center justify-between gap-2">
-      <div className="text-sm"><strong>{contagem(itens)}</strong> quick wins {envio?.aguardando_diretor && <Badge variant="outline">Aguardando diretor</Badge>} · envio: {envio?.status === "enviado" ? `enviado em ${new Date(envio.enviado_em ?? "").toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}` : "rascunho"}</div>
+      <div className="text-sm"><strong>{contagem(itens)}</strong> {envio?.aguardando_diretor && <Badge variant="outline">Aguardando diretor</Badge>} · envio: {envio?.status === "enviado" ? `enviado em ${new Date(envio.enviado_em ?? "").toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}` : "rascunho"}</div>
       <div className="flex gap-2">
-        {aberto && (!envio || envio.status === "rascunho") && <Button variant="outline" onClick={adicionar} disabled={busy || lista.length >= QW_LIMITE_ITENS}><Plus className="mr-1 h-4 w-4" />Adicionar</Button>}
+        {aberto && (!envio || envio.status === "rascunho") && <Button variant="outline" onClick={adicionar} disabled={busy || lista.length >= QW_LIMITE_ITENS}><Plus className="mr-1 h-4 w-4" />Adicionar quick win ({contagem(itens)})</Button>}
         {aberto && envio && (envio.status === "rascunho" || lista.some((i) => ["ajustar", "devolvido"].includes(i.status_triagem))) && <Button onClick={enviar} disabled={busy || lista.length < 1}><Send className="mr-1 h-4 w-4" />Enviar</Button>}
       </div>
     </div>}
     {lista.map((i) => { const ed = !!envio && podeEditarItem(envio.status, i, aberto); return <Card key={i.id}>
-      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0"><CardTitle className="text-base">#{i.ordem} {i.titulo || "Novo quick win"}</CardTitle><StatusItem i={i} /></CardHeader>
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0"><CardTitle className="text-base">Quick win #{i.ordem}</CardTitle><StatusItem i={i} /></CardHeader>
       <CardContent className="space-y-3">
         {i.comentario_diretor && <p className="rounded-md bg-muted p-2 text-sm"><strong>Comentário do diretor:</strong> {i.comentario_diretor}</p>}
-        <ItemEditor item={i} editavel={ed} limite={Number(ciclo?.limite_investimento ?? 20000)} areas={ctx?.areas.filter((a) => a.ativo) ?? []} objetivos={d.objetivos} aoSalvar={recarregar} />
+        <ItemEditor item={i} editavel={ed} areas={ctx?.areas.filter((a) => a.ativo) ?? []} aoSalvar={recarregar} />
         {i.status_triagem === "aprovado" && ciclo?.status !== "arquivado" && <Execucao item={i} aoSalvar={recarregar} />}
         {envio?.status === "rascunho" && aberto && <Button variant="ghost" size="sm" onClick={() => retirar(i.id)}>Retirar do rascunho</Button>}
       </CardContent></Card>; })}
@@ -178,10 +159,10 @@ function Triagem({ d, recarregar, filtroDiretor }: { d: NonNullable<ReturnType<t
   return <div className="space-y-4">{envios.map((e) => { const l = d.lideres.find((x) => x.id === e.lider_id); if (!l) return null; return <Card key={e.id}>
     <CardHeader><CardTitle className="text-base">{l.nome} · {CARGOS[l.cargo]}</CardTitle></CardHeader>
     <CardContent className="space-y-3">{ativos(d.itens.filter((i) => i.envio_id === e.id && d.ctx.itens_triaveis.includes(i.id))).map((i) => <div key={i.id} className="space-y-2 rounded-md border p-3">
-      <div className="flex flex-wrap items-center justify-between gap-2"><strong>#{i.ordem} {i.titulo}{i.area_rotulo && ` · ${i.area_rotulo}`}</strong><StatusItem i={i} /></div>
-      <p className="text-sm"><span className="text-muted-foreground">Ação:</span> {i.acao_proposta}</p>
-      <p className="text-sm"><span className="text-muted-foreground">Indicador:</span> {i.indicador} ({i.valor_atual ?? "—"} → {i.valor_alvo}) · {i.objetivo_id ? d.objetivos[i.objetivo_id] : ""}</p>
-      <p className="text-sm text-muted-foreground">{FAIXAS[i.faixa_investimento]} · {APROVACOES[i.aprovacao_necessaria]} · {PRAZOS[i.prazo_resultado]}</p>
+      <div className="flex flex-wrap items-center justify-between gap-2"><strong>#{i.ordem}{i.area_rotulo && ` · ${i.area_rotulo}`}</strong><StatusItem i={i} /></div>
+      <p className="text-sm"><span className="text-muted-foreground">{ROTULOS.acao_proposta}:</span> {i.acao_proposta}</p>
+      <p className="text-sm"><span className="text-muted-foreground">{ROTULOS.observacao}:</span> {i.observacao}</p>
+      <p className="text-sm"><span className="text-muted-foreground">Investimento estimado:</span> {i.investimento_estimado || "—"}</p>
       {i.status_triagem === "pendente" && <>
         <FormField id={`com-${i.id}`} label="Comentário (obrigatório exceto para aprovar)"><Textarea rows={2} value={coment[i.id] ?? ""} onChange={(ev) => setComent((p) => ({ ...p, [i.id]: ev.target.value }))} /></FormField>
         <div className="flex flex-wrap gap-2">
@@ -195,35 +176,31 @@ function Triagem({ d, recarregar, filtroDiretor }: { d: NonNullable<ReturnType<t
 
 function Painel({ d }: { d: NonNullable<ReturnType<typeof useDados>["data"]> }) {
   const anos = d.ciclos.map((c) => String(c.ano));
-  const [f, setF] = useState<Record<string, string>>({ ano: anos[0] ?? "", cadeira: "todos", cargo: "todos", objetivo: "todos", classificacao: "todos", triagem: "todos", execucao: "todos" });
+  const [f, setF] = useState<Record<string, string>>({ ano: anos[0] ?? "", cadeira: "todos", cargo: "todos", triagem: "todos", execucao: "todos" });
   const ciclo = d.ciclos.find((c) => String(c.ano) === f.ano);
   const cadeira = (id: string) => d.ctx.lideres.find((l) => l.id === id)?.cadeira ?? "—";
   const lideres = d.lideres.filter((l) => l.ativo && (f.cadeira === "todos" || cadeira(l.id) === f.cadeira) && (f.cargo === "todos" || l.cargo === f.cargo));
   const envios = d.envios.filter((e) => e.ciclo_id === ciclo?.id && lideres.some((l) => l.id === e.lider_id));
   const linhas: LinhaPainel[] = useMemo(() => d.itens.filter((i) => envios.some((e) => e.id === i.envio_id && e.status === "enviado"))
-    .filter((i) => (f.objetivo === "todos" || i.objetivo_id === f.objetivo) && (f.classificacao === "todos" || i.classificacao === f.classificacao) && (f.triagem === "todos" || i.status_triagem === f.triagem) && (f.execucao === "todos" || i.status_execucao === f.execucao))
+    .filter((i) => (f.triagem === "todos" || i.status_triagem === f.triagem) && (f.execucao === "todos" || i.status_execucao === f.execucao))
     .map((i) => { const e = envios.find((x) => x.id === i.envio_id); const l = d.lideres.find((x) => x.id === e?.lider_id); return { item: i, lider: { id: l?.id ?? "", nome: l?.nome ?? "—", cargo: l?.cargo ?? "", cadeira: cadeira(l?.id ?? "") }, enviado: true }; }), [d, f, envios]);
   const ind = indicadores(lideres.length, envios.filter((e) => e.status === "enviado").length, linhas.map((x) => x.item), d.objetivos);
   const cadeiras = Object.fromEntries([...new Set(d.ctx.lideres.map((l) => l.cadeira).filter((c): c is string => Boolean(c)))].map((c) => [c, c]));
   const filtro = (k: string, label: string, opcoes: Record<string, string>) => <FormField id={`f-${k}`} label={label}><Seletor value={f[k]} onChange={(v) => setF((p) => ({ ...p, [k]: v }))} opcoes={k === "ano" ? opcoes : { todos: "Todos", ...opcoes }} /></FormField>;
-  const exportar = () => { const b = new Blob([csv(linhas, d.objetivos)], { type: "text/csv;charset=utf-8" }); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `quick-wins-${f.ano}.csv`; a.click(); };
+  const exportar = () => { const b = new Blob([csv(linhas)], { type: "text/csv;charset=utf-8" }); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `quick-wins-${f.ano}.csv`; a.click(); };
   return <div className="space-y-4">
     <PendenciasDiretor d={d} />
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      {filtro("ano", "Ano", Object.fromEntries(anos.map((a) => [a, a])))}{filtro("cadeira", "Diretoria / cadeira", cadeiras)}{filtro("cargo", "Cargo", CARGOS)}{filtro("objetivo", "Objetivo BSC", d.objetivos)}
-      {filtro("classificacao", "Classificação", CLASSIFICACAO)}{filtro("triagem", "Triagem", TRIAGEM)}{filtro("execucao", "Execução", EXECUCAO)}
+      {filtro("ano", "Ano", Object.fromEntries(anos.map((a) => [a, a])))}{filtro("cadeira", "Diretoria / cadeira", cadeiras)}{filtro("cargo", "Cargo", CARGOS)}
+      {filtro("triagem", "Triagem", TRIAGEM)}{filtro("execucao", "Execução", EXECUCAO)}
       <div className="flex items-end"><Button variant="outline" onClick={exportar}><Download className="mr-1 h-4 w-4" />Exportar CSV</Button></div>
     </div>
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {[["Líderes que enviaram", `${ind.pctEnviaram}%`], ["Quick wins enviados", ind.total], ["Aprovados", `${ind.pctAprovados}%`], ["Concluídos com resultado medido", `${ind.pctConcluidos}%`]].map(([k, v]) =>
         <Card key={k as string}><CardContent className="pt-6"><div className="text-2xl font-semibold">{v}</div><div className="text-sm text-muted-foreground">{k}</div></CardContent></Card>)}
     </div>
-    <Card><CardHeader><CardTitle className="text-base">Distribuição por objetivo</CardTitle></CardHeader><CardContent className="space-y-1 text-sm">
-      {Object.entries(ind.distribuicao).sort((a, b) => b[1] - a[1]).map(([k, v]) => <div key={k} className="flex justify-between gap-2"><span>{k}</span><strong>{v}</strong></div>)}
-      {!ind.total && <p className="text-muted-foreground">Sem envios com estes filtros.</p>}
-    </CardContent></Card>
-    <div className="overflow-x-auto rounded-md border"><table className="w-full text-sm"><thead className="bg-muted"><tr>{["Líder", "Título", "Área", "Objetivo", "Classificação", "Triagem", "Execução"].map((h) => <th key={h} className="p-2 text-left">{h}</th>)}</tr></thead>
-      <tbody>{linhas.map(({ item: i, lider: l }) => <tr key={i.id} className="border-t"><td className="p-2">{l.nome}</td><td className="p-2">{i.titulo}</td><td className="p-2">{i.area_rotulo ?? "—"}</td><td className="p-2">{i.objetivo_id ? d.objetivos[i.objetivo_id]?.split(" · ")[0] : "—"}</td><td className="p-2">{CLASSIFICACAO[i.classificacao]}</td><td className="p-2">{TRIAGEM[i.status_triagem]}</td><td className="p-2">{EXECUCAO[i.status_execucao]}</td></tr>)}</tbody></table></div>
+    <div className="overflow-x-auto rounded-md border"><table className="w-full text-sm"><thead className="bg-muted"><tr>{["Líder", "Área", ROTULOS.acao_proposta, ROTULOS.observacao, "Investimento estimado", "Triagem", "Execução"].map((h) => <th key={h} className="p-2 text-left">{h}</th>)}</tr></thead>
+      <tbody>{linhas.map(({ item: i, lider: l }) => <tr key={i.id} className="border-t"><td className="p-2">{l.nome}</td><td className="p-2">{i.area_rotulo ?? "—"}</td><td className="p-2">{i.acao_proposta}</td><td className="p-2">{i.observacao}</td><td className="p-2">{i.investimento_estimado || "—"}</td><td className="p-2">{TRIAGEM[i.status_triagem]}</td><td className="p-2">{EXECUCAO[i.status_execucao]}</td></tr>)}</tbody></table></div>
   </div>;
 }
 

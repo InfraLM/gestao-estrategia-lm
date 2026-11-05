@@ -701,6 +701,13 @@
       "when": 1793803076785,
       "tag": "0099_quick_wins_resolucao_rpcs",
       "breakpoints": true
+    },
+    {
+      "idx": 100,
+      "version": "7",
+      "when": 1793895335961,
+      "tag": "0100_quick_wins_formulario_simplificado",
+      "breakpoints": true
     }
   ]
 }
