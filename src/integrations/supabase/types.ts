@@ -6694,6 +6694,17 @@ export type Database = {
         Args: { _modulo: string; _user_id: string }
         Returns: boolean
       }
+      convite_auditar_confirmacao: {
+        Args: {
+          _anterior: string
+          _ator: string
+          _convite: string
+          _motivo: string
+          _novo: string
+          _usuario: string
+        }
+        Returns: undefined
+      }
       editor_modulo: {
         Args: { _modulo: string; _uid: string }
         Returns: boolean

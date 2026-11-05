@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { invitationId, invitationLink } from "@/lib/userInvitation";
 import { retornoStatus } from "@/lib/atualizacaoStatus";
+import { APP_ORIGIN, authFeedback, confirmationRedirect } from '@/lib/authFeedback';
 
 export default function Auth() {
   const { user, loading, signOut } = useAuth();
@@ -26,6 +27,7 @@ export default function Auth() {
   const [convite] = useState(() => invitationId(new URLSearchParams(window.location.search).get("convite")) ?? invitationId(sessionStorage.getItem("convite-pendente")));
   const [inviteError, setInviteError] = useState("");
   const [accepted, setAccepted] = useState(false);
+  const [feedback, setFeedback] = useState('');
   const retorno = retornoStatus(new URLSearchParams(window.location.search).get("retorno"));
 
   useEffect(() => {
@@ -50,7 +52,8 @@ export default function Auth() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { setFeedback(authFeedback(error)); return; }
+    setFeedback('');
     toast.success("Bem-vindo!");
     if (!convite) nav(retorno);
   };
@@ -58,13 +61,26 @@ export default function Auth() {
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email, password,
-      options: { emailRedirectTo: convite ? invitationLink(convite) : `${window.location.origin}/`, data: { display_name: name, cargo } },
+      options: { emailRedirectTo: confirmationRedirect(convite, retorno), data: { display_name: name, cargo } },
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Conta criada! Verifique seu e-mail.");
+    if (error) { setFeedback(authFeedback(error)); return; }
+    if (!data.session) setFeedback('Conta criada. Confirme seu e-mail pelo link enviado. Confira também o spam. O convite será aceito após a confirmação.');
+  };
+
+  const sendEmail = async (kind: 'confirmation' | 'recovery') => {
+    if (busy) return;
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setFeedback('Informe seu e-mail acima.'); return; }
+    setBusy(true);
+    const { error } = kind === 'confirmation'
+      ? await supabase.auth.resend({ type: 'signup', email: email.trim(), options: { emailRedirectTo: confirmationRedirect(convite, retorno) } })
+      : await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${APP_ORIGIN}/reset-password` });
+    setBusy(false);
+    setFeedback(error ? authFeedback(error) : kind === 'confirmation'
+      ? 'Se a conta aguarda confirmação, você receberá um novo link. Confira a caixa de entrada e o spam.'
+      : 'Se este e-mail possui uma conta, você receberá o link para recuperar a senha. Confira também o spam.');
   };
 
   const google = async () => {
@@ -86,6 +102,7 @@ export default function Auth() {
           <h1 className="text-2xl font-semibold tracking-tight">Gestão e Estratégia</h1>
           <p className="text-sm text-muted-foreground mt-1">{convite ? "Convite recebido · entre com o e-mail convidado" : "Entre para acessar o portfólio"}</p>
         </div>
+        {feedback && <p role="status" className="mb-4 text-sm text-foreground">{feedback}</p>}
         <Tabs defaultValue="signin">
           <TabsList className="grid grid-cols-2 w-full mb-4">
             <TabsTrigger value="signin">Entrar</TabsTrigger>
@@ -108,6 +125,10 @@ export default function Auth() {
             </form>
           </TabsContent>
         </Tabs>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button type="button" variant="link" disabled={busy} onClick={() => sendEmail('confirmation')}>Reenviar confirmação</Button>
+          <Button type="button" variant="link" disabled={busy} onClick={() => sendEmail('recovery')}>Recuperar senha</Button>
+        </div>
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
           <span className="relative bg-card px-3 text-xs text-muted-foreground mx-auto block w-fit">ou</span>
