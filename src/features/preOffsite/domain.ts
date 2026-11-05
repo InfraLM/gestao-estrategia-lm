@@ -1,3 +1,4 @@
+import { prefixoPergunta } from './presentation';
 import { camposProjeto, camposRiscos } from './editorConfig';
 import { PROJETOS_HISTORICOS } from './presentation';
 import { respostasBloco0, bloco0Completo, perguntaPara } from './bloco0';
@@ -25,7 +26,7 @@ export function completude(r:Respostas,c:Config,nome?:string):{percentual:number
  if(p.id==='4C')ok=c.produtos.filter(d=>d.titulo!=='Outro'||presente(r[`4C.${d.id}`]?.Nome)).every(d=>['Posição','Impacto na sua área e o que garantir na transição'].every(k=>presente(r[`4C.${d.id}`]?.[k])));
  if(p.id==='5.riscos')ok=c.escolhas.every(d=>camposRiscos(c).filter(f=>!f.opcional).every(f=>presente(r[d.id]?.[f.nome])));
  if(b===0)ok=bloco0Completo(p,r[p.id],nome??'');
- if(!ok)faltas.push(`${p.id==='5.riscos'?'':p.id+' · '}${p.titulo??p.texto}`);
+ if(!ok)faltas.push(`${prefixoPergunta(p)}${p.titulo??p.texto}`);
  }
  avisos.push(...faltas);return faltas.length===0;
  });
@@ -41,7 +42,7 @@ export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
  const discordas=c.diretrizes.filter(x=>r[`3.pos.${x.id}`]==='Discordo');if(discordas.length)d.push({titulo:'1 · Diretrizes em discordância e indicadores',dados:discordas.map(x=>({diretriz:x.titulo,detalhes:r[`3.detalhe.${x.id}`],ajuste:r[`3.ajuste.${x.id}`]}))});
  d.push({titulo:'2 · Arquitetura do portfólio, mix de pagamento e working money',dados:{'5.7':r['5.7'],'5.1':r['5.1'],'5.4':r['5.4']}});
  d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Adia','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...r[`4C.${x.id}`]}))}});
- d.push({titulo:'4 · Reação ao mandato e decisões fora da alçada',dados:{'6.1':r['6.1'],'0.18':r['0.18']}});
+ if(c.perguntas[6]?.some(p=>p.id==='6.1'))d.push({titulo:'4 · Reação ao mandato e decisões fora da alçada',dados:{'6.1':r['6.1'],'0.18':r['0.18']}});else d.push({titulo:'4 · Decisões paradas ou tomadas fora da alçada',dados:{'0.18':r['0.18']}});
  d.push({titulo:'5 · Novas frentes e funções',dados:{'0.3':r['0.3']}});
  d.push({titulo:'6 · Processos críticos e estruturantes, lacunas de competência e estrutura, lideranças dependentes e pontos de parada',dados:{'0.6':r['0.6'],'0.2':r['0.2'],'0.1':r['0.1'],'0.3':r['0.3'],'0.4':r['0.4'],'0.7':r['0.7']}});return d;
 }
