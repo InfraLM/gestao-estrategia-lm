@@ -39,6 +39,7 @@ import MinhasPermissoes from "./pages/MinhasPermissoes";
 import GestaoUsuarios from "./pages/GestaoUsuarios";
 import BusinessCaseScorecard from "./pages/BusinessCaseScorecard";
 import Auth from "./pages/Auth";
+import ResetPassword from './pages/ResetPassword';
 import SociosFormulario from "./pages/SociosFormulario";
 import SociosConsolidado from "./pages/SociosConsolidado";
 import SociosResponder from "./pages/SociosResponder";
@@ -63,6 +64,7 @@ const App = () => (
           <PortfolioNovosVinculos />
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/responder/:token" element={<SociosResponder />} />
             <Route element={<ModuleAccessGate><AppLayout /></ModuleAccessGate>}>
               <Route path="/quick-wins" element={<QuickWins />} />

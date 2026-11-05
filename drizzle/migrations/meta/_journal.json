@@ -708,6 +708,13 @@
       "when": 1793895335961,
       "tag": "0100_quick_wins_formulario_simplificado",
       "breakpoints": true
+    },
+    {
+      "idx": 101,
+      "version": "7",
+      "when": 1793906367980,
+      "tag": "0101_convite_confirmacao_admin_auditoria",
+      "breakpoints": true
     }
   ]
 }
