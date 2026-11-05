@@ -5558,6 +5558,7 @@ export type Database = {
           faixa_investimento: string
           id: string
           indicador: string
+          investimento_estimado: string | null
           mudanca_maior: string
           objetivo_id: string | null
           observacao: string
@@ -5586,6 +5587,7 @@ export type Database = {
           faixa_investimento?: string
           id?: string
           indicador?: string
+          investimento_estimado?: string | null
           mudanca_maior?: string
           objetivo_id?: string | null
           observacao?: string
@@ -5614,6 +5616,7 @@ export type Database = {
           faixa_investimento?: string
           id?: string
           indicador?: string
+          investimento_estimado?: string | null
           mudanca_maior?: string
           objetivo_id?: string | null
           observacao?: string
