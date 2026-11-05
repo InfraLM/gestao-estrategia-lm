@@ -84,7 +84,7 @@ describe("Quick Wins: regras no banco", () => {
   it("envio exige campos obrigatórios; triagem exige comentário exceto aprovar", async () => {
     const envio = ((await db.query<{ id: string }>(`SELECT id FROM public.qw_envios`)).rows[0]).id;
     await expect(rpc(LIDER, `SELECT public.qw_enviar('${envio}')`)).rejects.toThrow(/obrigatórios/);
-    const completo = { titulo: "T", observacao: "O", acao_proposta: "A", indicador: "I", valor_alvo: "10", objetivo_id: OBJ, mudanca_maior: "M", responsavel_execucao: "R" };
+    const completo = { observacao: "O", acao_proposta: "A", investimento_estimado: "" };
     await db.exec(`UPDATE public.qw_itens SET status_execucao='cancelado' WHERE ordem>1`);
     const item = ((await db.query<{ id: string }>(`SELECT id FROM public.qw_itens WHERE ordem=1 AND status_execucao<>'cancelado'`)).rows[0]).id;
     await rpc(LIDER, `SELECT public.qw_salvar_item('${item}', '${JSON.stringify(completo)}'::jsonb)`);

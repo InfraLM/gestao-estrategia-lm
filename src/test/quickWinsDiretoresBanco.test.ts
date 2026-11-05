@@ -63,7 +63,7 @@ afterAll(() => db.close());
 
 const YURI = "00000000-0000-0000-0000-0000000000e1";
 const emailId = async (email: string) => (await db.query<{id:string}>(`SELECT id FROM public.qw_lideres WHERE email='${email}@liberdademedicaedu.com.br'`)).rows[0].id;
-const completo = { titulo: "T", observacao: "O", acao_proposta: "A", indicador: "I", valor_alvo: "10", objetivo_id: OBJ, mudanca_maior: "M", responsavel_execucao: "R" };
+const completo = { observacao: "O", acao_proposta: "A", investimento_estimado: "" };
 describe("Quick Wins: diretores, áreas e carga", () => {
  it("carga inclui exatamente 26 pessoas e não duplica ao repetir", async () => {
   const n = async () => (await db.query<{n:number}>("SELECT count(*)::int n FROM public.qw_lideres WHERE revisao_pendente")).rows[0].n;
