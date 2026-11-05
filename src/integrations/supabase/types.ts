@@ -6987,6 +6987,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      okr_diretor_da_cadeira: {
+        Args: { _cadeira: string; _uid: string }
+        Returns: boolean
+      }
       orc_budget_salvar: {
         Args: { _fonte: string; _projeto: string; _valor: number }
         Returns: undefined
