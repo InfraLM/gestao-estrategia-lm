@@ -42,7 +42,7 @@ Deno.serve(async req => {
     const updateResponse = await fetch(`${url}/auth/v1/admin/users/${target.id}`, { method: 'PUT', headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ email_confirm: true }) });
     const updateError = !updateResponse.ok;
     const { error: auditError } = await client.rpc('convite_auditar_confirmacao', { ...args, _novo: updateError ? 'falhou' : 'confirmado' });
-    if (updateError) return respond({ error: 'Não foi possível confirmar a conta' }, 500);
+    if (updateError) { const failure = await updateResponse.json().catch(() => ({})); return respond({ error: 'Não foi possível confirmar a conta', status: updateResponse.status, code: failure.error_code ?? failure.code ?? null }, 500); }
     if (auditError) return respond({ error: 'Conta confirmada; registro final de auditoria pendente' }, 500);
     return respond({ ok: true });
   } catch { return respond({ error: `Não foi possível confirmar a conta (${stage})` }, 500); }
