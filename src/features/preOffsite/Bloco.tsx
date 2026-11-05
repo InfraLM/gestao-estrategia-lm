@@ -1,7 +1,6 @@
 import { rotuloPergunta } from './presentation';
 import { camposDetalhe32 } from './config';
 import { camposProjeto, camposRiscos } from './editorConfig';
-import { CAMPOS_DETALHE_32 } from './config';
 import PerguntaBloco0, { Apenas, ApoioPergunta } from './PerguntaBloco0';
 import { perspectivaClasse } from './presentation';
 import { CHAVE_BLOCO0, respostasBloco0, perguntaPara } from './bloco0';
