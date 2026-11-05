@@ -12,6 +12,8 @@ const t=(nome:string,extra:Partial<Campo>={}):Campo=>({nome,...extra});
 const e=(nome:string,opcoes:string[]):Campo=>({nome,tipo:'escolha',opcoes});
 const z=(id:string,titulo:string,texto:string,porque:string,como:string,entregar:string,extra:Partial<Pergunta>={}):Pergunta=>({id,titulo,texto,apoio:{porque,como,entregar},...extra});
 export const CAMPOS_DETALHE_32:Campo[]=[{nome:'Objeção mais forte',rotulo:'Qual é a objeção mais forte que alguém faria a ela?'},{nome:'O que precisa ser verdade',rotulo:'O que precisa ser verdade para dar certo?'},{nome:'O que sua área vai fazer',rotulo:'O que a sua área vai fazer por ela?'},{nome:'KPI',rotulo:'Qual indicador do BSC Rev.03 a sua área move com ela?',tipo:'kpi'},{nome:'Quanto espera mover em 2027',rotulo:'E quanto espera mover em 2027?'}];
+/** Campos da 3.2; com bsc2027 o rótulo do KPI cita o BSC do formulário. O nome (chave da resposta) não muda. */
+export const camposDetalhe32=(c:{bsc2027?:{rotulo:string}}):Campo[]=>c.bsc2027?CAMPOS_DETALHE_32.map(f=>f.nome==='KPI'?{...f,rotulo:`Qual indicador do ${c.bsc2027!.rotulo} a sua área move com ela?`}:f):CAMPOS_DETALHE_32;
 export const AJUDA_32='Ao marcar uma diretriz entre as 3 que mais afetam sua área, abrem logo abaixo os campos para detalhar. Ao marcar ‘Ajustaria’ ou ‘Discordo’ em uma diretriz fora das 3, abre o campo para dizer qual ajuste faria.';
 export const AJUDA_4A='Os projetos de 2027 ainda são teses. Para cada um, diga o impacto na sua área, a premissa que precisa ser verdade, o risco mais provável de não entregar e o que a sua área precisa fazer para ele dar certo.';
 export const POSICOES=['Concordo','Ajustaria','Discordo'];
