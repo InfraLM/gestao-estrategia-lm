@@ -5986,6 +5986,7 @@ export type Database = {
           ativo: boolean
           atualizado_em: string
           atualizado_por: string | null
+          destinatarios_permitidos: string[] | null
           id: boolean
           lembrete_dia: number
           lembrete_hora: string
@@ -5997,6 +5998,7 @@ export type Database = {
           ativo?: boolean
           atualizado_em?: string
           atualizado_por?: string | null
+          destinatarios_permitidos?: string[] | null
           id?: boolean
           lembrete_dia?: number
           lembrete_hora?: string
@@ -6008,6 +6010,7 @@ export type Database = {
           ativo?: boolean
           atualizado_em?: string
           atualizado_por?: string | null
+          destinatarios_permitidos?: string[] | null
           id?: boolean
           lembrete_dia?: number
           lembrete_hora?: string
@@ -6029,9 +6032,11 @@ export type Database = {
           impedimento_id: string | null
           nome: string
           pendencias: Json
+          processando_em: string | null
           provedor_id: string | null
           solicitado_por: string | null
           status: string
+          tentativas: number
           tipo: string
           usuario_id: string
         }
@@ -6048,9 +6053,11 @@ export type Database = {
           impedimento_id?: string | null
           nome: string
           pendencias: Json
+          processando_em?: string | null
           provedor_id?: string | null
           solicitado_por?: string | null
           status?: string
+          tentativas?: number
           tipo: string
           usuario_id: string
         }
@@ -6067,9 +6074,11 @@ export type Database = {
           impedimento_id?: string | null
           nome?: string
           pendencias?: Json
+          processando_em?: string | null
           provedor_id?: string | null
           solicitado_por?: string | null
           status?: string
+          tentativas?: number
           tipo?: string
           usuario_id?: string
         }
@@ -6089,6 +6098,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      rotina_avisos_remetente: {
+        Row: {
+          configurado_em: string
+          configurado_por: string | null
+          id: boolean
+          remetente: string | null
+          token: string
+          url: string
+        }
+        Insert: {
+          configurado_em?: string
+          configurado_por?: string | null
+          id?: boolean
+          remetente?: string | null
+          token: string
+          url: string
+        }
+        Update: {
+          configurado_em?: string
+          configurado_por?: string | null
+          id?: boolean
+          remetente?: string | null
+          token?: string
+          url?: string
+        }
+        Relationships: []
       }
       rotina_pendencia_sugestoes: {
         Row: {
@@ -7303,12 +7339,43 @@ export type Database = {
         Returns: boolean
       }
       rotina_atividades_abertas: { Args: { _ciclo: string }; Returns: Json }
+      rotina_avisos_acordar: { Args: never; Returns: undefined }
       rotina_avisos_agendar: { Args: { _tipo: string }; Returns: undefined }
+      rotina_avisos_agendar_retentativa: {
+        Args: { _ligar: boolean }
+        Returns: undefined
+      }
+      rotina_avisos_concluir: {
+        Args: {
+          _erro?: string
+          _id: string
+          _ok: boolean
+          _provedor_id?: string
+          _reprocessar?: boolean
+        }
+        Returns: string
+      }
+      rotina_avisos_desconectar: { Args: never; Returns: undefined }
       rotina_avisos_destinatarios: { Args: { _ciclo: string }; Returns: Json }
+      rotina_avisos_permitidos_salvar: {
+        Args: { _emails: string[] }
+        Returns: undefined
+      }
       rotina_avisos_preparar: {
         Args: { _cadeira?: string; _ciclo: string; _tipo: string }
         Returns: number
       }
+      rotina_avisos_reivindicar: { Args: { _limite?: number }; Returns: Json }
+      rotina_avisos_remetente_configurar: {
+        Args: {
+          _remetente?: string
+          _token: string
+          _uid: string
+          _url: string
+        }
+        Returns: undefined
+      }
+      rotina_avisos_remetente_info: { Args: never; Returns: Json }
       rotina_avisos_salvar: {
         Args: {
           _abertura_dia: number
