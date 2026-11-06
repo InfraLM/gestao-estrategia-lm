@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     if (!input.success) return respond({ error: "Convite inválido" }, 400);
     const { data: invite, error } = await client.from("usuario_convites").select("id,email,aceito_em").eq("id", input.data.convite_id).single();
     if (error || !invite || invite.aceito_em) return respond({ error: "Convite não encontrado ou já aceito" }, 400);
-    const { error: sendError } = await client.auth.admin.inviteUserByEmail(invite.email, { redirectTo: "https://nextlevel-lm.lovable.app/auth" });
+    const { error: sendError } = await client.auth.admin.inviteUserByEmail(invite.email, { redirectTo: `https://gestao-estrategia-lm.lovable.app/auth?convite=${invite.id}&retorno=%2Fpre-offsite` });
     if (sendError) return respond({ error: "Convite cadastrado, mas não foi possível enviar o e-mail. Verifique se a conta já existe ou tente novamente." }, 400);
     const { error: updateError } = await client.from("usuario_convites").update({ email_enviado_em: new Date().toISOString() }).eq("id", invite.id);
     if (updateError) return respond({ error: "E-mail enviado, mas a confirmação de envio não foi registrada." }, 500);

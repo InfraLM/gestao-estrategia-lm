@@ -705,8 +705,22 @@
     {
       "idx": 100,
       "version": "7",
-      "when": 1793815963251,
-      "tag": "0100_rotina_avisos_email",
+      "when": 1793895335961,
+      "tag": "0100_quick_wins_formulario_simplificado",
+      "breakpoints": true
+    },
+    {
+      "idx": 101,
+      "version": "7",
+      "when": 1793906367980,
+      "tag": "0101_convite_confirmacao_admin_auditoria",
+      "breakpoints": true
+    },
+    {
+      "idx": 102,
+      "version": "7",
+      "when": 1793906605170,
+      "tag": "0102_convites_modulo_quick_wins_compativel",
       "breakpoints": true
     }
   ]

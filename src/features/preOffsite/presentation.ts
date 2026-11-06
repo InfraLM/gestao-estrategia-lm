@@ -27,3 +27,24 @@ export const rotuloKpiId=(id:string,kpis:any[]=[],arquivados:any[]=[])=>{const k
 export const ordenarKpis=<T extends {codigo?:string;nome?:string}>(ks:T[])=>[...(ks??[])].sort((a,b)=>perspectivaKpi(a.codigo??'')-perspectivaKpi(b.codigo??'')||String(a.codigo).localeCompare(String(b.codigo),'pt-BR',{numeric:true}));
 export const kpisSelecionados=(v:any):string[]=>Array.isArray(v)?v.filter((x:any)=>typeof x==='string'&&x):typeof v==='string'&&v?[v]:[];
 export {ORDEM_PERSPECTIVA};
+
+/** Blocos exibidos: o 0 sempre; os demais só quando têm pergunta ativa (bloco todo arquivado some). */
+export const blocosVisiveis = (c: Config) => c.blocos.map((_, i) => i).filter(i => i === 0 || (c.perguntas[i]?.length ?? 0) > 0);
+/** Número exibido do bloco, renumerado após blocos ocultos; o índice interno não muda. */
+export const numeroBloco = (c: Config, i: number) => blocosVisiveis(c).indexOf(i);
+/** Rótulo exibido da pergunta; o id interno (chave das respostas) não muda. */
+export const rotuloPergunta = (p: Pergunta) => p.rotulo ?? p.id;
+export const prefixoPergunta = (p: Pergunta) => (p.id === '5.riscos' ? '' : `${rotuloPergunta(p)} · `);
+const slug = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+export const idBsc2027 = (codigo: string, nome?: string) => `rev041:${codigo}${nome ? ':' + slug(nome) : ''}`;
+/** Com bsc2027 na configuração, objetivos/KPIs dos seletores passam a ser os dele; os do app ficam só para ler respostas antigas. */
+export function aplicarBsc2027<R extends { objetivos: any[]; kpis: any[] }>(refs: R, c: Config): R {
+  const b = c.bsc2027;
+  if (!b?.objetivos?.length) return refs;
+  const anterior = (x: any) => ({ ...x, nome: `${x.nome} (BSC anterior)`, oculto: true });
+  return {
+    ...refs,
+    objetivos: [...b.objetivos.map(o => ({ id: idBsc2027(o.codigo), codigo: o.codigo, nome: o.nome })), ...refs.objetivos.map(anterior)],
+    kpis: [...b.kpis.map(k => ({ id: idBsc2027(k.codigo, k.nome), codigo: k.codigo, nome: `${k.codigo} · ${k.nome}` })), ...refs.kpis.map(anterior)],
+  };
+}

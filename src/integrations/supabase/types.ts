@@ -5558,6 +5558,7 @@ export type Database = {
           faixa_investimento: string
           id: string
           indicador: string
+          investimento_estimado: string | null
           mudanca_maior: string
           objetivo_id: string | null
           observacao: string
@@ -5586,6 +5587,7 @@ export type Database = {
           faixa_investimento?: string
           id?: string
           indicador?: string
+          investimento_estimado?: string | null
           mudanca_maior?: string
           objetivo_id?: string | null
           observacao?: string
@@ -5614,6 +5616,7 @@ export type Database = {
           faixa_investimento?: string
           id?: string
           indicador?: string
+          investimento_estimado?: string | null
           mudanca_maior?: string
           objetivo_id?: string | null
           observacao?: string
@@ -6691,6 +6694,17 @@ export type Database = {
         Args: { _modulo: string; _user_id: string }
         Returns: boolean
       }
+      convite_auditar_confirmacao: {
+        Args: {
+          _anterior: string
+          _ator: string
+          _convite: string
+          _motivo: string
+          _novo: string
+          _usuario: string
+        }
+        Returns: undefined
+      }
       editor_modulo: {
         Args: { _modulo: string; _uid: string }
         Returns: boolean
@@ -6983,6 +6997,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      okr_diretor_da_cadeira: {
+        Args: { _cadeira: string; _uid: string }
+        Returns: boolean
       }
       orc_budget_salvar: {
         Args: { _fonte: string; _projeto: string; _valor: number }
