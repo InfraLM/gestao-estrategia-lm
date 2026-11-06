@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { cicloAtual, cicloValido, EMAIL_VALIDO, montarEmail, montarEnvio, REMETENTE_NOME_PADRAO, tokenValido, type TipoFila } from "./email.ts";
+import { cicloAtual, cicloValido, EMAIL_VALIDO, emailCorporativo, montarEmail, nomeDoEmail, montarEnvio, REMETENTE_NOME_PADRAO, tokenValido, type TipoFila } from "./email.ts";
 import { credencialGmail, enviarGmail, ErroEnvio } from "./gmail.ts";
 
 // Weekly check-in/checkout e-mails (and assigned-impediment notices) through the Gmail API (Google Workspace).
@@ -90,6 +90,16 @@ Deno.serve(async req => {
 
   if (acao === "teste") {
     const ciclo = typeof body?.ciclo === "string" && cicloValido(body.ciclo) ? body.ciclo : cicloAtual();
+    const tipoTeste = body?.tipo === "lembrete" ? "lembrete" : "abertura";
+    // Ad-hoc test to a corporate mailbox: sample counts only, no chair data, writes nothing.
+    if (body?.email !== undefined) {
+      if (!emailCorporativo(body.email)) return out({ error: "Use um e-mail @liberdademedicaedu.com.br" }, 422);
+      const para = body.email.trim().toLowerCase();
+      try {
+        const id = await enviar(para, montarEmail({ nome: nomeDoEmail(para), ciclo, tipo: tipoTeste, pendencias: { prioridades: 1, kpis: 2, atas: 1, status_reports: 0 }, teste: true }));
+        return out({ ok: true, para, ciclo, tipo: tipoTeste, provedor_id: id });
+      } catch (e) { return out({ ok: false, error: String((e as Error).message ?? e) }, 502); }
+    }
     const { data: lista, error } = await db.rpc("rotina_avisos_destinatarios", { _ciclo: ciclo });
     if (error) return out({ error: "Não foi possível carregar os destinatários" }, 500);
     const d = (lista ?? []).find((x: { cadeira_id: string }) => x.cadeira_id === body?.cadeira_id);

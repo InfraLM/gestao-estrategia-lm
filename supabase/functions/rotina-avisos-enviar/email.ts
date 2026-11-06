@@ -103,6 +103,11 @@ const CRLF = "\r\n";
 const semQuebra = (s: string) => s.replace(/[\r\n]+/g, " ").trim();
 const palavra = (s: string) => `=?UTF-8?B?${base64(utf8(semQuebra(s)))}?=`;
 const linhas76 = (s: string) => s.replace(/.{1,76}/g, `$&${CRLF}`);
+/** Ad-hoc Governance tests only go to corporate mailboxes. */
+export const DOMINIO_CORPORATIVO = "@liberdademedicaedu.com.br";
+export const emailCorporativo = (v: unknown): v is string => typeof v === "string" && EMAIL_VALIDO.test(v.trim()) && v.trim().toLowerCase().endsWith(DOMINIO_CORPORATIVO);
+/** "naira.yurie@…" → "Naira" for the greeting of an ad-hoc test. */
+export const nomeDoEmail = (email: string) => { const p = email.split("@")[0].split(/[._-]/)[0] ?? ""; return p ? p[0].toUpperCase() + p.slice(1).toLowerCase() : "diretor(a)"; };
 export const EMAIL_VALIDO = /^[^@\s<>"]+@[^@\s<>"]+\.[^@\s<>"]+$/;
 
 export function mensagemMime(de: { nome: string; email: string }, para: string, m: { subject: string; text: string; html: string }) {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { base64url, cicloAtual, mensagemMime, montarEmail, tokenValido } from "../../supabase/functions/rotina-avisos-enviar/email";
+import { base64url, cicloAtual, emailCorporativo, mensagemMime, montarEmail, nomeDoEmail, tokenValido } from "../../supabase/functions/rotina-avisos-enviar/email";
 import { alternarPermitido, recebeAutomatico } from "@/lib/avisosCiclo";
 
 const p = { prioridades: 1, kpis: 3, atas: 2, status_reports: 0 };
@@ -47,4 +47,12 @@ describe("E-mails semanais via Gmail", () => {
     expect(() => mensagemMime({ nome: "x", email: "gestao@x.com" }, "a@x.com>\r\nBcc: b@x.com", m)).toThrow();
   });
   it("base64url sem padding", () => expect(base64url(new Uint8Array([251, 255]))).toBe("-_8"));
+  it("teste avulso só para e-mail corporativo e saudação pelo primeiro nome", () => {
+    expect(emailCorporativo("felipe.rabello@liberdademedicaedu.com.br")).toBe(true);
+    expect(emailCorporativo(" Naira.Yurie@LiberdadeMedicaEdu.com.br ")).toBe(true);
+    expect(emailCorporativo("x@gmail.com")).toBe(false);
+    expect(emailCorporativo("x@liberdademedicaedu.com.br.evil.com")).toBe(false);
+    expect(emailCorporativo("a@b@liberdademedicaedu.com.br")).toBe(false);
+    expect(nomeDoEmail("felipe.rabello@liberdademedicaedu.com.br")).toBe("Felipe");
+  });
 });
