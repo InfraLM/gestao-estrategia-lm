@@ -31,12 +31,26 @@ DROP TRIGGER IF EXISTS rotina_avisos_filtrar_permitidos ON public.rotina_avisos_
 CREATE TRIGGER rotina_avisos_filtrar_permitidos BEFORE INSERT ON public.rotina_avisos_envios FOR EACH ROW EXECUTE FUNCTION public.rotina_avisos_filtrar_permitidos();
 REVOKE ALL ON FUNCTION public.rotina_avisos_filtrar_permitidos() FROM PUBLIC, anon, authenticated;
 
--- 5) Wake: pings the worker only when something is waiting. Never raises, so enqueueing (e.g. inside a check-in send) never fails.
+-- 5) Retry job exists only while something is pending: scheduled when a retry/claim leaves work behind,
+--    removed by the wake itself once the queue is empty. No permanent polling.
+CREATE OR REPLACE FUNCTION public.rotina_avisos_agendar_retentativa(_ligar boolean) RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
+DECLARE job record; existe boolean;
+BEGIN
+ SELECT EXISTS(SELECT 1 FROM cron.job WHERE jobname='rotina-email-processar') INTO existe;
+ IF _ligar AND NOT existe THEN PERFORM cron.schedule('rotina-email-processar','*/10 * * * *','SELECT public.rotina_avisos_acordar();');
+ ELSIF NOT _ligar AND existe THEN FOR job IN SELECT jobid FROM cron.job WHERE jobname='rotina-email-processar' LOOP PERFORM cron.unschedule(job.jobid); END LOOP;
+ END IF;
+EXCEPTION WHEN OTHERS THEN RAISE WARNING 'rotina_avisos_agendar_retentativa: %',SQLERRM;
+END $$;
+REVOKE ALL ON FUNCTION public.rotina_avisos_agendar_retentativa(boolean) FROM PUBLIC, anon, authenticated;
+
+-- Wake: pings the worker only when something is waiting. Never raises, so enqueueing (e.g. inside a check-in send) never fails.
 CREATE OR REPLACE FUNCTION public.rotina_avisos_acordar() RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
 DECLARE r public.rotina_avisos_remetente%ROWTYPE;
 BEGIN
  SELECT * INTO r FROM public.rotina_avisos_remetente WHERE id;
- IF NOT FOUND OR NOT EXISTS(SELECT 1 FROM public.rotina_avisos_config WHERE id AND remetente_pronto) THEN RETURN; END IF;
+ IF NOT FOUND OR NOT EXISTS(SELECT 1 FROM public.rotina_avisos_config WHERE id AND remetente_pronto) THEN PERFORM public.rotina_avisos_agendar_retentativa(false); RETURN; END IF;
+ IF NOT EXISTS(SELECT 1 FROM public.rotina_avisos_envios WHERE canal='email' AND status IN ('aguardando','processando')) THEN PERFORM public.rotina_avisos_agendar_retentativa(false); RETURN; END IF;
  IF NOT EXISTS(SELECT 1 FROM public.rotina_avisos_envios WHERE canal='email' AND (status='aguardando' OR (status='processando' AND processando_em<now()-interval '15 minutes'))) THEN RETURN; END IF;
  BEGIN
   PERFORM net.http_post(url:=r.url,headers:=jsonb_build_object('Content-Type','application/json','x-cron-token',r.token),body:='{}'::jsonb,timeout_milliseconds:=5000);
@@ -74,6 +88,8 @@ BEGIN
   UPDATE public.rotina_avisos_envios e SET status='processando',processando_em=now(),tentativas=e.tentativas+1 FROM alvo WHERE e.id=alvo.id
   RETURNING e.id,e.tipo,e.ciclo,e.nome,e.destinatario,e.pendencias,e.tentativas,e.criado_em
  ) SELECT coalesce(jsonb_agg(jsonb_build_object('id',f.id,'tipo',f.tipo,'ciclo',f.ciclo,'nome',f.nome,'destinatario',f.destinatario,'pendencias',f.pendencias,'tentativas',f.tentativas) ORDER BY f.criado_em),'[]'::jsonb) INTO resultado FROM feitos f;
+ -- A claimed row in flight keeps the retry job armed, so a crashed worker run is picked up again.
+ IF jsonb_array_length(resultado)>0 THEN PERFORM public.rotina_avisos_agendar_retentativa(true); END IF;
  RETURN resultado;
 END $$;
 REVOKE ALL ON FUNCTION public.rotina_avisos_reivindicar(integer) FROM PUBLIC, anon, authenticated;
@@ -98,7 +114,7 @@ GRANT EXECUTE ON FUNCTION public.rotina_avisos_concluir(uuid,boolean,text,text,b
 
 -- 7) Connect the Gmail sender (called only by rotina-avisos-enviar with service role, on behalf of a Governance user).
 CREATE OR REPLACE FUNCTION public.rotina_avisos_remetente_configurar(_token text,_url text,_uid uuid,_remetente text DEFAULT NULL) RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
-DECLARE anterior jsonb; job record;
+DECLARE anterior jsonb;
 BEGIN
  IF coalesce(auth.role(),'')<>'service_role' THEN RAISE EXCEPTION 'Sem permissão'; END IF;
  IF _uid IS NULL OR NOT public.mt_is_governanca(_uid) THEN RAISE EXCEPTION 'Sem permissão'; END IF;
@@ -110,9 +126,8 @@ BEGIN
   ON CONFLICT(id) DO UPDATE SET url=EXCLUDED.url,token=EXCLUDED.token,remetente=EXCLUDED.remetente,configurado_por=_uid,configurado_em=now();
  INSERT INTO public.rotina_avisos_config(id,remetente_pronto,atualizado_por) VALUES(true,true,_uid)
   ON CONFLICT(id) DO UPDATE SET remetente_pronto=true,atualizado_por=_uid,atualizado_em=now();
- -- Safety net for lost wakes and retries: every 10 minutes, posts only when something is waiting.
- FOR job IN SELECT jobid FROM cron.job WHERE jobname='rotina-email-processar' LOOP PERFORM cron.unschedule(job.jobid); END LOOP;
- PERFORM cron.schedule('rotina-email-processar','*/10 * * * *','SELECT public.rotina_avisos_acordar();');
+ -- Rows already waiting (e.g. impediments queued before the sender existed) get delivered now.
+ PERFORM public.rotina_avisos_acordar();
  INSERT INTO public.mt_auditoria(tabela,registro_id,campo,valor_anterior,valor_novo,alterado_por)
  VALUES('rotina_avisos_config','true','remetente_pronto',coalesce(anterior->>'remetente_pronto','false'),'true (Gmail API '||coalesce(nullif(trim(_remetente),''),'?')||')',_uid);
 END $$;
@@ -165,4 +180,4 @@ END $$;
 REVOKE ALL ON FUNCTION public.rotina_avisos_permitidos_salvar(text[]) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.rotina_avisos_permitidos_salvar(text[]) TO authenticated;
 
-COMMENT ON TABLE public.rotina_avisos_envios IS 'Channel-ready notification outbox (email). rotina-avisos-enviar delivers weekly and impediment notices through the Gmail API: claims via rotina_avisos_reivindicar, finishes via rotina_avisos_concluir (max 3 attempts, 14-day expiry), woken by pg_net on insert plus a 10-minute cron. Open tracking stays null.';
+COMMENT ON TABLE public.rotina_avisos_envios IS 'Channel-ready notification outbox (email). rotina-avisos-enviar delivers weekly and impediment notices through the Gmail API: claims via rotina_avisos_reivindicar, finishes via rotina_avisos_concluir (max 3 attempts, 14-day expiry), woken by pg_net on insert; a 10-minute retry cron exists only while rows are pending. Open tracking stays null.';

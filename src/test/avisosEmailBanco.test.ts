@@ -55,7 +55,7 @@ describe("Remetente Gmail dos e-mails do ciclo", () => {
     await pg.exec(usuario);
     await conectar();
     expect((await pg.query<any>("select remetente_pronto,ativo from rotina_avisos_config")).rows[0]).toEqual({ remetente_pronto: true, ativo: false });
-    expect((await pg.query<any>("select jobname,command from cron.job")).rows).toEqual([{ jobname: "rotina-email-processar", command: "SELECT public.rotina_avisos_acordar();" }]);
+    expect((await pg.query("select * from cron.job")).rows).toHaveLength(0);
     expect((await pg.query<any>("select campo from mt_auditoria")).rows).toEqual([{ campo: "remetente_pronto" }]);
     expect((await pg.query<any>("select rotina_avisos_remetente_info() as i")).rows[0].i).toMatchObject({ remetente: "gestao@lm.test" });
   });
@@ -99,6 +99,21 @@ describe("Remetente Gmail dos e-mails do ciclo", () => {
     expect((await pg.query<any>("select rotina_avisos_reivindicar(1) as l")).rows[0].l).toEqual([]);
   });
 
+  it("retentativa só fica agendada enquanto há pendência", async () => {
+    await conectar(); await enfileirar(); await pg.exec(servico);
+    const jobs = async () => (await pg.query<any>("select jobname from cron.job where jobname='rotina-email-processar'")).rows.length;
+    expect(await jobs()).toBe(0);
+    const [e] = (await pg.query<any>("select rotina_avisos_reivindicar(1) as l")).rows[0].l;
+    expect(await jobs()).toBe(1);
+    await pg.query("select rotina_avisos_concluir($1,false,null,'429',true)", [e.id]);
+    await pg.query("select rotina_avisos_acordar()");
+    expect(await jobs()).toBe(1);
+    const [e2] = (await pg.query<any>("select rotina_avisos_reivindicar(1) as l")).rows[0].l;
+    await pg.query("select rotina_avisos_concluir($1,true,'id')", [e2.id]);
+    await pg.query("select rotina_avisos_acordar()");
+    expect(await jobs()).toBe(0);
+  });
+
   it("expira fila antiga e processamento travado sem resposta", async () => {
     await conectar(); await enfileirar(); await pg.exec(servico);
     await pg.exec("UPDATE rotina_avisos_envios SET criado_em=now()-interval '15 days'");
@@ -111,7 +126,7 @@ describe("Remetente Gmail dos e-mails do ciclo", () => {
   it("desconectar desliga envio e agendamentos; sem remetente nada é reivindicado", async () => {
     await conectar();
     await pg.query("select rotina_avisos_salvar(true,5,'08:00',1,'14:00')");
-    expect((await pg.query("select * from cron.job")).rows).toHaveLength(3);
+    expect((await pg.query("select * from cron.job")).rows).toHaveLength(2);
     await enfileirar();
     await pg.query("select rotina_avisos_desconectar()");
     expect((await pg.query<any>("select ativo,remetente_pronto from rotina_avisos_config")).rows[0]).toEqual({ ativo: false, remetente_pronto: false });

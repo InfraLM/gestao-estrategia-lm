@@ -4,7 +4,7 @@ import { cicloAtual, cicloValido, EMAIL_VALIDO, montarEmail, montarEnvio, REMETE
 import { credencialGmail, enviarGmail, ErroEnvio } from "./gmail.ts";
 
 // Weekly check-in/checkout e-mails (and assigned-impediment notices) through the Gmail API (Google Workspace).
-// - x-cron-token (pg_net wake on enqueue + 10-minute cron): delivers the queue.
+// - x-cron-token (pg_net wake on enqueue; 10-minute retry cron only while rows are pending): delivers the queue.
 // - Governança JWT + {acao:"teste", cadeira_id}: sends one preview to that director; writes nothing.
 // - Governança JWT + {acao:"configurar"}: registers this endpoint for the wake and marks the sender ready (audited).
 // - Governança JWT + {acao:"processar"}: delivers the queue on demand.
