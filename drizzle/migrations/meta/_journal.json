@@ -722,6 +722,13 @@
       "when": 1793906605170,
       "tag": "0102_convites_modulo_quick_wins_compativel",
       "breakpoints": true
+    },
+    {
+      "idx": 103,
+      "version": "7",
+      "when": 1793906665170,
+      "tag": "0103_rotina_avisos_email",
+      "breakpoints": true
     }
   ]
 }
