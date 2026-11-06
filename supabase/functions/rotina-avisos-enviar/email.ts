@@ -1,6 +1,7 @@
 // Pure helpers (no Deno APIs) so they are shared by the edge function and the vitest suite.
 export type Pendencias = { prioridades: number; kpis: number; atas: number; status_reports: number };
 export type TipoAviso = "abertura" | "lembrete" | "manual";
+export type TipoFila = TipoAviso | "impedimento";
 export type Aviso = { nome: string; ciclo: string; tipo: TipoAviso; pendencias: Pendencias; teste?: boolean };
 
 export const APP_URL = "https://gestao-estrategia-lm.lovable.app";
@@ -55,6 +56,44 @@ export function montarEmail(a: Aviso) {
 ${a.teste ? '<p style="color:#6b7280;font-size:12px">Este é um e-mail de teste.</p>' : ""}</div>`;
   return { subject, text, html };
 }
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const curto = (v: unknown, max = 120) => (typeof v === "string" ? v.replace(/[\r\n\t]+/g, " ").trim().slice(0, max) : "");
+
+/** Assigned-impediment notice: origin chair, who flagged it and wanted date only — never the impediment text. */
+export function montarImpedimento(a: { nome: string; ciclo: string; pendencias: Record<string, unknown> | null; teste?: boolean }) {
+  if (!cicloValido(a.ciclo)) throw new Error("Ciclo inválido");
+  const link = curto(a.pendencias?.link, 200);
+  const m = /^\/metas\/semanal\?semana=(\d{4}-\d{2}-\d{2})&impedimento=([0-9a-f-]{36})$/i.exec(link);
+  const caminho = m && cicloValido(m[1]) && UUID.test(m[2]) ? `/metas/semanal?semana=${m[1]}&impedimento=${m[2]}` : `/metas/semanal?semana=${a.ciclo}`;
+  const url = `${APP_URL}${caminho}`;
+  const nome = (a.nome || "").trim().split(/\s+/)[0] || "diretor(a)";
+  const origem = curto(a.pendencias?.cadeira_origem) || "Outra cadeira";
+  const quem = curto(a.pendencias?.quem_sinalizou);
+  const prazoTxt = curto(a.pendencias?.prazo_desejado, 10);
+  const prazo = /^\d{4}-\d{2}-\d{2}$/.test(prazoTxt) ? dataBr(prazoTxt) : "";
+  const linhas = [
+    `A cadeira ${origem}${quem ? ` (${quem})` : ""} sinalizou um impedimento atribuído à sua cadeira.`,
+    prazo ? `Prazo desejado: ${prazo}.` : "Sem prazo desejado informado.",
+    `Responda com plano, prazo e status no checkout do ciclo de ${dataBr(a.ciclo)}.`,
+  ];
+  const prefixo = a.teste ? "[Teste] " : "";
+  const subject = `${prefixo}Impedimento recebido · ${origem}`;
+  const text = [`Olá, ${nome}.`, "", ...linhas, "", `Ver impedimento: ${url}`].join("\n");
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#1f2937;max-width:560px">
+<p>Olá, ${esc(nome)}.</p>${linhas.map(l => `<p>${esc(l)}</p>`).join("")}
+<p><a href="${url}" style="display:inline-block;background:#1d4ed8;color:#fff;text-decoration:none;padding:10px 18px;border-radius:6px">Ver impedimento</a></p></div>`;
+  return { subject, text, html };
+}
+
+/** Routes a queued outbox row to its template. */
+export function montarEnvio(e: { tipo: TipoFila; ciclo: string; nome: string; pendencias: Record<string, unknown> | null }) {
+  if (e.tipo === "impedimento") return montarImpedimento(e);
+  return montarEmail({ nome: e.nome, ciclo: e.ciclo, tipo: e.tipo, pendencias: (e.pendencias ?? {}) as Pendencias });
+}
+
+/** Provider status → retry later (rate limit / outage) or fail for good. */
+export const falhaTemporaria = (status: number) => status === 429 || status >= 500;
 
 // ---- MIME for the Gmail API (RFC 2822 + RFC 2047), no Deno APIs. ----
 const base64 = (bytes: Uint8Array) => { let b = ""; for (let i = 0; i < bytes.length; i += 0x8000) b += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(b); };

@@ -2,7 +2,12 @@
 // 1) GMAIL_SERVICE_ACCOUNT_JSON — service account with domain-wide delegation, scope gmail.send,
 //    impersonating the sender mailbox (GMAIL_REMETENTE).
 // 2) GMAIL_CLIENT_ID + GMAIL_CLIENT_SECRET + GMAIL_REFRESH_TOKEN — OAuth consent of the sender mailbox.
-import { base64url, mensagemMime } from "./email.ts";
+import { base64url, falhaTemporaria, mensagemMime } from "./email.ts";
+
+/** Carries whether retrying later can succeed (429/5xx/network) or not (auth, invalid address). */
+export class ErroEnvio extends Error {
+  constructor(message: string, readonly temporaria: boolean) { super(message); }
+}
 
 const ESCOPO = "https://www.googleapis.com/auth/gmail.send";
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -38,9 +43,9 @@ async function tokenAcesso(c: Credencial, remetenteEmail: string) {
   const body = c.tipo === "service_account"
     ? new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion: await assinarJwt(c.conta, remetenteEmail) })
     : new URLSearchParams({ grant_type: "refresh_token", client_id: c.id, client_secret: c.segredo, refresh_token: c.refresh });
-  const r = await fetch(TOKEN_URL, { method: "POST", body, signal: AbortSignal.timeout(15000) });
+  const r = await fetch(TOKEN_URL, { method: "POST", body, signal: AbortSignal.timeout(15000) }).catch(e => { throw new ErroEnvio(`Google OAuth indisponível: ${(e as Error).message}`, true); });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok || !j.access_token) throw new Error(`Google OAuth ${r.status}: ${String(j.error_description ?? j.error ?? "erro").slice(0, 200)}`);
+  if (!r.ok || !j.access_token) throw new ErroEnvio(`Google OAuth ${r.status}: ${String(j.error_description ?? j.error ?? "erro").slice(0, 200)}`, falhaTemporaria(r.status));
   cache = { token: j.access_token, expira: Date.now() + Number(j.expires_in ?? 3600) * 1000 };
   return cache.token;
 }
@@ -50,8 +55,9 @@ export async function enviarGmail(c: Credencial, de: { nome: string; email: stri
   const raw = base64url(enc.encode(mensagemMime(de, para, m)));
   const r = await fetch(`https://gmail.googleapis.com/gmail/v1/users/${encodeURIComponent(de.email)}/messages/send`, {
     method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ raw }), signal: AbortSignal.timeout(20000),
-  });
+  }).catch(e => { throw new ErroEnvio(`Gmail indisponível: ${(e as Error).message}`, true); });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(`Gmail ${r.status}: ${String(j?.error?.message ?? "erro").slice(0, 300)}`);
+  if (r.status === 401) cache = null;
+  if (!r.ok) throw new ErroEnvio(`Gmail ${r.status}: ${String(j?.error?.message ?? "erro").slice(0, 300)}`, falhaTemporaria(r.status));
   return String(j.id ?? "");
 }

@@ -1,3 +1,4 @@
+import { montarEmail } from "../../supabase/functions/rotina-avisos-enviar/email";
 /** Only explicitly allowlisted weekly destinations survive login. */
 export function semanaLink(value: string | null): string | null {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
@@ -13,14 +14,12 @@ export function cronSemanal(dia: number, hora: string) {
   return `${m} ${utc % 24} * * ${(dia + Math.floor(utc / 24)) % 7}`;
 }
 export const podeReceberAviso = (d: DestinatarioAviso, tipo: "abertura" | "lembrete" | "manual") => !d.motivo && (tipo === "abertura" || !d.enviado);
-const escape = (s: string) => s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] ?? c));
-export function mensagemAviso(d: DestinatarioAviso, ciclo: string) {
+/** Same template the Gmail worker sends, so the Governance preview matches the real e-mail. */
+export function mensagemAviso(d: DestinatarioAviso, ciclo: string, tipo: "abertura" | "lembrete" | "manual" = "abertura") {
   if (!semanaLink(ciclo)) throw new Error("Ciclo inválido");
-  const url = `https://gestao-estrategia-lm.lovable.app/metas/semanal?semana=${ciclo}`;
-  const p = d.pendencias;
-  const text = `Olá, ${d.nome}.\nCiclo de ${ciclo}. Prazo: segunda-feira, ${ciclo}, às 23h59 (São Paulo).\nPendentes: ${p.prioridades} prioridade(s), ${p.kpis} KPI(s), ${p.atas} pendência(s) de atas e ${p.status_reports} status report(s).\nAbrir meu check-in/checkout: ${url}`;
-  return { subject: `Check-in/checkout · ciclo ${ciclo}`, text, html: `<p>Olá, ${escape(d.nome)}.</p><p>Ciclo de ${ciclo}. Prazo: segunda-feira às 23h59 (São Paulo).</p><p>Pendentes: ${p.prioridades} prioridade(s), ${p.kpis} KPI(s), ${p.atas} pendência(s) de atas e ${p.status_reports} status report(s).</p><p><a href="${url}">Abrir meu check-in/checkout</a></p>` };
-}/** Weekly e-mail allowlist: null = every eligible chair receives automatic notices. */
+  return montarEmail({ nome: d.nome, ciclo, tipo, pendencias: d.pendencias });
+}
+/** Weekly e-mail allowlist: null = every eligible chair receives automatic notices. */
 export const recebeAutomatico = (email: string | null, lista: string[] | null) => !!email && (lista === null || lista.includes(email.trim().toLowerCase()));
 /** Toggling starts from "everyone eligible" when no list exists yet; result is normalized and sorted. */
 export function alternarPermitido(lista: string[] | null, elegiveis: string[], email: string, recebe: boolean): string[] {
