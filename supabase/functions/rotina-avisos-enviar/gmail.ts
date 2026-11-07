@@ -14,7 +14,9 @@ const TOKEN_URL = "https://oauth2.googleapis.com/token";
 
 type Credencial = { tipo: "service_account"; conta: { client_email: string; private_key: string } } | { tipo: "oauth"; id: string; segredo: string; refresh: string };
 
-export function credencialGmail(env: (k: string) => string | undefined): Credencial | null {
+export function credencialGmail(envBruto: (k: string) => string | undefined): Credencial | null {
+  // Pasted secrets often carry stray spaces/newlines at the ends.
+  const env = (k: string) => envBruto(k)?.trim() || undefined;
   const sa = env("GMAIL_SERVICE_ACCOUNT_JSON");
   if (sa) {
     const conta = JSON.parse(sa);
@@ -37,6 +39,15 @@ async function assinarJwt(conta: { client_email: string; private_key: string }, 
   return `${cab}.${corpo}.${base64url(assinatura)}`;
 }
 
+/** Actionable hint for the usual Google token errors. */
+export function dicaOAuth(tipo: Credencial["tipo"], erro: string) {
+  if (tipo === "service_account" && erro === "unauthorized_client") return ". Falta a delegação em todo o domínio no Admin Console (ou remova GMAIL_SERVICE_ACCOUNT_JSON para usar o refresh token).";
+  if (tipo === "oauth" && erro === "unauthorized_client") return ". O refresh token não foi gerado com este GMAIL_CLIENT_ID: no OAuth Playground marque \"Use your own OAuth credentials\" antes de autorizar.";
+  if (tipo === "oauth" && erro === "invalid_client") return ". GMAIL_CLIENT_ID ou GMAIL_CLIENT_SECRET incorretos.";
+  if (erro === "invalid_grant") return ". Refresh token expirado ou revogado: gere outro no OAuth Playground.";
+  return "";
+}
+
 let cache: { token: string; expira: number } | null = null;
 async function tokenAcesso(c: Credencial, remetenteEmail: string) {
   if (cache && cache.expira > Date.now() + 60_000) return cache.token;
@@ -45,7 +56,7 @@ async function tokenAcesso(c: Credencial, remetenteEmail: string) {
     : new URLSearchParams({ grant_type: "refresh_token", client_id: c.id, client_secret: c.segredo, refresh_token: c.refresh });
   const r = await fetch(TOKEN_URL, { method: "POST", body, signal: AbortSignal.timeout(15000) }).catch(e => { throw new ErroEnvio(`Google OAuth indisponível: ${(e as Error).message}`, true); });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok || !j.access_token) throw new ErroEnvio(`Google OAuth ${r.status}: ${String(j.error_description ?? j.error ?? "erro").slice(0, 200)}`, falhaTemporaria(r.status));
+  if (!r.ok || !j.access_token) throw new ErroEnvio(`Google OAuth ${r.status} (${c.tipo === "service_account" ? "conta de serviço" : "refresh token da caixa"}): ${String(j.error ?? "erro")}${j.error_description ? ` — ${String(j.error_description)}` : ""}${dicaOAuth(c.tipo, String(j.error ?? ""))}`.slice(0, 400), falhaTemporaria(r.status));
   cache = { token: j.access_token, expira: Date.now() + Number(j.expires_in ?? 3600) * 1000 };
   return cache.token;
 }

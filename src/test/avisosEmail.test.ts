@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { base64url, cicloAtual, emailCorporativo, mensagemMime, montarEmail, nomeDoEmail, tokenValido } from "../../supabase/functions/rotina-avisos-enviar/email";
 import { alternarPermitido, recebeAutomatico } from "@/lib/avisosCiclo";
+import { credencialGmail, dicaOAuth } from "../../supabase/functions/rotina-avisos-enviar/gmail";
 
 const p = { prioridades: 1, kpis: 3, atas: 2, status_reports: 0 };
 describe("E-mails semanais via Gmail", () => {
@@ -54,5 +55,15 @@ describe("E-mails semanais via Gmail", () => {
     expect(emailCorporativo("x@liberdademedicaedu.com.br.evil.com")).toBe(false);
     expect(emailCorporativo("a@b@liberdademedicaedu.com.br")).toBe(false);
     expect(nomeDoEmail("felipe.rabello@liberdademedicaedu.com.br")).toBe("Felipe");
+  });
+  it("credencial ignora espaços colados e prefere refresh token sem conta de serviço", () => {
+    const env: Record<string, string> = { GMAIL_CLIENT_ID: " id.apps.googleusercontent.com
+", GMAIL_CLIENT_SECRET: "segredo ", GMAIL_REFRESH_TOKEN: "	1//tok", GMAIL_SERVICE_ACCOUNT_JSON: "  " };
+    expect(credencialGmail(k => env[k])).toEqual({ tipo: "oauth", id: "id.apps.googleusercontent.com", segredo: "segredo", refresh: "1//tok" });
+  });
+  it("explica os erros comuns do Google", () => {
+    expect(dicaOAuth("oauth", "unauthorized_client")).toContain("Use your own OAuth credentials");
+    expect(dicaOAuth("service_account", "unauthorized_client")).toContain("delegação");
+    expect(dicaOAuth("oauth", "invalid_grant")).toContain("Refresh token");
   });
 });
