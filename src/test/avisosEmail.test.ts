@@ -60,6 +60,11 @@ describe("E-mails semanais via Gmail", () => {
     const env: Record<string, string> = { GMAIL_CLIENT_ID: " id.apps.googleusercontent.com\n", GMAIL_CLIENT_SECRET: "segredo ", GMAIL_REFRESH_TOKEN: "	1//tok", GMAIL_SERVICE_ACCOUNT_JSON: "  " };
     expect(credencialGmail(k => env[k])).toEqual({ tipo: "oauth", id: "id.apps.googleusercontent.com", segredo: "segredo", refresh: "1//tok" });
   });
+  it("prefere o conector Gmail gerenciado quando vinculado, mesmo com refresh token cadastrado", () => {
+    const env: Record<string, string> = { LOVABLE_API_KEY: "lk", GOOGLE_MAIL_API_KEY: " ck ", GMAIL_CLIENT_ID: "id", GMAIL_CLIENT_SECRET: "s", GMAIL_REFRESH_TOKEN: "r" };
+    expect(credencialGmail(k => env[k])).toEqual({ tipo: "conector", lovable: "lk", conexao: "ck" });
+    expect(credencialGmail(k => ({ ...env, GOOGLE_MAIL_API_KEY: "" })[k])?.tipo).toBe("oauth");
+  });
   it("explica os erros comuns do Google", () => {
     expect(dicaOAuth("oauth", "unauthorized_client")).toContain("Use your own OAuth credentials");
     expect(dicaOAuth("service_account", "unauthorized_client")).toContain("delegação");
