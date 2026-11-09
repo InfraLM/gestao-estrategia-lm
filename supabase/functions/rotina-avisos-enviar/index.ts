@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { cicloAtual, cicloValido, EMAIL_VALIDO, emailCorporativo, montarEmail, nomeDoEmail, montarEnvio, REMETENTE_NOME_PADRAO, tokenValido, type TipoFila } from "./email.ts";
 import { credencialGmail, enviarGmail, ErroEnvio } from "./gmail.ts";
+import { permiteTesteRestrito } from "./autorizacao.ts";
 
 // Weekly check-in/checkout e-mails (and assigned-impediment notices) through the Gmail API (Google Workspace).
 // - x-cron-token (pg_net wake on enqueue; 10-minute retry cron only while rows are pending): delivers the queue.
@@ -83,10 +84,14 @@ Deno.serve(async req => {
   const uid = claims?.claims?.sub;
   if (authError || !uid) return out({ error: "Não autenticado" }, 401);
   const { data: gov } = await db.rpc("mt_is_governanca", { _uid: uid });
-  if (!gov) return out({ error: "Sem permissão" }, 403);
-
   const body = await req.json().catch(() => ({}));
   const acao = String(body?.acao ?? "");
+  if (!gov) {
+    const { data: permissao, error } = await db.from("rotina_avisos_testadores").select("valido_ate,revogado_em").eq("user_id", uid).maybeSingle();
+    if (error || !permiteTesteRestrito(acao, body?.email, permissao?.valido_ate ?? null, permissao?.revogado_em ?? null)) {
+      return out({ error: "Sem permissão: solicite à Governança acesso temporário para testar somente com a Naira" }, 403);
+    }
+  }
 
   if (acao === "teste") {
     const ciclo = typeof body?.ciclo === "string" && cicloValido(body.ciclo) ? body.ciclo : cicloAtual();
