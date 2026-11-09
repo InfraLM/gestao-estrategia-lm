@@ -57,8 +57,7 @@ describe("E-mails semanais via Gmail", () => {
     expect(nomeDoEmail("felipe.rabello@liberdademedicaedu.com.br")).toBe("Felipe");
   });
   it("credencial ignora espaços colados e prefere refresh token sem conta de serviço", () => {
-    const env: Record<string, string> = { GMAIL_CLIENT_ID: " id.apps.googleusercontent.com
-", GMAIL_CLIENT_SECRET: "segredo ", GMAIL_REFRESH_TOKEN: "	1//tok", GMAIL_SERVICE_ACCOUNT_JSON: "  " };
+    const env: Record<string, string> = { GMAIL_CLIENT_ID: " id.apps.googleusercontent.com\n", GMAIL_CLIENT_SECRET: "segredo ", GMAIL_REFRESH_TOKEN: "	1//tok", GMAIL_SERVICE_ACCOUNT_JSON: "  " };
     expect(credencialGmail(k => env[k])).toEqual({ tipo: "oauth", id: "id.apps.googleusercontent.com", segredo: "segredo", refresh: "1//tok" });
   });
   it("explica os erros comuns do Google", () => {
