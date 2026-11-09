@@ -7360,6 +7360,10 @@ export type Database = {
         Returns: boolean
       }
       rotina_atividades_abertas: { Args: { _ciclo: string }; Returns: Json }
+      rotina_aviso_extra_executar: {
+        Args: { _ciclo: string; _job: string }
+        Returns: undefined
+      }
       rotina_avisos_acordar: { Args: never; Returns: undefined }
       rotina_avisos_agendar: { Args: { _tipo: string }; Returns: undefined }
       rotina_avisos_agendar_retentativa: {
