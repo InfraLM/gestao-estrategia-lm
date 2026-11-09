@@ -1,3 +1,8 @@
+# Teste restrito de e-mail
+- [ ] Permissão de 24h concedida/revogada pela Governança, auditada e limitada à Naira; sem roles novos.
+- [ ] Controle isolado, validação servidor, testes e publicação da função sem ativar avisos.
+- [ ] Concessão à conta autenticada de Felipe e envio real dependem de aprovação da Governança.
+
 # Primeiro acesso Pré-Offsite · confirmação de e-mail
 - [x] Causa confirmada: CHECK de usuario_acessos não aceitava quick_wins já usado no convite e revertia a confirmação. Migrations 0101/0102; Bruno confirmado 05/11 19:23 UTC com auditoria, convite aceito e CFO diretor verificado, sem senha/respostas.
 - [x] Reenvio, recuperação pública e mensagens pt-BR; confirmação obrigatória preservada. Remetente padrão ativo, envio próprio sem domínio; URL antiga do remetente de convites corrigida.
