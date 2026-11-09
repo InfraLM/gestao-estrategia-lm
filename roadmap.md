@@ -1,3 +1,9 @@
+# Teste restrito de e-mail
+- [x] Permissão isolada de 24h e concessão/revogação auditada pela Governança implementadas na 0105, sem roles novos ou concessões reais.
+- [x] Controle em MinhasPermissoes, autorização servidor e 30 testes passaram; função republicada, build OK, avisos/configuração não alterados.
+- [x] Sessão autenticada de Felipe já retorna mt_is_governanca=true; não foi concedido novo perfil. Teste único para Naira falhou com Google OAuth unauthorized_client, nenhum envio confirmado.
+- [ ] Felipe corrige compatibilidade de refresh token/client ID do Gmail; envio real e controle delegado autorizado ainda não verificáveis. App não publicado; concessão delegada exige Governança.
+
 # Primeiro acesso Pré-Offsite · confirmação de e-mail
 - [x] Causa confirmada: CHECK de usuario_acessos não aceitava quick_wins já usado no convite e revertia a confirmação. Migrations 0101/0102; Bruno confirmado 05/11 19:23 UTC com auditoria, convite aceito e CFO diretor verificado, sem senha/respostas.
 - [x] Reenvio, recuperação pública e mensagens pt-BR; confirmação obrigatória preservada. Remetente padrão ativo, envio próprio sem domínio; URL antiga do remetente de convites corrigida.

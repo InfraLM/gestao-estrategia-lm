@@ -6126,6 +6126,27 @@ export type Database = {
         }
         Relationships: []
       }
+      rotina_avisos_testadores: {
+        Row: {
+          concedido_por: string
+          revogado_em: string | null
+          user_id: string
+          valido_ate: string
+        }
+        Insert: {
+          concedido_por: string
+          revogado_em?: string | null
+          user_id: string
+          valido_ate: string
+        }
+        Update: {
+          concedido_por?: string
+          revogado_em?: string | null
+          user_id?: string
+          valido_ate?: string
+        }
+        Relationships: []
+      }
       rotina_pendencia_sugestoes: {
         Row: {
           cadeira_id: string | null
@@ -7386,6 +7407,11 @@ export type Database = {
         }
         Returns: undefined
       }
+      rotina_avisos_teste_conceder: {
+        Args: { _email: string; _revogar?: boolean }
+        Returns: string
+      }
+      rotina_avisos_teste_info: { Args: never; Returns: string }
       rotina_conformidade: {
         Args: { _ate: string; _de: string }
         Returns: {

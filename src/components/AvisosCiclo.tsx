@@ -11,6 +11,7 @@ import { Mail, RefreshCw, Eye, Save, FlaskConical, PlugZap, Users, Unplug } from
 import { toast } from "sonner";
 import { cicloPadrao } from "@/lib/rotinaSemanal";
 import { DestinatarioAviso, alternarPermitido, mensagemAviso, recebeAutomatico } from "@/lib/avisosCiclo";
+import PermissaoTesteEmail from "@/components/PermissaoTesteEmail";
 
 const db = supabase as any;
 const DIAS = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
@@ -109,6 +110,7 @@ export default function AvisosCiclo() {
   return <section className="space-y-4 border-t pt-5" aria-label="E-mails do ciclo semanal">
     <div className="flex flex-wrap justify-between gap-3 items-center"><h2 className="font-semibold flex gap-2 items-center"><Mail className="h-5 w-5" />E-mails do ciclo semanal</h2><Button size="sm" variant="outline" onClick={load}><RefreshCw className="h-4 w-4 mr-2" />Atualizar</Button></div>
     {erro && <p role="alert" className="text-destructive text-sm">{erro}</p>}
+    <PermissaoTesteEmail />
     <div className="flex flex-wrap items-end gap-2"><div className="space-y-1"><Label htmlFor="avisos-email-teste">Enviar teste para um e-mail</Label><Input id="avisos-email-teste" className="w-72" type="email" placeholder="nome@liberdademedicaedu.com.br" value={emailTeste} onChange={e => setEmailTeste(e.target.value)} /></div><Button variant="outline" disabled={busy || !/^[^@\s]+@liberdademedicaedu\.com\.br$/i.test(emailTeste.trim())} onClick={() => void testarEmail()}><FlaskConical className="h-4 w-4 mr-2" />Enviar teste</Button><span className="text-xs text-muted-foreground">Não grava nada; usa contagens de exemplo.</span></div>
     {!config.remetente_pronto && <div role="status" className="text-sm text-warning bg-warning-soft border border-warning/30 rounded p-3 flex flex-wrap items-center justify-between gap-2"><span>Envio automático desligado · conecte o remetente (Gmail) depois de testar.</span><Button size="sm" variant="outline" disabled={busy || !carregado} onClick={conectar}><PlugZap className="h-4 w-4 mr-2" />Conectar remetente</Button></div>}
     {config.remetente_pronto && <div className="text-sm border rounded p-3 flex flex-wrap items-center justify-between gap-2"><span>Remetente Gmail conectado{remetente?.remetente ? <> · <b>{remetente.remetente}</b></> : null}{remetente ? ` desde ${new Date(remetente.configurado_em).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}` : ""}{naFila ? ` · ${naFila} na fila` : ""}</span><div className="flex flex-wrap gap-1"><Button size="sm" variant="ghost" disabled={busy} onClick={() => void processarFila()}><RefreshCw className="h-4 w-4 mr-2" />Processar fila agora</Button><Button size="sm" variant="ghost" disabled={busy} onClick={() => setDesconectar(true)}><Unplug className="h-4 w-4 mr-2" />Desconectar</Button></div></div>}
