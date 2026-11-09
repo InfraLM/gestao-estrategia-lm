@@ -2,6 +2,7 @@
 // 1) GMAIL_SERVICE_ACCOUNT_JSON — service account with domain-wide delegation, scope gmail.send,
 //    impersonating the sender mailbox (GMAIL_REMETENTE).
 // 2) GMAIL_CLIENT_ID + GMAIL_CLIENT_SECRET + GMAIL_REFRESH_TOKEN — OAuth consent of the sender mailbox.
+// 0) Preferred when linked: Lovable Gmail connector (LOVABLE_API_KEY + GOOGLE_MAIL_API_KEY) — managed OAuth, no token handling.
 import { base64url, falhaTemporaria, mensagemMime } from "./email.ts";
 
 /** Carries whether retrying later can succeed (429/5xx/network) or not (auth, invalid address). */
@@ -12,11 +13,15 @@ export class ErroEnvio extends Error {
 const ESCOPO = "https://www.googleapis.com/auth/gmail.send";
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 
-type Credencial = { tipo: "service_account"; conta: { client_email: string; private_key: string } } | { tipo: "oauth"; id: string; segredo: string; refresh: string };
+const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_mail/gmail/v1";
+
+type Credencial = { tipo: "conector"; lovable: string; conexao: string } | { tipo: "service_account"; conta: { client_email: string; private_key: string } } | { tipo: "oauth"; id: string; segredo: string; refresh: string };
 
 export function credencialGmail(envBruto: (k: string) => string | undefined): Credencial | null {
   // Pasted secrets often carry stray spaces/newlines at the ends.
   const env = (k: string) => envBruto(k)?.trim() || undefined;
+  const lovable = env("LOVABLE_API_KEY"), conexao = env("GOOGLE_MAIL_API_KEY");
+  if (lovable && conexao) return { tipo: "conector", lovable, conexao };
   const sa = env("GMAIL_SERVICE_ACCOUNT_JSON");
   if (sa) {
     const conta = JSON.parse(sa);
@@ -49,7 +54,7 @@ export function dicaOAuth(tipo: Credencial["tipo"], erro: string) {
 }
 
 let cache: { token: string; expira: number } | null = null;
-async function tokenAcesso(c: Credencial, remetenteEmail: string) {
+async function tokenAcesso(c: Exclude<Credencial, { tipo: "conector" }>, remetenteEmail: string) {
   if (cache && cache.expira > Date.now() + 60_000) return cache.token;
   const body = c.tipo === "service_account"
     ? new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion: await assinarJwt(c.conta, remetenteEmail) })
@@ -62,6 +67,20 @@ async function tokenAcesso(c: Credencial, remetenteEmail: string) {
 }
 
 export async function enviarGmail(c: Credencial, de: { nome: string; email: string }, para: string, m: { subject: string; text: string; html: string }) {
+  if (c.tipo === "conector") {
+    const raw = base64url(enc.encode(mensagemMime(de, para, m)));
+    const r = await fetch(`${GATEWAY_URL}/users/me/messages/send`, {
+      method: "POST", headers: { Authorization: `Bearer ${c.lovable}`, "X-Connection-Api-Key": c.conexao, "Content-Type": "application/json" }, body: JSON.stringify({ raw }), signal: AbortSignal.timeout(20000),
+    }).catch(e => { throw new ErroEnvio(`Gmail (conector) indisponível: ${(e as Error).message}`, true); });
+    const texto = await r.text();
+    let j: { id?: string; error?: { message?: string } | string; message?: string } = {};
+    try { j = JSON.parse(texto); } catch { /* keep raw text */ }
+    if (!r.ok) {
+      const msg = typeof j.error === "object" ? j.error?.message : (j.message ?? j.error ?? texto);
+      throw new ErroEnvio(`Gmail (conector) ${r.status}: ${String(msg ?? "erro").slice(0, 300)}`, falhaTemporaria(r.status));
+    }
+    return String(j.id ?? "");
+  }
   const token = await tokenAcesso(c, de.email);
   const raw = base64url(enc.encode(mensagemMime(de, para, m)));
   const r = await fetch(`https://gmail.googleapis.com/gmail/v1/users/${encodeURIComponent(de.email)}/messages/send`, {
