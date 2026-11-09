@@ -1,3 +1,8 @@
+# Aviso extra 15/11 · Gmail
+- [x] Envio pelo conector Gmail gerenciado adicionado (preferido quando vinculado); token do cron gerado; função republicada; 15 testes passaram.
+- [x] Aviso único agendado domingo 15/11 08h (São Paulo), ciclo 16/11, só diretores que ainda não enviaram; o agendamento se remove depois de rodar e registra resultado em mt_auditoria.
+- [ ] Bloqueio: conectar uma caixa Gmail (cartão de conexão) ou novo refresh token válido, depois teste para a Naira e "Conectar remetente" na Governança antes de 15/11 08h.
+
 # Teste restrito de e-mail
 - [x] Permissão isolada de 24h e concessão/revogação auditada pela Governança implementadas na 0105, sem roles novos ou concessões reais.
 - [x] Controle em MinhasPermissoes, autorização servidor e 30 testes passaram; função republicada, build OK, avisos/configuração não alterados.

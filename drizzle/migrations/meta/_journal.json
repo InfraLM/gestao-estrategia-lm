@@ -743,6 +743,20 @@
       "when": 1794253321968,
       "tag": "0105_rotina_avisos_teste_restrito",
       "breakpoints": true
+    },
+    {
+      "idx": 106,
+      "version": "7",
+      "when": 1794256894703,
+      "tag": "0106_rotina_aviso_extra_15_novembro",
+      "breakpoints": true
+    },
+    {
+      "idx": 107,
+      "version": "7",
+      "when": 1794256927398,
+      "tag": "0107_rotina_aviso_extra_auditoria",
+      "breakpoints": true
     }
   ]
 }
