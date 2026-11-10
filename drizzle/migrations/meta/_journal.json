@@ -757,6 +757,13 @@
       "when": 1794256927398,
       "tag": "0107_rotina_aviso_extra_auditoria",
       "breakpoints": true
+    },
+    {
+      "idx": 108,
+      "version": "7",
+      "when": 1794343076318,
+      "tag": "0108_fix_departamentos_insert_repositorio_read",
+      "breakpoints": true
     }
   ]
 }
