@@ -55,7 +55,7 @@ export type Entrega = EntregaV2;
 export type KpiSituacao = { indicador_id: string; valor: string; situacao: "no_trilho" | "atencao" | "fora" | ""; comentario: string };
 export const SITUACAO_LBL: Record<string, string> = { no_trilho: "No trilho", atencao: "Atenção", fora: "Fora do trilho" };
 export type CheckoutConteudo = CheckoutV2;
-export const ENTREGA_LBL: Record<string, string> = { entregue: "Entregue", parcial: "Parcial", nao_entregue: "Não entregue" };
+export const ENTREGA_LBL: Record<string, string> = { entregue: "Entregue", parcial: "Parcial", nao_entregue: "Não entregue", cancelado: "Cancelado" };
 const TIPO_RISCO: Record<string, string> = { risco: "Risco", impedimento: "Impedimento", decisao: "Decisão pendente" };
 const ORIGEM_LBL: Record<string, string> = { bsc: "BSC", okr: "KR", cesta: "Cesta" };
 
@@ -127,6 +127,8 @@ export default function MetasSemanal() {
   const [tocados, setTocados] = useState<Set<string>>(() => new Set());
   const [secao, setSecao] = useState("bloco-kpis");
   const [aba, setAba] = useState<Tipo>("checkout");
+  // Painel de conformidade fica em aba própria para não tirar o foco da resposta do diretor.
+  const [vista, setVista] = useState<"formulario" | "painel">("formulario");
   const ciRef = useRef(ci); const coRef = useRef(co);
   const sujo = useRef<Record<Tipo, boolean>>({ checkin: false, checkout: false });
   const gravando = useRef(false); const repetir = useRef(false);
@@ -475,8 +477,12 @@ export default function MetasSemanal() {
         </div>
       </header>
       <AvisoTransparencia ativo={transp.ativo} />
-      {cad && <CartaoConformidade cadeira={cad} />}
+      <Tabs value={vista} onValueChange={(v) => setVista(v as "formulario" | "painel")}>
+        <TabsList className="h-auto"><TabsTrigger value="formulario">Responder o ciclo</TabsTrigger><TabsTrigger value="painel">Meu painel · conformidade</TabsTrigger></TabsList>
+      </Tabs>
+      {vista === "painel" && cad && <CartaoConformidade cadeira={cad} />}
 
+      <div className={vista === "painel" ? "hidden" : undefined}>
       <Tabs value={aba} onValueChange={(v) => { setAba(v as Tipo); setSecao(v === "checkout" ? "bloco-kpis" : "bloco-prioridades"); }}>
         <TabsList className="h-auto flex-wrap"><TabsTrigger value="checkout">Checkout · semana de {fmtSem(semOut)}</TabsTrigger><TabsTrigger value="checkin">Check-in · semana de {fmtSem(sem)}</TabsTrigger></TabsList>
 
@@ -526,14 +532,14 @@ export default function MetasSemanal() {
                         {k.voluntario&&!r.desvio_critico&&<div className="flex flex-wrap items-center gap-1"><Badge variant="outline">Fora do calendário · voluntário</Badge>{podeEditar&&!co.primeiro_envio_em&&<Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={()=>setCo({...co,kpis_retrato:retrato.filter(x=>x.indicador_id!==k.indicador_id),kpis_resposta:co.kpis_resposta.filter(x=>x.indicador_id!==k.indicador_id)})}>Remover</Button>}</div>}
                         {k.voluntario&&!r.desvio_critico&&podeEditar&&!co.primeiro_envio_em&&sugerirDesvio({...k,...r,voluntario:true} as any)&&<div role="status" className="mt-1 rounded border border-destructive/40 bg-destructive/5 p-2 text-xs">Valor indica Off track com desvio crítico. <Button size="sm" variant="outline" className="ml-1 h-6 px-2 text-xs" onClick={()=>{setCo({...co,kpis_retrato:retrato.map(x=>x.indicador_id===k.indicador_id?{...x,desvio_critico:true,periodo_label:periodoApontamento(x,sem,true).label}:x),kpis_resposta:co.kpis_resposta.map(x=>x.indicador_id===k.indicador_id?{...x,desvio_critico:true,ok:false}:x)});}}>Transformar em desvio crítico</Button></div>}
                         <p className="text-xs text-muted-foreground">Última situação atual apontada: {ult ? <><b className="text-foreground">{ult.valor}</b> · {ult.fonte}{ult.data && ult.fonte === "Árvore de KPIs" ? ` · ${new Date(ult.data).toLocaleDateString("pt-BR")}` : ult.fonte === "Árvore de KPIs" ? " · Rev.02" : ""}</> : "—"}</p></div>
-                      <div className="flex gap-1"><Badge variant="outline">{ORIGEM_LBL[k.origem]}</Badge><Badge variant="secondary">{TIPO_LBL[tipo]}</Badge>{aval && <Badge variant={aval === "off" ? "destructive" : aval === "on" ? "default" : "outline"}>{AVALIACAO_LBL[aval]}</Badge>}</div>
+                      <div className="flex gap-1"><Badge variant="outline">{ORIGEM_LBL[k.origem]}</Badge><Badge variant="secondary">{TIPO_LBL[tipo]}</Badge>{tipo === "valor_periodo" && r.declaracao && <Badge className={r.declaracao === "on" ? "bg-success text-success-foreground" : undefined} variant={r.declaracao === "off" ? "destructive" : "default"}>Status atual: {AVALIACAO_LBL[r.declaracao]}</Badge>}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs">
                       <div><p className="text-muted-foreground">{tipo === "valor_mensal" ? "Meta mensal" : tipo === "entrega" ? "Prazo da entrega" : "Meta semestral/anual"}</p>
                         <p>{tipo === "entrega" ? (k.prazo_entrega ? new Date(k.prazo_entrega + "T12:00:00").toLocaleDateString("pt-BR") : "Sem prazo") : tipo === "valor_periodo" ? (k.meta_texto || fmtNum(k.meta_semestre ?? null) || "Sem meta registrada") : k.meta_mes != null ? fmtNum(k.meta_mes) : "Sem meta registrada"}</p>
                         {tipo === "valor_periodo" && k.meta_mes != null && <p className="text-muted-foreground">meta de referência do mês: {fmtNum(k.meta_mes)}</p>}</div>
                       <div><p className="text-muted-foreground">Valor apontado no mês</p><p>{tipo === "entrega" ? "—" : fmtNum(k.realizado)}</p></div>
-                      <div><p className="text-muted-foreground">Avaliação</p><p>{AVALIACAO_LBL[aval]}{avR.origem && <span className="block text-muted-foreground">{avR.origem}</span>}{tipo === "valor_mensal" && k.origem !== "bsc" && !semMeta && k.atingimento != null && <span className="block text-muted-foreground">atingimento {pct(k.atingimento)}</span>}</p></div></div>
+                      <div><p className="text-muted-foreground">{avR.fonte === "declarado" ? "Avaliação anterior" : "Avaliação"}</p><p>{AVALIACAO_LBL[aval]}{avR.origem && <span className="block text-muted-foreground">{avR.origem}</span>}{tipo === "valor_mensal" && k.origem !== "bsc" && !semMeta && k.atingimento != null && <span className="block text-muted-foreground">atingimento {pct(k.atingimento)}</span>}</p></div></div>
                     {tipo !== "entrega" && <FormField id={`kpi-${k.indicador_id}-valor`} label="Valor apontado · situação atual" required={!!r.desvio_critico} help={tipo === "valor_periodo" && !r.desvio_critico ? "Opcional" : undefined}><Input placeholder={tipo === "valor_mensal" ? "Valor apontado — situação atual (número)" : "Valor apontado — situação atual (opcional)"} maxLength={200} value={r.situacao_atual ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { situacao_atual: e.target.value })} /></FormField>}
                     {r.desvio_critico && <div id={`kpi-${k.indicador_id}-desvio`} tabIndex={-1} className="space-y-3 border-l-2 border-destructive pl-3">
                       <p className="text-sm font-medium">Desvio crítico</p>
@@ -543,8 +549,9 @@ export default function MetasSemanal() {
                       <FormField id={`kpi-${k.indicador_id}-acao-critico`} label="Plano de ação do desvio" required><Textarea rows={3} maxLength={LIMITE_TEXTO} value={r.plano} onChange={e => setResp(k.indicador_id, { plano: e.target.value })} disabled={!podeEditar} /></FormField>
                       {erroCampo(`kpi-${k.indicador_id}-desvio`) && <p role="alert" className="text-xs text-destructive">{erroCampo(`kpi-${k.indicador_id}-desvio`)}</p>}
                     </div>}
-                    {tipo === "valor_periodo" && <div className="space-y-2 rounded bg-muted/40 p-2">
-                      <p className="text-xs font-medium">Declaração do diretor para o mês</p>
+                    {tipo === "valor_periodo" && <div className={`space-y-2 rounded border-2 p-3 ${r.declaracao === "off" ? "border-destructive bg-destructive/5" : r.declaracao === "on" ? "border-success bg-success/5" : "border-primary/40 bg-muted/40"}`}>
+                      <p className="text-sm font-semibold">Status atual · sua avaliação neste ciclo</p>
+                      <p className="text-xs text-muted-foreground">A avaliação anterior aparece acima só como referência. Marque como o indicador está agora.</p>
                       <div className="flex gap-2">
                         <Button size="sm" aria-pressed={r.declaracao === "on"} variant={r.declaracao === "on" ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "on" ? null : "on" })}>On track</Button>
                         <Button size="sm" aria-pressed={r.declaracao === "off"} variant={r.declaracao === "off" ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "off" ? null : "off" })}>Off track</Button>
@@ -613,9 +620,10 @@ export default function MetasSemanal() {
                     {podeEditar && e.status !== "entregue" && <Button size="sm" variant="outline" onClick={() => set({ status: "entregue" })}>Entreguei</Button>}
                     <Select value={e.status || "none"} disabled={!podeEditar} onValueChange={(v) => set({ status: (v === "none" ? "" : v) as EntregaV2["status"] })}>
                       <SelectTrigger className="w-52 h-8" aria-label={`Status: ${e.titulo}`}><SelectValue /></SelectTrigger>
-                      <SelectContent><SelectItem value="none">Ainda em aberto</SelectItem><SelectItem value="entregue">Entregue</SelectItem><SelectItem value="parcial">Em andamento</SelectItem><SelectItem value="nao_entregue">Não entregue</SelectItem></SelectContent>
+                      <SelectContent><SelectItem value="none">Ainda em aberto</SelectItem><SelectItem value="entregue">Entregue</SelectItem><SelectItem value="parcial">Em andamento</SelectItem><SelectItem value="nao_entregue">Não entregue</SelectItem><SelectItem value="cancelado">Cancelado</SelectItem></SelectContent>
                     </Select>
                     {e.status === "entregue" && <Badge>Entregue · sai das próximas semanas</Badge>}
+                    {e.status === "cancelado" && <Badge variant="secondary">Cancelado · sai das próximas semanas</Badge>}
                   </div>
                 </div>);
               return (
@@ -728,6 +736,7 @@ export default function MetasSemanal() {
           </section>
         </TabsContent>
       </Tabs>
+      </div>
 
       <Revisao pend={[...pendOut.map((p) => ({ ...p, aba: "checkout" as Tipo })), ...pendIn.map((p) => ({ ...p, aba: "checkin" as Tipo }))]} blocos={[
         { aba: "checkout", id: "bloco-kpis", txt: `KPIs: ${respostas.length}/${retrato.length} respondidos · ${respostas.filter((k) => k.ok === false).length} "Não" · ${co.kpis_resposta.filter((k) => k.ok === false && k.vira_iniciativa && k.plano.trim()).length} plano(s) viram iniciativa` },
