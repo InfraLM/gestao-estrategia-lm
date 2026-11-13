@@ -6,7 +6,6 @@ import { ShieldCheck, Building2, FolderKanban, Loader2, KeyRound } from "lucide-
 import { Link } from "react-router-dom";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { ACCESS_MODULES } from "@/lib/moduleAccess";
-import TesteEmailRestrito from "@/components/TesteEmailRestrito";
 
 const MODULO_LABELS: Record<string, string> = {
   pmo: "PMO · Projetos, Status Report, Gestão",
@@ -36,7 +35,6 @@ export default function MinhasPermissoes() {
 
   return (
     <div className="space-y-6 max-w-5xl">
-      <TesteEmailRestrito />
       <section className="space-y-3">
         <h3 className="font-semibold">Acesso por módulo</h3>
         <div className="divide-y border rounded-md">{ACCESS_MODULES.map(m => {

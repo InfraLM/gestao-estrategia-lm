@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { base64url, cicloAtual, emailCorporativo, mensagemMime, montarEmail, nomeDoEmail, tokenValido } from "../../supabase/functions/rotina-avisos-enviar/email";
+import { base64url, cicloAtual, mensagemMime, montarEmail, montarImpedimento, tokenValido } from "../../supabase/functions/rotina-avisos-enviar/email";
 import { alternarPermitido, recebeAutomatico } from "@/lib/avisosCiclo";
 import { credencialGmail, dicaOAuth } from "../../supabase/functions/rotina-avisos-enviar/gmail";
 
@@ -16,8 +16,22 @@ describe("E-mails semanais via Gmail", () => {
     expect(m.text).toContain("semana=2026-11-09");
     expect(m.text).not.toContain("status report");
   });
-  it("lembrete e teste são identificados no assunto", () => {
-    expect(montarEmail({ nome: "Naira", ciclo: "2026-11-09", tipo: "lembrete", pendencias: p, teste: true }).subject).toBe("[Teste] Lembrete: check-in/checkout vence hoje às 23h59");
+  it("lembrete identificado no assunto e sem marca de teste", () => {
+    const m = montarEmail({ nome: "Naira", ciclo: "2026-11-09", tipo: "lembrete", pendencias: p });
+    expect(m.subject).toBe("Lembrete: check-in/checkout vence hoje às 23h59");
+    expect(m.html + m.text).not.toMatch(/teste/i);
+  });
+  it("HTML formatado com a marca LM e o mesmo texto", () => {
+    const m = montarEmail({ nome: "Naira Yurie", ciclo: "2026-11-09", tipo: "abertura", pendencias: p });
+    expect(m.html).toContain("<!doctype html>");
+    expect(m.html).toContain("Gestão e Estratégia");
+    expect(m.html).toContain("Olá, Naira.");
+    expect(m.html).toContain("3 KPI(s) a apontar");
+    expect(m.html).toContain("Abrir meu check-in/checkout");
+    expect(m.html).toContain("semana=2026-11-09");
+    const i = montarImpedimento({ nome: "Ana", ciclo: "2026-11-09", pendencias: { cadeira_origem: "Financeiro" } });
+    expect(i.subject).toBe("Impedimento recebido · Financeiro");
+    expect(i.html).toContain("Ver impedimento");
   });
   it("escapa HTML e ignora campos fora das contagens", () => {
     const m = montarEmail({ nome: "<b>x</b>", ciclo: "2026-11-09", tipo: "abertura", pendencias: { ...p, segredo: "RESERVADO" } as never });
@@ -48,14 +62,6 @@ describe("E-mails semanais via Gmail", () => {
     expect(() => mensagemMime({ nome: "x", email: "gestao@x.com" }, "a@x.com>\r\nBcc: b@x.com", m)).toThrow();
   });
   it("base64url sem padding", () => expect(base64url(new Uint8Array([251, 255]))).toBe("-_8"));
-  it("teste avulso só para e-mail corporativo e saudação pelo primeiro nome", () => {
-    expect(emailCorporativo("felipe.rabello@liberdademedicaedu.com.br")).toBe(true);
-    expect(emailCorporativo(" Naira.Yurie@LiberdadeMedicaEdu.com.br ")).toBe(true);
-    expect(emailCorporativo("x@gmail.com")).toBe(false);
-    expect(emailCorporativo("x@liberdademedicaedu.com.br.evil.com")).toBe(false);
-    expect(emailCorporativo("a@b@liberdademedicaedu.com.br")).toBe(false);
-    expect(nomeDoEmail("felipe.rabello@liberdademedicaedu.com.br")).toBe("Felipe");
-  });
   it("credencial ignora espaços colados e prefere refresh token sem conta de serviço", () => {
     const env: Record<string, string> = { GMAIL_CLIENT_ID: " id.apps.googleusercontent.com\n", GMAIL_CLIENT_SECRET: "segredo ", GMAIL_REFRESH_TOKEN: "	1//tok", GMAIL_SERVICE_ACCOUNT_JSON: "  " };
     expect(credencialGmail(k => env[k])).toEqual({ tipo: "oauth", id: "id.apps.googleusercontent.com", segredo: "segredo", refresh: "1//tok" });

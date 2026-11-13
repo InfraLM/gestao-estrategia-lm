@@ -16,7 +16,7 @@ export type AtaStatus = { gov_acao_id: string; titulo: string; status: "" | "ent
 export type Prioridade = PrioridadeSemanal & { id: string; prazo: string; responsavel: Responsavel; vinculos?: Vinculos };
 export type CheckinV2 = { v: 2; prioridades: Prioridade[]; riscos: string; apoio: string; confianca: number; envio_token?: string; primeiro_envio_em?: string };
 export type Entrega = {
-  titulo: string; status: "entregue" | "parcial" | "nao_entregue" | ""; motivo: string; iniciativa_id?: string; novo_status_ini?: string;
+  titulo: string; status: "entregue" | "parcial" | "nao_entregue" | "cancelado" | ""; motivo: string; iniciativa_id?: string; novo_status_ini?: string;
   gov_acao_id?: string; gov_comite_codigo?: string; prioridade_id?: string; responsavel?: Responsavel; herdada_de?: string; vinculos?: Vinculos;
 };
 export type KpiRetrato = CalendarioKpi & {
@@ -154,12 +154,12 @@ export const alternar = (atual: boolean | null, clicado: boolean) => (atual === 
 
 // ---------- Prioridades herdadas ----------
 type Row = { semana: string; tipo: string; conteudo: any };
-/** Prioridades de semanas anteriores ainda não entregues (nem no checkout da própria semana, nem depois). */
+/** Prioridades de semanas anteriores ainda não entregues nem canceladas (nem no checkout da própria semana, nem depois). */
 export function prioridadesHerdadas(rows: Row[], sem: string): Entrega[] {
   const ant = rows.filter((r) => r.semana < sem);
   const entregues = new Set<string>();
   for (const r of ant.filter((r) => r.tipo === "checkout")) {
-    for (const e of normalizarCheckout(r.conteudo).entregas) if (e.status === "entregue") entregues.add(chave(e.herdada_de ?? r.semana, e));
+    for (const e of normalizarCheckout(r.conteudo).entregas) if (e.status === "entregue" || e.status === "cancelado") entregues.add(chave(e.herdada_de ?? r.semana, e));
   }
   const out: Entrega[] = [];
   for (const r of ant.filter((r) => r.tipo === "checkin").sort((a, b) => a.semana.localeCompare(b.semana))) {

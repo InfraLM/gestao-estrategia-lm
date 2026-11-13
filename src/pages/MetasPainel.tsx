@@ -136,7 +136,7 @@ export default function MetasPainel() {
           {ver?.tipo === "checkout" && (
             <div className="space-y-3 text-sm">
               <ul className="space-y-1">{(ver.conteudo.entregas ?? []).map((e: any, i: number) => (
-                <li key={i}><Badge variant={e.status === "entregue" ? "default" : e.status === "parcial" ? "secondary" : "destructive"}>{ENTREGA_LBL[e.status] ?? "—"}</Badge> {e.titulo}{e.motivo && <p className="text-muted-foreground pl-2">{e.motivo}</p>}</li>))}</ul>
+                <li key={i}><Badge variant={e.status === "entregue" ? "default" : e.status === "parcial" || e.status === "cancelado" ? "secondary" : "destructive"}>{ENTREGA_LBL[e.status] ?? "—"}</Badge> {e.titulo}{e.motivo && <p className="text-muted-foreground pl-2">{e.motivo}</p>}</li>))}</ul>
               <h3 className="font-medium">Entregas fora do planejado</h3>
               <ExtrasLeitura conteudo={ver.conteudo} historico />
               <p><b>Avaliação da semana:</b> {ver.conteudo.ritmo}/5</p>
