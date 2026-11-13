@@ -1,12 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { cicloAtual, cicloValido, EMAIL_VALIDO, emailCorporativo, montarEmail, nomeDoEmail, montarEnvio, REMETENTE_NOME_PADRAO, tokenValido, type TipoFila } from "./email.ts";
+import { EMAIL_VALIDO, montarEnvio, REMETENTE_NOME_PADRAO, tokenValido, type TipoFila } from "./email.ts";
 import { credencialGmail, enviarGmail, ErroEnvio } from "./gmail.ts";
-import { permiteTesteRestrito } from "./autorizacao.ts";
 
 // Weekly check-in/checkout e-mails (and assigned-impediment notices) through the Gmail API (Google Workspace).
 // - x-cron-token (pg_net wake on enqueue; 10-minute retry cron only while rows are pending): delivers the queue.
-// - Governança JWT + {acao:"teste", cadeira_id}: sends one preview to that director; writes nothing.
 // - Governança JWT + {acao:"configurar"}: registers this endpoint for the wake and marks the sender ready (audited).
 // - Governança JWT + {acao:"processar"}: delivers the queue on demand.
 // Rows are claimed/finished only through service-role RPCs: one row per claim, max 3 attempts, 14-day expiry.
@@ -86,36 +84,7 @@ Deno.serve(async req => {
   const { data: gov } = await db.rpc("mt_is_governanca", { _uid: uid });
   const body = await req.json().catch(() => ({}));
   const acao = String(body?.acao ?? "");
-  if (!gov) {
-    const { data: permissao, error } = await db.from("rotina_avisos_testadores").select("valido_ate,revogado_em").eq("user_id", uid).maybeSingle();
-    if (error || !permiteTesteRestrito(acao, body?.email, permissao?.valido_ate ?? null, permissao?.revogado_em ?? null)) {
-      return out({ error: "Sem permissão: solicite à Governança acesso temporário para testar somente com a Naira" }, 403);
-    }
-  }
-
-  if (acao === "teste") {
-    const ciclo = typeof body?.ciclo === "string" && cicloValido(body.ciclo) ? body.ciclo : cicloAtual();
-    const tipoTeste = body?.tipo === "lembrete" ? "lembrete" : "abertura";
-    // Ad-hoc test to a corporate mailbox: sample counts only, no chair data, writes nothing.
-    if (body?.email !== undefined) {
-      if (!emailCorporativo(body.email)) return out({ error: "Use um e-mail @liberdademedicaedu.com.br" }, 422);
-      const para = body.email.trim().toLowerCase();
-      try {
-        const id = await enviar(para, montarEmail({ nome: nomeDoEmail(para), ciclo, tipo: tipoTeste, pendencias: { prioridades: 1, kpis: 2, atas: 1, status_reports: 0 }, teste: true }));
-        return out({ ok: true, para, ciclo, tipo: tipoTeste, provedor_id: id });
-      } catch (e) { return out({ ok: false, error: String((e as Error).message ?? e) }, 502); }
-    }
-    const { data: lista, error } = await db.rpc("rotina_avisos_destinatarios", { _ciclo: ciclo });
-    if (error) return out({ error: "Não foi possível carregar os destinatários" }, 500);
-    const d = (lista ?? []).find((x: { cadeira_id: string }) => x.cadeira_id === body?.cadeira_id);
-    if (!d) return out({ error: "Cadeira não encontrada" }, 404);
-    if (d.motivo || !d.email) return out({ error: `Não recebe: ${d.motivo ?? "sem e-mail"}` }, 422);
-    const tipo = body?.tipo === "lembrete" ? "lembrete" : "abertura";
-    try {
-      const id = await enviar(d.email, montarEmail({ nome: d.nome, ciclo, tipo, pendencias: d.pendencias, teste: true }));
-      return out({ ok: true, para: d.email, ciclo, tipo, provedor_id: id });
-    } catch (e) { return out({ ok: false, error: String((e as Error).message ?? e) }, 502); }
-  }
+  if (!gov) return out({ error: "Sem permissão: somente a Governança" }, 403);
 
   if (acao === "configurar") {
     if (faltaGmail()) return out({ error: faltaGmail() }, 503);
