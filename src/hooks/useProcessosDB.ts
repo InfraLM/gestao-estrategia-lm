@@ -51,9 +51,11 @@ function mapRow(r: any): Processo {
 
 /** Arquivos de fluxo são privados: troca o endereço salvo por um link temporário (só com login). */
 export async function assinarFluxo(url?: string): Promise<string | undefined> {
-  const m = url?.match(/\/processo-fluxos\/(.+)$/);
-  if (!m) return url;
-  const path = decodeURIComponent(m[1].split("?")[0]);
+  if (!url) return url;
+  const m = url.match(/\/processo-fluxos\/(.+)$/);
+  // Registros novos guardam só o caminho; antigos guardam a URL pública.
+  if (!m && /^(https?:|data:|blob:|\/)/.test(url)) return url;
+  const path = m ? decodeURIComponent(m[1].split("?")[0]) : url;
   const { data } = await supabase.storage.from("processo-fluxos").createSignedUrl(path, 60 * 60 * 12);
   return data?.signedUrl ?? url;
 }

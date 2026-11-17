@@ -55,8 +55,7 @@ export function canAccessModule(grants: ModuleGrant[], module: string, edit = fa
   if (superAdmin) return true;
   if (CLOSED_MODULES.includes(module) && admin) return true;
   const grant = grants.find(g => g.modulo === module);
-  if (!grant && CLOSED_MODULES.includes(module)) return false;
-  if (!grant) return true; // Existing scoped permissions remain authoritative without an override.
+  if (!grant) return false; // Closed by default: Governance must grant each module explicitly.
   return edit ? grant.nivel === "edicao" : grant.nivel !== "nenhum";
 }
 export type SocioParticipante = { respondente: boolean; pode_ver_consolidado: boolean; ativo: boolean } | null;

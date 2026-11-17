@@ -76,6 +76,6 @@ describe("Quick Wins: regras de tela", () => {
     expect(canAccessQuickWins({ lider_id: "x", governanca: false }, [])).toBe(true);
     expect(canAccessQuickWins({ lider_id: null, governanca: true }, [])).toBe(true);
     expect(canAccessQuickWins({ lider_id: "x", governanca: false }, [{ modulo: "quick_wins", nivel: "nenhum" }])).toBe(false);
-    expect(canAccessModule([], "estrategia")).toBe(true);
+    expect(canAccessModule([], "estrategia")).toBe(false);
   });
 });
