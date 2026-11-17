@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation, Link } from "react-router-dom";
-import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp, Settings2, LogIn, KeyRound, UserCog, User as UserIcon, PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
+import { LayoutDashboard, LayoutGrid, LineChart, FolderKanban, FolderArchive, Bell, Search, LogOut, ShieldCheck, Sparkles, Compass, Target, ListChecks, Repeat, Network, Workflow, ShieldAlert, ChevronDown, Briefcase, GitBranch, History, BookOpen, FileCheck2, ScrollText, Library, Server, TrendingUp, Settings2, LogIn, KeyRound, UserCog, User as UserIcon, Mail, PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
@@ -161,6 +161,7 @@ const titles: Record<string, string> = {
   "/socios/consolidado": "Desejos dos Sócios 2027 · Visão consolidada",
   "/minhas-permissoes": "Minhas Permissões",
   "/gestao-usuarios": "Gestão de Usuários e Permissões",
+  "/usuarios-emails": "Usuários e e-mails",
   "/pmo/business-case": "PMO · Submissão de Business Case (ScoreCard LM)",
 };
 
@@ -179,6 +180,13 @@ export default function AppLayout() {
     return !module || access.canAccessPath(module, child.to);
   }) })).filter(group => group.children.length > 0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Standalone "Usuários e e-mails" entry: Governance only (server RPC enforces it too).
+  const [isGovernanca, setIsGovernanca] = useState(false);
+  useEffect(() => {
+    if (!user) { setIsGovernanca(false); return; }
+    (supabase as any).rpc("mt_is_governanca", { _uid: user.id }).then(({ data }: { data: boolean | null }) => setIsGovernanca(!!data)); // eslint-disable-line @typescript-eslint/no-explicit-any
+  }, [user]);
+  const mostrarEmails = isGovernanca && !access.acessoPendente && !access.liderRestrito;
 
   useEffect(() => { setMobileMenuOpen(false); }, [loc.pathname, loc.search]);
 
@@ -300,6 +308,25 @@ export default function AppLayout() {
               </div>
             );
           })}
+          {mostrarEmails && (
+            <div className="pt-3 mt-3 border-t border-sidebar-border/60">
+              {compact ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <NavLink to="/usuarios-emails" onClick={() => { if (mobile) setMobileMenuOpen(false); }} className={({ isActive }) => cn("flex items-center justify-center h-10 w-10 mx-auto rounded-md transition-colors", isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground")}>
+                      <Mail className="h-4 w-4 shrink-0" />
+                    </NavLink>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">Usuários e e-mails</TooltipContent>
+                </Tooltip>
+              ) : (
+                <NavLink to="/usuarios-emails" onClick={() => { if (mobile) setMobileMenuOpen(false); }} className={({ isActive }) => cn("flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-colors", isActive ? "bg-sidebar-accent text-sidebar-accent-foreground border-l-2 border-primary" : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60")}>
+                  <Mail className="h-4 w-4 shrink-0" />
+                  <span>Usuários e e-mails</span>
+                </NavLink>
+              )}
+            </div>
+          )}
         </nav>
         </TooltipProvider>
         <div className={cn("py-3 border-t border-sidebar-border flex", compact ? "px-2 justify-center" : "px-4 items-center justify-between")}>
