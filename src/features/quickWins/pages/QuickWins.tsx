@@ -261,6 +261,8 @@ function ConviteEmail({ d }: { d: Dados }) {
   const recebidos = new Set(convites.data ?? []);
   const lideresAtivos = new Set(d.lideres.filter((l) => l.ativo).map((l) => l.email.trim().toLowerCase()));
   const [novo, setNovo] = useState({ nome: "", email: "", diretoria: "" });
+  const [confirmando, setConfirmando] = useState(false);
+  const pendentes = ativos.filter((x) => !recebidos.has(x.email)).length;
   const salvarLista = async (itens: ItemEnvio[], ok: string) => {
     setBusy(true);
     const { error } = await db.rpc("qw_envio_lista_salvar", { _itens: itens });
@@ -285,7 +287,7 @@ function ConviteEmail({ d }: { d: Dados }) {
     else toast({ title: `Teste enviado para ${(r.resultado ?? []).length} e-mail(s)` });
   };
   const lideres = async () => {
-    if (!window.confirm(`Enviar o convite do Quick Wins ${ciclo?.ano} para as ${ativos.filter((x) => !recebidos.has(x.email)).length} pessoas da lista Envio Quick Wins que ainda não receberam?`)) return;
+    setConfirmando(false);
     const r = await chamar({ modo: "lideres" });
     if (!r) return;
     void convites.refetch(); void lista.refetch();
@@ -317,7 +319,10 @@ function ConviteEmail({ d }: { d: Dados }) {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-3">
-        <Button disabled={busy || !ciclo || !ativos.length} onClick={lideres}><Mail className="h-4 w-4 mr-2" />Enviar convite para a lista</Button>
+        {confirmando
+          ? <><Button disabled={busy} onClick={lideres}><Mail className="h-4 w-4 mr-2" />Confirmar envio para {pendentes} pessoa(s)</Button><Button variant="outline" disabled={busy} onClick={() => setConfirmando(false)}>Cancelar</Button></>
+          : <Button disabled={busy || !ciclo || !pendentes} onClick={() => setConfirmando(true)}><Mail className="h-4 w-4 mr-2" />Enviar convite para a lista</Button>}
+        {busy && <span className="text-sm text-muted-foreground" role="status">Enviando…</span>}
         <span className="text-sm text-muted-foreground">{ciclo ? `${ativos.filter((x) => recebidos.has(x.email)).length} de ${ativos.length} da lista já receberam no ciclo ${ciclo.ano}` : "Abra um ciclo para enviar o convite"}</span>
       </div>
     </CardContent></Card>;
