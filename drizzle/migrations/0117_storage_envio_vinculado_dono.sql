@@ -1,0 +1,4 @@
+DROP POLICY IF EXISTS "backlog_sub_insert_auth" ON storage.objects;
+CREATE POLICY "backlog_sub_insert_auth" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'backlog-submissoes' AND (storage.foldername(name))[1] = (select auth.uid())::text);
+DROP POLICY IF EXISTS "rdb_insert_auth" ON storage.objects;
+CREATE POLICY "rdb_insert_auth" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'repositorio-docs' AND ((storage.foldername(name))[1] = (select auth.uid())::text OR public.has_role((select auth.uid()),'admin') OR public.has_role((select auth.uid()),'pmo') OR public.has_role((select auth.uid()),'super_admin')));
