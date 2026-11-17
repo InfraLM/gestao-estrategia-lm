@@ -37,6 +37,7 @@ import DashboardProcessos from "./pages/DashboardProcessos";
 import StatusReportProcessos from "./pages/StatusReportProcessos";
 import MinhasPermissoes from "./pages/MinhasPermissoes";
 import GestaoUsuarios from "./pages/GestaoUsuarios";
+import UsuariosEmails from "./pages/UsuariosEmails";
 import BusinessCaseScorecard from "./pages/BusinessCaseScorecard";
 import Auth from "./pages/Auth";
 import ResetPassword from './pages/ResetPassword';
@@ -79,6 +80,7 @@ const App = () => (
               <Route path="/cesta-metas/insights" element={<CestaInsights />} />
               <Route path="/governanca/integracao" element={<GovernancaIntegracao />} />
               <Route path="/gestao-usuarios" element={<GestaoUsuarios />} />
+              <Route path="/usuarios-emails" element={<UsuariosEmails />} />
               <Route path="/minhas-permissoes" element={<MinhasPermissoes />} />
               <Route path="/" element={<RedirInicio />} />
               <Route path="/pmo/dashboard" element={<Dashboard />} />
