@@ -18,7 +18,7 @@ import {
   CARGOS, CRITERIOS, ICE_LEGENDA, O_QUE_SAO, PERGUNTA, QW_LIMITE_ITENS, ROTULOS,
   ativos, camposFaltando, contagem, csv, custoTexto, faixaIce, formatarIce, iceScore, indicadores, linhaVazia, ordenarPorIce, temIniciativa, tituloAutomatico,
   type LinhaForm, type LinhaPainel, type QwItem,
-} from "@/lib/quickWins";
+} from "@/features/quickWins/lib/quickWins";
 
 const db = supabase as any;
 type Ciclo = { id: string; ano: number; status: string; data_abertura: string | null; data_fechamento: string | null; limite_investimento: number; prazo_max_dias: number };

@@ -1,4 +1,4 @@
-import QuickWins from "./pages/QuickWins";
+import QuickWins from "@/features/quickWins/pages/QuickWins";
 import PreOffsiteFormulario from "./features/preOffsite/Formulario";
 import PreOffsiteAdmin from "./features/preOffsite/Admin";
 import PortfolioNovosVinculos from "./components/PortfolioNovosVinculos";

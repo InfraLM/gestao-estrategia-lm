@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { canAccessModule, canAccessQuickWins, moduleForPath, rotaPermitidaLiderRestrito } from "@/lib/moduleAccess";
-import { camposFaltando, custoTexto, classificar, faixaIce, iceScore, linhaVazia, contagem, csv, indicadores, ordenarPorIce, tituloAutomatico, type QwItem } from "@/lib/quickWins";
+import { camposFaltando, custoTexto, classificar, faixaIce, iceScore, linhaVazia, contagem, csv, indicadores, ordenarPorIce, tituloAutomatico, type QwItem } from "@/features/quickWins/lib/quickWins";
 
 describe("Quick Wins: regras de tela", () => {
   it("área é obrigatória apenas para líderes com mais de um vínculo", () => {
