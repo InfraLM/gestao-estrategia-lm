@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ACCESS_MODULES, AccessLevel, CLOSED_MODULES } from "@/lib/moduleAccess";
+import { ACCESS_MODULES, AccessLevel } from "@/lib/moduleAccess";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
@@ -29,9 +29,9 @@ export default function UserModuleMatrix({ userId, grants, isSuperAdmin, disable
     <div className="divide-y border rounded-md">
       {ACCESS_MODULES.map(m => <div key={m.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
         <span className="text-sm">{m.label}</span>
-        <Select value={isSuperAdmin ? "edicao" : grants[m.id] ?? "padrao"} disabled={disabled || isSuperAdmin || saving !== null} onValueChange={v => save(m.id, v)}>
+        <Select value={isSuperAdmin ? "edicao" : (grants[m.id] && grants[m.id] !== "nenhum" ? grants[m.id] : "padrao")} disabled={disabled || isSuperAdmin || saving !== null} onValueChange={v => save(m.id, v)}>
           <SelectTrigger className="w-48" aria-label={`Acesso a ${m.label}`}><SelectValue /></SelectTrigger>
-          <SelectContent><SelectItem value="padrao">{CLOSED_MODULES.includes(m.id) ? "Padrão · acesso restrito" : "Manter acesso atual"}</SelectItem><SelectItem value="nenhum">Sem acesso</SelectItem><SelectItem value="leitura">Somente consulta</SelectItem><SelectItem value="edicao">Consulta e edição</SelectItem></SelectContent>
+          <SelectContent><SelectItem value="padrao">Nenhum</SelectItem><SelectItem value="leitura">Somente consulta</SelectItem><SelectItem value="edicao">Consulta e edição</SelectItem></SelectContent>
         </Select>
       </div>)}
     </div>

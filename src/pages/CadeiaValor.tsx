@@ -194,11 +194,11 @@ function DetalheCadeia({
     const path = `${edit.id}/${Date.now()}-${file.name}`;
     const { error: upErr } = await supabase.storage.from("processo-fluxos").upload(path, file, { upsert: true });
     if (upErr) { setBusy(false); toast({ title: "Erro no upload", description: upErr.message, variant: "destructive" }); return; }
-    const { data: pub } = supabase.storage.from("processo-fluxos").getPublicUrl(path);
-    const { error } = await supabase.from("processos").update({ imagem_fluxo_url: pub.publicUrl }).eq("id", edit.id);
+    // Bucket privado: grava só o caminho; a URL assinada é gerada na leitura.
+    const { error } = await supabase.from("processos").update({ imagem_fluxo_url: path }).eq("id", edit.id);
     setBusy(false);
     if (error) { toast({ title: "Erro ao salvar URL", variant: "destructive" }); return; }
-    const assinada = await assinarFluxo(pub.publicUrl);
+    const assinada = await assinarFluxo(path);
     setEdit(e => ({ ...e, imagemFluxoUrl: assinada }));
     toast({ title: "Imagem do fluxo atualizada" });
     onChanged();
