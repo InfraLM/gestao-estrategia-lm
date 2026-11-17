@@ -13,6 +13,11 @@ export default function PortfolioNovosVinculos() {
     for(const j of data??[]){if(stopped||tentados.has(j.id))continue;tentados.add(j.id);const {data:r,error}=await supabase.functions.invoke('portfolio-vincular',{body:{modo:'novo',item:{fonte_tipo:j.fonte_tipo,id:j.fonte_id}}});
      if(error||r?.error){toast.error(r?.error??await erroFuncao(error));break;}atualizarVinculos();}
    }finally{running=false;}
-  };run();const timer=window.setInterval(run,10000);return()=>{stopped=true;window.clearInterval(timer);};
+  };
+  // Fila de vínculos: confere a cada 30 s só com a aba visível (antes: a cada 10 s, sempre), e logo ao voltar à aba.
+  const tick=()=>{if(document.visibilityState==='visible')run();};
+  const aoVoltar=()=>{if(document.visibilityState==='visible')run();};
+  run();const timer=window.setInterval(tick,30000);document.addEventListener('visibilitychange',aoVoltar);
+  return()=>{stopped=true;window.clearInterval(timer);document.removeEventListener('visibilitychange',aoVoltar);};
  },[user]);return null;
 }

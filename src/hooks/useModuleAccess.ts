@@ -21,8 +21,10 @@ export function useModuleAccess() {
       if (roles.error) throw roles.error;
       return { grants: grants.data as ModuleGrant[], superAdmin: roles.data.some(r => r.role === "super_admin"), roles: roles.data.map(r => r.role), socio: (socio.data ?? null) as SocioParticipante };
     },
+    // Permissão muda raramente: vale por 5 min e atualiza quando a pessoa volta à aba.
+    // Antes: a cada 30 s para todo usuário, com o UPDATE de socios_vincular junto.
+    staleTime: 5 * 60_000,
     refetchOnWindowFocus: true,
-    refetchInterval: 30000,
   });
   const ownership = useQuery({
     queryKey: ["phase1-ownership", user?.id], enabled: !!user,
@@ -31,7 +33,7 @@ export function useModuleAccess() {
       if (error) throw error;
       const own = data as { ocupante?: boolean; diretor?: boolean } | null;
       return { ocupante: own?.ocupante === true, diretor: own?.diretor === true };
-    }, refetchOnWindowFocus: true, refetchInterval: 30000,
+    }, staleTime: 5 * 60_000, refetchOnWindowFocus: true,
   });
   const offsite = useQuery({queryKey: ['offsite-access', user?.id], enabled: !!user, queryFn: async () => { const {data,error} = await (supabase as any).rpc('offsite_acesso'); if(error) throw error; return data as {admin:boolean;permitido:boolean}; }, refetchOnWindowFocus:true});
   const qw = useQwPerfil();
