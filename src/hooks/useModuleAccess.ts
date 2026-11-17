@@ -38,15 +38,20 @@ export function useModuleAccess() {
   const offsite = useQuery({queryKey: ['offsite-access', user?.id], enabled: !!user, queryFn: async () => { const {data,error} = await (supabase as any).rpc('offsite_acesso'); if(error) throw error; return data as {admin:boolean;permitido:boolean}; }, refetchOnWindowFocus:true});
   const qw = useQwPerfil();
   const liderRestrito = qw.data?.lider_restrito === true;
-  const allowed = (module: string, edit = false) => !!user && !!query.data && (module === "quick_wins" ? canAccessQuickWins(qw.data, query.data.grants, query.data.superAdmin) : liderRestrito ? false : module === "pre_offsite" ? offsite.data?.permitido === true : module === "socios" ? canAccessSocios(query.data.socio) : canAccessModule(query.data.grants, module, edit, query.data.superAdmin, query.data.roles.includes("admin")));
+  // Contas sem cadastro: fechado por padrão (o servidor aplica a mesma regra via is_lider_restrito).
+  const acessoPendente = qw.data?.liberado === false;
+  const semAcessoGeral = qw.data?.acesso_geral === false;
+  const allowed = (module: string, edit = false) => !!user && !!query.data && (module === "quick_wins" ? canAccessQuickWins(qw.data, query.data.grants, query.data.superAdmin) : liderRestrito || acessoPendente ? false : module === "pre_offsite" ? offsite.data?.permitido === true : module === "socios" ? canAccessSocios(query.data.socio) : semAcessoGeral ? false : canAccessModule(query.data.grants, module, edit, query.data.superAdmin, query.data.roles.includes("admin")));
   return {
     loading: authLoading || (!!user && (query.isPending || offsite.isPending || qw.isPending)),
-    liderRestrito, qwPerfil: qw.data ?? null, error: query.isError,
+    liderRestrito, acessoPendente, semAcessoGeral, qwPerfil: qw.data ?? null, error: query.isError,
     grants: query.data?.grants ?? [], roles: query.data?.roles ?? [],
     isSuperAdmin: query.data?.superAdmin ?? false,
     socio: query.data?.socio ?? null,
     canAccessPath: (module: string, path: string) => {
       if (liderRestrito && module !== "quick_wins") return false;
+      if (acessoPendente) return false;
+      if (semAcessoGeral && !["quick_wins", "socios", "pre_offsite"].includes(module)) return false;
       if (module === "pre_offsite") return !!user && !!offsite.data?.permitido && (path === "/pre-offsite" || offsite.data.admin);
       if (module === "socios") return !!user && !!query.data && canAccessSocios(query.data.socio, path);
       if (["decisoes", "estrutura", "incentivos"].includes(module)) return !!user && !!query.data && canAccessPhase1Path(path, query.data.grants, query.data.superAdmin, query.data.roles.includes("admin"), ownership.data ?? { ocupante: false, diretor: false });

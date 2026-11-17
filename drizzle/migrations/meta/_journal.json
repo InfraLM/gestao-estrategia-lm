@@ -764,6 +764,41 @@
       "when": 1794343076318,
       "tag": "0108_fix_departamentos_insert_repositorio_read",
       "breakpoints": true
+    },
+    {
+      "idx": 109,
+      "version": "7",
+      "when": 1794927352098,
+      "tag": "0109_quick_wins_tabela_ice",
+      "breakpoints": true
+    },
+    {
+      "idx": 110,
+      "version": "7",
+      "when": 1794927638865,
+      "tag": "0110_quick_wins_sem_triagem",
+      "breakpoints": true
+    },
+    {
+      "idx": 111,
+      "version": "7",
+      "when": 1794928376584,
+      "tag": "0111_acesso_fechado_contas_sem_cadastro",
+      "breakpoints": true
+    },
+    {
+      "idx": 112,
+      "version": "7",
+      "when": 1794928414903,
+      "tag": "0112_acesso_geral_separado_socios",
+      "breakpoints": true
+    },
+    {
+      "idx": 113,
+      "version": "7",
+      "when": 1794937634277,
+      "tag": "0113_quick_wins_custo_opcional",
+      "breakpoints": true
     }
   ]
 }

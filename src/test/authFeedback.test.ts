@@ -14,3 +14,14 @@ describe('Primeiro acesso seguro', () => {
     expect(url.searchParams.get('retorno')).toBe('/pre-offsite');
   });
 });
+import { emailCorporativo, MSG_EMAIL_CORPORATIVO, authFeedback as fb } from '@/lib/authFeedback';
+describe('cadastro só com e-mail corporativo', () => {
+  it('aceita apenas @liberdademedicaedu.com.br', () => {
+    expect(emailCorporativo('ana@liberdademedicaedu.com.br')).toBe(true);
+    expect(emailCorporativo('ana@gmail.com')).toBe(false);
+    expect(emailCorporativo('ana@liberdademedicaedu.com.br.evil.com')).toBe(false);
+  });
+  it('erro do servidor vira mensagem de e-mail corporativo', () => {
+    expect(fb({ message: 'Database error saving new user' })).toBe(MSG_EMAIL_CORPORATIVO);
+  });
+});

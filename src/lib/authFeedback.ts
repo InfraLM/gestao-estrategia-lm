@@ -1,6 +1,10 @@
 export const APP_ORIGIN = 'https://gestao-estrategia-lm.lovable.app';
 
+export const MSG_EMAIL_CORPORATIVO = 'Use seu e-mail corporativo @liberdademedicaedu.com.br.';
+export const emailCorporativo = (email: string) => /@liberdademedicaedu\.com\.br$/i.test(email.trim());
+
 export function authFeedback(error: { code?: string; message?: string }): string {
+  if (/e-mail corporativo|Database error saving new user/i.test(error.message ?? '')) return MSG_EMAIL_CORPORATIVO;
   if (error.message?.includes('This email address is not allowed')) return 'Use um e-mail real que possa receber mensagens. Endereços fictícios ou domínios inválidos não são aceitos.';
   if (error.code === 'email_not_confirmed') return 'Confirme seu e-mail pelo link enviado. Você pode reenviar a confirmação abaixo.';
   if (error.code === 'invalid_credentials') return 'E-mail ou senha incorretos. Confira o e-mail ou recupere sua senha.';
