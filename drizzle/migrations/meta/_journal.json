@@ -764,6 +764,13 @@
       "when": 1794343076318,
       "tag": "0108_fix_departamentos_insert_repositorio_read",
       "breakpoints": true
+    },
+    {
+      "idx": 109,
+      "version": "7",
+      "when": 1794927352098,
+      "tag": "0109_quick_wins_tabela_ice",
+      "breakpoints": true
     }
   ]
 }

@@ -48,7 +48,7 @@ beforeAll(async () => {
   await db.exec(`INSERT INTO public.profiles(user_id) VALUES ('${DIRETOR}');
     INSERT INTO public.mt_auditoria(tabela) VALUES ('seed');`);
   for (const a of abertas) await db.exec(`GRANT SELECT ON public.${a.tabela} TO authenticated; ALTER TABLE public.${a.tabela} ENABLE ROW LEVEL SECURITY; CREATE POLICY ${a.policy} ON public.${a.tabela} FOR SELECT TO authenticated USING (true);`);
-  for (const f of ["0094_quick_wins_modulo", "0095_quick_wins_lider_restrito", "0096_quick_wins_policies_lider_restrito", "0097_quick_wins_contexto", "0098_quick_wins_diretores_areas", "0099_quick_wins_resolucao_rpcs", "0100_quick_wins_formulario_simplificado"])
+  for (const f of ["0094_quick_wins_modulo", "0095_quick_wins_lider_restrito", "0096_quick_wins_policies_lider_restrito", "0097_quick_wins_contexto", "0098_quick_wins_diretores_areas", "0099_quick_wins_resolucao_rpcs", "0100_quick_wins_formulario_simplificado", "0109_quick_wins_tabela_ice"])
     await db.exec(readFileSync(`drizzle/migrations/${f}.sql`, "utf8").split("--> statement-breakpoint").join(""));
   await db.exec(`INSERT INTO auth.users VALUES ('${LIDER}','lider@liberdademedicaedu.com.br',now()), ('${LIDER_COM_PAPEL}','antigo@liberdademedicaedu.com.br',now());
     INSERT INTO public.qw_lideres(email,nome,cargo,diretor_user_id) VALUES ('lider@liberdademedicaedu.com.br','Líder','coordenador','${DIRETOR}'),('antigo@liberdademedicaedu.com.br','Antigo','gerente','${DIRETOR}');`);
@@ -84,10 +84,14 @@ describe("Quick Wins: regras no banco", () => {
   it("envio exige campos obrigatórios; triagem exige comentário exceto aprovar", async () => {
     const envio = ((await db.query<{ id: string }>(`SELECT id FROM public.qw_envios`)).rows[0]).id;
     await expect(rpc(LIDER, `SELECT public.qw_enviar('${envio}')`)).rejects.toThrow(/obrigatórios/);
-    const completo = { observacao: "O", acao_proposta: "A", investimento_estimado: "" };
+    const completo = { observacao: "O", acao_proposta: "A", investimento_estimado: "", tem_custo: false, ice_impacto: 4, ice_confianca: 3, ice_facilidade: 5 };
     await db.exec(`UPDATE public.qw_itens SET status_execucao='cancelado' WHERE ordem>1`);
     const item = ((await db.query<{ id: string }>(`SELECT id FROM public.qw_itens WHERE ordem=1 AND status_execucao<>'cancelado'`)).rows[0]).id;
+    await rpc(LIDER, `SELECT public.qw_salvar_item('${item}', '${JSON.stringify({ ...completo, tem_custo: true })}'::jsonb)`);
+    await expect(rpc(LIDER, `SELECT public.qw_enviar('${envio}')`)).rejects.toThrow(/obrigatórios/);
+    await expect(rpc(LIDER, `SELECT public.qw_salvar_item('${item}', '{"ice_impacto":"7"}'::jsonb)`)).rejects.toThrow(/1 a 5/);
     await rpc(LIDER, `SELECT public.qw_salvar_item('${item}', '${JSON.stringify(completo)}'::jsonb)`);
+    expect(Number((await db.query<{ s: string }>(`SELECT ice_score s FROM public.qw_itens WHERE id='${item}'`)).rows[0].s)).toBe(4);
     await rpc(LIDER, `SELECT public.qw_enviar('${envio}')`);
     await expect(rpc(LIDER, `SELECT public.qw_salvar_item('${item}', '{"titulo":"x"}'::jsonb)`)).rejects.toThrow(/ajustar/);
     await expect(rpc(DIRETOR, `SELECT public.qw_triar('${item}','devolver','')`)).rejects.toThrow(/Comentário/);

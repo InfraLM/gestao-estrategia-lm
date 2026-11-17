@@ -27,24 +27,47 @@ export function classificar(faixa: Faixa, aprovacao: Aprovacao, prazo: Prazo, li
 }
 
 export type QwItem = {
-  area_rotulo?: string | null; investimento_estimado?: string | null; id: string; envio_id: string; ordem: number; titulo: string; observacao: string; acao_proposta: string; indicador: string;
+  area_rotulo?: string | null; investimento_estimado?: string | null; tem_custo?: boolean | null; ice_impacto?: number | null; ice_confianca?: number | null; ice_facilidade?: number | null; ice_score?: number | string | null; id: string; envio_id: string; ordem: number; titulo: string; observacao: string; acao_proposta: string; indicador: string;
   valor_atual: string | null; valor_alvo: string; objetivo_id: string | null; faixa_investimento: Faixa; aprovacao_necessaria: Aprovacao;
   prazo_resultado: Prazo; mudanca_maior: string; responsavel_execucao: string; classificacao: Classificacao; status_triagem: StatusTriagem;
   comentario_diretor: string | null; triado_em: string | null; status_execucao: StatusExecucao; resultado_medido: string | null; concluido_em: string | null;
 };
 
-/** Formulário simplificado do líder: só iniciativa e problema/oportunidade são obrigatórios. */
-export const CAMPOS_OBRIGATORIOS: (keyof QwItem)[] = ["acao_proposta", "observacao"];
-export const ROTULOS = { acao_proposta: "Iniciativa proposta", observacao: "Problema ou oportunidade que sanaria", investimento_estimado: "Investimento estimado (se aplicável)" };
-export const PERGUNTA = "Quais os quick wins você enxerga para a sua área de atuação e para a empresa? Liste no máximo 10.";
-export const EXPLICACAO = "Quick wins são ações de baixo esforço e bom impacto, com resultados visíveis em curto prazo, que geram tração e moral para o time.";
+/** Formulário em tabela (10 linhas): iniciativa, justificativa, custo e ICE. */
+export const CAMPOS_OBRIGATORIOS: (keyof QwItem)[] = ["acao_proposta", "observacao", "tem_custo", "ice_impacto", "ice_confianca", "ice_facilidade"];
+export const ROTULOS = { acao_proposta: "Iniciativa", observacao: "Justificativa", investimento_estimado: "Valor estimado (R$)", tem_custo: "Tem custo?" };
+export const TITULO_EXPLICACAO = "O que é um quick win?";
+export const EXPLICACAO = "Quick win é uma ação simples, de baixo custo e rápida de implementar (em até 90 dias), que não depende de grandes aprovações e gera um resultado visível e mensurável para a sua área e para a empresa. São melhorias que destravam problemas do dia a dia, geram tração e abrem caminho para mudanças maiores.";
+export const CRITERIOS_CURTOS = ["Baixo investimento", "Sem grandes aprovações", "Resultado concreto e mensurável", "Cria momento para mudanças maiores"];
+export const PERGUNTA = "Na sua visão, quais ações rápidas e de baixo custo trariam ganhos concretos para a sua área e para a LM? Liste até 10 iniciativas, da mais para a menos prioritária.";
+export const ICE_LEGENDA = { ice_impacto: ["Impacto", "Quanto melhora o resultado"], ice_confianca: ["Confiança", "Quão certo está de que vai funcionar"], ice_facilidade: ["Facilidade", "Quão fácil/rápido é implementar"] } as const;
 export const tituloAutomatico = (iniciativa: string) => iniciativa.trim().slice(0, 80);
 
+export type LinhaForm = Pick<QwItem, "acao_proposta" | "observacao" | "investimento_estimado" | "tem_custo" | "ice_impacto" | "ice_confianca" | "ice_facilidade" | "area_rotulo">;
+
+/** Linha totalmente vazia é ignorada. */
+export function linhaVazia(i: Partial<LinhaForm>) {
+  return !String(i.acao_proposta ?? "").trim() && !String(i.observacao ?? "").trim() && !String(i.investimento_estimado ?? "").trim()
+    && i.tem_custo == null && i.ice_impacto == null && i.ice_confianca == null && i.ice_facilidade == null;
+}
+
 export function camposFaltando(i: Partial<QwItem>, areaObrigatoria = false): string[] {
-  const campos: string[] = CAMPOS_OBRIGATORIOS.filter((k) => !String(i[k] ?? "").trim());
+  const campos: string[] = CAMPOS_OBRIGATORIOS.filter((k) => i[k] == null || !String(i[k]).trim());
+  if (i.tem_custo === true && !String(i.investimento_estimado ?? "").trim()) campos.push("investimento_estimado");
   if (areaObrigatoria && !i.area_rotulo?.trim()) campos.push("area_rotulo");
   return campos;
 }
+
+/** ICE = média dos três critérios, 1 casa decimal; null se faltar algum. */
+export function iceScore(i: Partial<Pick<QwItem, "ice_impacto" | "ice_confianca" | "ice_facilidade">>): number | null {
+  const v = [i.ice_impacto, i.ice_confianca, i.ice_facilidade];
+  if (v.some((x) => x == null)) return null;
+  return Math.round(((v as number[]).reduce((a, b) => a + b, 0) / 3) * 10) / 10;
+}
+export type FaixaIce = "alto" | "medio" | "baixo";
+export const faixaIce = (s: number): FaixaIce => (s >= 4 ? "alto" : s >= 3 ? "medio" : "baixo");
+export const formatarIce = (s: number | null) => (s == null ? "—" : s.toFixed(1).replace(".", ","));
+export const custoTexto = (i: Pick<QwItem, "tem_custo">) => (i.tem_custo == null ? "—" : i.tem_custo ? "Sim" : "Não");
 
 export const ativos = (itens: QwItem[]) => itens.filter((i) => i.status_execucao !== "cancelado");
 export const contagem = (itens: QwItem[]) => `${ativos(itens).length} de ${QW_LIMITE_ITENS}`;
@@ -71,7 +94,7 @@ export function indicadores(totalLideres: number, lideresQueEnviaram: number, it
 
 const esc = (v: unknown) => { const s = String(v ?? ""); return /[";\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 export function csv(linhas: LinhaPainel[]): string {
-  const head = ["Líder", "Cargo", "Cadeira", "Área", "Ordem", ROTULOS.acao_proposta, ROTULOS.observacao, ROTULOS.investimento_estimado, "Triagem", "Comentário do diretor", "Execução", "Resultado medido"];
-  const rows = linhas.map(({ item: i, lider: l }) => [l.nome, CARGOS[l.cargo] ?? l.cargo, l.cadeira, i.area_rotulo, i.ordem, i.acao_proposta, i.observacao, i.investimento_estimado, TRIAGEM[i.status_triagem], i.comentario_diretor, EXECUCAO[i.status_execucao], i.resultado_medido]);
+  const head = ["Líder", "Cargo", "Cadeira", "Área", "Ordem", ROTULOS.acao_proposta, ROTULOS.observacao, "Tem custo", "Valor estimado", "Impacto", "Confiança", "Facilidade", "ICE", "Triagem", "Comentário do diretor", "Execução", "Resultado medido"];
+  const rows = linhas.map(({ item: i, lider: l }) => [l.nome, CARGOS[l.cargo] ?? l.cargo, l.cadeira, i.area_rotulo, i.ordem, i.acao_proposta, i.observacao, custoTexto(i), i.investimento_estimado, i.ice_impacto, i.ice_confianca, i.ice_facilidade, formatarIce(iceScore(i)), TRIAGEM[i.status_triagem], i.comentario_diretor, EXECUCAO[i.status_execucao], i.resultado_medido]);
   return "\uFEFF" + [head, ...rows].map((r) => r.map(esc).join(";")).join("\n");
 }

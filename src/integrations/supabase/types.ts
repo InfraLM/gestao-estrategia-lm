@@ -5556,6 +5556,10 @@ export type Database = {
           created_at: string
           envio_id: string
           faixa_investimento: string
+          ice_confianca: number | null
+          ice_facilidade: number | null
+          ice_impacto: number | null
+          ice_score: number | null
           id: string
           indicador: string
           investimento_estimado: string | null
@@ -5568,6 +5572,7 @@ export type Database = {
           resultado_medido: string | null
           status_execucao: string
           status_triagem: string
+          tem_custo: boolean | null
           titulo: string
           triado_em: string | null
           triado_por: string | null
@@ -5585,6 +5590,10 @@ export type Database = {
           created_at?: string
           envio_id: string
           faixa_investimento?: string
+          ice_confianca?: number | null
+          ice_facilidade?: number | null
+          ice_impacto?: number | null
+          ice_score?: number | null
           id?: string
           indicador?: string
           investimento_estimado?: string | null
@@ -5597,6 +5606,7 @@ export type Database = {
           resultado_medido?: string | null
           status_execucao?: string
           status_triagem?: string
+          tem_custo?: boolean | null
           titulo?: string
           triado_em?: string | null
           triado_por?: string | null
@@ -5614,6 +5624,10 @@ export type Database = {
           created_at?: string
           envio_id?: string
           faixa_investimento?: string
+          ice_confianca?: number | null
+          ice_facilidade?: number | null
+          ice_impacto?: number | null
+          ice_score?: number | null
           id?: string
           indicador?: string
           investimento_estimado?: string | null
@@ -5626,6 +5640,7 @@ export type Database = {
           resultado_medido?: string | null
           status_execucao?: string
           status_triagem?: string
+          tem_custo?: boolean | null
           titulo?: string
           triado_em?: string | null
           triado_por?: string | null
