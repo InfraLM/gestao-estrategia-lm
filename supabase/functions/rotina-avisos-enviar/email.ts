@@ -37,7 +37,7 @@ const dataBr = (ciclo: string) => ciclo.split("-").reverse().join("/");
 // Identidade LM no e-mail: vermelho, preto e branco, com detalhe em azul-marinho. Só HTML com estilos inline (clientes de e-mail).
 const COR = { vermelho: "#E42535", marinho: "#1B2A4A", texto: "#1F2937", suave: "#6B7280", fundo: "#F4F4F5", borda: "#E4E4E7" };
 /** Moldura comum dos avisos: faixa com a marca, título, corpo e um botão. Recebe HTML já escapado. */
-function moldura(titulo: string, corpo: string, botao: { texto: string; url: string }) {
+function moldura(titulo: string, corpo: string, botao: { texto: string; url: string }, rodape = "Liberdade Médica · Rotina semanal de check-in e checkout. Mensagem automática; responda pelo app.") {
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(titulo)}</title></head>
 <body style="margin:0;padding:0;background:${COR.fundo}">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${COR.fundo};padding:24px 12px"><tr><td align="center">
@@ -48,7 +48,7 @@ function moldura(titulo: string, corpo: string, botao: { texto: string; url: str
 <tr><td style="padding:24px 24px 8px"><h1 style="margin:0 0 16px;font-size:20px;line-height:1.3;color:${COR.marinho}">${esc(titulo)}</h1>
 <div style="font-size:15px;line-height:1.6">${corpo}</div></td></tr>
 <tr><td style="padding:8px 24px 28px"><a href="${botao.url}" style="display:inline-block;background:${COR.vermelho};color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px;padding:12px 22px;border-radius:6px">${esc(botao.texto)}</a></td></tr>
-<tr><td style="padding:14px 24px;background:${COR.fundo};border-top:1px solid ${COR.borda};font-size:12px;color:${COR.suave}">Liberdade Médica · Rotina semanal de check-in e checkout. Mensagem automática; responda pelo app.</td></tr>
+<tr><td style="padding:14px 24px;background:${COR.fundo};border-top:1px solid ${COR.borda};font-size:12px;color:${COR.suave}">${esc(rodape)}</td></tr>
 </table></td></tr></table></body></html>`;
 }
 
@@ -105,6 +105,49 @@ export function montarImpedimento(a: { nome: string; ciclo: string; pendencias: 
 export function montarEnvio(e: { tipo: TipoFila; ciclo: string; nome: string; pendencias: Record<string, unknown> | null }) {
   if (e.tipo === "impedimento") return montarImpedimento(e);
   return montarEmail({ nome: e.nome, ciclo: e.ciclo, tipo: e.tipo, pendencias: (e.pendencias ?? {}) as Pendencias });
+}
+
+export const QW_LINK = `${APP_URL}/quick-wins/formulario`;
+/** Quick Wins invitation to leaders: Governance-approved text (Naira). Same message for every leader; no personal data. */
+export function montarConviteQuickWins(c: { ano: number; prazo: string | null; teste?: boolean }) {
+  const ano = Number.isInteger(c.ano) ? c.ano : new Date().getFullYear();
+  const prazo = c.prazo && /^\d{4}-\d{2}-\d{2}$/.test(c.prazo) ? dataBr(c.prazo) : "";
+  const subject = `${c.teste ? "[Teste] " : ""}Quick Wins ${ano}: quais vocês enxergam para a sua área?`;
+  const passo3 = `Preencha, salve como rascunho se quiser continuar depois, e envie${prazo ? ` até ${prazo}` : " dentro do prazo do ciclo"}.`;
+  const criterios = ["exige baixo investimento;", "não depende de grandes aprovações;", "gera resultado concreto e mensurável;", "cria momento para mudanças maiores."];
+  const text = [
+    "Olá, líderes LM!", "",
+    `Queremos ouvir quem está mais perto da operação. Por isso, estamos abrindo o ciclo de Quick Wins ${ano}, e a visão de cada um de vocês é essencial.`, "",
+    "O que são Quick Wins?",
+    "São ações de baixo esforço e bom impacto, com resultados visíveis em curto prazo. Um bom quick win:",
+    ...criterios.map(t => `* ${t}`), "",
+    "A pergunta é simples: quais quick wins você enxerga para a sua área de atuação e para a empresa? Cada líder pode registrar até 10.", "",
+    "Como acessar:",
+    `1. Entre em ${QW_LINK}`,
+    "2. Faça login com o seu e-mail corporativo (@liberdademedicaedu.com.br). O formulário já abre com o seu nome.",
+    `3. ${passo3}`, "",
+    "Leva poucos minutos, e não precisa estar tudo perfeito: ideias simples e práticas são exatamente o que buscamos.", "",
+    "Qualquer dúvida ou dificuldade de acesso, é só responder este e-mail.", "",
+    "Obrigada pela contribuição de todos!", "",
+    "Naira",
+  ].join("\n");
+  const p = (t: string, extra = "") => `<p style="margin:0 0 14px${extra}">${t}</p>`;
+  const corpo = [
+    p("Olá, líderes LM!"),
+    p(`Queremos ouvir quem está mais perto da operação. Por isso, estamos abrindo o ciclo de Quick Wins ${ano}, e a visão de cada um de vocês é essencial.`),
+    `<p style="margin:0 0 6px;font-weight:bold;color:${COR.marinho}">O que são Quick Wins?</p>`,
+    p("São ações de baixo esforço e bom impacto, com resultados visíveis em curto prazo. Um bom quick win:", ";margin-bottom:6px"),
+    `<ul style="margin:0 0 14px;padding-left:20px">${criterios.map(t => `<li style="margin:2px 0">${esc(t)}</li>`).join("")}</ul>`,
+    p(`A pergunta é simples: <b>quais quick wins você enxerga para a sua área de atuação e para a empresa?</b> Cada líder pode registrar até 10.`),
+    `<p style="margin:0 0 6px;font-weight:bold;color:${COR.marinho}">Como acessar:</p>`,
+    `<ol style="margin:0 0 14px;padding-left:20px"><li style="margin:2px 0">Entre em <a href="${QW_LINK}" style="color:${COR.vermelho}">${esc(QW_LINK)}</a>.</li><li style="margin:2px 0">Faça login com o seu e-mail corporativo (@liberdademedicaedu.com.br). O formulário já abre com o seu nome.</li><li style="margin:2px 0">${prazo ? `Preencha, salve como rascunho se quiser continuar depois, e envie até <b>${esc(prazo)}</b>.` : esc(passo3)}</li></ol>`,
+    p("Leva poucos minutos, e não precisa estar tudo perfeito: ideias simples e práticas são exatamente o que buscamos."),
+    p("Qualquer dúvida ou dificuldade de acesso, é só responder este e-mail."),
+    p("Obrigada pela contribuição de todos!"),
+    p("Naira", ";font-weight:bold"),
+  ].join("\n");
+  const html = moldura(`Quick Wins ${ano}`, corpo, { texto: "Abrir meu formulário de Quick Wins", url: QW_LINK }, "Liberdade Médica · Quick Wins. Dúvidas? Responda este e-mail.");
+  return { subject, text, html };
 }
 
 /** Provider status → retry later (rate limit / outage) or fail for good. */

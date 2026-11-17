@@ -12,7 +12,7 @@ export default function ModuleAccessGate({ children }: { children: React.ReactNo
   const { pathname, search } = useLocation();
   const org = useBaseOrganizacional();
   if (loading || access.loading || (["/incentivos", "/cesta-metas/insights"].includes(pathname) && access.phase1OwnershipLoading)) return <div className="grid place-items-center p-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
-  if (!user) return <Navigate to={(["/pmo/atualizar-status", "/metas/semanal"].includes(pathname) || pathname.startsWith("/pre-offsite")) ? `/auth?retorno=${encodeURIComponent(pathname + search)}` : "/auth"} replace />;
+  if (!user) return <Navigate to={(["/pmo/atualizar-status", "/metas/semanal", "/quick-wins/formulario"].includes(pathname) || pathname.startsWith("/pre-offsite")) ? `/auth?retorno=${encodeURIComponent(pathname + search)}` : "/auth"} replace />;
   if (access.acessoPendente) return <AcessoPendente />;
   if (access.liderRestrito && !rotaPermitidaLiderRestrito(pathname)) return <Navigate to={QW_ROTA} replace />;
   const module = moduleForPath(pathname);
