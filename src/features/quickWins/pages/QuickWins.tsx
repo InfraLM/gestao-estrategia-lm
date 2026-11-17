@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowDownWideNarrow, Download, Eye, Loader2, Send, Users, Zap } from "lucide-react";
+import { ArrowDownWideNarrow, Download, Eye, Loader2, LogOut, Mail, Send, Users, Zap } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import AbasPagina, { type Aba } from "@/components/AbasPagina";
 import { FormField } from "@/components/FormField";
@@ -226,6 +227,7 @@ function Administracao({ d, recarregar }: { d: Dados; recarregar: () => void }) 
       {d.ciclos.map((c) => <CicloLinha key={c.id} c={c} rpc={rpc} />)}
       <Button variant="outline" size="sm" onClick={() => { const ano = window.prompt("Ano do novo ciclo"); if (ano) rpc("qw_ciclo_salvar", { _id: null, _dados: { ano: Number(ano) } }, "Ciclo criado em rascunho"); }}>Novo ciclo</Button>
     </CardContent></Card>
+    <ConviteEmail d={d} />
     <Card><CardHeader><CardTitle className="text-base">Líderes cadastrados</CardTitle><p className="text-sm text-muted-foreground">Cada líder ativo entra com o e-mail corporativo e responde só o próprio formulário.</p></CardHeader><CardContent className="space-y-3">
       <div className="grid gap-3 md:grid-cols-[1.4fr_1fr_1fr_1fr_auto] md:items-end">
         <FormField id="nl-email" label="E-mail corporativo" required><Input value={novo.email} onChange={(e) => setNovo({ ...novo, email: e.target.value })} placeholder="nome@liberdademedicaedu.com.br" /></FormField>
@@ -245,6 +247,52 @@ function Administracao({ d, recarregar }: { d: Dados; recarregar: () => void }) 
   </div>;
 }
 
+/** Governance: invitation e-mail to leaders (test to a few addresses first, then once per leader per open cycle). */
+function ConviteEmail({ d }: { d: Dados }) {
+  const { user } = useAuth();
+  const [para, setPara] = useState(user?.email ?? "");
+  const [busy, setBusy] = useState(false);
+  const ciclo = d.ciclos.find((c) => c.status === "aberto");
+  const ativosQtd = d.lideres.filter((l) => l.ativo).length;
+  const convites = useQuery({ queryKey: ["qw-convites", ciclo?.id], enabled: !!ciclo, queryFn: async () => { const r = await db.from("qw_convites_email").select("lider_id").eq("ciclo_id", ciclo!.id); return r.error ? null : (r.data as { lider_id: string }[]).length; } });
+  const chamar = async (body: object) => {
+    setBusy(true);
+    const { data, error } = await supabase.functions.invoke("rotina-avisos-enviar", { body: { acao: "qw_convite", ...body } });
+    setBusy(false);
+    let msg = data?.error as string | undefined;
+    if (error && !msg) { try { msg = (await (error as { context?: Response }).context?.json())?.error; } catch { /* ignore */ } }
+    if (error || msg) { erro({ message: msg ?? "Falha ao enviar" }); return null; }
+    return data;
+  };
+  const teste = async () => {
+    const r = await chamar({ modo: "teste", para: para.split(/[,;\s]+/).filter(Boolean) });
+    if (!r) return;
+    const falhas = (r.resultado ?? []).filter((x: { ok: boolean }) => !x.ok);
+    if (falhas.length) erro({ message: falhas.map((x: { para: string; erro?: string }) => `${x.para}: ${x.erro}`).join(" · ") });
+    else toast({ title: `Teste enviado para ${(r.resultado ?? []).length} e-mail(s)` });
+  };
+  const lideres = async () => {
+    if (!window.confirm(`Enviar o convite do Quick Wins ${ciclo?.ano} para os líderes ativos que ainda não receberam?`)) return;
+    const r = await chamar({ modo: "lideres" });
+    if (!r) return;
+    void convites.refetch();
+    if (r.falhas?.length) erro({ message: `${r.enviados} enviados. Falhas: ${r.falhas.map((f: { nome: string; erro: string }) => `${f.nome} (${f.erro})`).join(" · ")}` });
+    else toast({ title: `${r.enviados} convite(s) enviado(s)${r.ja_enviados ? ` · ${r.ja_enviados} já tinham recebido` : ""}` });
+  };
+  return <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Mail className="h-4 w-4" />Convite por e-mail</CardTitle>
+    <p className="text-sm text-muted-foreground">Texto aprovado (assinado pela Naira) com o link direto para o formulário. Prazo usado: {ciclo?.data_fechamento ? dataBR(ciclo.data_fechamento) : "sem data de fechamento no ciclo"}.</p></CardHeader>
+    <CardContent className="space-y-4">
+      <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+        <FormField id="qw-teste" label="Enviar teste para (até 5, separados por vírgula)"><Input value={para} onChange={(e) => setPara(e.target.value)} placeholder="nome@liberdademedicaedu.com.br" /></FormField>
+        <Button variant="outline" disabled={busy || !para.trim()} onClick={teste}><Send className="h-4 w-4 mr-2" />Enviar teste</Button>
+      </div>
+      <div className="flex flex-wrap items-center gap-3">
+        <Button disabled={busy || !ciclo} onClick={lideres}><Mail className="h-4 w-4 mr-2" />Enviar convite aos líderes</Button>
+        <span className="text-sm text-muted-foreground">{ciclo ? `${convites.data ?? 0} de ${ativosQtd} líderes ativos já receberam no ciclo ${ciclo.ano}` : "Abra um ciclo para enviar aos líderes"}</span>
+      </div>
+    </CardContent></Card>;
+}
+
 function CicloLinha({ c, rpc }: { c: Ciclo; rpc: (fn: string, args: object, ok: string) => void }) {
   const [v, setV] = useState({ data_abertura: c.data_abertura ?? "", data_fechamento: c.data_fechamento ?? "", limite_investimento: String(c.limite_investimento), prazo_max_dias: String(c.prazo_max_dias) });
   return <div className="grid gap-3 rounded-md border p-3 md:grid-cols-[80px_1fr_1fr_1fr_1fr_auto] md:items-end">
@@ -259,6 +307,29 @@ function CicloLinha({ c, rpc }: { c: Ciclo; rpc: (fn: string, args: object, ok: 
       {c.status === "aberto" && <Button size="sm" variant="outline" onClick={() => window.confirm(`Fechar o ciclo ${c.ano}? Os itens ficam em leitura.`) && rpc("qw_fechar_ciclo", { _id: c.id }, "Ciclo fechado")}>Fechar</Button>}
       {c.status === "fechado" && <Button size="sm" variant="ghost" onClick={() => rpc("qw_ciclo_salvar", { _id: c.id, _dados: { status: "arquivado" } }, "Ciclo arquivado")}>Arquivar</Button>}
     </div>
+  </div>;
+}
+
+/** Link do e-mail: só o formulário, sem menu nem outros módulos. */
+export function QuickWinsFormularioFoco() {
+  const perfil = useQwPerfil();
+  const dados = useDados();
+  const qc = useQueryClient();
+  const { user, signOut } = useAuth();
+  const recarregar = () => qc.invalidateQueries({ queryKey: ["qw-dados"] });
+  const conteudo = (() => {
+    if (perfil.isPending || dados.isPending) return <div className="grid place-items-center p-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+    const p = perfil.data, d = dados.data;
+    if (dados.error || perfil.error || !p || !d) return <p className="text-destructive">Não foi possível carregar o Quick Wins.</p>;
+    if (!p.lider_id && !p.governanca) return <p className="text-muted-foreground">Seu e-mail não está cadastrado como líder no Quick Wins. Responda o e-mail do convite para pedir acesso.</p>;
+    return <Formulario d={d} liderId={p.lider_id} recarregar={recarregar} />;
+  })();
+  return <div className="min-h-screen bg-surface">
+    <header className="border-b bg-background"><div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+      <div className="flex items-center gap-3"><div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-primary font-bold text-primary-foreground">LM</div><div className="leading-tight"><div className="text-sm font-semibold">Quick Wins</div><div className="text-xs text-muted-foreground">Liberdade Médica</div></div></div>
+      <div className="flex items-center gap-2"><span className="hidden text-sm text-muted-foreground sm:inline">{user?.email}</span><Button variant="ghost" size="sm" onClick={() => signOut()}><LogOut className="h-4 w-4 mr-2" />Sair</Button></div>
+    </div></header>
+    <main className="mx-auto max-w-6xl px-4 py-6">{conteudo}</main>
   </div>;
 }
 

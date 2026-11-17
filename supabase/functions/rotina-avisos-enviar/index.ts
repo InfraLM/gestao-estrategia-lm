@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { EMAIL_VALIDO, montarEnvio, REMETENTE_NOME_PADRAO, tokenValido, type TipoFila } from "./email.ts";
+import { EMAIL_VALIDO, montarConviteQuickWins, montarEnvio, REMETENTE_NOME_PADRAO, tokenValido, type TipoFila } from "./email.ts";
 import { credencialGmail, enviarGmail, ErroEnvio } from "./gmail.ts";
 
 // Weekly check-in/checkout e-mails (and assigned-impediment notices) through the Gmail API (Google Workspace).
@@ -96,6 +96,53 @@ Deno.serve(async req => {
 
   if (acao === "processar") {
     try { return out({ ok: true, ...(await processar()) }); } catch { return out({ ok: false, error: "Falha ao processar a fila" }, 500); }
+  }
+
+  // Quick Wins invitation (Governança). modo "teste": up to 5 corporate addresses, nothing recorded.
+  // modo "lideres": every active leader of the open cycle, once per cycle (qw_convites_email).
+  if (acao === "qw_convite") {
+    const falta = faltaGmail();
+    if (falta) return out({ error: falta }, 503);
+    const { data: ciclo } = await db.from("qw_ciclos").select("id,ano,data_fechamento,status").eq("status", "aberto").order("ano", { ascending: false }).limit(1).maybeSingle();
+    const modo = String(body?.modo ?? "");
+    if (modo === "teste") {
+      const para = Array.isArray(body?.para) ? [...new Set((body.para as unknown[]).map(e => String(e ?? "").trim().toLowerCase()).filter(Boolean))] : [];
+      if (!para.length || para.length > 5 || para.some(e => !EMAIL_VALIDO.test(e) || !e.endsWith("@liberdademedicaedu.com.br"))) return out({ error: "Informe de 1 a 5 e-mails @liberdademedicaedu.com.br" }, 400);
+      const m = montarConviteQuickWins({ ano: ciclo?.ano ?? new Date().getFullYear(), prazo: ciclo?.data_fechamento ?? null, teste: true });
+      const resultado: { para: string; ok: boolean; erro?: string }[] = [];
+      for (const e of para) {
+        try { await enviar(e, m); resultado.push({ para: e, ok: true }); } catch (err) { resultado.push({ para: e, ok: false, erro: String((err as Error).message).slice(0, 300) }); }
+        await new Promise(r => setTimeout(r, PAUSA_MS));
+      }
+      return out({ ok: resultado.every(r => r.ok), resultado });
+    }
+    if (modo === "lideres") {
+      if (!ciclo) return out({ error: "Abra o ciclo de Quick Wins antes de enviar o convite" }, 409);
+      const [{ data: lideres, error: e1 }, { data: feitos, error: e2 }] = await Promise.all([
+        db.from("qw_lideres").select("id,email,nome").eq("ativo", true),
+        db.from("qw_convites_email").select("lider_id").eq("ciclo_id", ciclo.id),
+      ]);
+      if (e1 || e2) return out({ error: "Não foi possível carregar os líderes" }, 500);
+      const ja = new Set((feitos ?? []).map((f: { lider_id: string }) => f.lider_id));
+      const m = montarConviteQuickWins({ ano: ciclo.ano, prazo: ciclo.data_fechamento });
+      let enviados = 0; const falhas: { nome: string; erro: string }[] = [];
+      for (const l of (lideres ?? []) as { id: string; email: string; nome: string }[]) {
+        if (ja.has(l.id)) continue;
+        try {
+          if (!EMAIL_VALIDO.test(l.email ?? "")) throw new Error("E-mail inválido");
+          const id = await enviar(l.email.trim().toLowerCase(), m);
+          enviados++;
+          const { error: eReg } = await db.from("qw_convites_email").insert({ ciclo_id: ciclo.id, lider_id: l.id, email: l.email.trim().toLowerCase(), provedor_id: id || null, enviado_por: uid });
+          if (eReg) falhas.push({ nome: l.nome, erro: "E-mail enviado, mas não registrado (pode ser reenviado)" });
+        } catch (err) {
+          falhas.push({ nome: l.nome, erro: String((err as Error).message).slice(0, 200) });
+          if (err instanceof ErroEnvio && err.temporaria) break;
+        }
+        await new Promise(r => setTimeout(r, PAUSA_MS));
+      }
+      return out({ ok: !falhas.length, enviados, ja_enviados: ja.size, falhas });
+    }
+    return out({ error: "Modo inválido" }, 400);
   }
 
   return out({ error: "Ação inválida" }, 400);

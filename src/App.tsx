@@ -1,4 +1,4 @@
-import QuickWins from "@/features/quickWins/pages/QuickWins";
+import QuickWins, { QuickWinsFormularioFoco } from "@/features/quickWins/pages/QuickWins";
 import PreOffsiteFormulario from "./features/preOffsite/Formulario";
 import PreOffsiteAdmin from "./features/preOffsite/Admin";
 import PortfolioNovosVinculos from "./components/PortfolioNovosVinculos";
@@ -71,6 +71,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/responder/:token" element={<SociosResponder />} />
+            <Route path="/quick-wins/formulario" element={<ModuleAccessGate><QuickWinsFormularioFoco /></ModuleAccessGate>} />
             <Route element={<ModuleAccessGate><AppLayout /></ModuleAccessGate>}>
               <Route path="/quick-wins" element={<QuickWins />} />
               <Route path="/pre-offsite" element={<PreOffsiteFormulario />} />
