@@ -7,9 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { NIVEIS } from "@/pages/estruturaOrganizacional";
-import { descendentes, validarCargo } from "@/lib/organograma";
-import PessoaSelect from './PessoaSelect';
+import { NIVEIS } from "@/features/estrutura/lib/estruturaOrganizacional";
+import { descendentes, validarCargo } from "@/features/estrutura/lib/organograma";
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 export type CargoEdicao = { id?: string; nome: string; ocupante_nome: string | null; nivel: string | null; parent_id: string | null; ordem: number | null; ativo: boolean | null; observacoes?: string | null; mt_cadeira_id?: string | null; pessoa_id?: string | null };
 export default function EditarCargo({ cargo, cargos, salvar, fechar, campos = [], cadeirasSemanal }: {

@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useFitFinderAccess } from "@/hooks/useFitFinderAccess";
-import { DIRETORIAS_FITFINDER } from "../../../supabase/functions/fitfinder-sync/mapear";
+import { DIRETORIAS_FITFINDER } from "../../../../supabase/functions/fitfinder-sync/mapear";
 import { X, Plus } from "lucide-react";
 
 const db = supabase as any;

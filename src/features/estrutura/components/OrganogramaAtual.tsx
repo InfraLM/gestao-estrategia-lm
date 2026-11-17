@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { buscarCargos, lerOrganograma, type Cargo, type CargoImportado } from "@/lib/organograma";
-import OrganogramaVisual, { type NoOrganograma } from "./OrganogramaVisual";
+import { buscarCargos, lerOrganograma, type Cargo, type CargoImportado } from "@/features/estrutura/lib/organograma";
+import OrganogramaVisual, { type NoOrganograma } from "@/features/estrutura/components/OrganogramaVisual";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import EditarCargo, { type CargoEdicao } from "./EditarCargo";
+import EditarCargo, { type CargoEdicao } from "@/features/estrutura/components/EditarCargo";
 import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
 import { nomeVinculado } from '@/lib/baseOrganizacional';
 

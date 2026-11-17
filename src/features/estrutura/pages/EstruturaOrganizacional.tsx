@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CadastroCadeiras } from "./Hubs";
+import { CadastroCadeiras } from "@/pages/Hubs";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Search, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,16 +12,16 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import ArvoreCadeiras from "@/components/estrutura/ArvoreCadeiras";
+import ArvoreCadeiras from "@/features/estrutura/components/ArvoreCadeiras";
 import EstruturaTexto from "@/components/estrutura/EstruturaTexto";
-import { type Cadeira, NIVEIS, filtrarCadeiras, montarArvore, rotuloNivel } from "./estruturaOrganizacional";
-import RaioXPrestadores from "@/components/estrutura/RaioXPrestadores";
-import OrganogramaAtual from "@/components/estrutura/OrganogramaAtual";
-import EditarCargo, { type CargoEdicao } from "@/components/estrutura/EditarCargo";
-import { podeEditarEstrutura } from "@/lib/organograma";
+import { type Cadeira, NIVEIS, filtrarCadeiras, montarArvore, rotuloNivel } from "@/features/estrutura/lib/estruturaOrganizacional";
+import RaioXPrestadores from "@/features/estrutura/components/RaioXPrestadores";
+import OrganogramaAtual from "@/features/estrutura/components/OrganogramaAtual";
+import EditarCargo, { type CargoEdicao } from "@/features/estrutura/components/EditarCargo";
+import { podeEditarEstrutura } from "@/features/estrutura/lib/organograma";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useFitFinderAccess } from "@/hooks/useFitFinderAccess";
-import BaseOrganizacional from '@/components/estrutura/BaseOrganizacional';
+import BaseOrganizacional from '@/features/estrutura/components/BaseOrganizacional';
 import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
 
 const BLOCOS: { titulo: string; campo: keyof Cadeira }[] = [

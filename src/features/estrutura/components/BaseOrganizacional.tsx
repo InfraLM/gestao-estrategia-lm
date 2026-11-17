@@ -14,7 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import PessoaSelect from './PessoaSelect';
+import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 const db = supabase as any;
 type Correspondencia = { id: string; fonte: string; registro_id: string; campo: string; texto_original: string; pessoa_id: string | null; cadeira_id: string | null; confianca: number; motivo: string; status: string };

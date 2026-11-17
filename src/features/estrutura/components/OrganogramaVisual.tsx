@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronUp, Maximize, Minus, Plus, FoldVertical, UnfoldVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import "./organogramaVisual.css";
+import "@/features/estrutura/components/organogramaVisual.css";
 
 export type NoOrganograma = { id: string; nome: string; ocupante: string | null; ativo: boolean; filhos: NoOrganograma[] };
 

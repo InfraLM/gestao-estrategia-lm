@@ -1,5 +1,5 @@
 import type { Database } from "@/integrations/supabase/types";
-import { canAccessModule, type ModuleGrant } from "./moduleAccess";
+import { canAccessModule, type ModuleGrant } from "@/lib/moduleAccess";
 import { semAcentos } from "@/pages/contextoDecisoes";
 import * as XLSX from "xlsx";
 
