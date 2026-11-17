@@ -99,7 +99,7 @@ Deno.serve(async req => {
   }
 
   // Quick Wins invitation (Governança). modo "teste": up to 5 corporate addresses, nothing recorded.
-  // modo "lideres": every active leader of the open cycle, once per cycle (qw_convites_email).
+  // modo "lideres": every active e-mail of the "Envio Quick Wins" list (qw_envio_lista), once per cycle (qw_convites_email).
   if (acao === "qw_convite") {
     const falta = faltaGmail();
     if (falta) return out({ error: falta }, 503);
@@ -118,21 +118,25 @@ Deno.serve(async req => {
     }
     if (modo === "lideres") {
       if (!ciclo) return out({ error: "Abra o ciclo de Quick Wins antes de enviar o convite" }, 409);
-      const [{ data: lideres, error: e1 }, { data: feitos, error: e2 }] = await Promise.all([
-        db.from("qw_lideres").select("id,email,nome").eq("ativo", true),
-        db.from("qw_convites_email").select("lider_id").eq("ciclo_id", ciclo.id),
+      // Recipients = the "Envio Quick Wins" list (Governance-curated), once per e-mail per cycle.
+      const [{ data: lista, error: e1 }, { data: feitos, error: e2 }, { data: lideres }] = await Promise.all([
+        db.from("qw_envio_lista").select("email,nome").eq("ativo", true),
+        db.from("qw_convites_email").select("email").eq("ciclo_id", ciclo.id),
+        db.from("qw_lideres").select("id,email"),
       ]);
-      if (e1 || e2) return out({ error: "Não foi possível carregar os líderes" }, 500);
-      const ja = new Set((feitos ?? []).map((f: { lider_id: string }) => f.lider_id));
+      if (e1 || e2) return out({ error: "Não foi possível carregar a lista Envio Quick Wins" }, 500);
+      const ja = new Set((feitos ?? []).map((f: { email: string }) => f.email.toLowerCase()));
+      const liderPorEmail = new Map(((lideres ?? []) as { id: string; email: string }[]).map(l => [l.email.trim().toLowerCase(), l.id]));
       const m = montarConviteQuickWins({ ano: ciclo.ano, prazo: ciclo.data_fechamento });
       let enviados = 0; const falhas: { nome: string; erro: string }[] = [];
-      for (const l of (lideres ?? []) as { id: string; email: string; nome: string }[]) {
-        if (ja.has(l.id)) continue;
+      for (const l of (lista ?? []) as { email: string; nome: string }[]) {
+        const email = l.email.trim().toLowerCase();
+        if (ja.has(email)) continue;
         try {
-          if (!EMAIL_VALIDO.test(l.email ?? "")) throw new Error("E-mail inválido");
-          const id = await enviar(l.email.trim().toLowerCase(), m);
+          if (!EMAIL_VALIDO.test(email)) throw new Error("E-mail inválido");
+          const id = await enviar(email, m);
           enviados++;
-          const { error: eReg } = await db.from("qw_convites_email").insert({ ciclo_id: ciclo.id, lider_id: l.id, email: l.email.trim().toLowerCase(), provedor_id: id || null, enviado_por: uid });
+          const { error: eReg } = await db.from("qw_convites_email").insert({ ciclo_id: ciclo.id, lider_id: liderPorEmail.get(email) ?? null, email, provedor_id: id || null, enviado_por: uid });
           if (eReg) falhas.push({ nome: l.nome, erro: "E-mail enviado, mas não registrado (pode ser reenviado)" });
         } catch (err) {
           falhas.push({ nome: l.nome, erro: String((err as Error).message).slice(0, 200) });
