@@ -36,9 +36,7 @@ export type QwItem = {
 /** Formulário em tabela (10 linhas): iniciativa, justificativa, custo e ICE. */
 export const CAMPOS_OBRIGATORIOS: (keyof QwItem)[] = ["acao_proposta", "observacao", "tem_custo", "ice_impacto", "ice_confianca", "ice_facilidade"];
 export const ROTULOS = { acao_proposta: "Iniciativa", observacao: "Justificativa", investimento_estimado: "Valor estimado (R$)", tem_custo: "Tem custo?" };
-export const TITULO_EXPLICACAO = "O que é um quick win?";
-export const EXPLICACAO = "Quick win é uma ação simples, de baixo custo e rápida de implementar (em até 90 dias), que não depende de grandes aprovações e gera um resultado visível e mensurável para a sua área e para a empresa. São melhorias que destravam problemas do dia a dia, geram tração e abrem caminho para mudanças maiores.";
-export const CRITERIOS_CURTOS = ["Baixo investimento", "Sem grandes aprovações", "Resultado concreto e mensurável", "Cria momento para mudanças maiores"];
+export const O_QUE_SAO = ["Ações de baixo esforço e bom impacto", "Resultados visíveis em curto prazo", "Geram tração e moral para o time"];
 export const PERGUNTA = "Na sua visão, quais ações rápidas e de baixo custo trariam ganhos concretos para a sua área e para a LM? Liste até 10 iniciativas, da mais para a menos prioritária.";
 export const ICE_LEGENDA = { ice_impacto: ["Impacto", "Quanto melhora o resultado"], ice_confianca: ["Confiança", "Quão certo está de que vai funcionar"], ice_facilidade: ["Facilidade", "Quão fácil/rápido é implementar"] } as const;
 export const tituloAutomatico = (iniciativa: string) => iniciativa.trim().slice(0, 80);

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowDownWideNarrow, Download, Loader2, Send } from "lucide-react";
+import { ArrowDownWideNarrow, Download, Eye, Loader2, Send, Users, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AbasPagina, { type Aba } from "@/components/AbasPagina";
 import { FormField } from "@/components/FormField";
@@ -15,7 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import { useQwPerfil } from "@/hooks/useQuickWins";
 import {
-  CARGOS, CRITERIOS_CURTOS, EXPLICACAO, ICE_LEGENDA, PERGUNTA, QW_LIMITE_ITENS, ROTULOS, TITULO_EXPLICACAO,
+  CARGOS, CRITERIOS, ICE_LEGENDA, O_QUE_SAO, PERGUNTA, QW_LIMITE_ITENS, ROTULOS,
   ativos, camposFaltando, contagem, csv, custoTexto, faixaIce, formatarIce, iceScore, indicadores, linhaVazia, ordenarPorIce, tituloAutomatico,
   type LinhaForm, type LinhaPainel, type QwItem,
 } from "@/lib/quickWins";
@@ -79,13 +79,18 @@ function Formulario({ d, liderId, recarregar }: { d: Dados; liderId: string | nu
   return <div className="space-y-4">
     {previa && <p className="border-l-4 border-primary bg-muted p-3 text-sm" role="status"><strong>Prévia — é assim que as lideranças veem o formulário.</strong> Somente leitura.</p>}
     {!cicloAberto && <p className="border-l-4 border-warning bg-warning/10 p-3 text-sm" role="status">O ciclo de Quick Wins ainda não foi aberto.</p>}
-    <Card><CardContent className="space-y-3 pt-6 text-sm">
-      <h2 className="text-lg font-semibold">{TITULO_EXPLICACAO}</h2>
-      <p>{EXPLICACAO}</p>
-      <p><span className="text-muted-foreground">Critérios:</span> {CRITERIOS_CURTOS.join(" · ").toLowerCase()}</p>
+    <section className="grid gap-6 rounded-lg border bg-muted/40 p-6 md:grid-cols-2 md:items-center" aria-label="O que são quick wins">
+      <div className="space-y-3">
+        <h2 className="text-3xl font-black tracking-tight">Quick Wins</h2>
+        <p className="text-lg font-semibold text-primary">O que são?</p>
+        <ul className="space-y-2">{O_QUE_SAO.map((t, n) => { const Icone = [Zap, Eye, Users][n]; return <li key={t} className="flex items-center gap-3"><Icone className="h-5 w-5 shrink-0 text-primary" aria-hidden />{t}</li>; })}</ul>
+      </div>
+      <ul className="space-y-2" aria-label="Critérios">{CRITERIOS.map((c) => <li key={c} className="rounded-full border bg-background px-4 py-2 text-center text-sm font-medium">{c}</li>)}</ul>
+    </section>
+    {(lider || ciclo?.data_fechamento) && <Card><CardContent className="space-y-3 pt-6 text-sm">
       {lider && <p><span className="text-muted-foreground">Respondendo como:</span> <strong>{lider.nome} · {CARGOS[lider.cargo] ?? lider.cargo}</strong></p>}
       {ciclo?.data_fechamento && <p><span className="text-muted-foreground">Prazo:</span> <strong>{dataBR(ciclo.data_fechamento)}</strong></p>}
-    </CardContent></Card>
+    </CardContent></Card>}
     <p className="text-lg font-semibold">{PERGUNTA}</p>
     <TabelaQuickWins key={chave} lista={lista} envio={envio} editavel={!previa && !!cicloAberto && ciclo?.status === "aberto"} cicloId={ciclo?.id} liderId={lider?.id} recarregar={recarregar} />
   </div>;
