@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, statusEfetivo, STATUS_INI } from "@/hooks/useMetasBase";
-import { SITUACAO_LBL, ENTREGA_LBL } from "./MetasSemanal";
+import { SITUACAO_LBL, ENTREGA_LBL } from "@/features/metas/pages/MetasSemanal";
 import { normalizarCheckout, riscoAberto, idadeSemanas, cicloPadrao, ciclosDisponiveis, semanaCheckout, periodoSemana, competenciaDaSemana, seloCiclo, prazoCiclo } from "@/lib/rotinaSemanal";
-import { useTransparencia, AvisoTransparencia, InterruptorTransparencia } from "@/hooks/useTransparencia";
+import { useTransparencia, AvisoTransparencia, InterruptorTransparencia } from "@/features/metas/hooks/useTransparencia";
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
-import { useConformidade, pctC } from "@/components/Conformidade";
-import { ExtrasLeitura, ResumoExtras } from '@/components/EntregasExtras';
+import { useConformidade, pctC } from "@/features/metas/components/Conformidade";
+import { ExtrasLeitura, ResumoExtras } from '@/features/metas/components/EntregasExtras';
 
 const db = supabase as any;
 const fmtSem = (s: string) => new Date(s + "T12:00").toLocaleDateString("pt-BR");

@@ -1,6 +1,6 @@
 /** Dashboard consolidado da Rotina Semanal: classificação dos apontamentos de KPI vindos da projeção segura do banco. */
 import { avaliarPorTipo,numeroBr } from "@/lib/avaliacaoBsc";
-import { LIMITE_CRITICO } from "@/lib/matrizApontamentos";
+import { LIMITE_CRITICO } from "@/features/metas/lib/matrizApontamentos";
 
 export type KpiDash = {
   indicador_id: string; codigo: string; nome: string; origem: "bsc" | "okr" | "cesta"; nivel?: string | null;

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { conformidadeCadeira, INICIO_CONFORMIDADE, type RegCiclo } from "@/lib/conformidade";
+import { conformidadeCadeira, INICIO_CONFORMIDADE, type RegCiclo } from "@/features/metas/lib/conformidade";
 
 const db = supabase as any;
 export const pctC = (v: number | null) => (v == null ? "—" : `${Math.round(v * 100)}%`);

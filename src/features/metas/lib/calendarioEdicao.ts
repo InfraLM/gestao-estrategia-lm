@@ -1,4 +1,4 @@
-import { FREQUENCIAS, devidoNoCiclo, frequenciaNoCiclo, type CalendarioKpi, type Frequencia } from './frequenciaApontamento';
+import { FREQUENCIAS, devidoNoCiclo, frequenciaNoCiclo, type CalendarioKpi, type Frequencia } from '@/lib/frequenciaApontamento';
 export type KpiCalendario=CalendarioKpi&{id:string;codigo:string;nome:string;cadeira_id:string|null;origem?:string;nivel?:string|null;velocidade_mudanca?:string|null;velocidade_reacao?:string|null;frequencia_justificativa?:string|null;piso_fonte?:string|null};
 export type EdicaoFrequencia={frequencia:Frequencia;mes_ciclo:number|null;semana_mes:number|null;tratamento:string|null};
 export const edicaoInicial=(k:KpiCalendario):EdicaoFrequencia=>({frequencia:k.frequencia??'mensal',mes_ciclo:['trimestral','semestral'].includes(k.frequencia??'')?k.mes_ciclo??1:null,semana_mes:['semanal','quinzenal'].includes(k.frequencia??'')?null:k.semana_mes??1,tratamento:k.tratamento??null});

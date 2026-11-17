@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { contar, origemDash, situacaoDash, sugerirDesvio } from "@/lib/dashboardRotina";
-import { calcularCompletude } from "@/lib/conformidade";
+import { contar, origemDash, situacaoDash, sugerirDesvio } from "@/features/metas/lib/dashboardRotina";
+import { calcularCompletude } from "@/features/metas/lib/conformidade";
 import { normalizarCheckout, normalizarCheckin, respostaVazia } from "@/lib/rotinaSemanal";
 const base = { indicador_id: "a", codigo: "A", nome: "A", origem: "bsc" as const, nivel: "Estratégico" };
 describe("Outros KPIs e dashboard", () => {

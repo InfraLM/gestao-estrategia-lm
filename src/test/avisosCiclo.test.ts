@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { cronSemanal, mensagemAviso, podeReceberAviso, semanaLink, type DestinatarioAviso } from "@/lib/avisosCiclo";
 import { retornoStatus } from "@/lib/atualizacaoStatus";
 import { prazoCiclo } from "@/lib/rotinaSemanal";
-import { COMPLETUDE_MINIMA } from "@/lib/conformidade";
+import { COMPLETUDE_MINIMA } from "@/features/metas/lib/conformidade";
 const d: DestinatarioAviso = { cadeira_id: "c1", cadeira: "CPPO", usuario_id: "u1", nome: "Naira", email: "naira@example.test", motivo: null, enviado: false, pendencias: { prioridades: 1, kpis: 3, atas: 2, status_reports: 0 } };
 describe("Avisos semanais", () => {
   it("abre sexta 8h São Paulo = sexta 11h UTC", () => expect(cronSemanal(5, "08:00")).toBe("0 11 * * 5"));

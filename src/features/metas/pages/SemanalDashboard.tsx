@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import AtividadesRotina from "@/components/AtividadesRotina";
-import GestaoPendenciasRotina from "@/components/GestaoPendenciasRotina";
+import AtividadesRotina from "@/features/metas/components/AtividadesRotina";
+import GestaoPendenciasRotina from "@/features/metas/components/GestaoPendenciasRotina";
 import { AcoesEntregaLista } from "@/components/AcoesEntregaCheckout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,10 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, fmtNum } from "@/hooks/useMetasBase";
 import { cicloPadrao, ciclosDisponiveis, semanaCheckout, prazoCiclo } from "@/lib/rotinaSemanal";
-import { useConformidade, pctC } from "@/components/Conformidade";
-import { useTransparencia } from "@/hooks/useTransparencia";
-import { ExtrasLeitura } from "@/components/EntregasExtras";
-import { contar, origemDash, situacaoDash, avaliarApontamento, KpiDash, OrigemDash, ORIGEM_DASH_LBL, Situacao, SITUACAO_DASH_LBL } from "@/lib/dashboardRotina";
+import { useConformidade, pctC } from "@/features/metas/components/Conformidade";
+import { useTransparencia } from "@/features/metas/hooks/useTransparencia";
+import { ExtrasLeitura } from "@/features/metas/components/EntregasExtras";
+import { contar, origemDash, situacaoDash, avaliarApontamento, KpiDash, OrigemDash, ORIGEM_DASH_LBL, Situacao, SITUACAO_DASH_LBL } from "@/features/metas/lib/dashboardRotina";
 
 const db = supabase as any;
 const fmt = (s: string) => new Date(s + "T12:00").toLocaleDateString("pt-BR");

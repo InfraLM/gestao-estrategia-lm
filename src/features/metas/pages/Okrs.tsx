@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Target, History } from "lucide-react";
-import data from "@/data/okrs20262.json";
+import data from "@/features/metas/data/okrs20262.json";
 import bsc from "@/data/bscRev02.json";
 import { OKRS } from "@/data/okrs";
 import BaseSubmissaoIA from "@/components/BaseSubmissaoIA";

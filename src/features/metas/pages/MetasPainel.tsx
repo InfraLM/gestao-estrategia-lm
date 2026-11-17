@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useAtasAguardando } from "@/components/GestaoPendenciasRotina";
+import { useAtasAguardando } from "@/features/metas/components/GestaoPendenciasRotina";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,15 +13,15 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase, MESES_2S26, statusEfetivo } from "@/hooks/useMetasBase";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ENTREGA_LBL } from "@/pages/MetasSemanal";
+import { ENTREGA_LBL } from "@/features/metas/pages/MetasSemanal";
 import { cicloPadrao, semanaCheckout, seloCiclo,addDias } from "@/lib/rotinaSemanal";
 import { srPendentesPorCadeira,ultimoCicloDoMes } from "@/lib/projetosGestao";
 import { segundasMes } from '@/lib/frequenciaApontamento';
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
-import { useConformidade, pctC } from "@/components/Conformidade";
-import { ExtrasLeitura, ResumoExtras } from '@/components/EntregasExtras';
-import AvisosCiclo from '@/components/AvisosCiclo';
-import DesviosKpiPauta from '@/components/DesviosKpiPauta';
+import { useConformidade, pctC } from "@/features/metas/components/Conformidade";
+import { ExtrasLeitura, ResumoExtras } from '@/features/metas/components/EntregasExtras';
+import AvisosCiclo from '@/features/metas/components/AvisosCiclo';
+import DesviosKpiPauta from '@/features/metas/components/DesviosKpiPauta';
 
 const db = supabase as any;
 const ORIGENS = ["bsc", "okr", "cesta"];

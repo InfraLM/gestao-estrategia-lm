@@ -1,6 +1,6 @@
 import type { Database } from "@/integrations/supabase/types";
 import { canAccessModule, type ModuleGrant } from "@/lib/moduleAccess";
-import { semAcentos } from "./contextoDecisoes";
+import { semAcentos } from "@/pages/contextoDecisoes";
 export type CombinadoCesta = Database["public"]["Tables"]["cesta_insights"]["Row"];
 export const ADERENCIAS = { atende: "Atende", parcial: "Parcial", nao_atende: "Não atende", nao_avaliado: "Não avaliado" } as const;
 export type Aderencia = keyof typeof ADERENCIAS;

@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { STATUS_IMPEDIMENTO } from '@/lib/impedimentos';
+import { STATUS_IMPEDIMENTO } from '@/features/metas/lib/impedimentos';
 type Atividade={id:string;origem:string;titulo:string;origem_label:string;responsavel:string;quem_sinalizou:string;plano:string;prazo:string|null;status:string;atrasado:boolean;cadeira_id:string;sinalizador_cadeira_id?:string};
 export default function AtividadesRotina({ciclo,cadeira}:{ciclo:string;cadeira:string}) {
   const [itens,setItens]=useState<Atividade[]>([]), [status,setStatus]=useState('abertos'), [origem,setOrigem]=useState('todas'), [erro,setErro]=useState('');

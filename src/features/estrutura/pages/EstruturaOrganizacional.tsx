@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CadastroCadeiras } from "@/pages/Hubs";
+import { CadastroCadeiras } from "@/features/metas/pages/Hubs";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Search, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";

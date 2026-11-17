@@ -2,7 +2,7 @@ import { icp_DEF, playToWin_DEF, ansoff_DEF, errc_DEF, vrin_DEF, swot_DEF, hipot
 import { ConteudoRevisaoProvider, useRevisaoContexto } from "@/hooks/useConteudoRevisoes";
 import RevisaoSeletor from "@/components/RevisaoSeletor";
 import { useConteudo } from "@/hooks/useConteudo";
-import { CadastroBsc } from "./Hubs";
+import { CadastroBsc } from "@/features/metas/pages/Hubs";
 import { EditarConteudo } from "@/components/EditarConteudo";
 import BscArvoreKpis from "@/components/BscArvoreKpis";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,8 +1,8 @@
 import PortfolioVinculos from "@/components/PortfolioVinculos";
 import PessoaSelect from '@/components/estrutura/PessoaSelect';
-import AnaliseMetaConfig from '@/components/AnaliseMetaConfig';
+import AnaliseMetaConfig from '@/features/metas/components/AnaliseMetaConfig';
 import { ANALISE_LABEL, ANALISE_AJUDA,analiseDefinida } from '@/lib/analiseMetas';
-import FrequenciaKpi, { CalendarioApontamento } from '@/components/FrequenciaKpi';
+import FrequenciaKpi, { CalendarioApontamento } from '@/features/metas/components/FrequenciaKpi';
 import { TIPO_LBL } from "@/lib/avaliacaoBsc";
 import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";

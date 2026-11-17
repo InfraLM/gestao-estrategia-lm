@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Check, Save, Undo2 } from 'lucide-react';
 import { FREQUENCIAS, FREQUENCIA_LBL, TRATAMENTOS, devidoNoCiclo, segundasMes } from '@/lib/frequenciaApontamento';
-import { cargaSemanas, dadosSalvar, edicaoInicial, erroPiso, mudarFrequencia, origemCalendario, previaKpi, proximoCiclo, type EdicaoFrequencia, type KpiCalendario } from '@/lib/calendarioEdicao';
+import { cargaSemanas, dadosSalvar, edicaoInicial, erroPiso, mudarFrequencia, origemCalendario, previaKpi, proximoCiclo, type EdicaoFrequencia, type KpiCalendario } from '@/features/metas/lib/calendarioEdicao';
 
 const ORIGENS=[['bsc_estrategico','BSC estratégico'],['bsc_tatico','BSC tático'],['okr','OKR'],['cesta','Cesta']];
 function Lista({label,value,opcoes,disabled,onChange}:{label:string;value:string;opcoes:{value:string;label:string;disabled?:boolean}[];disabled?:boolean;onChange:(v:string)=>void}) {

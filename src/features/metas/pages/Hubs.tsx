@@ -1,14 +1,14 @@
 import { useMetasBase } from "@/hooks/useMetasBase";
 import AbasPagina from "@/components/AbasPagina";
-import VinculadosPorIndicador from "@/components/VinculadosPorIndicador";
-import Okrs from "./Okrs";
-import CestaMetas from "./CestaMetas";
-import MetasCadastros from "./MetasCadastros";
-import MetasPainel from "./MetasPainel";
-import MetasLancamento from "./MetasLancamento";
-import MatrizApontamentos from "./MatrizApontamentos";
-import CalendarioApontamento from '@/components/CalendarioApontamento';
-import FrequenciasPropostas from '@/components/FrequenciasPropostas';
+import VinculadosPorIndicador from "@/features/metas/components/VinculadosPorIndicador";
+import Okrs from "@/features/metas/pages/Okrs";
+import CestaMetas from "@/features/metas/pages/CestaMetas";
+import MetasCadastros from "@/features/metas/pages/MetasCadastros";
+import MetasPainel from "@/features/metas/pages/MetasPainel";
+import MetasLancamento from "@/features/metas/pages/MetasLancamento";
+import MatrizApontamentos from "@/features/metas/pages/MatrizApontamentos";
+import CalendarioApontamento from '@/features/metas/components/CalendarioApontamento';
+import FrequenciasPropostas from '@/features/metas/components/FrequenciasPropostas';
 
 export function OkrsHub() {
   return <AbasPagina abas={[

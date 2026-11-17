@@ -14,8 +14,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { dataDecisao } from "./contextoDecisoes";
-import { ADERENCIAS, CORES_ADERENCIA, aderenciaValida, avaliacaoPayload, contarAderencias, filtrarCombinados, podeEditarCesta, type Aderencia, type CombinadoCesta } from "./cestaInsightsDados";
+import { dataDecisao } from "@/pages/contextoDecisoes";
+import { ADERENCIAS, CORES_ADERENCIA, aderenciaValida, avaliacaoPayload, contarAderencias, filtrarCombinados, podeEditarCesta, type Aderencia, type CombinadoCesta } from "@/features/metas/lib/cestaInsightsDados";
 
 export default function CestaInsights() {
   const { user } = useAuth();

@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { filtrarItens, planoEmMassa, ItemPendencia, Sugestao } from "@/lib/pendenciasMassa";
+import { filtrarItens, planoEmMassa, ItemPendencia, Sugestao } from "@/features/metas/lib/pendenciasMassa";
 import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 const db = supabase as any;

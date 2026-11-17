@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import EstruturaTexto from "@/components/estrutura/EstruturaTexto";
-import { agruparOrigemMeta, BLOCOS_METAS, formatarMeta, sistemaMetasAoVivo, type IndicadorIncentivo, type MetaIncentivo } from "./incentivosDados";
+import { agruparOrigemMeta, BLOCOS_METAS, formatarMeta, sistemaMetasAoVivo, type IndicadorIncentivo, type MetaIncentivo } from "@/features/metas/lib/incentivosDados";
 
 export default function Incentivos() {
   const { user } = useAuth();

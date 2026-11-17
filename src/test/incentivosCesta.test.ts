@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { agruparOrigemMeta, formatarMeta, sistemaMetasAoVivo } from "@/pages/incentivosDados";
-import { avaliacaoPayload, contarAderencias, filtrarCombinados, podeEditarCesta, type CombinadoCesta } from "@/pages/cestaInsightsDados";
+import { agruparOrigemMeta, formatarMeta, sistemaMetasAoVivo } from "@/features/metas/lib/incentivosDados";
+import { avaliacaoPayload, contarAderencias, filtrarCombinados, podeEditarCesta, type CombinadoCesta } from "@/features/metas/lib/cestaInsightsDados";
 describe("Incentivos · metas", () => {
   it.each([["bsc", "bsc"], ["arvore_kpis", "bsc"], ["okr", "okr"], ["cesta", "cesta"], ["cesta_metas", "cesta"], ["desconhecida", null], [null, null]])("agrupa origem %s", (origem, grupo) => { expect(agruparOrigemMeta(origem)).toBe(grupo); });
   it("prioriza meta textual", () => { expect(formatarMeta({ meta_texto: "Até 20 dias", meta_semestre: 30, unidade: "dias" })).toBe("Até 20 dias"); });

@@ -14,7 +14,7 @@ import { objetivosBSC } from "@/data/mockData";
 import DesdobramentoObjetivo from "@/components/DesdobramentoObjetivo";
 import { useSearchParams } from "react-router-dom";
 import PmoVinculos from "@/features/pmo/pages/PmoVinculos";
-import { CadastroIniciativas } from "./Hubs";
+import { CadastroIniciativas } from "@/features/metas/pages/Hubs";
 import IntegracaoProcessos from "@/components/IntegracaoProcessos";
 import SugestoesVinculo from "@/components/SugestoesVinculo";
 import { supabase } from "@/integrations/supabase/client";

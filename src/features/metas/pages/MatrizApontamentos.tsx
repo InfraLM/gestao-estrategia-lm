@@ -10,7 +10,7 @@ import { useMetasBase, MESES_2S26, NOME_MES, fmtNum } from "@/hooks/useMetasBase
 import { carregarSituacoesKpi } from "@/hooks/useAvaliacoesBsc";
 import { mapaArvore, AVALIACAO_LBL, numeroBr, STATUS_ENTREGA_LBL, TIPO_LBL, type CheckoutReg } from "@/lib/avaliacaoBsc";
 import { competenciaDaSemana } from "@/lib/rotinaSemanal";
-import { celulaMes, marcarCriticos, grupoDo, GRUPO_LBL, type Grupo, type Celula } from "@/lib/matrizApontamentos";
+import { celulaMes, marcarCriticos, grupoDo, GRUPO_LBL, type Grupo, type Celula } from "@/features/metas/lib/matrizApontamentos";
 import { cn } from "@/lib/utils";
 import rev02 from "@/data/bscRev02.json";
 import { devidoNoCiclo, previstoNoMes } from '@/lib/frequenciaApontamento';

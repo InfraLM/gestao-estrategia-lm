@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Impedimento, RespostaImpedimento, STATUS_IMPEDIMENTO, StatusImpedimento, devidoImpedimento, respostaCompleta } from '@/lib/impedimentos';
+import { Impedimento, RespostaImpedimento, STATUS_IMPEDIMENTO, StatusImpedimento, devidoImpedimento, respostaCompleta } from '@/features/metas/lib/impedimentos';
 
 function Linha({ item: r, cadeira, ciclo, editar, governanca, onReload }: { item: Impedimento; cadeira: string; ciclo: string; editar: boolean; governanca: boolean; onReload: () => void }) {
   const [resposta, setResposta] = useState<RespostaImpedimento>(r.resposta_ciclo ?? { plano: r.plano_acao, prazo: r.prazo_plano ?? '', status: r.resposta_status, justificativa: r.justificativa_resposta });

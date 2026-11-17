@@ -1,4 +1,4 @@
-import { analiseNaData } from "./analiseMetas";
+import { analiseNaData } from "@/lib/analiseMetas";
 import { avaliarPorTipo, apontamentoMaisRecente, situacaoNumerica, FIM_PERIODO, type Avaliacao, type ArvoreSit, type CheckoutReg, type Fonte, type TipoApontamento, type StatusEntrega } from "@/lib/avaliacaoBsc";
 import { previstoNoMes, type CalendarioKpi } from '@/lib/frequenciaApontamento';
 

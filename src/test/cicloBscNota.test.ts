@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { cicloPadrao, semanaCheckout, competenciaDaSemana, ultimaSituacao, montarRetrato } from "@/lib/rotinaSemanal";
-import { prazoDe } from "@/pages/MetasSemanal";
+import { prazoDe } from "@/features/metas/pages/MetasSemanal";
 import { avaliarBsc, lerMeta } from "@/lib/avaliacaoBsc";
 
 describe("Ciclo semanal", () => {
