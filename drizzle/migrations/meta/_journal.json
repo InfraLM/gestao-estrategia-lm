@@ -841,6 +841,13 @@
       "when": 1794947865313,
       "tag": "0119_quick_wins_convite_email",
       "breakpoints": true
+    },
+    {
+      "idx": 120,
+      "version": "7",
+      "when": 1794949329717,
+      "tag": "0120_quick_wins_lista_envio",
+      "breakpoints": true
     }
   ]
 }
