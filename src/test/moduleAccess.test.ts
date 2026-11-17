@@ -15,8 +15,8 @@ describe("Acessos por usuário e módulo", () => {
     expect(canAccessModule(grants, "pmo", true)).toBe(true);
     expect(canAccessModule(grants, "okrs")).toBe(false);
   });
-  it("preserva acesso existente quando não foi configurada uma exceção", () => {
-    expect(canAccessModule([], "metas")).toBe(true);
+  it("fecha o módulo quando não há linha de acesso", () => {
+    expect(canAccessModule([], "metas")).toBe(false);
   });
   it("mantém acesso total para Admin Principal", () => {
     expect(canAccessModule([{ modulo: "pmo", nivel: "nenhum" }], "pmo", true, true)).toBe(true);
