@@ -813,6 +813,13 @@
       "when": 1794938422960,
       "tag": "0115_mt_auditoria_governanca",
       "breakpoints": true
+    },
+    {
+      "idx": 116,
+      "version": "7",
+      "when": 1794946107827,
+      "tag": "0116_storage_leitura_vinculada_dono",
+      "breakpoints": true
     }
   ]
 }
