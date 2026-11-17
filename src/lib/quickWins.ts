@@ -34,7 +34,8 @@ export type QwItem = {
 };
 
 /** Formulário em tabela (10 linhas): iniciativa, justificativa, custo e ICE. */
-export const CAMPOS_OBRIGATORIOS: (keyof QwItem)[] = ["acao_proposta", "observacao", "tem_custo", "ice_impacto", "ice_confianca", "ice_facilidade"];
+/** Com Iniciativa preenchida: Justificativa e as 3 notas ICE. "Tem custo?" e valor são opcionais. */
+export const CAMPOS_OBRIGATORIOS: (keyof QwItem)[] = ["acao_proposta", "observacao", "ice_impacto", "ice_confianca", "ice_facilidade"];
 export const ROTULOS = { acao_proposta: "Iniciativa", observacao: "Justificativa", investimento_estimado: "Valor estimado (R$)", tem_custo: "Tem custo?" };
 export const O_QUE_SAO = ["Ações de baixo esforço e bom impacto", "Resultados visíveis em curto prazo", "Geram tração e moral para o time"];
 export const PERGUNTA = "Na sua visão, quais ações rápidas e de baixo custo trariam ganhos concretos para a sua área e para a LM? Liste até 10 iniciativas, da mais para a menos prioritária.";
@@ -49,9 +50,11 @@ export function linhaVazia(i: Partial<LinhaForm>) {
     && i.tem_custo == null && i.ice_impacto == null && i.ice_confianca == null && i.ice_facilidade == null;
 }
 
+/** Só linhas com Iniciativa entram no envio; as demais são ignoradas. */
+export const temIniciativa = (i: Partial<LinhaForm>) => !!String(i.acao_proposta ?? "").trim();
+
 export function camposFaltando(i: Partial<QwItem>, areaObrigatoria = false): string[] {
   const campos: string[] = CAMPOS_OBRIGATORIOS.filter((k) => i[k] == null || !String(i[k]).trim());
-  if (i.tem_custo === true && !String(i.investimento_estimado ?? "").trim()) campos.push("investimento_estimado");
   if (areaObrigatoria && !i.area_rotulo?.trim()) campos.push("area_rotulo");
   return campos;
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { canAccessModule, canAccessQuickWins, moduleForPath, rotaPermitidaLiderRestrito } from "@/lib/moduleAccess";
-import { camposFaltando, classificar, faixaIce, iceScore, linhaVazia, contagem, csv, indicadores, ordenarPorIce, tituloAutomatico, type QwItem } from "@/lib/quickWins";
+import { camposFaltando, custoTexto, classificar, faixaIce, iceScore, linhaVazia, contagem, csv, indicadores, ordenarPorIce, tituloAutomatico, type QwItem } from "@/lib/quickWins";
 
 describe("Quick Wins: regras de tela", () => {
   it("área é obrigatória apenas para líderes com mais de um vínculo", () => {
@@ -9,12 +9,13 @@ describe("Quick Wins: regras de tela", () => {
     expect(camposFaltando(item, true)).toEqual(["area_rotulo"]);
     expect(camposFaltando({ ...item, area_rotulo: "Jurídico" }, true)).toEqual([]);
   });
-  it("linha parcial exige iniciativa, justificativa, custo e os 3 critérios ICE", () => {
-    expect(camposFaltando({ acao_proposta: "A" })).toEqual(["observacao", "tem_custo", "ice_impacto", "ice_confianca", "ice_facilidade"]);
+  it("com iniciativa exige justificativa e os 3 critérios ICE; custo é opcional", () => {
+    expect(camposFaltando({ acao_proposta: "A" })).toEqual(["observacao", "ice_impacto", "ice_confianca", "ice_facilidade"]);
   });
-  it("custo = Sim exige valor estimado", () => {
+  it("custo em branco ou Sim sem valor não bloqueia", () => {
     const base = { observacao: "O", acao_proposta: "A", ice_impacto: 3, ice_confianca: 3, ice_facilidade: 3 };
-    expect(camposFaltando({ ...base, tem_custo: true })).toEqual(["investimento_estimado"]);
+    expect(camposFaltando({ ...base, tem_custo: true })).toEqual([]);
+    expect(camposFaltando({ ...base, tem_custo: null })).toEqual([]);
     expect(camposFaltando({ ...base, tem_custo: true, investimento_estimado: "R$ 2 mil" })).toEqual([]);
     expect(camposFaltando({ ...base, tem_custo: false })).toEqual([]);
   });
@@ -55,6 +56,11 @@ describe("Quick Wins: regras de tela", () => {
   it("indicadores do painel: % respondentes, % com custo e ICE médio", () => {
     const it = (c: boolean, n: number) => ({ tem_custo: c, ice_impacto: n, ice_confianca: n, ice_facilidade: n, status_execucao: "nao_iniciado" }) as QwItem;
     expect(indicadores(4, 1, [it(true, 5), it(false, 3)])).toEqual({ pctResponderam: 25, total: 2, pctComCusto: 50, iceMedio: 4 });
+  });
+  it("custo em branco aparece como — e não conta como com custo", () => {
+    expect(custoTexto({ tem_custo: null })).toBe("—");
+    const x = (c: boolean | null) => ({ tem_custo: c, ice_impacto: 3, ice_confianca: 3, ice_facilidade: 3 }) as QwItem;
+    expect(indicadores(1, 1, [x(true), x(null), x(null), x(false)]).pctComCusto).toBe(25);
   });
   it("ordenação por ICE coloca maior primeiro e sem ICE no fim", () => {
     const l = (n: number | null) => ({ item: { ice_impacto: n, ice_confianca: n, ice_facilidade: n } as QwItem });

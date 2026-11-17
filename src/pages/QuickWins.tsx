@@ -16,7 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import { useQwPerfil } from "@/hooks/useQuickWins";
 import {
   CARGOS, CRITERIOS, ICE_LEGENDA, O_QUE_SAO, PERGUNTA, QW_LIMITE_ITENS, ROTULOS,
-  ativos, camposFaltando, contagem, csv, custoTexto, faixaIce, formatarIce, iceScore, indicadores, linhaVazia, ordenarPorIce, tituloAutomatico,
+  ativos, camposFaltando, contagem, csv, custoTexto, faixaIce, formatarIce, iceScore, indicadores, linhaVazia, ordenarPorIce, temIniciativa, tituloAutomatico,
   type LinhaForm, type LinhaPainel, type QwItem,
 } from "@/lib/quickWins";
 
@@ -114,7 +114,7 @@ function TabelaQuickWins({ lista, envio, editavel, cicloId, liderId, recarregar 
     try { await salvarTudo(); setEstado({ estado: "salvo", em: new Date() }); recarregar(); }
     catch (e: any) { setEstado({ estado: "erro", erro: e.message }); erro(e); } finally { setBusy(false); }
   };
-  const preenchidas = linhas.filter((l) => !linhaVazia(l));
+  const preenchidas = linhas.filter(temIniciativa);
   const enviar = async () => {
     const incompletas = preenchidas.filter((l) => camposFaltando(l as Partial<QwItem>).length).length;
     if (!preenchidas.length) return erro({ message: "Preencha ao menos 1 iniciativa para enviar." });
@@ -143,7 +143,7 @@ function TabelaQuickWins({ lista, envio, editavel, cicloId, liderId, recarregar 
       <span>#</span><span>Iniciativa</span><span>Justificativa</span><span>Tem custo?</span><span title={ICE_LEGENDA.ice_impacto[1]}>Impacto</span><span title={ICE_LEGENDA.ice_confianca[1]}>Confiança</span><span title={ICE_LEGENDA.ice_facilidade[1]}>Facilidade</span><span>ICE</span>
     </div>
     <ol className="space-y-3 lg:space-y-0">{linhas.map((l, n) => {
-      const falta = linhaVazia(l) ? [] : camposFaltando(l as Partial<QwItem>);
+      const falta = !temIniciativa(l) ? [] : camposFaltando(l as Partial<QwItem>);
       const err = (k: string) => (editavel && falta.includes(k) ? inv : "");
       const id = `qw-l${n + 1}`;
       return <li key={n} className="rounded-md border p-3 lg:rounded-none lg:border-x lg:border-t-0 lg:p-2">
@@ -152,8 +152,8 @@ function TabelaQuickWins({ lista, envio, editavel, cicloId, liderId, recarregar 
           <div><label htmlFor={`${id}-ini`} className={rotulo}>Iniciativa</label><Textarea id={`${id}-ini`} rows={2} className={err("acao_proposta")} aria-invalid={!!err("acao_proposta")} value={l.acao_proposta ?? ""} onChange={(e) => set(n, "acao_proposta", e.target.value)} disabled={!editavel} placeholder="O que fazer" /></div>
           <div><label htmlFor={`${id}-jus`} className={rotulo}>Justificativa</label><Textarea id={`${id}-jus`} rows={2} className={err("observacao")} aria-invalid={!!err("observacao")} value={l.observacao ?? ""} onChange={(e) => set(n, "observacao", e.target.value)} disabled={!editavel} placeholder="Que problema resolve ou que ganho gera?" /></div>
           <div className="space-y-1"><label htmlFor={`${id}-custo`} className={rotulo}>Tem custo?</label>
-            <div className={`rounded-md ${err("tem_custo")}`}><Seletor id={`${id}-custo`} value={l.tem_custo == null ? "" : l.tem_custo ? "sim" : "nao"} onChange={(v) => set(n, "tem_custo", v === "sim")} opcoes={CUSTO} disabled={!editavel} /></div>
-            {l.tem_custo && <><label htmlFor={`${id}-valor`} className="text-xs font-medium text-muted-foreground">Valor estimado (R$)</label><Input id={`${id}-valor`} className={err("investimento_estimado")} aria-invalid={!!err("investimento_estimado")} value={l.investimento_estimado ?? ""} onChange={(e) => set(n, "investimento_estimado", e.target.value)} disabled={!editavel} placeholder="Ex.: R$ 2 mil" /></>}
+            <div className="rounded-md"><Seletor id={`${id}-custo`} value={l.tem_custo == null ? "" : l.tem_custo ? "sim" : "nao"} onChange={(v) => set(n, "tem_custo", v === "sim")} opcoes={CUSTO} disabled={!editavel} /></div>
+            {l.tem_custo && <><label htmlFor={`${id}-valor`} className="text-xs font-medium text-muted-foreground">Valor estimado (R$)</label><Input id={`${id}-valor`} value={l.investimento_estimado ?? ""} onChange={(e) => set(n, "investimento_estimado", e.target.value)} disabled={!editavel} placeholder="Ex.: R$ 2 mil" /></>}
           </div>
           <div className="grid grid-cols-3 gap-2 lg:contents">{(["ice_impacto", "ice_confianca", "ice_facilidade"] as const).map((k) => <div key={k}>
             <label htmlFor={`${id}-${k}`} className={rotulo} title={ICE_LEGENDA[k][1]}>{ICE_LEGENDA[k][0]}</label>

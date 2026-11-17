@@ -792,6 +792,13 @@
       "when": 1794928414903,
       "tag": "0112_acesso_geral_separado_socios",
       "breakpoints": true
+    },
+    {
+      "idx": 113,
+      "version": "7",
+      "when": 1794937634277,
+      "tag": "0113_quick_wins_custo_opcional",
+      "breakpoints": true
     }
   ]
 }
