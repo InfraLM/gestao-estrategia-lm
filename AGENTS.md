@@ -1,11 +1,13 @@
 # AGENTS.md
 
+Folder layout: each module lives in `src/features/<module>/{pages,components,hooks,lib,data}` (acesso, estrategia, estrutura, governanca, metas, pmo, processos, quickWins, socios, preOffsite); files used by two or more modules stay in `src/components`, `src/hooks`, `src/lib` and `src/data`. Routes and URLs are defined in `src/App.tsx` and never depend on file location; import with the `@/` alias.
+
 Area rules live in nested AGENTS.md files; read the one for the folder before changing files there:
-- `docs/agents/metas-rotina.md` — Metas, OKRs, Cesta, Lançamentos, weekly cycle, transparency, projects (applies to src/pages Metas*/Semanal*/Hubs/Matriz*, src/lib rotina/avaliacao/matriz/projetos, mt_* SQL).
+- `docs/agents/metas-rotina.md` — Metas, OKRs, Cesta, Lançamentos, weekly cycle, transparency, projects (applies to src/features/metas, shared src/lib rotina/avaliacao/projetos, mt_* SQL).
 - `docs/agents/socios-governanca.md` — Desejos dos Sócios, Governança integration, AI planning revisions.
-- `src/components/AGENTS.md` — layout. `src/components/estrutura/AGENTS.md` — organogram and canonical identities; apply directory rules across forms.
+- `src/components/AGENTS.md` — layout. `src/features/estrutura/AGENTS.md` (also covers shared src/components/estrutura) — organogram and canonical identities; apply directory rules across forms.
 - `src/features/preOffsite/AGENTS.md` — Pré-Offsite config, privacy and answer preservation.
-- `docs/agents/quick-wins.md` — Quick Wins, restricted leaders (src/pages/QuickWins, src/lib/quickWins, qw_* SQL).
+- `docs/agents/quick-wins.md` — Quick Wins, restricted leaders (src/features/quickWins, qw_* SQL).
 
 - Phase 1 spaces use six isolated tables and additive `fase1_*` auth helpers; new modules default closed, with owner/director read exceptions enforced server-side without changing legacy module access.
 - Cadence calendar (CalendarioApontamento) uses pure draft/load helpers and shared São Paulo next-Monday projections preserving sent cycles; batch saves per row via mt_frequencia_salvar, keeping failed drafts.

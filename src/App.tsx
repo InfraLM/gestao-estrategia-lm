@@ -51,7 +51,11 @@ import ModuleAccessGate from "./components/ModuleAccessGate";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { destinoInicio } from "@/lib/moduleAccess";
 import { useLocation } from "react-router-dom";
-import { ContextoDecisoes, SociosInsights, EstruturaOrganizacional, Incentivos, CestaInsights } from "./pages/Phase1Spaces";
+import ContextoDecisoes from "@/features/estrategia/pages/ContextoDecisoes";
+import SociosInsights from "@/features/socios/pages/SociosInsights";
+import EstruturaOrganizacional from "@/features/estrutura/pages/EstruturaOrganizacional";
+import Incentivos from "@/features/metas/pages/Incentivos";
+import CestaInsights from "@/features/metas/pages/CestaInsights";
 
 const queryClient = new QueryClient();
 
