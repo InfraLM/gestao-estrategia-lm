@@ -771,6 +771,13 @@
       "when": 1794927352098,
       "tag": "0109_quick_wins_tabela_ice",
       "breakpoints": true
+    },
+    {
+      "idx": 110,
+      "version": "7",
+      "when": 1794927638865,
+      "tag": "0110_quick_wins_sem_triagem",
+      "breakpoints": true
     }
   ]
 }

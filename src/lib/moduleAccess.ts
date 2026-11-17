@@ -71,12 +71,12 @@ export function canAccessSocios(p: SocioParticipante, path = "/socios/formulario
   return p.respondente || p.pode_ver_consolidado;
 }
 
-/** Quick Wins: visível a líderes cadastrados, diretores com líderes e Governança/CEO; override "nenhum" ainda bloqueia. */
-export function canAccessQuickWins(perfil: { lider_id: string | null; diretor: boolean; gov_ceo: boolean } | null | undefined, grants: ModuleGrant[], superAdmin = false): boolean {
+/** Quick Wins: visível só a líderes cadastrados ativos e à Governança/admin; override "nenhum" ainda bloqueia. */
+export function canAccessQuickWins(perfil: { lider_id: string | null; governanca: boolean } | null | undefined, grants: ModuleGrant[], superAdmin = false): boolean {
   if (!perfil) return false;
   if (superAdmin) return true;
   if (grants.find(g => g.modulo === "quick_wins")?.nivel === "nenhum") return false;
-  return !!perfil.lider_id || perfil.diretor || perfil.gov_ceo;
+  return !!perfil.lider_id || perfil.governanca;
 }
 
 /** Líder restrito só navega no Quick Wins. */

@@ -48,7 +48,7 @@ beforeAll(async () => {
   await db.exec(`INSERT INTO public.profiles(user_id) VALUES ('${DIRETOR}');
     INSERT INTO public.mt_auditoria(tabela) VALUES ('seed');`);
   for (const a of abertas) await db.exec(`GRANT SELECT ON public.${a.tabela} TO authenticated; ALTER TABLE public.${a.tabela} ENABLE ROW LEVEL SECURITY; CREATE POLICY ${a.policy} ON public.${a.tabela} FOR SELECT TO authenticated USING (true);`);
-  for (const f of ["0094_quick_wins_modulo", "0095_quick_wins_lider_restrito", "0096_quick_wins_policies_lider_restrito", "0097_quick_wins_contexto", "0098_quick_wins_diretores_areas", "0099_quick_wins_resolucao_rpcs", "0100_quick_wins_formulario_simplificado", "0109_quick_wins_tabela_ice"])
+  for (const f of ["0094_quick_wins_modulo", "0095_quick_wins_lider_restrito", "0096_quick_wins_policies_lider_restrito", "0097_quick_wins_contexto", "0098_quick_wins_diretores_areas", "0099_quick_wins_resolucao_rpcs", "0100_quick_wins_formulario_simplificado", "0109_quick_wins_tabela_ice", "0110_quick_wins_sem_triagem"])
     await db.exec(readFileSync(`drizzle/migrations/${f}.sql`, "utf8").split("--> statement-breakpoint").join(""));
   await db.exec(`INSERT INTO auth.users VALUES ('${LIDER}','lider@liberdademedicaedu.com.br',now()), ('${LIDER_COM_PAPEL}','antigo@liberdademedicaedu.com.br',now());
     INSERT INTO public.qw_lideres(email,nome,cargo,diretor_user_id) VALUES ('lider@liberdademedicaedu.com.br','Líder','coordenador','${DIRETOR}'),('antigo@liberdademedicaedu.com.br','Antigo','gerente','${DIRETOR}');`);
@@ -98,43 +98,23 @@ describe("Quick Wins: diretores, áreas e carga", () => {
   await db.exec(`INSERT INTO auth.users VALUES ('${u}','iurifranco@liberdademedicaedu.com.br',now())`);
   expect((await db.query<{u:string}>(`SELECT public.qw_diretor_item('${lider}',null) u`)).rows[0].u).toBe(u);
   expect((await db.query<{u:string}>(`SELECT public.qw_resolver_diretor('${DIRETOR}','${iuri}') u`)).rows[0].u).toBe(DIRETOR);
-  expect((await rpc(u,"SELECT public.qw_meu_perfil() p")).rows[0] as any).toMatchObject({p:{diretor:true,lider_restrito:false}});
+  expect((await rpc(u,"SELECT public.qw_meu_perfil() p")).rows[0] as any).toMatchObject({p:{diretor:false,lider_restrito:false}});
  });
- it("dois diretores: Área obrigatória, RLS e triagem isoladas, avisos por item", async () => {
+ it("sem triagem: envio não exige área nem diretor; cada líder lê só as próprias respostas", async () => {
   const uid='00000000-0000-0000-0000-000000000080'; const lider=await emailId('marcya.santos');
   await db.exec(`INSERT INTO auth.users VALUES ('${uid}','marcyasantos@liberdademedicaedu.com.br',now())`);
-  const areas=(await db.query<{id:string;area_rotulo:string}>(`SELECT id,area_rotulo FROM public.qw_lider_diretores WHERE lider_id='${lider}' ORDER BY area_rotulo`)).rows;
-  await rpc(GOV,`SELECT public.qw_diretor_salvar('${areas[0].id}','${lider}','{"diretor_user_id":"${DIRETOR}"}')`);
-  await rpc(GOV,`SELECT public.qw_diretor_salvar('${areas[1].id}','${lider}','{"diretor_lider_id":"${await emailId('yuri.ribeiro')}"}')`);
-  const ids:string[]=[];
-  for(let n=0;n<2;n++) ids.push(((await rpc(uid,"SELECT public.qw_salvar_item(null,'{}') id")).rows[0] as any).id);
-  for(const id of ids) await rpc(uid,`SELECT public.qw_salvar_item('${id}','${JSON.stringify(completo)}')`);
-  const envio=(await db.query<{id:string}>(`SELECT id FROM public.qw_envios WHERE lider_id='${lider}'`)).rows[0].id;
-  await expect(rpc(uid,`SELECT public.qw_enviar('${envio}')`)).rejects.toThrow(/Área/);
-  for(let n=0;n<2;n++) await rpc(uid,`SELECT public.qw_salvar_item('${ids[n]}','{"area_rotulo":"${areas[n].area_rotulo}"}')`);
-  await rpc(uid,`SELECT public.qw_enviar('${envio}')`);
-  expect((await como(DIRETOR,()=>db.query(`SELECT id FROM public.qw_itens WHERE envio_id='${envio}'`))).rows).toEqual([{id:ids[0]}]);
-  expect((await como(YURI,()=>db.query(`SELECT id FROM public.qw_itens WHERE envio_id='${envio}'`))).rows).toEqual([{id:ids[1]}]);
-  await expect(rpc(DIRETOR,`SELECT public.qw_triar('${ids[1]}','aprovar',null)`)).rejects.toThrow(/diretor/);
-  await rpc(DIRETOR,`SELECT public.qw_triar('${ids[0]}','aprovar',null)`); await rpc(YURI,`SELECT public.qw_triar('${ids[1]}','ajustar','Revisar')`);
-  expect((await como(YURI,()=>db.query("SELECT * FROM public.qw_avisos"))).rows).toHaveLength(0);
-  expect((await db.query(`SELECT item_id FROM public.qw_avisos WHERE envio_id='${envio}' AND tipo='envio_diretor'`)).rows).toHaveLength(2);
-  await expect(como(uid,()=>db.exec(`UPDATE public.qw_lider_diretores SET ativo=false WHERE lider_id='${lider}'`))).rejects.toThrow();
- });
- it("pendente permite preencher/enviar e atualiza após vincular; Ian segue Governança", async () => {
-  const uid='00000000-0000-0000-0000-000000000081'; const lider=await emailId('rany.araujo');
-  await db.exec(`INSERT INTO auth.users VALUES ('${uid}','rany.araujo@liberdademedicaedu.com.br',now())`);
   const id=((await rpc(uid,`SELECT public.qw_salvar_item(null,'${JSON.stringify(completo)}') id`)).rows[0] as any).id;
-  const e=(await db.query<{envio_id:string}>(`SELECT envio_id FROM public.qw_itens WHERE id='${id}'`)).rows[0].envio_id;
-  await rpc(uid,`SELECT public.qw_enviar('${e}')`);
-  expect((await db.query<{a:boolean}>(`SELECT aguardando_diretor a FROM public.qw_envios WHERE id='${e}'`)).rows[0].a).toBe(true);
-  await rpc(GOV,`SELECT public.qw_lider_salvar('${lider}','{"diretor_lider_id":"${await emailId('yuri.ribeiro')}"}')`);
-  expect((await db.query<{a:boolean}>(`SELECT aguardando_diretor a FROM public.qw_envios WHERE id='${e}'`)).rows[0].a).toBe(false);
-  const ian='00000000-0000-0000-0000-0000000000e2';
-  const ii=((await rpc(ian,`SELECT public.qw_salvar_item(null,'${JSON.stringify(completo)}') id`)).rows[0] as any).id;
-  const ie=(await db.query<{envio_id:string}>(`SELECT envio_id FROM public.qw_itens WHERE id='${ii}'`)).rows[0].envio_id;
-  await rpc(ian,`SELECT public.qw_enviar('${ie}')`);
-  expect((await db.query<{a:boolean}>(`SELECT aguardando_diretor a FROM public.qw_envios WHERE id='${ie}'`)).rows[0].a).toBe(false);
-  await rpc(GOV,`SELECT public.qw_triar('${ii}','aprovar',null)`);
+  const envio=(await db.query<{id:string}>(`SELECT id FROM public.qw_envios WHERE lider_id='${lider}'`)).rows[0].id;
+  await rpc(uid,`SELECT public.qw_enviar('${envio}')`);
+  expect((await db.query<{a:boolean}>(`SELECT aguardando_diretor a FROM public.qw_envios WHERE id='${envio}'`)).rows[0].a).toBe(false);
+  expect((await como(DIRETOR,()=>db.query(`SELECT id FROM public.qw_itens WHERE envio_id='${envio}'`))).rows).toHaveLength(0);
+  expect((await como(YURI,()=>db.query(`SELECT id FROM public.qw_itens WHERE envio_id='${envio}'`))).rows).toHaveLength(0);
+  expect((await como(uid,()=>db.query(`SELECT id FROM public.qw_itens`))).rows).toEqual([{id}]);
+  const outro='00000000-0000-0000-0000-000000000081';
+  await db.exec(`INSERT INTO auth.users VALUES ('${outro}','rany.araujo@liberdademedicaedu.com.br',now())`);
+  await rpc(outro,`SELECT public.qw_salvar_item(null,'${JSON.stringify(completo)}')`);
+  expect((await como(outro,()=>db.query(`SELECT id FROM public.qw_itens WHERE id='${id}'`))).rows).toHaveLength(0);
+  expect((await como(outro,()=>db.query(`SELECT id FROM public.qw_lideres`))).rows).toHaveLength(1);
+  await expect(rpc(outro,`SELECT public.qw_salvar_item('${id}','{"acao_proposta":"x"}')`)).rejects.toThrow(/não pertence/);
  });
 });

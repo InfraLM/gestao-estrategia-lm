@@ -48,7 +48,7 @@ beforeAll(async () => {
   await db.exec(`INSERT INTO public.profiles(user_id) VALUES ('${DIRETOR}');
     INSERT INTO public.mt_auditoria(tabela) VALUES ('seed');`);
   for (const a of abertas) await db.exec(`GRANT SELECT ON public.${a.tabela} TO authenticated; ALTER TABLE public.${a.tabela} ENABLE ROW LEVEL SECURITY; CREATE POLICY ${a.policy} ON public.${a.tabela} FOR SELECT TO authenticated USING (true);`);
-  for (const f of ["0094_quick_wins_modulo", "0095_quick_wins_lider_restrito", "0096_quick_wins_policies_lider_restrito", "0097_quick_wins_contexto", "0098_quick_wins_diretores_areas", "0099_quick_wins_resolucao_rpcs", "0100_quick_wins_formulario_simplificado", "0109_quick_wins_tabela_ice"])
+  for (const f of ["0094_quick_wins_modulo", "0095_quick_wins_lider_restrito", "0096_quick_wins_policies_lider_restrito", "0097_quick_wins_contexto", "0098_quick_wins_diretores_areas", "0099_quick_wins_resolucao_rpcs", "0100_quick_wins_formulario_simplificado", "0109_quick_wins_tabela_ice", "0110_quick_wins_sem_triagem"])
     await db.exec(readFileSync(`drizzle/migrations/${f}.sql`, "utf8").split("--> statement-breakpoint").join(""));
   await db.exec(`INSERT INTO auth.users VALUES ('${LIDER}','lider@liberdademedicaedu.com.br',now()), ('${LIDER_COM_PAPEL}','antigo@liberdademedicaedu.com.br',now());
     INSERT INTO public.qw_lideres(email,nome,cargo,diretor_user_id) VALUES ('lider@liberdademedicaedu.com.br','Líder','coordenador','${DIRETOR}'),('antigo@liberdademedicaedu.com.br','Antigo','gerente','${DIRETOR}');`);
@@ -65,16 +65,11 @@ describe("Quick Wins: regras no banco", () => {
     await expect(db.exec(`INSERT INTO public.qw_lideres(email,nome,cargo) VALUES ('x@gmail.com','X','gerente')`)).rejects.toThrow();
   });
 
-  it("classifica automaticamente e bloqueia o 11º item", async () => {
+  it("bloqueia o 11º item", async () => {
     const ids: string[] = [];
     for (let n = 0; n < 10; n++) ids.push((await rpc(LIDER, `SELECT public.qw_salvar_item(null, '{}'::jsonb) AS id`)).rows[0] as any);
     await expect(rpc(LIDER, `SELECT public.qw_salvar_item(null, '{}'::jsonb)`)).rejects.toThrow(/10/);
     const id = ((ids[0] as any).id) as string;
-    const cls = async (d: object) => { await rpc(LIDER, `SELECT public.qw_salvar_item('${id}', '${JSON.stringify(d)}'::jsonb)`); return ((await db.query<{ c: string }>(`SELECT classificacao c FROM public.qw_itens WHERE id='${id}'`)).rows[0].c); };
-    expect(await cls({ faixa_investimento: "5k_20k", aprovacao_necessaria: "diretor", prazo_resultado: "61_90" })).toBe("quick_win");
-    expect(await cls({ faixa_investimento: "acima_20k" })).toBe("iniciativa_maior");
-    expect(await cls({ faixa_investimento: "sem_custo", aprovacao_necessaria: "comite_ceo" })).toBe("iniciativa_maior");
-    expect(await cls({ aprovacao_necessaria: "diretor", prazo_resultado: "acima_90" })).toBe("iniciativa_maior");
     // retirar um item libera vaga (cancelado, nunca apagado)
     await rpc(LIDER, `SELECT public.qw_cancelar_item('${(ids[9] as any).id}')`);
     await rpc(LIDER, `SELECT public.qw_salvar_item(null, '{}'::jsonb)`);
@@ -93,14 +88,13 @@ describe("Quick Wins: regras no banco", () => {
     await rpc(LIDER, `SELECT public.qw_salvar_item('${item}', '${JSON.stringify(completo)}'::jsonb)`);
     expect(Number((await db.query<{ s: string }>(`SELECT ice_score s FROM public.qw_itens WHERE id='${item}'`)).rows[0].s)).toBe(4);
     await rpc(LIDER, `SELECT public.qw_enviar('${envio}')`);
-    await expect(rpc(LIDER, `SELECT public.qw_salvar_item('${item}', '{"titulo":"x"}'::jsonb)`)).rejects.toThrow(/ajustar/);
-    await expect(rpc(DIRETOR, `SELECT public.qw_triar('${item}','devolver','')`)).rejects.toThrow(/Comentário/);
-    await expect(rpc(LIDER, `SELECT public.qw_triar('${item}','aprovar',null)`)).rejects.toThrow(/diretor/);
-    await rpc(DIRETOR, `SELECT public.qw_triar('${item}','aprovar',null)`);
+    // sem triagem: após o envio o líder ainda edita, inclui e reenvia enquanto o ciclo está aberto
+    await rpc(LIDER, `SELECT public.qw_salvar_item('${item}', '{"acao_proposta":"Nova"}'::jsonb)`);
+    await rpc(LIDER, `SELECT public.qw_salvar_item(null, '${JSON.stringify(completo)}'::jsonb)`);
+    await rpc(LIDER, `SELECT public.qw_enviar('${envio}')`);
     await rpc(GOV, "SELECT public.qw_fechar_ciclo(id) FROM public.qw_ciclos WHERE ano=2026");
-    await expect(rpc(LIDER, `SELECT public.qw_atualizar_execucao('${item}','concluido','')`)).rejects.toThrow(/resultado/);
-    await rpc(LIDER, `SELECT public.qw_atualizar_execucao('${item}','concluido','12')`);
-    expect((await db.query(`SELECT 1 FROM public.mt_auditoria WHERE tabela='qw_itens' AND campo='status_triagem'`)).rows).toHaveLength(1);
+    await expect(rpc(LIDER, `SELECT public.qw_salvar_item('${item}', '{"acao_proposta":"x"}'::jsonb)`)).rejects.toThrow(/fechado/);
+    await expect(rpc(LIDER, `SELECT public.qw_cancelar_item('${item}')`)).rejects.toThrow(/fechado/);
   });
 
   it("líder restrito não lê nenhuma das 36 tabelas e só tem o módulo quick_wins", async () => {
@@ -116,8 +110,10 @@ describe("Quick Wins: regras no banco", () => {
     }
   });
 
-  it("diretor só vê os próprios líderes; outro usuário não vê nada", async () => {
-    expect((await como(DIRETOR, () => db.query(`SELECT * FROM public.qw_lideres`))).rows).toHaveLength(2);
+  it("só Governança lê respostas de todos; diretor e outros não leem; líder lê só as suas", async () => {
+    expect((await como(DIRETOR, () => db.query(`SELECT * FROM public.qw_lideres`))).rows).toHaveLength(0);
+    expect((await como(DIRETOR, () => db.query(`SELECT * FROM public.qw_itens`))).rows).toHaveLength(0);
+    expect((await como(GOV, () => db.query(`SELECT * FROM public.qw_itens`))).rows.length).toBeGreaterThan(0);
     expect((await como("00000000-0000-0000-0000-000000000099", () => db.query(`SELECT * FROM public.qw_itens`))).rows).toHaveLength(0);
     expect((await como(LIDER, () => db.query(`SELECT * FROM public.qw_lideres`))).rows).toHaveLength(1);
   });

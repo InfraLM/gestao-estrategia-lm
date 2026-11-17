@@ -82,19 +82,19 @@ export function comentarioObrigatorio(acao: "aprovar" | "ajustar" | "devolver" |
 
 export type LinhaPainel = { item: QwItem; lider: { id: string; nome: string; cargo: string; cadeira: string }; enviado: boolean };
 
-export function indicadores(totalLideres: number, lideresQueEnviaram: number, itens: QwItem[], objetivos: Record<string, string>) {
+export function indicadores(totalLideres: number, lideresQueResponderam: number, itens: QwItem[]) {
   const a = ativos(itens);
-  const aprovados = a.filter((i) => i.status_triagem === "aprovado");
-  const concluidosMedidos = aprovados.filter((i) => i.status_execucao === "concluido" && (i.resultado_medido ?? "").trim());
   const pct = (n: number, d: number) => (d ? Math.round((n / d) * 100) : 0);
-  const dist: Record<string, number> = {};
-  for (const i of a) { const k = i.objetivo_id ? objetivos[i.objetivo_id] ?? "—" : "Sem objetivo"; dist[k] = (dist[k] ?? 0) + 1; }
-  return { pctEnviaram: pct(lideresQueEnviaram, totalLideres), total: a.length, pctAprovados: pct(aprovados.length, a.length), pctConcluidos: pct(concluidosMedidos.length, aprovados.length), distribuicao: dist };
+  const notas = a.map(iceScore).filter((x): x is number => x != null);
+  return { pctResponderam: pct(lideresQueResponderam, totalLideres), total: a.length, pctComCusto: pct(a.filter((i) => i.tem_custo === true).length, a.length), iceMedio: notas.length ? Math.round((notas.reduce((x, y) => x + y, 0) / notas.length) * 10) / 10 : null };
 }
+
+/** Maior ICE primeiro; itens sem ICE ao final. */
+export const ordenarPorIce = <T extends { item: QwItem }>(l: T[]) => [...l].sort((a, b) => (iceScore(b.item) ?? -1) - (iceScore(a.item) ?? -1));
 
 const esc = (v: unknown) => { const s = String(v ?? ""); return /[";\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 export function csv(linhas: LinhaPainel[]): string {
-  const head = ["Líder", "Cargo", "Cadeira", "Área", "Ordem", ROTULOS.acao_proposta, ROTULOS.observacao, "Tem custo", "Valor estimado", "Impacto", "Confiança", "Facilidade", "ICE", "Triagem", "Comentário do diretor", "Execução", "Resultado medido"];
-  const rows = linhas.map(({ item: i, lider: l }) => [l.nome, CARGOS[l.cargo] ?? l.cargo, l.cadeira, i.area_rotulo, i.ordem, i.acao_proposta, i.observacao, custoTexto(i), i.investimento_estimado, i.ice_impacto, i.ice_confianca, i.ice_facilidade, formatarIce(iceScore(i)), TRIAGEM[i.status_triagem], i.comentario_diretor, EXECUCAO[i.status_execucao], i.resultado_medido]);
+  const head = ["Líder", "Cargo", "Cadeira", "#", ROTULOS.acao_proposta, ROTULOS.observacao, "Tem custo", "Valor estimado", "Impacto", "Confiança", "Facilidade", "ICE"];
+  const rows = linhas.map(({ item: i, lider: l }) => [l.nome, CARGOS[l.cargo] ?? l.cargo, l.cadeira, i.ordem, i.acao_proposta, i.observacao, custoTexto(i), i.tem_custo ? i.investimento_estimado : "", i.ice_impacto, i.ice_confianca, i.ice_facilidade, formatarIce(iceScore(i))]);
   return "\uFEFF" + [head, ...rows].map((r) => r.map(esc).join(";")).join("\n");
 }
