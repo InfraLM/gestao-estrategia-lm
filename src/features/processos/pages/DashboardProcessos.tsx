@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { E2E_ZONES, zonesForProcesso } from "@/data/e2eZones";
+import { E2E_ZONES, zonesForProcesso } from "@/features/processos/data/e2eZones";
 import { ArrowRight, Network, Workflow, AlertTriangle, ShieldCheck, Bot, Activity, Users, Layers, Target } from "lucide-react";
 
 type Processo = {

@@ -99,7 +99,7 @@ const DIRETOR_AREA: Record<string, Area> = {
   "Não atribuído": "PMO Estratégico",
 };
 
-import okrIniciativas from "@/data/okrIniciativas.json";
+import okrIniciativas from "@/features/processos/data/okrIniciativas.json";
 
 const SEED_PROJ: MelhoriaEstrategica[] = projetos
   .filter(p => p.classificacao === "Melhoria Contínua" || p.classificacao === "Melhoria Contínua com EPP")

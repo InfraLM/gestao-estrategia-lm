@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import processosSeed from "@/data/processos.json";
-import { DiretoresMultiSelect, parseDiretores } from "@/components/DiretoresMultiSelect";
+import { DiretoresMultiSelect, parseDiretores } from "@/features/processos/components/DiretoresMultiSelect";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -9,9 +9,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Search, FileText, Users, ArrowRight, ArrowLeft, RotateCcw, Target, Workflow, ShieldAlert, AlertTriangle, Network, Settings2 } from "lucide-react";
-import { E2E_ZONES, zonesForProcesso, type E2EZone } from "@/data/e2eZones";
-import CadeiaValor from "@/pages/CadeiaValor";
-import GerenciarCadeia from "@/pages/GerenciarCadeia";
+import { E2E_ZONES, zonesForProcesso, type E2EZone } from "@/features/processos/data/e2eZones";
+import CadeiaValor from "@/features/processos/pages/CadeiaValor";
+import GerenciarCadeia from "@/features/processos/pages/GerenciarCadeia";
 import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 type Processo = {

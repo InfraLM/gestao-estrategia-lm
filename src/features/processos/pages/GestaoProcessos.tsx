@@ -11,10 +11,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Search, ArrowLeft, Plus, Trash2, FileText, AlertTriangle, GitBranch, Target, ClipboardList, Workflow, Link2, Bot, Download, Sparkles, Loader2 } from "lucide-react";
 import { exportToCSV } from "@/lib/exportCsv";
-import { NATUREZAS_BPMO, TIPOS_BPMO, STATUS_RISCO_BPMO, IMPACTO_LABEL, PROB_LABEL, classifRiscoBPMO, type NaturezaBPMO, type TipoBPMO, type StatusRiscoBPMO } from "@/lib/bpmoRisco";
+import { NATUREZAS_BPMO, TIPOS_BPMO, STATUS_RISCO_BPMO, IMPACTO_LABEL, PROB_LABEL, classifRiscoBPMO, type NaturezaBPMO, type TipoBPMO, type StatusRiscoBPMO } from "@/features/processos/lib/bpmoRisco";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { DiretoresMultiSelect } from "@/components/DiretoresMultiSelect";
+import { DiretoresMultiSelect } from "@/features/processos/components/DiretoresMultiSelect";
 import PessoaSelect from '@/components/estrutura/PessoaSelect';
 
 

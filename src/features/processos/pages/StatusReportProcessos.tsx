@@ -18,7 +18,7 @@ import {
   exportToCsv,
   formatDateForFilename,
   type StatusReportPayload,
-} from "@/utils/exportUtils";
+} from "@/features/processos/lib/exportUtils";
 
 type Processo = {
   id: string; nome: string; nivel: string; revisao: number | null;
