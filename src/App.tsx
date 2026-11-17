@@ -45,7 +45,7 @@ import SociosFormulario from "./pages/SociosFormulario";
 import SociosConsolidado from "./pages/SociosConsolidado";
 import SociosResponder from "./pages/SociosResponder";
 import NotFound from "./pages/NotFound.tsx";
-import GovernancaIntegracao from "./pages/GovernancaIntegracao";
+import GovernancaIntegracao from "@/features/governanca/pages/GovernancaIntegracao";
 import { AuthProvider } from "@/hooks/useAuth";
 import ModuleAccessGate from "./components/ModuleAccessGate";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
