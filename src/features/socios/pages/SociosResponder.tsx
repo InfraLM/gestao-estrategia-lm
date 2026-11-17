@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-import { useRespostaPorLink } from "@/hooks/useSocios";
-import { FormularioSocio } from "./SociosFormulario";
+import { useRespostaPorLink } from "@/features/socios/hooks/useSocios";
+import { FormularioSocio } from "@/features/socios/pages/SociosFormulario";
 
 export default function SociosResponder() {
   const { token = "" } = useParams();

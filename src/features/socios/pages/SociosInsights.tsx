@@ -12,8 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import InsightTexto from "@/components/socios/InsightTexto";
-import { agruparStatus, filtrarInsights, ORIGENS_INSIGHTS, STATUS_INSIGHTS, type FiltrosInsights, type GrupoStatus, type InsightSocio } from "./sociosInsights";
+import InsightTexto from "@/features/socios/components/InsightTexto";
+import { agruparStatus, filtrarInsights, ORIGENS_INSIGHTS, STATUS_INSIGHTS, type FiltrosInsights, type GrupoStatus, type InsightSocio } from "@/features/socios/lib/sociosInsights";
 
 const CORES_STATUS: Record<GrupoStatus, string> = {
   Passa: "bg-success-soft text-success border-success/30",

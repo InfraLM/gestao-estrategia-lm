@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { kpiNome } from "@/hooks/useObjetivosKpis";
-import { CAMPOS_COMPARACAO, valorCampo, normalizar, INVEST_ITENS, LINHAS_VERMELHAS, PAPEIS, Diretriz, Projeto, RESPOSTAS_ABERTAS, respostasAbertas } from "@/lib/sociosTradeoff";
+import { kpiNome } from "@/features/socios/hooks/useObjetivosKpis";
+import { CAMPOS_COMPARACAO, valorCampo, normalizar, INVEST_ITENS, LINHAS_VERMELHAS, PAPEIS, Diretriz, Projeto, RESPOSTAS_ABERTAS, respostasAbertas } from "@/features/socios/lib/sociosTradeoff";
 
 type Versao = { id: string; user_id: string; versao: number; enviado_em: string };
 type Doc = { versao: number; enviado_em: string; respostas: any; diretrizes: Diretriz[]; projetos: Projeto[]; extras: any };

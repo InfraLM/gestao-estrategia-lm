@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type { Opcao, Pergunta } from "@/lib/sociosTradeoff";
+import type { Opcao, Pergunta } from "@/features/socios/lib/sociosTradeoff";
 
 export function Help({ children }: { children: ReactNode }) {
   return <div className="flex gap-2 rounded-md border border-primary/20 bg-primary/5 p-3 text-sm text-muted-foreground"><Info className="h-4 w-4 mt-0.5 shrink-0 text-primary" /><div>{children}</div></div>;

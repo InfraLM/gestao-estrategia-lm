@@ -6,16 +6,16 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useConsolidado, reabrirSocio } from "@/hooks/useSocios";
-import LinksSocios from "@/components/socios/LinksSocios";
-import { useObjetivosKpis, kpiNome } from "@/hooks/useObjetivosKpis";
-import EixosConsolidado from "@/components/socios/EixosConsolidado";
-import { TradeOff } from "./SociosFormulario";
-import SubmissoesHistorico from "@/components/socios/SubmissoesHistorico";
+import { useConsolidado, reabrirSocio } from "@/features/socios/hooks/useSocios";
+import LinksSocios from "@/features/socios/components/LinksSocios";
+import { useObjetivosKpis, kpiNome } from "@/features/socios/hooks/useObjetivosKpis";
+import EixosConsolidado from "@/features/socios/components/EixosConsolidado";
+import { TradeOff } from "@/features/socios/pages/SociosFormulario";
+import SubmissoesHistorico from "@/features/socios/components/SubmissoesHistorico";
 import {
   calcularEixos, compararSocios, statusExibido, pontosProjeto, LINHAS_VERMELHAS, CONSEQUENCIAS, PAPEIS, INVEST_ITENS,
   Diretriz, Projeto, Respostas, normalizar, respostasAbertas,
-} from "@/lib/sociosTradeoff";
+} from "@/features/socios/lib/sociosTradeoff";
 
 const fmtData = (s?: string | null) => (s ? new Date(s).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : "—");
 

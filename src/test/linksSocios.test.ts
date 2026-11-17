@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { linkSocio, linhasCsvLinks, type LinkPainel } from "@/lib/linksSocios";
+import { linkSocio, linhasCsvLinks, type LinkPainel } from "@/features/socios/lib/linksSocios";
 
 const base: LinkPainel = { participante_id: "1", nome: "Iuri", email: "iuri@x", token: "a".repeat(64), link_ativo: true, criado_em: null,
   expira_em: "2026-11-07T02:59:59Z", primeiro_acesso_em: null, ultimo_acesso_em: null, acessos: 0, situacao: "nao_abriu", enviado_em: null };

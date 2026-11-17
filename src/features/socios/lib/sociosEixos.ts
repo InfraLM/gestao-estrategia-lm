@@ -1,4 +1,4 @@
-import { normalizar, type Eixos, type Respostas } from "./sociosTradeoff";
+import { normalizar, type Eixos, type Respostas } from "@/features/socios/lib/sociosTradeoff";
 
 const chaveNome = (nome: string) => nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toUpperCase();
 const conhecidos = ["CLETO", "IAN", "IURI", "NAIRA", "YURI"];

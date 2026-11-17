@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { gerarLinkSocio, revogarLinkSocio, useLinksSocios } from "@/hooks/useSocios";
-import { linhasCsvLinks, linkSocio, mensagemSocio, SITUACAO_LABEL, type LinkPainel } from "@/lib/linksSocios";
+import { gerarLinkSocio, revogarLinkSocio, useLinksSocios } from "@/features/socios/hooks/useSocios";
+import { linhasCsvLinks, linkSocio, mensagemSocio, SITUACAO_LABEL, type LinkPainel } from "@/features/socios/lib/linksSocios";
 
 const fmt = (s: string | null) => (s ? new Date(s).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Sao_Paulo" }) : "—");
 const copiar = async (texto: string, ok: string) => {

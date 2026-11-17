@@ -8,19 +8,19 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useMinhaResposta } from "@/hooks/useSocios";
-import { useObjetivosKpis, kpiId, kpiObjetivo, kpiNome } from "@/hooks/useObjetivosKpis";
+import { useMinhaResposta } from "@/features/socios/hooks/useSocios";
+import { useObjetivosKpis, kpiId, kpiObjetivo, kpiNome } from "@/features/socios/hooks/useObjetivosKpis";
 import { useConteudo } from "@/hooks/useConteudo";
 import { EditarConteudo } from "@/components/EditarConteudo";
 import GrupoMultiSelect from "@/components/socios/GrupoMultiSelect";
-import { BlocoPergunta, Campo, Help, Opcoes, Regua, SelectSimples } from "@/components/socios/Campos";
-import { CONTEXTO_2027, CardContexto } from "@/data/sociosContexto2027";
+import { BlocoPergunta, Campo, Help, Opcoes, Regua, SelectSimples } from "@/features/socios/components/Campos";
+import { CONTEXTO_2027, CardContexto } from "@/features/socios/data/sociosContexto2027";
 import {
   PERGUNTA, INVEST_ITENS, PAPEIS, TEMPOS, JANELAS_VENDA, HORIZONTES, PAPEL_FIM, CADENCIAS, CONSEQUENCIAS, LINHAS_VERMELHAS,
   PRAZO_TEXTO, FormDados, Respostas, Diretriz, Projeto, calcularEixos, posicionamento, escolhas, tensoes, objetivosSugeridos,
   diretrizesSugeridas, validarEnvio, prazoAberto, statusExibido,
   normalizar, financia, FIN_APOSTAS, FIN_CRITERIOS, ACOES_PRODUTO, PRODUTOS_2027, PORTFOLIO_VERSAO, ProdutoInfo,
-} from "@/lib/sociosTradeoff";
+} from "@/features/socios/lib/sociosTradeoff";
 
 const ETAPAS = ["Contexto", "Estratégia", "Caixa e sociedade", "Prioridade 2027", "Seu trade-off", "Diretrizes e projetos"];
 const VAZIO: FormDados = { respostas: {}, diretrizes: [], projetos: [], extras: {} };

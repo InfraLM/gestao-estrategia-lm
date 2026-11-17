@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import type { FormDados } from "@/lib/sociosTradeoff";
-import { linkSocio, type LinkPainel } from "@/lib/linksSocios";
+import type { FormDados } from "@/features/socios/lib/sociosTradeoff";
+import { linkSocio, type LinkPainel } from "@/features/socios/lib/linksSocios";
 
 export type SocioRow = {
   id: string; user_id: string; status: string; respostas: any; diretrizes: any; projetos: any; extras: any;

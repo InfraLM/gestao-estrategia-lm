@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { calcularEixos, posicionamento, type Eixos, type Respostas } from "@/lib/sociosTradeoff";
-import { consensoEixo, identidadesSocios, respostasDoEixo } from "@/lib/sociosEixos";
+import { calcularEixos, posicionamento, type Eixos, type Respostas } from "@/features/socios/lib/sociosTradeoff";
+import { consensoEixo, identidadesSocios, respostasDoEixo } from "@/features/socios/lib/sociosEixos";
 
 const eixos: { key: keyof Eixos; esquerda: string; direita: string }[] = [
   { key: "core", esquerda: "Foco no core", direita: "Abrir Motor 2" },

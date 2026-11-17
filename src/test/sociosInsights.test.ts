@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { agruparOrigem, agruparStatus, filtrarInsights, type InsightSocio } from "@/pages/sociosInsights";
+import { agruparOrigem, agruparStatus, filtrarInsights, type InsightSocio } from "@/features/socios/lib/sociosInsights";
 
 const insight = (campos: Partial<InsightSocio> = {}): InsightSocio => ({
   id: "teste", codigo: "DS-01", desejo: "Desejo", origem: null, dono_proposto: null,
