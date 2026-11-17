@@ -1,3 +1,4 @@
+import { registrarUsoIa } from "../_shared/limiteIa.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createOpenAI } from 'npm:@ai-sdk/openai@3';
@@ -18,6 +19,7 @@ Deno.serve(async (req) => {
   const sb = createClient(url, key, { global: { headers: { Authorization: req.headers.get('Authorization') ?? '' } } }), admin = createClient(url, service);
   const { data: auth, error: ae } = await sb.auth.getUser(); if (ae || !auth.user) return out({ error: 'Faça login' }, 401);
   const { data: gov } = await sb.rpc('mt_is_governanca', { _uid: auth.user.id }); if (!gov) return out({ error: 'Somente Governança' }, 403);
+  { const limite = await registrarUsoIa(req, 'rotina-pendencias-sugerir', corsHeaders); if (limite) return limite; }
   let parsed; try { parsed = schema.safeParse(await req.json()); } catch { return out({ error: 'Pedido inválido' }, 400); }
   if (!parsed.success) return out({ error: 'Envie de 1 a 40 itens' }, 400);
   const { contexto, refs } = parsed.data; const run = createLovableAiGatewayRunIdFetch();

@@ -1,3 +1,4 @@
+import { registrarUsoIa } from "../_shared/limiteIa.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { streamText, APICallError } from 'npm:ai@6';
@@ -17,6 +18,7 @@ Deno.serve(async req => {
   if(!url||!anon||!service) return response({error:'Configuração indisponível.'},500);
   const sb=createClient(url,anon,{global:{headers:{Authorization:req.headers.get('Authorization') ?? ''}}});
   const {data:auth,error:ae}=await sb.auth.getUser(); if(ae||!auth.user) return response({error:'Faça login.'},401);
+  {const limite=await registrarUsoIa(req,'portfolio-vincular',corsHeaders);if(limite)return limite;}
   const parsed=schema.safeParse(await req.json()); if(!parsed.success) return response({error:'Pedido inválido.'},400);
   const {modo,item,fontes}=parsed.data;
   const {data:gov}=await sb.rpc('proj_gov_ou_ceo',{_uid:auth.user.id});

@@ -1,3 +1,4 @@
+import { registrarUsoIa } from "../_shared/limiteIa.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createOpenAI } from 'npm:@ai-sdk/openai@3';
@@ -21,6 +22,7 @@ Deno.serve(async req=>{
   const {data:pausa}=await admin.from('ciclo_preparacao_execucoes').select('erro').eq('status','pausado').limit(1);
   if(pausa?.length)return out({error:pausa[0].erro??'Geração pausada: restabeleça acesso/créditos antes de retomar.'},403);
   const {data:acesso}=await sb.rpc('acesso_modulo',{_uid:auth.user.id,_modulo:tipo==='cadeiras'?'pmo':'rotina',_editar:false});if(!acesso)return out({error:'Sem acesso ao espaço'},403);
+  {const limite=await registrarUsoIa(req,'ciclo-preparar',corsHeaders);if(limite)return limite;}
   const [cs,ps,ind,objs,vs,oks]=await Promise.all([
    sb.from('mt_cadeiras').select('id,nome,diretor_nome').eq('ativo',true),
    sb.from('projetos').select('id,codigo,nome,descricao,diretor,gerente,cadeira_id').in('id',tipo==='cadeiras'?ids:[]),
