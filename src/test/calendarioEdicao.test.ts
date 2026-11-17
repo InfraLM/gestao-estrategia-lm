@@ -1,5 +1,5 @@
 import { describe,it,expect } from 'vitest';
-import { cargaSemanas,dadosSalvar,edicaoInicial,erroPiso,mudarFrequencia,origemCalendario,proximoCiclo } from '@/lib/calendarioEdicao';
+import { cargaSemanas,dadosSalvar,edicaoInicial,erroPiso,mudarFrequencia,origemCalendario,proximoCiclo } from '@/features/metas/lib/calendarioEdicao';
 import { devidoNoCiclo,periodoApontamento } from '@/lib/frequenciaApontamento';
 const k={id:'k',codigo:'K',nome:'Indicador',cadeira_id:'c',origem:'bsc',nivel:'Estratégico',frequencia:'mensal' as const,semana_mes:2,velocidade_mudanca:'mensal',frequencia_justificativa:'Fonte preservada'};
 describe('Calendário editável',()=>{

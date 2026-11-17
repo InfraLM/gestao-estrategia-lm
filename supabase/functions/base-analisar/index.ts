@@ -1,3 +1,4 @@
+import { registrarUsoIa } from "../_shared/limiteIa.ts";
 // Análise IA de arquivos submetidos para atualização da base (Estratégia, OKRs, PMO)
 import { createClient } from "npm:@supabase/supabase-js@2.45.0";
 import * as XLSX from "npm:xlsx@0.18.5";
@@ -200,6 +201,8 @@ Deno.serve(async (req) => {
     const userClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: auth } } });
     const { data: u } = await userClient.auth.getUser();
     if (!u?.user) return json({ error: "Não autenticado" }, 401);
+    const limite = await registrarUsoIa(req, "base-analisar", corsHeaders);
+    if (limite) return limite;
     const { submissao_id } = await req.json();
     if (!submissao_id || typeof submissao_id !== "string") return json({ error: "submissao_id obrigatório" }, 400);
     // @ts-ignore EdgeRuntime é global no Supabase

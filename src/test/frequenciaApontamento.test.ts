@@ -1,9 +1,9 @@
 import { describe,it,expect } from 'vitest';
 import { devidoNoCiclo,periodoApontamento,semanaDoMes,registrarLeituraNormal } from '@/lib/frequenciaApontamento';
-import { calcularCompletude } from '@/lib/conformidade';
+import { calcularCompletude } from '@/features/metas/lib/conformidade';
 import { normalizarCheckout,normalizarCheckin } from '@/lib/rotinaSemanal';
 import { avaliarPorTipo } from '@/lib/avaliacaoBsc';
-import { celulaMes } from '@/lib/matrizApontamentos';
+import { celulaMes } from '@/features/metas/lib/matrizApontamentos';
 describe('Framework da Naira',()=>{
  it('quinzenal só segundas 1 e 3',()=>expect(['2026-11-02','2026-11-09','2026-11-16','2026-11-23','2026-11-30'].map(c=>devidoNoCiclo({frequencia:'quinzenal'},c))).toEqual([true,false,true,false,false]));
  it('semana 5 só semanais',()=>{expect(semanaDoMes('2026-11-30')).toBe(5);expect(devidoNoCiclo({frequencia:'semanal'},'2026-11-30')).toBe(true);expect(devidoNoCiclo({frequencia:'mensal',semana_mes:4},'2026-11-30')).toBe(false);});

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { filtrarItens, planoEmMassa, ItemPendencia, Sugestao } from "@/lib/pendenciasMassa";
+import { filtrarItens, planoEmMassa, ItemPendencia, Sugestao } from "@/features/metas/lib/pendenciasMassa";
 
 const it1: ItemPendencia = { tipo: "ata", ref: "a1", titulo: "A", comite: "CEA", reuniao: "R1", data: null, detalhe: "", cadeiras: [] };
 const it2: ItemPendencia = { ...it1, ref: "a2", comite: "CES" };

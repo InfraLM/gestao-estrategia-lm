@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { errosExtras, resumoExtras } from '@/lib/entregasExtras';
 import { normalizarCheckout, normalizarCheckin, pendenciasCheckout } from '@/lib/rotinaSemanal';
-import { calcularCompletude } from '@/lib/conformidade';
+import { calcularCompletude } from '@/features/metas/lib/conformidade';
 import { entregaFonte } from '../../supabase/functions/planejamento-gerar/entregas';
 const extra = { id: 'e', descricao: 'Regularizar contrato', motivo_id: 'outros', motivo_nome: 'Outros', exige_detalhe: true, detalhe: '' };
 describe('Entregas extras', () => {

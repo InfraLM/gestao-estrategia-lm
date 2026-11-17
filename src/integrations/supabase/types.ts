@@ -1939,6 +1939,90 @@ export type Database = {
         }
         Relationships: []
       }
+      ia_limite_parametros: {
+        Row: {
+          atualizado_em: string
+          email_alerta: string
+          id: number
+          teto_base: number
+          teto_extra: number
+        }
+        Insert: {
+          atualizado_em?: string
+          email_alerta?: string
+          id?: number
+          teto_base?: number
+          teto_extra?: number
+        }
+        Update: {
+          atualizado_em?: string
+          email_alerta?: string
+          id?: number
+          teto_base?: number
+          teto_extra?: number
+        }
+        Relationships: []
+      }
+      ia_uso_alertas: {
+        Row: {
+          chamadas: number
+          criado_em: string
+          dia: string
+          envio_erro: string | null
+          envio_status: string
+          funcao: string
+          id: string
+          tipo: string
+          user_id: string
+        }
+        Insert: {
+          chamadas: number
+          criado_em?: string
+          dia: string
+          envio_erro?: string | null
+          envio_status?: string
+          funcao: string
+          id?: string
+          tipo: string
+          user_id: string
+        }
+        Update: {
+          chamadas?: number
+          criado_em?: string
+          dia?: string
+          envio_erro?: string | null
+          envio_status?: string
+          funcao?: string
+          id?: string
+          tipo?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ia_uso_diario: {
+        Row: {
+          atualizado_em: string
+          chamadas: number
+          dia: string
+          teto_do_dia: number
+          user_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          chamadas?: number
+          dia: string
+          teto_do_dia: number
+          user_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          chamadas?: number
+          dia?: string
+          teto_do_dia?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       incentivo_metas: {
         Row: {
           created_at: string
@@ -6850,6 +6934,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      ia_registrar_uso: { Args: { _funcao: string }; Returns: Json }
       is_admin_of_modulo: {
         Args: { _modulo: string; _user_id: string }
         Returns: boolean

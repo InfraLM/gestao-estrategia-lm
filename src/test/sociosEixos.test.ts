@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { consensoEixo, identidadesSocios, respostasDoEixo } from "@/lib/sociosEixos";
+import { consensoEixo, identidadesSocios, respostasDoEixo } from "@/features/socios/lib/sociosEixos";
 
 describe("Eixos dos Sócios · comparação", () => {
   const pessoas = ["Yuri Ribeiro", "Naira", "Iuri", "Ian", "Cleto"].map(nome => ({ nome, id: nome }));

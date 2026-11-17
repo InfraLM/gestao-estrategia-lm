@@ -1,6 +1,6 @@
 import { describe,it,expect } from 'vitest';
 import { financeiroObjetivo,principalProjeto,realizadoProjeto,atingimentoMeta,validarPlanilha,valorEscalar } from '@/lib/impactoFinanceiro';
-import { montarKpisObjetivo } from '@/hooks/useKpisObjetivo';
+import { montarKpisObjetivo } from '@/features/estrategia/hooks/useKpisObjetivo';
 import { validarExport } from '../../supabase/functions/orcamento-sync/validar';
 const v=(id:string,obj:string,status='proposto',impacto='principal')=>({fonte_tipo:'projeto',fonte_id:id,tipo:'objetivo',ref_id:obj,status,impacto});
 describe('Financeiro por objetivo',()=>{

@@ -1,3 +1,4 @@
+import { registrarUsoIa } from "../_shared/limiteIa.ts";
 // Gera RASCUNHO de revisão (relatório mensal ou diagnóstico por ferramenta). Só Governança; 3 por mês por tipo.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { entregaFonte } from './entregas.ts';
@@ -22,6 +23,8 @@ Deno.serve(async (req) => {
     if (!u?.user) return json({ error: "Faça login." }, 401);
     const { data: gov } = await sb.rpc("mt_is_governanca", { _uid: u.user.id });
     if (!gov) return json({ error: "Somente a Governança gera rascunhos." }, 403);
+    const limite = await registrarUsoIa(req, "planejamento-gerar", cors);
+    if (limite) return limite;
     const { tipo, competencia } = await req.json();
     if (!TIPOS.includes(tipo)) return json({ error: "Tipo inválido." }, 400);
 

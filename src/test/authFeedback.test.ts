@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { authFeedback, confirmationRedirect } from '@/lib/authFeedback';
+import { authFeedback, confirmationRedirect } from '@/features/acesso/lib/authFeedback';
 
 describe('Primeiro acesso seguro', () => {
   it('distingue confirmação pendente sem expor existência da conta no erro de credenciais', () => {
@@ -14,7 +14,7 @@ describe('Primeiro acesso seguro', () => {
     expect(url.searchParams.get('retorno')).toBe('/pre-offsite');
   });
 });
-import { emailCorporativo, MSG_EMAIL_CORPORATIVO, authFeedback as fb } from '@/lib/authFeedback';
+import { emailCorporativo, MSG_EMAIL_CORPORATIVO, authFeedback as fb } from '@/features/acesso/lib/authFeedback';
 describe('cadastro só com e-mail corporativo', () => {
   it('aceita apenas @liberdademedicaedu.com.br', () => {
     expect(emailCorporativo('ana@liberdademedicaedu.com.br')).toBe(true);

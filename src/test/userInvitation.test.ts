@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { invitationId, invitationLink, invitationSchema } from "@/lib/userInvitation";
+import { invitationId, invitationLink, invitationSchema } from "@/features/acesso/lib/userInvitation";
 
 const invite = { email: " Pessoa@Gmail.com ", display_name: "Pessoa", cargo: "Diretor", departamento_id: null, acessos: { pmo: "leitura" } };
 describe("Cadastro por convite", () => {

@@ -1,8 +1,8 @@
 import {describe,it,expect} from 'vitest';
 import {avaliarPorTipo,farolEntrega} from '@/lib/avaliacaoBsc';
 import {analiseNaData,fimSemestre,tipoMudou} from '@/lib/analiseMetas';
-import {avaliarApontamento} from '@/lib/dashboardRotina';
-import {celulaMes} from '@/lib/matrizApontamentos';
+import {avaliarApontamento} from '@/features/metas/lib/dashboardRotina';
+import {celulaMes} from '@/features/metas/lib/matrizApontamentos';
 const base={indicador_id:'k',origem:'cesta',analise_configurada_em:'2026-10-27',competencia:'2026-10',sentido:'maior' as const,meta_mes:100,meta_semestre:200,meta_texto:null,realizado:95};
 describe('Análise configurável',()=>{
  it('V tolerância em unidades após fim de mês, nunca antes',()=>{expect(avaliarPorTipo({...base,tolerancia:5},null,[],new Date('2026-10-28')).aval).toBe('acomp');expect(avaliarPorTipo({...base,tolerancia:5},null,[],new Date('2026-11-01')).aval).toBe('on');expect(avaliarPorTipo({...base,tolerancia:4},null,[],new Date('2026-11-01')).aval).toBe('off')});
