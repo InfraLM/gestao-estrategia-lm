@@ -3,8 +3,8 @@ import { PGlite } from '@electric-sql/pglite';
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { normalizarCheckin,normalizarCheckout,pendenciasCheckin,pendenciasCheckout,respostaVazia } from '@/lib/rotinaSemanal';
-import { calcularCompletude,avaliarCiclo } from '@/lib/conformidade';
-import { contar } from '@/lib/dashboardRotina';
+import { calcularCompletude,avaliarCiclo } from '@/features/metas/lib/conformidade';
+import { contar } from '@/features/metas/lib/dashboardRotina';
 const origem='00000000-0000-4000-8000-000000000010', destino='00000000-0000-4000-8000-000000000011', outro='00000000-0000-4000-8000-000000000012';
 const u1='00000000-0000-4000-8000-000000000001',u2='00000000-0000-4000-8000-000000000002',u3='00000000-0000-4000-8000-000000000003';
 describe('Atribuição, envio e respostas em banco isolado',()=>{

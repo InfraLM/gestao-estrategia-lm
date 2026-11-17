@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as XLSX from "xlsx";
-import { descendentes, validarCargo, podeEditarEstrutura, lerOrganograma } from "@/lib/organograma";
+import { descendentes, validarCargo, podeEditarEstrutura, lerOrganograma } from "@/features/estrutura/lib/organograma";
 
 describe("Organograma atualizado", () => {
   it("permite edição somente a administradores ou editores de estrutura", () => {

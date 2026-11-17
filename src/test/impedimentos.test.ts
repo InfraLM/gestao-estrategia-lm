@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { completudeImpedimentos, devidoImpedimento, impedimentoAtrasado, respostaCompleta, type Impedimento } from '@/lib/impedimentos';
+import { completudeImpedimentos, devidoImpedimento, impedimentoAtrasado, respostaCompleta, type Impedimento } from '@/features/metas/lib/impedimentos';
 const item = { id: '1', atribuido_cadeira_id: 'CFO', publicado_ciclo: '2026-10-26', resposta_status: 'aberto', resposta_ciclo: null } as Impedimento;
 describe('Impedimentos entre diretores', () => {
   it('atribuição empilha a partir do ciclo seguinte, não no ciclo de origem', () => {

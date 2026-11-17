@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { avaliarPorTipo, farolEntrega, apontamentoMaisRecente } from "@/lib/avaliacaoBsc";
-import { celulaMes, marcarCriticos } from "@/lib/matrizApontamentos";
-import { avaliarCiclo, taxa, semanasDevidas, calcularCompletude, conformidadeCadeira } from "@/lib/conformidade";
+import { celulaMes, marcarCriticos } from "@/features/metas/lib/matrizApontamentos";
+import { avaliarCiclo, taxa, semanasDevidas, calcularCompletude, conformidadeCadeira } from "@/features/metas/lib/conformidade";
 import { normalizarCheckin, normalizarCheckout, pendenciasCheckout } from "@/lib/rotinaSemanal";
 
 const base = { indicador_id: "k", sentido: "maior" as const, competencia: "2026-10", meta_mes: 10, meta_semestre: 100, meta_texto: null, realizado: null as number | null };
