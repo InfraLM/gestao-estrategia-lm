@@ -8,6 +8,8 @@ async function banco(){const p=new PGlite();await p.exec(`CREATE ROLE authentica
  await p.exec('GRANT USAGE ON SCHEMA auth TO authenticated;');
  for(const file of ['0058_pre_offsite_2027_privado.sql','0070_pre_offsite_participantes_convites_isolados.sql'])await p.exec(readFileSync(`drizzle/migrations/${file}`,'utf8'));
  const sql=readFileSync('drizzle/migrations/0008_socios_desejos_2027.sql','utf8');await p.exec(sql.replace(/INSERT INTO public\.socios_participantes[\s\S]*?CREATE TABLE public\.socios_respostas_2027/,'CREATE TABLE public.socios_respostas_2027'));
+ // Este teste confere a separação dos formulários, não o prazo: fixa o prazo como aberto (mesmo padrão de sociosLinksBanco.test.ts).
+ await p.exec('CREATE OR REPLACE FUNCTION public.socios_prazo_aberto(_reaberto timestamptz) RETURNS boolean LANGUAGE sql STABLE AS $$SELECT true$$;');
  for(const [i,[nome,email,off,socio,admin]] of pessoas.entries()){
   await p.query('INSERT INTO auth.users VALUES($1,$2,now())',[id(i),email]);await p.query('INSERT INTO profiles VALUES($1,$2)',[id(i),nome]);await p.query('INSERT INTO mt_cadeiras VALUES($1,$2,true)',[id(i+20),id(i)]);await p.query("INSERT INTO mt_usuarios VALUES($1,$2,'diretor')",[id(i),id(i+20)]);
   if(off)await p.query('INSERT INTO offsite_participantes(email,nome,cadeira_id) VALUES($1,$2,$3)',[email,nome,id(i+20)]);
