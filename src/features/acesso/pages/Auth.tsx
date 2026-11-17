@@ -10,9 +10,9 @@ import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Loader2, Eye, EyeOff } from "lucide-react";
-import { invitationId, invitationLink } from "@/lib/userInvitation";
+import { invitationId, invitationLink } from "@/features/acesso/lib/userInvitation";
 import { retornoStatus } from "@/lib/atualizacaoStatus";
-import { APP_ORIGIN, authFeedback, confirmationRedirect, emailCorporativo, MSG_EMAIL_CORPORATIVO } from '@/lib/authFeedback';
+import { APP_ORIGIN, authFeedback, confirmationRedirect, emailCorporativo, MSG_EMAIL_CORPORATIVO } from '@/features/acesso/lib/authFeedback';
 
 export default function Auth() {
   const { user, loading, signOut } = useAuth();

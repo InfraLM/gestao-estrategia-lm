@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
-import { useUserPermissions } from "@/hooks/useUserPermissions";
+import { useUserPermissions } from "@/features/acesso/hooks/useUserPermissions";
 import { ShieldCheck, Building2, FolderKanban, Loader2, KeyRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useModuleAccess } from "@/hooks/useModuleAccess";

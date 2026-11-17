@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { authFeedback } from '@/lib/authFeedback';
+import { authFeedback } from '@/features/acesso/lib/authFeedback';
 
 export default function ResetPassword() {
   const nav = useNavigate();

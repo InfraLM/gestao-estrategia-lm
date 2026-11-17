@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "./useAuth";
-import { useModuleAccess } from "./useModuleAccess";
+import { useAuth } from "@/hooks/useAuth";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
 
 export type AppRole = "super_admin" | "admin" | "pmo" | "viewer";
 export type ModuloAdmin = "pmo" | "bpmo" | "estrategia" | "repositorios";

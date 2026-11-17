@@ -8,12 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useUserPermissions } from "@/hooks/useUserPermissions";
+import { useUserPermissions } from "@/features/acesso/hooks/useUserPermissions";
 import { toast } from "sonner";
 import { Loader2, ShieldCheck, Users, Building2, FolderKanban, Plus, Trash2, Settings2 } from "lucide-react";
-import UserModuleMatrix from "@/components/UserModuleMatrix";
-import UserInvitationDialog from "@/components/UserInvitationDialog";
-import PendingInvitesCard from "@/components/PendingInvitesCard";
+import UserModuleMatrix from "@/features/acesso/components/UserModuleMatrix";
+import UserInvitationDialog from "@/features/acesso/components/UserInvitationDialog";
+import PendingInvitesCard from "@/features/acesso/components/PendingInvitesCard";
 
 type Profile = { user_id: string; display_name: string | null; email: string | null; cargo: string | null; departamento_id: string | null };
 type Departamento = { id: string; nome: string; origem: string };

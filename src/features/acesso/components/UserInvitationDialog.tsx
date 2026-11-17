@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ACCESS_MODULES, AccessLevel, CLOSED_MODULES } from "@/lib/moduleAccess";
-import { invitationLink, invitationSchema } from "@/lib/userInvitation";
+import { invitationLink, invitationSchema } from "@/features/acesso/lib/userInvitation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
