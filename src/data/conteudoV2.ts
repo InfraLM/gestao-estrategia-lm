@@ -1,4 +1,4 @@
-import { CONTEUDO_PADROES } from './conteudoPadroes';
+import { CONTEUDO_PADROES } from '@/features/estrategia/data/conteudoPadroes';
 export const RESUMO_V2 = `1. Tese passa a escola prática de paciente grave (D-097); encontro mentor–aluno é o mecanismo e ecossistema é extensão.
 2. Comunidade desce de pilar para consequência (55% da base em “Perdidos”).
 3. Expansão condicionada à qualidade (D-102), SP primeiro (M2); Recife e internacionalização fora de 2027 (D-082).

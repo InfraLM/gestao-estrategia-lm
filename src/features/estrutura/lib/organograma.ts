@@ -1,6 +1,6 @@
 import type { Database } from "@/integrations/supabase/types";
 import { canAccessModule, type ModuleGrant } from "@/lib/moduleAccess";
-import { semAcentos } from "@/pages/contextoDecisoes";
+import { semAcentos } from "@/features/estrategia/lib/contextoDecisoes";
 import * as XLSX from "xlsx";
 
 export type Cargo = Database["public"]["Tables"]["org_organograma_cargos"]["Row"];

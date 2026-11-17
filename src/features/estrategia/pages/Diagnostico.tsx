@@ -1,6 +1,6 @@
-import { VISAO_MISSAO_DEF, PESTEL_DATA_DEF, PORTER_DATA_DEF, RBV_RECURSOS_DEF, SWOT_DATA_DEF, ANSOFF_DEF, ERRC_DEF, saidas_DEF } from "@/data/conteudoPadroes";
+import { VISAO_MISSAO_DEF, PESTEL_DATA_DEF, PORTER_DATA_DEF, RBV_RECURSOS_DEF, SWOT_DATA_DEF, ANSOFF_DEF, ERRC_DEF, saidas_DEF } from "@/features/estrategia/data/conteudoPadroes";
 import { ConteudoRevisaoProvider, useRevisaoContexto } from "@/hooks/useConteudoRevisoes";
-import RevisaoSeletor from "@/components/RevisaoSeletor";
+import RevisaoSeletor from "@/features/estrategia/components/RevisaoSeletor";
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

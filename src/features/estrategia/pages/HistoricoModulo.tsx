@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Download, FileText, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import ConteudoRevisoesHistorico from "@/components/ConteudoRevisoesHistorico";
+import ConteudoRevisoesHistorico from "@/features/estrategia/components/ConteudoRevisoesHistorico";
 import { NOMES_CONTEUDO, DocumentoConteudo } from "@/lib/conteudoRevisoes";
 
 type Sub = { id: string; titulo: string; descricao: string | null; arquivo_nome: string; arquivo_path: string; status: string; resumo_ia: string | null; submitted_by_nome: string | null; created_at: string };

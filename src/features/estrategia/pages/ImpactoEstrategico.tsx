@@ -11,18 +11,18 @@ import { useProjetosDB } from "@/hooks/useProjetosDB";
 import { useProcessosDB } from "@/hooks/useProcessosDB";
 import { useRiscosInstitucionaisDB } from "@/hooks/useRiscosInstitucionaisDB";
 import { objetivosBSC } from "@/data/mockData";
-import DesdobramentoObjetivo from "@/components/DesdobramentoObjetivo";
+import DesdobramentoObjetivo from "@/features/estrategia/components/DesdobramentoObjetivo";
 import { useSearchParams } from "react-router-dom";
 import PmoVinculos from "@/features/pmo/pages/PmoVinculos";
 import { CadastroIniciativas } from "@/features/metas/pages/Hubs";
-import IntegracaoProcessos from "@/components/IntegracaoProcessos";
-import SugestoesVinculo from "@/components/SugestoesVinculo";
+import IntegracaoProcessos from "@/features/estrategia/components/IntegracaoProcessos";
+import SugestoesVinculo from "@/features/estrategia/components/SugestoesVinculo";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import IntegracaoOrcamento from '@/components/IntegracaoOrcamento';
+import IntegracaoOrcamento from '@/features/estrategia/components/IntegracaoOrcamento';
 import { useImpactoFinanceiro } from '@/hooks/useImpactoFinanceiro';
 import { ResumoFinanceiroObjetivo } from '@/components/FinanceiroObjetivo';
-import { useKpisObjetivo } from '@/hooks/useKpisObjetivo';
+import { useKpisObjetivo } from '@/features/estrategia/hooks/useKpisObjetivo';
 
 /** Impacto Estratégico: objetivos com drill-down, visão por vínculo e cadastro de iniciativas. */
 export default function ImpactoEstrategico() {

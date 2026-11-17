@@ -1,5 +1,5 @@
 import { describe,it,expect } from 'vitest';
-import { previewBudget,previewMetas2030 } from '@/lib/importacoesCiclo';
+import { previewBudget,previewMetas2030 } from '@/features/estrategia/lib/importacoesCiclo';
 const projetos=[{codigo:'P001',nome:'Projeto real'}];
 const indicadores=[{id:'1',codigo:'F.01',nome:'Receita',origem:'bsc',status:'ativo',parent_id:null,meta_2030:'100 mi'},{id:'2',codigo:'C.02',nome:'NPS',origem:'bsc',status:'ativo',parent_id:null,meta_2030:null}];
 describe('Modelo budget e metas 2030',()=>{

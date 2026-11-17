@@ -3,7 +3,7 @@ import { beforeEach, afterEach, describe, it, expect } from 'vitest';
 import { PGlite } from '@electric-sql/pglite';
 import { readFileSync } from 'node:fs';
 import { documentoDaChave, valoresRevisao, podePublicar, Revisao, RevisaoItem } from '../lib/conteudoRevisoes';
-import { CONTEUDO_PADROES } from '../data/conteudoPadroes';
+import { CONTEUDO_PADROES } from '@/features/estrategia/data/conteudoPadroes';
 import { propostasV2 } from '../data/conteudoV2';
 const u=(n:number)=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 describe('Escopo e proposta v2',()=>{

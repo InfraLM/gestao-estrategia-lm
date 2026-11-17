@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useKpisObjetivo } from '@/hooks/useKpisObjetivo';
+import { useKpisObjetivo } from '@/features/estrategia/hooks/useKpisObjetivo';
 import { AVALIACAO_LBL } from '@/lib/avaliacaoBsc';
 import { pctFinanceiro } from '@/components/FinanceiroObjetivo';
 import { useImpactoFinanceiro } from '@/hooks/useImpactoFinanceiro';

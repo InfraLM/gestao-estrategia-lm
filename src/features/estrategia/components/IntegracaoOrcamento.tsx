@@ -3,14 +3,14 @@ import * as XLSX from 'xlsx';
 import { supabase } from '@/integrations/supabase/client';
 import { useImpactoFinanceiro } from '@/hooks/useImpactoFinanceiro';
 import { validarPlanilha, LinhaOrc, dinheiro } from '@/lib/impactoFinanceiro';
-import { contratoOrcamento } from '@/data/orcContrato';
+import { contratoOrcamento } from '@/features/estrategia/data/orcContrato';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Upload, Download, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { CentrosProjeto } from '@/components/FinanceiroObjetivo';
-import ImportacoesCiclo from '@/components/ImportacoesCiclo';
+import ImportacoesCiclo from '@/features/estrategia/components/ImportacoesCiclo';
 const db=supabase as any;
 export default function IntegracaoOrcamento(){
   const d=useImpactoFinanceiro();const [cfg,setCfg]=useState<any>(null);const [logs,setLogs]=useState<any[]>([]);const [linhas,setLinhas]=useState<LinhaOrc[]>([]);const [arquivo,setArquivo]=useState('');const [busy,setBusy]=useState(false);const input=useRef<HTMLInputElement>(null);

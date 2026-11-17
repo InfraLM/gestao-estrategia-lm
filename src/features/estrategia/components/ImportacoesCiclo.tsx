@@ -4,11 +4,11 @@ import * as XLSX from 'xlsx';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
-import { previewBudget,previewMetas2030, type ModeloBudget,type MetaPreview } from '@/lib/importacoesCiclo';
+import { previewBudget,previewMetas2030, type ModeloBudget,type MetaPreview } from '@/features/estrategia/lib/importacoesCiclo';
 import { dinheiro } from '@/lib/impactoFinanceiro';
 import { Download,Upload } from 'lucide-react';
 import { toast } from 'sonner';
-import { metas2030Arvore } from '@/data/metas2030';
+import { metas2030Arvore } from '@/features/estrategia/data/metas2030';
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
 const db=supabase as any;
 async function lerArquivo(file:File){if(file.size>10*1024*1024)throw new Error('Arquivo excede 10 MB.');const wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:false});return wb.SheetNames.flatMap(n=>{const sheet=wb.Sheets[n];return sheet?XLSX.utils.sheet_to_json<Record<string,unknown>>(sheet,{defval:'',raw:false}):[];});}

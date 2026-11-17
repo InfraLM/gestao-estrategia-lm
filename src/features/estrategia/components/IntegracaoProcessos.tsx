@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { divergencias } from "@/lib/processosImpacto";
+import { divergencias } from "@/features/estrategia/lib/processosImpacto";
 
 const db = supabase as any;
 const TIPO_DIV: Record<string, string> = { so_local: "Só na lista local", so_zeev: "Só no app de processos", nome: "Nome diferente", maturidade: "Maturidade diferente" };

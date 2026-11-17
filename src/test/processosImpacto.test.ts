@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { codigoDoNome, rotuloMaturidade, rotuloGrau, melhoriaRelevante, divergencias } from "@/lib/processosImpacto";
-import { estaAtrasado } from "@/lib/impactoObjetivo";
+import { codigoDoNome, rotuloMaturidade, rotuloGrau, melhoriaRelevante, divergencias } from "@/features/estrategia/lib/processosImpacto";
+import { estaAtrasado } from "@/features/estrategia/lib/impactoObjetivo";
 import { mapearExport, sugerirIndicador, kpiChave } from "../../supabase/functions/processos-sync/mapear";
 
 describe("processos no impacto estratégico", () => {

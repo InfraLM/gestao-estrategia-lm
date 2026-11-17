@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import {
   projetosBC, documentos, type ProjetoBC, type BCVersion, type DocumentoSubmetido, type DocTipo,
-} from "@/data/repositoryMock";
+} from "@/features/estrategia/data/repositoryMock";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import {

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { marcarCriticos, atingimento, celulaMes, type Celula } from "@/features/metas/lib/matrizApontamentos";
 import { avaliarKpiBsc } from "@/lib/avaliacaoBsc";
 import { srPendentesPorCadeira } from "@/lib/projetosGestao";
-import { validarFontes, temSemFonte } from "@/lib/planejamentoFontes";
+import { validarFontes, temSemFonte } from "@/features/estrategia/lib/planejamentoFontes";
 import { cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 import { moduleForPath } from "@/lib/moduleAccess";
 

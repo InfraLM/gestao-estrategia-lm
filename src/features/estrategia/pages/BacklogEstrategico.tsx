@@ -21,8 +21,8 @@ import {
 } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { useProjetosDB } from "@/hooks/useProjetosDB";
-import SubmissaoBacklogDialog from "@/components/SubmissaoBacklogDialog";
-import PropostasIABacklog from "@/components/PropostasIABacklog";
+import SubmissaoBacklogDialog from "@/features/estrategia/components/SubmissaoBacklogDialog";
+import PropostasIABacklog from "@/features/estrategia/components/PropostasIABacklog";
 import { exportToCSV } from "@/lib/exportCsv";
 
 // ===== Tipagem =====

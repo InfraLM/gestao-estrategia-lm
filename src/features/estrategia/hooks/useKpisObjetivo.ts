@@ -6,7 +6,7 @@ import { avaliarPorTipo, apontamentoMaisRecente, contarAvaliacoes, STATUS_ENTREG
 import { competenciaDaSemana } from '@/lib/rotinaSemanal';
 import { atingimentoMeta, valorEscalar } from '@/lib/impactoFinanceiro';
 import rev02 from '@/data/bscRev02.json';
-import { metas2030Arvore } from '@/data/metas2030';
+import { metas2030Arvore } from '@/features/estrategia/data/metas2030';
 import { previstoNoMes } from '@/lib/frequenciaApontamento';
 const db = supabase as any;
 export function montarKpisObjetivo(inds:any[], metas:any[], lancs:any[], cks:any[], arv:any[], arvData:string|null, hoje=new Date()) {

@@ -13,8 +13,8 @@ import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { calcularReferencias, dataDecisao, filtrarDecisoes, FORUNS, IMPACTOS, parseStatus, rotuloForum, TIPOS_FORUM, type Decisao, type FiltrosDecisoes } from "./contextoDecisoes";
-import DecisoesProjetos from "@/components/DecisoesProjetos";
+import { calcularReferencias, dataDecisao, filtrarDecisoes, FORUNS, IMPACTOS, parseStatus, rotuloForum, TIPOS_FORUM, type Decisao, type FiltrosDecisoes } from "@/features/estrategia/lib/contextoDecisoes";
+import DecisoesProjetos from "@/features/estrategia/components/DecisoesProjetos";
 
 const CORES_STATUS = {
   premissa: "bg-warning-soft text-warning-foreground border-warning/40",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buscarDecisao, calcularReferencias, filtrarDecisoes, parseStatus, type Decisao, type FiltrosDecisoes } from "@/pages/contextoDecisoes";
+import { buscarDecisao, calcularReferencias, filtrarDecisoes, parseStatus, type Decisao, type FiltrosDecisoes } from "@/features/estrategia/lib/contextoDecisoes";
 
 const decisao = (codigo: string, campos: Partial<Decisao> = {}): Decisao => ({
   id: codigo, codigo, titulo: "Decisão estratégica", data_decisao: null, acesso_reservado: false,

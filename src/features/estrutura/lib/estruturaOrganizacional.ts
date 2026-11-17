@@ -1,5 +1,5 @@
 import type { Database } from "@/integrations/supabase/types";
-import { semAcentos } from "@/pages/contextoDecisoes";
+import { semAcentos } from "@/features/estrategia/lib/contextoDecisoes";
 
 export type Cadeira = Database["public"]["Tables"]["org_cadeiras"]["Row"];
 export type NoCadeira = { cadeira: Cadeira; filhos: NoCadeira[] };

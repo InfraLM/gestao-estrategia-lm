@@ -11,10 +11,10 @@ import { carregarBaseVinculos } from "@/components/EmpilhadosVinculo";
 import { iniciativasDoItem } from "@/lib/projetosGestao";
 import { statusEfetivo, STATUS_INI, fmtData } from "@/hooks/useMetasBase";
 import { useAvaliacoesBsc } from "@/hooks/useAvaliacoesBsc";
-import { melhoriaRelevante, rotuloMaturidade, rotuloGrau, codigoDoNome } from "@/lib/processosImpacto";
-import { estaAtrasado, resumoImpacto, ItemImpacto, ROTULO_ORIGEM, OrigemImpacto } from "@/lib/impactoObjetivo";
+import { melhoriaRelevante, rotuloMaturidade, rotuloGrau, codigoDoNome } from "@/features/estrategia/lib/processosImpacto";
+import { estaAtrasado, resumoImpacto, ItemImpacto, ROTULO_ORIGEM, OrigemImpacto } from "@/features/estrategia/lib/impactoObjetivo";
 import FinanceiroObjetivo from '@/components/FinanceiroObjetivo';
-import KpisObjetivo from '@/components/KpisObjetivo';
+import KpisObjetivo from '@/features/estrategia/components/KpisObjetivo';
 import { useFitFinderAccess } from "@/hooks/useFitFinderAccess";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 

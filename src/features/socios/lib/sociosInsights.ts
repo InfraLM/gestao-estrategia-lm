@@ -1,5 +1,5 @@
 import type { Database } from "@/integrations/supabase/types";
-import { semAcentos } from "@/pages/contextoDecisoes";
+import { semAcentos } from "@/features/estrategia/lib/contextoDecisoes";
 
 export type InsightSocio = Database["public"]["Tables"]["socios_insights"]["Row"];
 export const STATUS_INSIGHTS = ["Passa", "Piloto", "Máquina", "Gestão interna", "Decidido", "Registrado", "Arquivado", "Outros"] as const;

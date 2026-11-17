@@ -1,17 +1,17 @@
-import { icp_DEF, playToWin_DEF, ansoff_DEF, errc_DEF, vrin_DEF, swot_DEF, hipoteses_DEF, tese_DEF, pilares_DEF, ambicao_DEF, waves_DEF } from "@/data/conteudoPadroes";
+import { icp_DEF, playToWin_DEF, ansoff_DEF, errc_DEF, vrin_DEF, swot_DEF, hipoteses_DEF, tese_DEF, pilares_DEF, ambicao_DEF, waves_DEF } from "@/features/estrategia/data/conteudoPadroes";
 import { ConteudoRevisaoProvider, useRevisaoContexto } from "@/hooks/useConteudoRevisoes";
-import RevisaoSeletor from "@/components/RevisaoSeletor";
+import RevisaoSeletor from "@/features/estrategia/components/RevisaoSeletor";
 import { useConteudo } from "@/hooks/useConteudo";
 import { CadastroBsc } from "@/features/metas/pages/Hubs";
 import { EditarConteudo } from "@/components/EditarConteudo";
-import BscArvoreKpis from "@/components/BscArvoreKpis";
+import BscArvoreKpis from "@/features/estrategia/components/BscArvoreKpis";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Target, Compass, Trophy, Telescope, Rocket, Layers, Shield, TrendingUp, Users, Cog, GraduationCap, Heart, DollarSign, Building2, Sparkles, Lightbulb, Grid2x2 } from "lucide-react";
-import EstrategiaToolInsights from "@/components/EstrategiaToolInsights";
-import OkrsSemestrais from "@/components/OkrsSemestrais";
+import EstrategiaToolInsights from "@/features/estrategia/components/EstrategiaToolInsights";
+import OkrsSemestrais from "@/features/estrategia/components/OkrsSemestrais";
 
 const FERRAMENTAS = {
   ICP: {
