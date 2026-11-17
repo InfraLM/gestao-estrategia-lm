@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { invitationId, invitationLink } from "@/lib/userInvitation";
 import { retornoStatus } from "@/lib/atualizacaoStatus";
-import { APP_ORIGIN, authFeedback, confirmationRedirect } from '@/lib/authFeedback';
+import { APP_ORIGIN, authFeedback, confirmationRedirect, emailCorporativo, MSG_EMAIL_CORPORATIVO } from '@/lib/authFeedback';
 
 export default function Auth() {
   const { user, loading, signOut } = useAuth();
@@ -27,7 +27,7 @@ export default function Auth() {
   const [convite] = useState(() => invitationId(new URLSearchParams(window.location.search).get("convite")) ?? invitationId(sessionStorage.getItem("convite-pendente")));
   const [inviteError, setInviteError] = useState("");
   const [accepted, setAccepted] = useState(false);
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState(() => { const p = new URLSearchParams(window.location.search + '&' + window.location.hash.slice(1)); const d = p.get('error_description'); return d ? authFeedback({ message: d }) : ''; });
   const retorno = retornoStatus(new URLSearchParams(window.location.search).get("retorno"));
 
   useEffect(() => {
@@ -60,6 +60,7 @@ export default function Auth() {
 
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!emailCorporativo(email)) { setFeedback(MSG_EMAIL_CORPORATIVO); return; }
     setBusy(true);
     const { data, error } = await supabase.auth.signUp({
       email, password,

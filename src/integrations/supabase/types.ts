@@ -7601,6 +7601,8 @@ export type Database = {
       }
       socios_vincular: { Args: never; Returns: undefined }
       status_report_pode_arquivo: { Args: { _name: string }; Returns: boolean }
+      usuario_liberado: { Args: { _uid: string }; Returns: boolean }
+      usuario_liberado_geral: { Args: { _uid: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "pmo" | "viewer" | "super_admin"
