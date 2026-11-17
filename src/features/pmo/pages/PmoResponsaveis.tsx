@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMetasBase } from "@/hooks/useMetasBase";
 import { useProjetosGestao } from "@/hooks/useProjetosGestao";
 import { sugerirCadeiras } from "@/lib/projetosGestao";
-import VinculosImpactoProjeto from "@/components/VinculosImpactoProjeto";
+import VinculosImpactoProjeto from "@/features/pmo/components/VinculosImpactoProjeto";
 import GrupoMultiSelect from "@/components/socios/GrupoMultiSelect";
 
 const db = supabase as any;

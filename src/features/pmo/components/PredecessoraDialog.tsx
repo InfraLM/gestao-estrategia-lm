@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link2, Plus, X, Search, Briefcase, GitBranch, Repeat, Lock } from "lucide-react";
 import { projetos } from "@/data/mockData";
 import { cn } from "@/lib/utils";
-import type { Predecessora, EntregaItem, PacoteEAP } from "@/hooks/useProjectEditableData";
+import type { Predecessora, EntregaItem, PacoteEAP } from "@/features/pmo/hooks/useProjectEditableData";
 
 interface CatalogoItem {
   refId: string;

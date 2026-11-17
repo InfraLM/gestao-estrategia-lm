@@ -1,4 +1,4 @@
-import type { Avaliacao } from "./avaliacaoBsc";
+import type { Avaliacao } from "@/lib/avaliacaoBsc";
 
 /** Semestre vigente no fuso de São Paulo, no formato "2026/2". */
 export function semestreVigente(hoje = new Date()): string {

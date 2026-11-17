@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Upload, FileText, FileSpreadsheet, FileAudio, File as FileIcon } from "lucide-react";
-import type { SubmissaoDocumento } from "@/hooks/useProjectEditableData";
+import type { SubmissaoDocumento } from "@/features/pmo/hooks/useProjectEditableData";
 import { cn } from "@/lib/utils";
 
 interface Props {

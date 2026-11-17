@@ -9,12 +9,12 @@ import { useProjetosDB } from "@/hooks/useProjetosDB";
 import { SaudeBadge } from "@/components/badges";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { ParecerDialog } from "@/components/ParecerDialog";
+import { ParecerDialog } from "@/features/pmo/components/ParecerDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useMelhoriasEstrategicas } from "@/hooks/useMelhoriasEstrategicas";
 import { FormField } from "@/components/FormField";
-import { FaroisReportLeitura } from "@/components/FaroisReportLeitura";
-import { faroisParaEdicao, type FarolDimensao, type CorFarol } from "@/lib/statusReportFarois";
+import { FaroisReportLeitura } from "@/features/pmo/components/FaroisReportLeitura";
+import { faroisParaEdicao, type FarolDimensao, type CorFarol } from "@/features/pmo/lib/statusReportFarois";
 import { exclusiveAction } from "@/lib/exclusiveAction";
 import { useRefetchOnFocus } from "@/hooks/useRefetchOnFocus";
 

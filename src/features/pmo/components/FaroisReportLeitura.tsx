@@ -1,4 +1,4 @@
-import { lerFarois } from "@/lib/statusReportFarois";
+import { lerFarois } from "@/features/pmo/lib/statusReportFarois";
 
 const cores = { verde: "text-success", amarelo: "text-warning-foreground", vermelho: "text-destructive" };
 export function FaroisReportLeitura({ valor }: { valor: unknown }) {

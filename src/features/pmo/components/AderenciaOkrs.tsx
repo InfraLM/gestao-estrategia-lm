@@ -5,7 +5,7 @@ import { useMetasBase } from "@/hooks/useMetasBase";
 import { useAvaliacoesBsc, cadeirasVisiveisBsc } from "@/hooks/useAvaliacoesBsc";
 import { usePortfolioVinculos } from "@/hooks/usePortfolioVinculos";
 import { AVALIACAO_LBL, type Avaliacao } from "@/lib/avaliacaoBsc";
-import { avaliacaoKr, contarVinculosKr, semestreVigente } from "@/lib/aderenciaOkrs";
+import { avaliacaoKr, contarVinculosKr, semestreVigente } from "@/features/pmo/lib/aderenciaOkrs";
 
 const COR: Record<Avaliacao, string> = { on: "text-success", off: "text-destructive", acomp: "text-warning", pendente: "text-muted-foreground", sem_meta: "text-muted-foreground", encerrada: "text-muted-foreground" };
 const ORIGENS = ["okr"];

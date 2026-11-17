@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Loader2, Plus, Trash2, Upload, FileText, DollarSign, Activity, Calendar, Users, ListChecks, GanttChart } from "lucide-react";
-import { useProjetoFromDB } from "@/hooks/useProjetoFromDB";
+import { useProjetoFromDB } from "@/features/pmo/hooks/useProjetoFromDB";
 import { useRef, useState } from "react";
 import { SaudeBadge } from "@/components/badges";
 import PessoaSelect from '@/components/estrutura/PessoaSelect';

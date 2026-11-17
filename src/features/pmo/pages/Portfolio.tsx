@@ -12,7 +12,7 @@ import { type Projeto, type CategoriaEstrategica, objetivosBSC, okrs, categorias
 import { useProjetosDB } from "@/hooks/useProjetosDB";
 import BaseSubmissaoIA from "@/components/BaseSubmissaoIA";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import Submissao from "./Submissao";
+import Submissao from "@/features/pmo/pages/Submissao";
 import { BCBadge, ClassBadge, StatusBadge, WaveBadge } from "@/components/badges";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";

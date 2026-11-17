@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useBaseOrganizacional } from './useBaseOrganizacional';
+import { useBaseOrganizacional } from '@/hooks/useBaseOrganizacional';
 import { nomeVinculado } from '@/lib/baseOrganizacional';
 
 export interface ProjetoRow {

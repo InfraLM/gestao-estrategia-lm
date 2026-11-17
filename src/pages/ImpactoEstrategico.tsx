@@ -13,7 +13,7 @@ import { useRiscosInstitucionaisDB } from "@/hooks/useRiscosInstitucionaisDB";
 import { objetivosBSC } from "@/data/mockData";
 import DesdobramentoObjetivo from "@/components/DesdobramentoObjetivo";
 import { useSearchParams } from "react-router-dom";
-import PmoVinculos from "./PmoVinculos";
+import PmoVinculos from "@/features/pmo/pages/PmoVinculos";
 import { CadastroIniciativas } from "./Hubs";
 import IntegracaoProcessos from "@/components/IntegracaoProcessos";
 import SugestoesVinculo from "@/components/SugestoesVinculo";

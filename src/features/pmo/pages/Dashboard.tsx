@@ -17,8 +17,8 @@ import {
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { cn } from "@/lib/utils";
-import AderenciaOkrs from "@/components/AderenciaOkrs";
-import DashboardPortfolioExtras from "@/components/DashboardPortfolioExtras";
+import AderenciaOkrs from "@/features/pmo/components/AderenciaOkrs";
+import DashboardPortfolioExtras from "@/features/pmo/components/DashboardPortfolioExtras";
 
 const fmtBRL = (n: number) => `R$ ${(n / 1_000_000).toFixed(2)}M`;
 

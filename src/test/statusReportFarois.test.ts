@@ -2,7 +2,7 @@
 import { PGlite } from "@electric-sql/pglite";
 import { readFileSync } from "node:fs";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { faroisParaEdicao, lerFarois } from "@/lib/statusReportFarois";
+import { faroisParaEdicao, lerFarois } from "@/features/pmo/lib/statusReportFarois";
 
 describe("Faróis de status report, banco isolado", () => {
   let pg: PGlite;
