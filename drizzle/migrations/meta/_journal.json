@@ -848,6 +848,13 @@
       "when": 1794949329717,
       "tag": "0120_quick_wins_lista_envio",
       "breakpoints": true
+    },
+    {
+      "idx": 121,
+      "version": "7",
+      "when": 1794949737123,
+      "tag": "0121_quick_wins_convite_email",
+      "breakpoints": true
     }
   ]
 }

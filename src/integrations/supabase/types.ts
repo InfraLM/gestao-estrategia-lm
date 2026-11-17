@@ -5581,6 +5581,78 @@ export type Database = {
         }
         Relationships: []
       }
+      qw_convites_email: {
+        Row: {
+          ciclo_id: string
+          email: string
+          enviado_em: string
+          enviado_por: string | null
+          id: string
+          lider_id: string | null
+          provedor_id: string | null
+        }
+        Insert: {
+          ciclo_id: string
+          email: string
+          enviado_em?: string
+          enviado_por?: string | null
+          id?: string
+          lider_id?: string | null
+          provedor_id?: string | null
+        }
+        Update: {
+          ciclo_id?: string
+          email?: string
+          enviado_em?: string
+          enviado_por?: string | null
+          id?: string
+          lider_id?: string | null
+          provedor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qw_convites_email_ciclo_id_fkey"
+            columns: ["ciclo_id"]
+            isOneToOne: false
+            referencedRelation: "qw_ciclos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qw_convites_email_lider_id_fkey"
+            columns: ["lider_id"]
+            isOneToOne: false
+            referencedRelation: "qw_lideres"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qw_envio_lista: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          atualizado_por: string | null
+          diretoria: string | null
+          email: string
+          nome: string
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          atualizado_por?: string | null
+          diretoria?: string | null
+          email: string
+          nome: string
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          atualizado_por?: string | null
+          diretoria?: string | null
+          email?: string
+          nome?: string
+        }
+        Relationships: []
+      }
       qw_envios: {
         Row: {
           aguardando_diretor: boolean
@@ -7370,6 +7442,7 @@ export type Database = {
       qw_email_chave: { Args: { _email: string }; Returns: string }
       qw_enviar: { Args: { _envio: string }; Returns: undefined }
       qw_envio_aguarda: { Args: { _envio: string }; Returns: boolean }
+      qw_envio_lista_salvar: { Args: { _itens: Json }; Returns: number }
       qw_fechar_ciclo: { Args: { _id: string }; Returns: undefined }
       qw_gov: { Args: { _uid: string }; Returns: boolean }
       qw_lider_ativar: {
