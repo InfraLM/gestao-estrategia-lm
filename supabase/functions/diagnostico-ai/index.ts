@@ -1,3 +1,4 @@
+import { exigirContaLiberada } from "../_shared/autorizacaoIa.ts";
 // Edge function: analisa um insight submetido ao Diagnóstico Estratégico LM
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,6 +24,8 @@ TAREFA: Avalie o insight submetido e devolva via tool call estruturado:
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const negado = await exigirContaLiberada(req, corsHeaders);
+  if (negado) return negado;
   try {
     const { framework, titulo, conteudo, evidencias } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

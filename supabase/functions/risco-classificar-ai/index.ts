@@ -1,3 +1,4 @@
+import { exigirContaLiberada } from "../_shared/autorizacaoIa.ts";
 // Edge function: classifica risco de processo (natureza, tipo e causa raiz) via IA
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,6 +33,8 @@ Responda SEMPRE via tool call estruturado.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const negado = await exigirContaLiberada(req, corsHeaders);
+  if (negado) return negado;
   try {
     const { risco, causa, processoNome, impacto, probabilidade } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

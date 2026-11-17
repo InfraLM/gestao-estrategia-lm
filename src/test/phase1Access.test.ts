@@ -16,9 +16,11 @@ describe("Fase 1 · novos módulos seguros", () => {
       expect(canAccessModule([{ modulo: module, nivel: "nenhum" }], module, true, false, true)).toBe(true);
     });
   }
-  it("mantém os módulos antigos abertos sem override", () => {
-    for (const module of ACCESS_MODULES.filter(m => !["decisoes", "estrutura", "incentivos"].includes(m.id))) expect(canAccessModule([], module.id)).toBe(true);
-    expect(canAccessModule([], "repositorios")).toBe(true);
+  it("fecha todos os módulos sem linha de acesso", () => {
+    for (const module of ACCESS_MODULES) expect(canAccessModule([], module.id)).toBe(false);
+    expect(canAccessModule([], "repositorios")).toBe(false);
+    expect(canAccessModule([{ modulo: "repositorios", nivel: "leitura" }], "repositorios")).toBe(true);
+    expect(canAccessModule([{ modulo: "repositorios", nivel: "leitura" }], "repositorios", true)).toBe(false);
     expect(canAccessModule([{ modulo: "pmo", nivel: "nenhum" }], "pmo", false, false, true)).toBe(false);
   });
   it("mapeia as novas páginas sem alterar a Cesta atual", () => {
