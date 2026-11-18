@@ -219,3 +219,7 @@
 # Pré-Offsite · ajustes 18/11
 - [x] Migration 0122 registra transformação; configuração publicada revisão 1 e PADRAO ajustados: 5.4 arquivada, anexo atualizado, 4.3 sem Diretriz e quatro posições da 4C.
 - [x] 113 testes aprovados; formulário e consolidado autenticados conferidos sem salvar; Excel cobre quatro posições. Nenhuma operação desta entrega escreveu respostas; diretores continuaram salvando durante a verificação, por isso o hash global variou.
+
+# Pré-Offsite · simplificação da 4C
+- [x] Campo de impacto oculto no formulário, consolidado, anexo e Excel; conclusão só por Posição e Nome no Outro utilizado, sem alterar respostas guardadas.
+- [x] 112 testes Pré-Offsite aprovados e seção 4C autenticada conferida sem salvar. Publicar somente a atualização do app; não requer migration nem publicação de configuração.

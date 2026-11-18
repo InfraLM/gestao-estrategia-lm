@@ -7,6 +7,7 @@ import type { Config } from './config';
 import { montarFrase, CAMPOS_DETALHE_32 } from './config';
 export type Respostas=Record<string, any>;
 export const respostaSchema=z.record(z.unknown()).refine(v=>JSON.stringify(v).length<=1000000,'Resposta muito extensa');
+export const produto4CVisivel=(v:any,outro:boolean)=>v&&typeof v==='object'?{...(outro&&v.Nome!==undefined?{Nome:v.Nome}:{}),...(v.Posição!==undefined?{Posição:v.Posição}:{})}:undefined;
 export const lista=(r:Respostas,k:string):any[]=>Array.isArray(r[k])?r[k]:[];
 export const presente=(v:any):boolean=>Array.isArray(v)?v.length>0&&v.every(presente):v&&typeof v==='object'?Object.values(v).length>0&&Object.values(v).every(presente):v!==undefined&&v!==null&&String(v).trim()!=='';
 export function completude(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[]} {
@@ -23,7 +24,7 @@ export function completude(r:Respostas,c:Config,nome?:string):{percentual:number
  if(p.id==='4A')ok=c.projetos.every(d=>camposProjeto(c,d).filter(f=>!f.opcional).every(f=>presente(r[`4A.${d.id}`]?.[f.nome])));
  if(p.id==='4.1')ok=lista(r,'4.1').filter(id=>c.projetos.some(d=>d.id===id)).length===(p.limite??2)&&presente(r['4.1.porque']);
  if(p.id==='4.2')ok=c.projetos.some(d=>d.id===r['4.2'])&&presente(r['4.2.porque']);
- if(p.id==='4C')ok=c.produtos.filter(d=>d.titulo!=='Outro'||presente(r[`4C.${d.id}`]?.Nome)).every(d=>['Posição','Impacto na sua área e o que garantir na transição'].every(k=>presente(r[`4C.${d.id}`]?.[k])));
+ if(p.id==='4C')ok=c.produtos.every(d=>{const v=r[`4C.${d.id}`];return d.titulo==='Outro'&&!presente(v?.Nome)&&!presente(v?.Posição)?true:presente(v?.Posição)&&(d.titulo!=='Outro'||presente(v?.Nome));});
  if(p.id==='5.riscos')ok=c.escolhas.every(d=>camposRiscos(c).filter(f=>!f.opcional).every(f=>presente(r[d.id]?.[f.nome])));
  if(b===0)ok=bloco0Completo(p,r[p.id],nome??'');
  if(!ok)faltas.push(`${prefixoPergunta(p)}${p.titulo??p.texto}`);
@@ -41,7 +42,7 @@ export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
  const d:{titulo:string;dados:any}[]=[];
  const discordas=c.diretrizes.filter(x=>r[`3.pos.${x.id}`]==='Discordo');if(discordas.length)d.push({titulo:'1 · Diretrizes em discordância e indicadores',dados:discordas.map(x=>({diretriz:x.titulo,detalhes:r[`3.detalhe.${x.id}`],ajuste:r[`3.ajuste.${x.id}`]}))});
  d.push({titulo:'2 · Arquitetura do portfólio e mix de pagamento',dados:{'5.7':r['5.7'],'5.1':r['5.1']}});
- d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Adia','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...r[`4C.${x.id}`]}))}});
+ d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Adia','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...produto4CVisivel(r[`4C.${x.id}`],x.titulo==='Outro')}))}});
  if(c.perguntas[6]?.some(p=>p.id==='6.1'))d.push({titulo:'4 · Reação ao mandato e decisões fora da alçada',dados:{'6.1':r['6.1'],'0.18':r['0.18']}});else d.push({titulo:'4 · Decisões paradas ou tomadas fora da alçada',dados:{'0.18':r['0.18']}});
  d.push({titulo:'5 · Novas frentes e funções',dados:{'0.3':r['0.3']}});
  d.push({titulo:'6 · Processos críticos e estruturantes, lacunas de competência e estrutura, lideranças dependentes e pontos de parada',dados:{'0.6':r['0.6'],'0.2':r['0.2'],'0.1':r['0.1'],'0.3':r['0.3'],'0.4':r['0.4'],'0.7':r['0.7']}});return d;
@@ -53,7 +54,8 @@ export function resumoResposta(r:Respostas,p:string,c:Config):any{
  if(p==='3.3')return lista(r,'3.selecionadas').map(id=>({Diretriz:c.diretrizes.find(d=>d.id===id)?.titulo,...r[`3.detalhe.${id}`]}));
  if(p==='3.4')return c.diretrizes.filter(d=>r[`3.ajuste.${d.id}`]).map(d=>({Diretriz:d.titulo,Ajuste:r[`3.ajuste.${d.id}`]}));
  if(p==='3.5')return{Objetivos:r['3.5.objetivos'],Texto:r['3.5.texto']};
- if(['4A','4C'].includes(p)){const items=p==='4A'?[...c.projetos,...PROJETOS_HISTORICOS.filter(d=>r[`4A.${d.id}`])]:c.produtos;return items.map(d=>({Item:d.titulo,...(p==='4A'&&PROJETOS_HISTORICOS.some(h=>h.id===d.id)?{Registro:'Histórico — removido do formulário'}:{}),...r[`${p}.${d.id}`]}));}
+ if(p==='4C')return c.produtos.map(d=>({Item:d.titulo,...produto4CVisivel(r[`4C.${d.id}`],d.titulo==='Outro')}));
+ if(['4A'].includes(p)){const items=p==='4A'?[...c.projetos,...PROJETOS_HISTORICOS.filter(d=>r[`4A.${d.id}`])]:c.produtos;return items.map(d=>({Item:d.titulo,...(p==='4A'&&PROJETOS_HISTORICOS.some(h=>h.id===d.id)?{Registro:'Histórico — removido do formulário'}:{}),...r[`${p}.${d.id}`]}));}
  if(p==='4.1'||p==='4.2')return{Seleção:r[p],Justificativa:r[`${p}.porque`]};
  if(p==='5.riscos')return c.escolhas.map(d=>({Escolha:d.titulo,...r[d.id]}));return r[p];
 }

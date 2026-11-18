@@ -38,11 +38,40 @@ describe('Pré-Offsite · ajustes de 18/11', () => {
     expect(POSICOES_PRODUTO).toEqual(['Encerrar', 'Manter como complemento de baixo contato', 'Manter sem investimento em ads', 'Manter e investir no crescimento, com budget previsto']);
     const c = prepararConfig(PADRAO);
     const rs = POSICOES_PRODUTO.map((posicao, i) => ({ id: String(i), nome: 'Fictício', cadeira_id: 'ficticia', respostas: { '4C.prod0': { Posição: posicao, 'Impacto na sua área e o que garantir na transição': 'Teste' } } }));
-    for (const r of rs) expect(resumoResposta(r.respostas, '4C', c)[0].Posição).toBe(r.respostas['4C.prod0'].Posição);
+    const antes = structuredClone(rs);
+    for (const r of rs) {
+      expect(resumoResposta(r.respostas, '4C', c)[0]).toEqual({ Item: c.produtos[0].titulo, Posição: r.respostas['4C.prod0'].Posição });
+      expect(JSON.stringify(divergencias(r.respostas, c))).not.toContain('Impacto na sua área e o que garantir na transição');
+    }
     exportarTudo(rs as any, refs, c, '2026-11-12');
     const wb = vi.mocked(XLSX.writeFile).mock.calls.at(-1)?.[0] as XLSX.WorkBook | undefined;
     if (!wb) throw new Error('Excel ausente');
     const rows = XLSX.utils.sheet_to_json<{ Pergunta: string; Campo: string; Resposta: string }>(wb.Sheets['Bloco 4']);
     expect(rows.filter(r => r.Pergunta === '4C' && r.Campo === 'Item 1 · Posição').map(r => r.Resposta)).toEqual(POSICOES_PRODUTO);
+    for (const sheet of Object.values(wb.Sheets)) expect(JSON.stringify(XLSX.utils.sheet_to_json(sheet))).not.toContain('Impacto na sua área e o que garantir na transição');
+    expect(rs).toEqual(antes);
+  });
+
+  it('4C exige apenas Posição nos produtos fixos', () => {
+    const c = prepararConfig(PADRAO);
+    c.perguntas = c.perguntas.map(ps => ps.filter(p => p.id === '4C'));
+    const r = Object.fromEntries(c.produtos.filter(d => d.titulo !== 'Outro').map(d => [`4C.${d.id}`, { Posição: 'Encerrar' }]));
+    expect(completude(r, c).percentual).toBe(100);
+    delete r[`4C.${c.produtos[0].id}`];
+    expect(completude(r, c).percentual).toBe(0);
+  });
+
+  it('4C exige Nome e Posição no Outro quando utilizado, ignorando impacto antigo', () => {
+    const c = prepararConfig(PADRAO);
+    c.perguntas = c.perguntas.map(ps => ps.filter(p => p.id === '4C'));
+    const outro = c.produtos.find(d => d.titulo === 'Outro');
+    if (!outro) throw new Error('Outro ausente');
+    const r = Object.fromEntries(c.produtos.filter(d => d.titulo !== 'Outro').map(d => [`4C.${d.id}`, { Posição: 'Encerrar' }]));
+    const chave = `4C.${outro.id}`;
+    const impacto = { 'Impacto na sua área e o que garantir na transição': 'Histórico' };
+    expect(completude({ ...r, [chave]: impacto }, c).percentual).toBe(100);
+    expect(completude({ ...r, [chave]: { ...impacto, Nome: 'Produto' } }, c).percentual).toBe(0);
+    expect(completude({ ...r, [chave]: { ...impacto, Posição: 'Encerrar' } }, c).percentual).toBe(0);
+    expect(completude({ ...r, [chave]: { ...impacto, Nome: 'Produto', Posição: 'Encerrar' } }, c).percentual).toBe(100);
   });
 });

@@ -31,7 +31,7 @@ export default function Bloco({index,r,set,refs,c,disabled,cadeiraId,admin=false
  case '4A':return cards(c.projetos,id=>grupo(camposProjeto(c,c.projetos.find(d=>d.id===id)!),`4A.${id}`));
  case '4.1':return <div className="space-y-4">{multi('4.1',c.projetos,p.limite??2)}{field(texto('Por quê?'),'4.1.porque')}</div>;
  case '4.2':return <div className="space-y-4">{field({nome:'Projeto a adiar',tipo:'projeto'},'4.2')}{field(texto('O que o faria voltar à pauta?'),'4.2.porque')}</div>;
- case '4C':return cards(c.produtos,id=>grupo([...(c.produtos.find(d=>d.id===id)?.titulo==='Outro'?[texto('Nome')]:[]),escolha('Posição',POSICOES_PRODUTO),texto('Impacto na sua área e o que garantir na transição','Impacto na sua área e o que garantir na transição (alunos ativos, contratos, receita prevista)')],`4C.${id}`));
+ case '4C':return cards(c.produtos,id=>grupo([...(c.produtos.find(d=>d.id===id)?.titulo==='Outro'?[texto('Nome')]:[]),escolha('Posição',POSICOES_PRODUTO)],`4C.${id}`));
  case '5.riscos':return <div className="space-y-5">{c.escolhas.map(d=><div className="border rounded-md p-4 space-y-4" key={d.id}><h3 className="font-medium">{d.id} · {d.titulo}</h3><CaixaDecisao texto={d.caixa}/>{grupo(camposRiscos(c),d.id)}</div>)}</div>;
  }
  if(p.tipo==='frase')return <div className="space-y-3">{grupo(p.campos??[],p.id)}<p className="rounded-md border-l-4 border-primary bg-muted/50 p-3 text-sm" aria-live="polite">{montarFrase(r[p.id])}</p></div>;
