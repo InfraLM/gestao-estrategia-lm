@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useModuleAccess } from "./useModuleAccess";
@@ -42,34 +43,48 @@ export const fmtNum = (v: number | null | undefined) => (v == null ? "—" : v.t
 export const fmtData = (d: string | null) => (d ? new Date(d + "T12:00:00").toLocaleDateString("pt-BR") : "—");
 export const EMAIL_CORP = "@liberdademedicaedu.com.br";
 
+type BaseMetas = {
+  cadeiras: Cadeira[]; objetivos: Objetivo[]; okrs: Okr[]; okrObj: { okr_id: string; objetivo_id: string }[];
+  indicadores: Indicador[]; metas: MetaMensal[]; iniciativas: Iniciativa[]; usuarios: UsuarioMt[]; perfis: Perfil[];
+};
+const BASE_VAZIA: BaseMetas = { cadeiras: [], objetivos: [], okrs: [], okrObj: [], indicadores: [], metas: [], iniciativas: [], usuarios: [], perfis: [] };
+
+/**
+ * Tempo em que a base baixada continua valendo sem nova busca. Dentro dele, trocar de tela reaproveita o que já veio
+ * (antes, cada uma das telas que usam este hook baixava as 9 tabelas de novo). Toda tela que grava nessas tabelas chama
+ * `reload()` depois de salvar, o que atualiza a base para todas as telas abertas.
+ */
+export const BASE_METAS_VALIDADE_MS = 60_000;
+export const chaveBaseMetas = (userId: string | null) => ["metas-base", userId] as const;
+
+export async function buscarBaseMetas(): Promise<BaseMetas> {
+  const db = supabase as any;
+  const q = (t: string, o = "created_at") => db.from(t).select("*").order(o);
+  const [c, o, k, ko, i, m, n, u, p] = await Promise.all([
+    q("mt_cadeiras", "nome"), q("mt_objetivos", "codigo"), q("mt_okrs", "codigo"), db.from("mt_okr_objetivos").select("*"),
+    q("mt_indicadores", "codigo"), q("mt_metas_mensais", "competencia"), q("mt_iniciativas"), db.from("mt_usuarios").select("*"),
+    db.from("profiles").select("user_id,display_name,email").order("display_name"),
+  ]);
+  return { cadeiras: c.data ?? [], objetivos: o.data ?? [], okrs: k.data ?? [], okrObj: ko.data ?? [], indicadores: i.data ?? [], metas: m.data ?? [], iniciativas: n.data ?? [], usuarios: u.data ?? [], perfis: p.data ?? [] };
+}
+
 export function useMetasBase() {
   const org = useBaseOrganizacional();
   const { user } = useAuth();
   const access = useModuleAccess();
-  const [s, setS] = useState({
-    cadeiras: [] as Cadeira[], objetivos: [] as Objetivo[], okrs: [] as Okr[], okrObj: [] as { okr_id: string; objetivo_id: string }[],
-    indicadores: [] as Indicador[], metas: [] as MetaMensal[], iniciativas: [] as Iniciativa[], usuarios: [] as UsuarioMt[], perfis: [] as Perfil[],
+  const queryClient = useQueryClient();
+  const uid = user?.id ?? null;
+  // A chave leva o usuário: cada conta vê só o que as regras do banco liberam para ela.
+  const base = useQuery({ queryKey: chaveBaseMetas(uid), queryFn: buscarBaseMetas, staleTime: BASE_METAS_VALIDADE_MS });
+  const gov = useQuery({
+    queryKey: ["mt-is-governanca", uid],
+    queryFn: async () => { const { data } = await (supabase as any).rpc("mt_is_governanca", { _uid: uid }); return !!data; },
+    enabled: !!uid, staleTime: 5 * 60_000,
   });
-  const [loading, setLoading] = useState(true);
-  const [isGov, setIsGov] = useState(false);
-
-  const load = useCallback(async () => {
-    const db = supabase as any;
-    const q = (t: string, o = "created_at") => db.from(t).select("*").order(o);
-    const [c, o, k, ko, i, m, n, u, p] = await Promise.all([
-      q("mt_cadeiras", "nome"), q("mt_objetivos", "codigo"), q("mt_okrs", "codigo"), db.from("mt_okr_objetivos").select("*"),
-      q("mt_indicadores", "codigo"), q("mt_metas_mensais", "competencia"), q("mt_iniciativas"), db.from("mt_usuarios").select("*"),
-      db.from("profiles").select("user_id,display_name,email").order("display_name"),
-    ]);
-    setS({ cadeiras: c.data ?? [], objetivos: o.data ?? [], okrs: k.data ?? [], okrObj: ko.data ?? [], indicadores: i.data ?? [], metas: m.data ?? [], iniciativas: n.data ?? [], usuarios: u.data ?? [], perfis: p.data ?? [] });
-    setLoading(false);
-  }, []);
-
-  useEffect(() => { load(); }, [load]);
-  useEffect(() => {
-    if (!user) return;
-    (supabase as any).rpc("mt_is_governanca", { _uid: user.id }).then(({ data }: any) => setIsGov(!!data));
-  }, [user]);
+  const s = base.data ?? BASE_VAZIA;
+  const loading = base.isPending;
+  const isGov = gov.data ?? false;
+  const load = useCallback(async () => { await queryClient.refetchQueries({ queryKey: chaveBaseMetas(uid), exact: true }); }, [queryClient, uid]);
 
   const corporativo = !!user?.email?.toLowerCase().endsWith(EMAIL_CORP);
   const meu = s.usuarios.find((x) => x.user_id === user?.id);
