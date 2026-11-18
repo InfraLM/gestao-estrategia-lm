@@ -7196,6 +7196,10 @@ export type Database = {
       offsite_acesso: { Args: never; Returns: Json }
       offsite_admin: { Args: never; Returns: boolean }
       offsite_cadeira: { Args: never; Returns: string }
+      offsite_config_ajustes_20261118: {
+        Args: { _conteudo: Json }
+        Returns: Json
+      }
       offsite_config_publicar: {
         Args: { _base: string; _conteudo: Json; _respostas?: Json }
         Returns: string

@@ -40,7 +40,7 @@ export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
  r=respostasBloco0(r);
  const d:{titulo:string;dados:any}[]=[];
  const discordas=c.diretrizes.filter(x=>r[`3.pos.${x.id}`]==='Discordo');if(discordas.length)d.push({titulo:'1 · Diretrizes em discordância e indicadores',dados:discordas.map(x=>({diretriz:x.titulo,detalhes:r[`3.detalhe.${x.id}`],ajuste:r[`3.ajuste.${x.id}`]}))});
- d.push({titulo:'2 · Arquitetura do portfólio, mix de pagamento e working money',dados:{'5.7':r['5.7'],'5.1':r['5.1'],'5.4':r['5.4']}});
+ d.push({titulo:'2 · Arquitetura do portfólio e mix de pagamento',dados:{'5.7':r['5.7'],'5.1':r['5.1']}});
  d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Adia','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...r[`4C.${x.id}`]}))}});
  if(c.perguntas[6]?.some(p=>p.id==='6.1'))d.push({titulo:'4 · Reação ao mandato e decisões fora da alçada',dados:{'6.1':r['6.1'],'0.18':r['0.18']}});else d.push({titulo:'4 · Decisões paradas ou tomadas fora da alçada',dados:{'0.18':r['0.18']}});
  d.push({titulo:'5 · Novas frentes e funções',dados:{'0.3':r['0.3']}});

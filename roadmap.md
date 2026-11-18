@@ -215,3 +215,7 @@
 - [x] Código: indicadores do Pré-Off-site por id, busca pelo nome anterior, BSC com C.02/métricas-mãe/D-091, rótulo de KPI arquivado, 11 propostas de frequência.
 - [ ] Gov/CEO aprovar as 11 propostas de frequência e definir donos dos KPIs novos.
 - [ ] Publicar — ação da Naira.
+
+# Pré-Offsite · ajustes 18/11
+- [x] Migration 0122 registra transformação; configuração publicada revisão 1 e PADRAO ajustados: 5.4 arquivada, anexo atualizado, 4.3 sem Diretriz e quatro posições da 4C.
+- [x] 113 testes aprovados; formulário e consolidado autenticados conferidos sem salvar; Excel cobre quatro posições. Nenhuma operação desta entrega escreveu respostas; diretores continuaram salvando durante a verificação, por isso o hash global variou.
