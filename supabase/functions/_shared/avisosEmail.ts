@@ -5,7 +5,12 @@ export type TipoFila = TipoAviso | "impedimento";
 export type Aviso = { nome: string; ciclo: string; tipo: TipoAviso; pendencias: Pendencias };
 
 export const APP_URL = "https://gestao-estrategia-lm.lovable.app";
-export const REMETENTE_NOME_PADRAO = "Gestão Estratégica LM";
+export const REMETENTE_NOME_PADRAO = "Gestão e Estratégia LM";
+
+/** Structured content rendered by the React Email layout (Lovable Emails). */
+export type Bloco = { tipo: "p"; texto: string; negrito?: boolean } | { tipo: "destaque"; texto: string } | { tipo: "titulo"; texto: string } | { tipo: "lista"; itens: string[]; ordenada?: boolean };
+export type DadosEmail = { subject: string; titulo: string; blocos: Bloco[]; botao?: { texto: string; url: string }; rodape?: string };
+const RODAPE_ROTINA = "Liberdade Médica · Rotina semanal de check-in e checkout. Mensagem automática; responda pelo app.";
 
 /** Missing/empty secrets must never authorize scheduled requests. */
 export function tokenValido(recebido: string | null, esperado: string | undefined): boolean {
@@ -70,8 +75,14 @@ export function montarEmail(a: Aviso) {
 <p style="margin:0 0 16px;padding:12px 14px;background:#FEF2F2;border-left:4px solid ${COR.vermelho};border-radius:4px"><b>Prazo:</b> ${esc(prazo)}.</p>
 <p style="margin:0 0 6px;font-weight:bold;color:${COR.marinho}">Pendências no momento:</p>
 <ul style="margin:0 0 8px;padding-left:20px">${itens.map(i => `<li style="margin:2px 0">${esc(i)}</li>`).join("")}</ul>`;
-  const html = moldura(lembrete ? "Seu check-in/checkout vence hoje" : `Ciclo de ${dataBr(a.ciclo)} aberto`, corpo, { texto: "Abrir meu check-in/checkout", url });
-  return { subject, text, html };
+  const titulo = lembrete ? "Seu check-in/checkout vence hoje" : `Ciclo de ${dataBr(a.ciclo)} aberto`;
+  const botao = { texto: "Abrir meu check-in/checkout", url };
+  const html = moldura(titulo, corpo, botao);
+  const dados: DadosEmail = { subject, titulo, botao, rodape: RODAPE_ROTINA, blocos: [
+    { tipo: "p", texto: `Olá, ${nome}.` }, { tipo: "p", texto: abertura }, { tipo: "destaque", texto: `Prazo: ${prazo}.` },
+    { tipo: "titulo", texto: "Pendências no momento:" }, { tipo: "lista", itens },
+  ] };
+  return { subject, text, html, dados };
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -97,8 +108,10 @@ export function montarImpedimento(a: { nome: string; ciclo: string; pendencias: 
   const subject = `Impedimento recebido · ${origem}`;
   const text = [`Olá, ${nome}.`, "", ...linhas, "", `Ver impedimento: ${url}`].join("\n");
   const corpo = `<p style="margin:0 0 12px">Olá, ${esc(nome)}.</p>${linhas.map(l => `<p style="margin:0 0 12px">${esc(l)}</p>`).join("")}`;
-  const html = moldura("Impedimento recebido", corpo, { texto: "Ver impedimento", url });
-  return { subject, text, html };
+  const botao = { texto: "Ver impedimento", url };
+  const html = moldura("Impedimento recebido", corpo, botao);
+  const dados: DadosEmail = { subject, titulo: "Impedimento recebido", botao, rodape: RODAPE_ROTINA, blocos: [{ tipo: "p", texto: `Olá, ${nome}.` }, ...linhas.map(texto => ({ tipo: "p" as const, texto }))] };
+  return { subject, text, html, dados };
 }
 
 /** Routes a queued outbox row to its template. */
@@ -146,31 +159,26 @@ export function montarConviteQuickWins(c: { ano: number; prazo: string | null; t
     p("Obrigada pela contribuição de todos!"),
     p("Naira", ";font-weight:bold"),
   ].join("\n");
-  const html = moldura(`Quick Wins ${ano}`, corpo, { texto: "Abrir meu formulário de Quick Wins", url: QW_LINK }, "Liberdade Médica · Quick Wins. Dúvidas? Responda este e-mail.");
-  return { subject, text, html };
+  const botao = { texto: "Abrir meu formulário de Quick Wins", url: QW_LINK };
+  const rodape = "Liberdade Médica · Quick Wins. Dúvidas? Responda este e-mail.";
+  const html = moldura(`Quick Wins ${ano}`, corpo, botao, rodape);
+  const dados: DadosEmail = { subject, titulo: `Quick Wins ${ano}`, botao, rodape, blocos: [
+    { tipo: "p", texto: "Olá, líderes LM!" },
+    { tipo: "p", texto: `Queremos ouvir quem está mais perto da operação. Por isso, estamos abrindo o ciclo de Quick Wins ${ano}, e a visão de cada um de vocês é essencial.` },
+    { tipo: "titulo", texto: "O que são Quick Wins?" },
+    { tipo: "p", texto: "São ações de baixo esforço e bom impacto, com resultados visíveis em curto prazo. Um bom quick win:" },
+    { tipo: "lista", itens: criterios },
+    { tipo: "p", texto: "A pergunta é simples: quais quick wins você enxerga para a sua área de atuação e para a empresa? Cada líder pode registrar até 10." },
+    { tipo: "titulo", texto: "Como acessar:" },
+    { tipo: "lista", ordenada: true, itens: [`Entre em ${QW_LINK}.`, "Faça login com o seu e-mail corporativo (@liberdademedicaedu.com.br). O formulário já abre com o seu nome.", passo3] },
+    { tipo: "p", texto: "Leva poucos minutos, e não precisa estar tudo perfeito: ideias simples e práticas são exatamente o que buscamos." },
+    { tipo: "p", texto: "Qualquer dúvida ou dificuldade de acesso, é só responder este e-mail." },
+    { tipo: "p", texto: "Obrigada pela contribuição de todos!" }, { tipo: "p", texto: "Naira", negrito: true },
+  ] };
+  return { subject, text, html, dados };
 }
 
 /** Provider status → retry later (rate limit / outage) or fail for good. */
 export const falhaTemporaria = (status: number) => status === 429 || status >= 500;
 
-// ---- MIME for the Gmail API (RFC 2822 + RFC 2047), no Deno APIs. ----
-const base64 = (bytes: Uint8Array) => { let b = ""; for (let i = 0; i < bytes.length; i += 0x8000) b += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(b); };
-export const base64url = (bytes: Uint8Array) => base64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-const utf8 = (s: string) => new TextEncoder().encode(s);
-const CRLF = "\r\n";
-const semQuebra = (s: string) => s.replace(/[\r\n]+/g, " ").trim();
-const palavra = (s: string) => `=?UTF-8?B?${base64(utf8(semQuebra(s)))}?=`;
-const linhas76 = (s: string) => s.replace(/.{1,76}/g, `$&${CRLF}`);
 export const EMAIL_VALIDO = /^[^@\s<>"]+@[^@\s<>"]+\.[^@\s<>"]+$/;
-
-export function mensagemMime(de: { nome: string; email: string }, para: string, m: { subject: string; text: string; html: string }) {
-  if (!EMAIL_VALIDO.test(de.email) || !EMAIL_VALIDO.test(para)) throw new Error("E-mail inválido");
-  const limite = `lm-${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
-  return [
-    `From: ${palavra(de.nome)} <${de.email}>`, `To: <${para}>`, `Subject: ${palavra(m.subject)}`, "MIME-Version: 1.0",
-    `Content-Type: multipart/alternative; boundary="${limite}"`, "",
-    `--${limite}`, "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64", "", linhas76(base64(utf8(m.text))),
-    `--${limite}`, "Content-Type: text/html; charset=UTF-8", "Content-Transfer-Encoding: base64", "", linhas76(base64(utf8(m.html))),
-    `--${limite}--`, "",
-  ].join(CRLF);
-}

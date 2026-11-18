@@ -5,3 +5,6 @@ project_id = "kqnzstflzngfelftnplx"
     verify_jwt = false
   [functions.rotina-avisos-enviar]
     verify_jwt = false
+
+[functions.preview-transactional-email]
+verify_jwt = false

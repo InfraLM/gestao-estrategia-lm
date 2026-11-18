@@ -11,7 +11,7 @@ const TOKEN = "x".repeat(40);
 const servico = `SELECT set_config('request.jwt.claims','{"role":"service_role"}',false)`;
 const usuario = `SELECT set_config('request.jwt.claims','',false)`;
 
-describe("Remetente Gmail dos e-mails do ciclo", () => {
+describe("Remetente dos e-mails do ciclo", () => {
   let pg: PGlite;
   beforeEach(async () => {
     pg = new PGlite();

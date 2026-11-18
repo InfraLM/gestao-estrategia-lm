@@ -1,9 +1,8 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { EMAIL_VALIDO, REMETENTE_NOME_PADRAO } from "./avisosEmail.ts";
-import { credencialGmail, enviarGmail } from "./gmail.ts";
+import { EMAIL_VALIDO } from "./avisosEmail.ts";
+import { enviarEmail } from "./enviarEmail.ts";
 
 export const MENSAGEM_LIMITE_IA = "Limite diário de uso da IA atingido. Tente novamente amanhã.";
-const esc = (s: string) => s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] ?? c));
 
 /**
  * Conta 1 chamada de IA da pessoa logada (ia_registrar_uso) e devolve 429 quando o teto do dia acabou.
@@ -40,18 +39,14 @@ async function enviarAlerta(id: string) {
     ]);
     const para = String(p?.email_alerta ?? "").trim();
     if (!EMAIL_VALIDO.test(para)) throw new Error("email_alerta inválido");
-    const credencial = credencialGmail(k => Deno.env.get(k));
-    const remetente = { nome: Deno.env.get("GMAIL_REMETENTE_NOME") || REMETENTE_NOME_PADRAO, email: (Deno.env.get("GMAIL_REMETENTE") ?? "").trim().toLowerCase() };
-    if (!credencial || !EMAIL_VALIDO.test(remetente.email)) throw new Error("Remetente do Gmail não configurado");
     const nome = String(prof?.display_name || prof?.email || a.user_id);
     const horario = new Date(a.criado_em).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
     const titulo = a.tipo === "subiu" ? "atingiu 100, teto subiu para 150" : "atingiu 150, bloqueado até amanhã";
     const linhas = [`Pessoa: ${nome}`, `Função: ${a.funcao}`, `Horário: ${horario}`, `Total de chamadas no dia: ${a.chamadas}`];
-    await enviarGmail(credencial, remetente, para, {
-      subject: `Alerta de uso da IA: ${nome} ${titulo}`,
-      text: [`Alerta de uso da IA: ${titulo}.`, "", ...linhas].join("\n"),
-      html: `<p><b>Alerta de uso da IA:</b> ${esc(titulo)}.</p><ul>${linhas.map(l => `<li>${esc(l)}</li>`).join("")}</ul>`,
-    });
+    await enviarEmail("alerta-uso-ia", para, {
+      subject: `Alerta de uso da IA: ${nome} ${titulo}`, titulo: "Alerta de uso da IA",
+      blocos: [{ tipo: "p", texto: `${titulo}.` }, { tipo: "lista", itens: linhas }],
+    }, `ia-alerta-${id}`);
     await marcar("enviado", null);
   } catch (e) {
     await marcar("falhou", String((e as Error)?.message ?? e).slice(0, 500));
