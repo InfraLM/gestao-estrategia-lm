@@ -17,9 +17,9 @@ export function completude(r:Respostas,c:Config,nome?:string):{percentual:number
  for(const p of qs){ if(b===0){const v=perguntaPara(p,nome??'');if(!v||v.opcional)continue;} total++; let ok=presente(r[p.id]);
  if(p.tipo==='lista'){const rows=lista(r,p.id);ok=rows.length>0&&rows.every(row=>(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(row?.[f.nome])));if(['2.1'].includes(p.id))ok=ok&&rows.length===3;if(p.minimo)ok=ok&&rows.length>=p.minimo;}
  if(p.tipo==='grupo'||p.tipo==='frase')ok=(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(r[p.id]?.[f.nome]));
- if(p.id==='3.2')ok=lista(r,'3.selecionadas').length===3&&c.diretrizes.every(d=>presente(r[`3.pos.${d.id}`]))&&lista(r,'3.selecionadas').every(id=>CAMPOS_DETALHE_32.map(f=>f.nome).every(k=>presente(r[`3.detalhe.${id}`]?.[k])))&&c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])&&!lista(r,'3.selecionadas').includes(d.id)).every(d=>presente(r[`3.ajuste.${d.id}`]));
+ if(p.id==='3.2')ok=lista(r,'3.selecionadas').length===3&&c.diretrizes.every(d=>presente(r[`3.pos.${d.id}`]))&&lista(r,'3.selecionadas').every(id=>CAMPOS_DETALHE_32.map(f=>f.nome).every(k=>presente(r[`3.detalhe.${id}`]?.[k])))&&c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])).every(d=>presente(r[`3.ajuste.${d.id}`]));
  if(p.id==='3.3')ok=lista(r,'3.selecionadas').length===3&&lista(r,'3.selecionadas').every(id=>['Objeção mais forte','O que precisa ser verdade','O que sua área vai fazer','KPI','Quanto espera mover em 2027'].every(k=>presente(r[`3.detalhe.${id}`]?.[k])));
- if(p.id==='3.4')ok=c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])&&!lista(r,'3.selecionadas').includes(d.id)).every(d=>presente(r[`3.ajuste.${d.id}`]));
+ if(p.id==='3.4')ok=c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])).every(d=>presente(r[`3.ajuste.${d.id}`]));
  if(p.id==='3.5')ok=presente(r['3.5.texto']);
  if(p.id==='4A')ok=c.projetos.every(d=>camposProjeto(c,d).filter(f=>!f.opcional).every(f=>presente(r[`4A.${d.id}`]?.[f.nome])));
  if(p.id==='4.1')ok=lista(r,'4.1').filter(id=>c.projetos.some(d=>d.id===id)).length===(p.limite??2)&&presente(r['4.1.porque']);
