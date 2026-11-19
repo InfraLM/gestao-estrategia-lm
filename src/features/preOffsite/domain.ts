@@ -12,6 +12,10 @@ export const detalhe32Visivel=(v:any)=>v&&typeof v==='object'&&v['O que sua áre
 export const lista=(r:Respostas,k:string):any[]=>Array.isArray(r[k])?r[k]:[];
 export const presente=(v:any):boolean=>Array.isArray(v)?v.length>0&&v.every(presente):v&&typeof v==='object'?Object.values(v).length>0&&Object.values(v).every(presente):v!==undefined&&v!==null&&String(v).trim()!=='';
 export type Falta={id:string;rotulo:string;texto:string};
+/** Campos que nunca contam na completude (mesma regra do bloco0Completo). */
+export const CAMPOS_NAO_CONTAM=['Observação','Comentário','Recurso liberado'];
+export const CAMPOS_OBRIGATORIOS_4B=['Nome','Posição','Status hoje'];
+export const camposObrigatorios=<T extends {nome:string;opcional?:boolean}>(cs?:T[])=>(cs??[]).filter(f=>!f.opcional&&!CAMPOS_NAO_CONTAM.includes(f.nome));
 export type EtapaProgresso={total:number;feitas:number;percentual:number;faltas:Falta[]};
 /** Progresso por etapa: só perguntas/campos obrigatórios e visíveis para o diretor (sem opcionais, "Apenas" de outras cadeiras ou arquivados). */
 export function completudeDetalhada(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[];detalhes:EtapaProgresso[]} {
@@ -19,8 +23,9 @@ export function completudeDetalhada(r:Respostas,c:Config,nome?:string):{percentu
  const avisos:string[]=[];let total=0; const detalhes:EtapaProgresso[]=[];const etapas=c.perguntas.map((qs,b)=>{
  const faltas:string[]=[];const pend:Falta[]=[];let tot=0;
  for(const p0 of qs){ const p=perguntaPara(p0,nome??'');if(!p||p.opcional)continue; total++;tot++; let ok=presente(r[p.id]);
- if(p.tipo==='lista'){const rows=lista(r,p.id);ok=rows.length>0&&rows.every(row=>(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(row?.[f.nome])));if(['2.1'].includes(p.id))ok=ok&&rows.length===3;if(p.minimo)ok=ok&&rows.length>=p.minimo;}
- if(p.tipo==='grupo'||p.tipo==='frase')ok=(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(r[p.id]?.[f.nome]));
+ if(p.tipo==='lista'){const rows=lista(r,p.id);ok=rows.length>0&&rows.every(row=>camposObrigatorios(p.campos).every(f=>presente(row?.[f.nome])));if(['2.1'].includes(p.id))ok=ok&&rows.length===3;if(p.minimo)ok=ok&&rows.length>=p.minimo;}
+ if(p.tipo==='grupo'||p.tipo==='frase')ok=camposObrigatorios(p.campos).every(f=>presente(r[p.id]?.[f.nome]));
+ if(p.id==='4B')ok=lista(r,'4B').every(row=>CAMPOS_OBRIGATORIOS_4B.every(k=>presente(row?.[k])));
  if(p.id==='3.2')ok=lista(r,'3.selecionadas').length===3&&c.diretrizes.every(d=>presente(r[`3.pos.${d.id}`]))&&lista(r,'3.selecionadas').every(id=>CAMPOS_DETALHE_32.map(f=>f.nome).every(k=>presente(r[`3.detalhe.${id}`]?.[k])))&&c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])).every(d=>presente(r[`3.ajuste.${d.id}`]));
  if(p.id==='3.3')ok=lista(r,'3.selecionadas').length===3&&lista(r,'3.selecionadas').every(id=>CAMPOS_DETALHE_32.map(f=>f.nome).every(k=>presente(r[`3.detalhe.${id}`]?.[k])));
  if(p.id==='3.4')ok=c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])).every(d=>presente(r[`3.ajuste.${d.id}`]));
