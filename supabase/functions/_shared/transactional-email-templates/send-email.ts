@@ -1,5 +1,7 @@
 import * as React from 'npm:react@18.3.1'
-import { renderAsync } from 'npm:@react-email/components@0.0.22'
+// render (síncrono) e não renderAsync: na 0.0.22 o renderAsync decodifica cada pedaço do HTML em separado e
+// quebra acentos que caem na divisa entre pedaços ("atuaç��o" no convite de teste de 19/11). O render monta tudo de uma vez.
+import { render } from 'npm:@react-email/components@0.0.22'
 import { EmailAPIError, sendLovableEmail } from 'npm:@lovable.dev/email-js@0.8.0'
 import { TEMPLATES } from './registry.ts'
 
@@ -60,8 +62,8 @@ export async function sendTemplateEmail(
 
   const templateData = options.templateData ?? {}
   const element = React.createElement(template.component, templateData)
-  const html = await renderAsync(element)
-  const text = await renderAsync(element, { plainText: true })
+  const html = render(element)
+  const text = render(element, { plainText: true })
   const subject =
     typeof template.subject === 'function'
       ? template.subject(templateData)
