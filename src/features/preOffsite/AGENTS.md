@@ -7,3 +7,4 @@
 - 4C uses produto4CVisivel for admin, annex and Excel projections so retired answer fields remain stored without being displayed; completion checks Position and, for a used Other item, Name only.
 - Form progress uses completudeDetalhada per step (only required questions/fields visible to the director via perguntaPara; CAMPOS_NAO_CONTAM fields never count in any block and 4B rows are optional; archived items removed by prepararConfig); the form, admin preview and review share it, keeping completion and answers unchanged.
 - Admin read-only director view reuses the form Editor with an `alvo` (answers already readable by offsite_admin via RLS); persist is disabled so viewing never writes, keeping status and timestamps intact.
+- Admin status labels use situacaoResposta with the displayed completion percentage across table, reader and Excel; submitted takes precedence, and computed completion never changes persisted status or editability.

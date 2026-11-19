@@ -88,3 +88,10 @@ export function itens4B(rs:{nome:string;cadeira_id:string;respostas:Respostas}[]
 
 export const rotuloAjuste32=(pos:unknown)=>pos==='Discordo'?'Motivo da discordância':'Ajuste';
 export const tituloAjuste32=(pos:unknown)=>pos==='Discordo'?'Por que você discorda? O que proporia no lugar?':'Qual o ajuste?';
+
+/** Situação exibida; não altera o status persistido nem a permissão de edição. */
+export function situacaoResposta(r: {status:string} | null | undefined, percentual:number):string {
+ if(!r)return 'Não iniciado';
+ if(r.status==='enviado')return 'Enviado';
+ return percentual===100?'Concluído':'Em andamento';
+}

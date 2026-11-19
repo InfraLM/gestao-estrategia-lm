@@ -223,3 +223,8 @@
 # Pré-Offsite · simplificação da 4C
 - [x] Campo de impacto oculto no formulário, consolidado, anexo e Excel; conclusão só por Posição e Nome no Outro utilizado, sem alterar respostas guardadas.
 - [x] 112 testes Pré-Offsite aprovados e seção 4C autenticada conferida sem salvar. Publicar somente a atualização do app; não requer migration nem publicação de configuração.
+
+# Pré-Offsite · Situação por completude
+- [x] Situação compartilhada na tabela, Ver formulário e Excel, sem mudar status salvo ou edição.
+- [x] 132 testes passaram; tabela e resumo administrativos conferidos com respostas reais, sem gravações.
+- [ ] Publicar app na próxima publicação; não requer alteração no banco.
