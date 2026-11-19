@@ -25,3 +25,9 @@ describe('progresso por etapa',()=>{
   it('item arquivado (5.4) não é exigido nos riscos',()=>expect(c.escolhas.some(e=>e.id==='5.4')).toBe(false));
 });
 describe('pergunta opcional fora do bloco 0',()=>{it('8.3 opcional não conta',()=>{const cc:any=prepararConfig(structuredClone(PADRAO));const i=cc.perguntas.findIndex((ps:any)=>ps.some((p:any)=>p.id==='8.3'));if(i<0)return;cc.perguntas[i].find((p:any)=>p.id==='8.3').opcional=true;expect(completudeDetalhada({},cc,'X').detalhes[i].faltas.some((f:any)=>f.id==='8.3')).toBe(false);});});
+import { semTrimestres } from '@/features/preOffsite/domain';
+describe('4.3 sem T1–T4',()=>{
+  it('campos e resumo sem trimestres, resposta guardada',()=>{const p=PADRAO.perguntas.flat().find(x=>x.id==='4.3')!;expect(p.campos!.map(f=>f.nome)).not.toContain('T1');expect(p.campos!.map(f=>f.nome)).toContain('Custo total');
+    const r:any={'4.3':[{Nome:'a','Custo total':10,T1:3}]};const l=resumoResposta(r,'4.3',PADRAO)[0];expect(l.T1).toBeUndefined();expect(l['Custo total']).toBe(10);expect(r['4.3'][0].T1).toBe(3);expect(semTrimestres({T4:1,X:2})).toEqual({X:2});});
+  it('sem aviso de divergência de trimestres',()=>expect(completude({'4.3':[{'Custo total':10,T1:1}]},PADRAO).avisos.some(a=>a.includes('trimestres'))).toBe(false));
+});

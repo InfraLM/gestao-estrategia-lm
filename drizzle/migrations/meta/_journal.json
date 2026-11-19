@@ -869,6 +869,13 @@
       "when": 1795047295181,
       "tag": "0123_pre_offsite_ajuste_32_detalhe",
       "breakpoints": true
+    },
+    {
+      "idx": 124,
+      "version": "7",
+      "when": 1795048897617,
+      "tag": "0124_pre_offsite_43_sem_trimestres",
+      "breakpoints": true
     }
   ]
 }

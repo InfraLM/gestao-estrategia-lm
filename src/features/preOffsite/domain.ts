@@ -36,12 +36,12 @@ export function completudeDetalhada(r:Respostas,c:Config,nome?:string):{percentu
  avisos.push(...faltas);detalhes.push({total:tot,feitas:tot-pend.length,percentual:tot?Math.round((tot-pend.length)/tot*100):100,faltas:pend});return faltas.length===0;
  });
  const percentual=Object.keys(r).length?Math.round((total-avisos.length)/total*100):0;
- for(const [i,p] of lista(r,'4.3').entries())if(custoDiverge(p))avisos.push(`4.3 · Proposta ${i+1}: soma dos trimestres difere do custo total.`);
  return{percentual,etapas,avisos,detalhes};
 }
 export function completude(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[]}{const {percentual,etapas,avisos}=completudeDetalhada(r,c,nome);return{percentual,etapas,avisos};}
 export function numero(v:any):number{if(typeof v==='number')return v;const s=String(v??'').replace(/R\$\s?/g,'').trim();return Number(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s)||0;}
-export const custoDiverge=(p:Record<string,any>)=>Math.abs(['T1','T2','T3','T4'].reduce((s,k)=>s+numero(p[k]),0)-numero(p['Custo total']))>0.01;
+/** 4.3 sem T1–T4: respostas antigas nesses campos ficam guardadas, só não são exibidas. */
+export const semTrimestres=(p:any)=>{if(!p||typeof p!=='object')return p;const {T1,T2,T3,T4,...rest}=p;return rest;};
 export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
  r=respostasBloco0(r);
  const d:{titulo:string;dados:any}[]=[];
@@ -61,6 +61,7 @@ export function resumoResposta(r:Respostas,p:string,c:Config):any{
  if(p==='3.5')return{Objetivos:r['3.5.objetivos'],Texto:r['3.5.texto']};
  if(p==='4C')return c.produtos.map(d=>({Item:d.titulo,...produto4CVisivel(r[`4C.${d.id}`],d.titulo==='Outro')}));
  if(['4A'].includes(p)){const items=p==='4A'?[...c.projetos,...PROJETOS_HISTORICOS.filter(d=>r[`4A.${d.id}`])]:c.produtos;return items.map(d=>({Item:d.titulo,...(p==='4A'&&PROJETOS_HISTORICOS.some(h=>h.id===d.id)?{Registro:'Histórico — removido do formulário'}:{}),...r[`${p}.${d.id}`]}));}
+ if(p==='4.3')return lista(r,'4.3').map(semTrimestres);
  if(p==='4.1'||p==='4.2')return{Seleção:r[p],Justificativa:r[`${p}.porque`]};
  if(p==='5.riscos')return c.escolhas.map(d=>({Escolha:d.titulo,...r[d.id]}));return r[p];
 }
