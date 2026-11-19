@@ -876,6 +876,13 @@
       "when": 1795048897617,
       "tag": "0124_pre_offsite_43_sem_trimestres",
       "breakpoints": true
+    },
+    {
+      "idx": 125,
+      "version": "7",
+      "when": 1795051164400,
+      "tag": "0125_pre_offsite_43_sem_diretriz_kpi",
+      "breakpoints": true
     }
   ]
 }

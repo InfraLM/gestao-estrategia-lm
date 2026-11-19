@@ -28,7 +28,7 @@ describe('Pré-Offsite · ajustes de 18/11', () => {
     const c = prepararConfig(PADRAO);
     const p = c.perguntas[4].find(p => p.id === '4.3');
     if (!p?.campos) throw new Error('4.3 ausente');
-    expect(p.campos.map(f => f.nome)).toEqual(['Nome', 'Justificativa', 'Objetivo BSC', 'KPI', 'Mês de início', 'Mês de fim', 'Custo total', 'O que entrega com metade do orçamento']);
+    expect(p.campos.map(f => f.nome)).toEqual(['Nome', 'Justificativa', 'Objetivo BSC', 'Mês de início', 'Mês de fim', 'Custo total', 'O que entrega com metade do orçamento']);
     c.perguntas = c.perguntas.map((_, i) => i === 4 ? [p] : []);
     const row = Object.fromEntries(p.campos.map(f => [f.nome, f.tipo === 'numero' ? 0 : 'Teste']));
     expect(completude({ '4.3': [row] }, c).percentual).toBe(100);
@@ -73,5 +73,13 @@ describe('Pré-Offsite · ajustes de 18/11', () => {
     expect(completude({ ...r, [chave]: { ...impacto, Nome: 'Produto' } }, c).percentual).toBe(0);
     expect(completude({ ...r, [chave]: { ...impacto, Posição: 'Encerrar' } }, c).percentual).toBe(0);
     expect(completude({ ...r, [chave]: { ...impacto, Nome: 'Produto', Posição: 'Encerrar' } }, c).percentual).toBe(100);
+  });
+});
+import { semTrimestres as ocultar43 } from '@/features/preOffsite/domain';
+describe('4.3 sem Diretriz e KPI', () => {
+  it('exibição oculta Diretriz e KPI e mantém Objetivo BSC', () => {
+    const salvo = { Nome: 'X', Diretriz: 'd1', KPI: 'k1', 'Objetivo BSC': 'o1' };
+    expect(ocultar43(salvo)).toEqual({ Nome: 'X', 'Objetivo BSC': 'o1' });
+    expect(salvo.KPI).toBe('k1');
   });
 });

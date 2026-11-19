@@ -7208,6 +7208,10 @@ export type Database = {
         Args: { _conteudo: Json; _revisao?: boolean }
         Returns: Json
       }
+      offsite_config_ajustes_20261119c: {
+        Args: { _conteudo: Json; _revisao?: boolean }
+        Returns: Json
+      }
       offsite_config_publicar: {
         Args: { _base: string; _conteudo: Json; _respostas?: Json }
         Returns: string

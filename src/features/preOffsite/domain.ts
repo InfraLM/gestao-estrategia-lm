@@ -40,8 +40,8 @@ export function completudeDetalhada(r:Respostas,c:Config,nome?:string):{percentu
 }
 export function completude(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[]}{const {percentual,etapas,avisos}=completudeDetalhada(r,c,nome);return{percentual,etapas,avisos};}
 export function numero(v:any):number{if(typeof v==='number')return v;const s=String(v??'').replace(/R\$\s?/g,'').trim();return Number(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s)||0;}
-/** 4.3 sem T1–T4: respostas antigas nesses campos ficam guardadas, só não são exibidas. */
-export const semTrimestres=(p:any)=>{if(!p||typeof p!=='object')return p;const {T1,T2,T3,T4,...rest}=p;return rest;};
+/** 4.3 sem T1–T4, Diretriz e KPI: respostas antigas nesses campos ficam guardadas, só não são exibidas. */
+export const semTrimestres=(p:any)=>{if(!p||typeof p!=='object')return p;const {T1,T2,T3,T4,Diretriz,KPI,...rest}=p;return rest;};
 export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
  r=respostasBloco0(r);
  const d:{titulo:string;dados:any}[]=[];
