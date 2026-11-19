@@ -9,10 +9,12 @@ export class ErroEnvio extends Error {
 }
 
 export const REMETENTE_EMAIL = 'noreply@notifylv.liberdademedicaedu.com.br'
+/** Quem recebe quando alguém clica em Responder: o noreply não tem caixa de entrada, e os e-mails dizem "Dúvidas? Responda este e-mail" (decisão do Arthur, 19/11). */
+export const RESPONDER_PARA = 'arthur.matos@liberdademedicaedu.com.br'
 
 export async function enviarEmail(modelo: string, para: string, dados: DadosEmail, chave: string): Promise<void> {
   try {
-    const r = await sendTemplateEmail(modelo, para, { templateData: dados, idempotencyKey: chave })
+    const r = await sendTemplateEmail(modelo, para, { templateData: dados, idempotencyKey: chave, replyTo: RESPONDER_PARA })
     if (!r.sent) throw new ErroEnvio('Destinatário bloqueado (descadastrado ou e-mail devolvido)', false)
   } catch (e) {
     if (e instanceof ErroEnvio) throw e
