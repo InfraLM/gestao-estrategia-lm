@@ -24,3 +24,4 @@ describe('progresso por etapa',()=>{
   it('lista faltas com número e % por etapa',()=>{const d=completudeDetalhada({'3.1':'x'},c,'Fulano').detalhes[3];expect(d.faltas.some(f=>f.id==='3.1')).toBe(false);expect(d.percentual).toBe(Math.round(d.feitas/d.total*100));});
   it('item arquivado (5.4) não é exigido nos riscos',()=>expect(c.escolhas.some(e=>e.id==='5.4')).toBe(false));
 });
+describe('pergunta opcional fora do bloco 0',()=>{it('8.3 opcional não conta',()=>{const cc:any=prepararConfig(structuredClone(PADRAO));const i=cc.perguntas.findIndex((ps:any)=>ps.some((p:any)=>p.id==='8.3'));if(i<0)return;cc.perguntas[i].find((p:any)=>p.id==='8.3').opcional=true;expect(completudeDetalhada({},cc,'X').detalhes[i].faltas.some((f:any)=>f.id==='8.3')).toBe(false);});});
