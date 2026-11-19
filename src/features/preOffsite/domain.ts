@@ -50,7 +50,7 @@ export const semTrimestres=(p:any)=>{if(!p||typeof p!=='object')return p;const {
 export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
  r=respostasBloco0(r);
  const d:{titulo:string;dados:any}[]=[];
- const discordas=c.diretrizes.filter(x=>['Discordo','Ajustaria'].includes(r[`3.pos.${x.id}`]));if(discordas.length)d.push({titulo:'1 · Diretrizes marcadas como Discordo ou Ajustaria e o ajuste proposto',dados:discordas.map(x=>({diretriz:x.titulo,posicao:r[`3.pos.${x.id}`],...(detalhe32Visivel(r[`3.detalhe.${x.id}`])?{detalhes:detalhe32Visivel(r[`3.detalhe.${x.id}`])}:{}),ajuste:r[`3.ajuste.${x.id}`]}))});
+ const discordas=c.diretrizes.filter(x=>['Discordo','Ajustaria'].includes(r[`3.pos.${x.id}`]));if(discordas.length)d.push({titulo:'1 · Diretrizes marcadas como Discordo ou Ajustaria e o ajuste proposto',dados:discordas.map(x=>({diretriz:x.titulo,posicao:r[`3.pos.${x.id}`],...(detalhe32Visivel(r[`3.detalhe.${x.id}`])?{detalhes:detalhe32Visivel(r[`3.detalhe.${x.id}`])}:{}),[rotuloAjuste32(r[`3.pos.${x.id}`])]:r[`3.ajuste.${x.id}`]}))});
  d.push({titulo:'2 · Arquitetura do portfólio e mix de pagamento',dados:{'5.7':r['5.7'],'5.1':r['5.1']}});
  d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Adia','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...produto4CVisivel(r[`4C.${x.id}`],x.titulo==='Outro')}))}});
  if(c.perguntas[6]?.some(p=>p.id==='6.1'))d.push({titulo:'4 · Reação ao mandato e decisões fora da alçada',dados:{'6.1':r['6.1'],'0.18':r['0.18']}});else d.push({titulo:'4 · Decisões paradas ou tomadas fora da alçada',dados:{'0.18':r['0.18']}});
@@ -60,9 +60,9 @@ export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
 export const moeda=(v:any)=>numero(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 export function resumoResposta(r:Respostas,p:string,c:Config):any{
  if(p.startsWith('0.')){const v=respostasBloco0(r)[p];return p==='0.17'&&v?montarFrase(v):v;}
- if(p==='3.2')return c.diretrizes.map(d=>({Diretriz:d.titulo,Posição:r[`3.pos.${d.id}`]??'',Prioritária:lista(r,'3.selecionadas').includes(d.id),...(lista(r,'3.selecionadas').includes(d.id)?detalhe32Visivel(r[`3.detalhe.${d.id}`])??{}:{}),...(r[`3.ajuste.${d.id}`]?{Ajuste:r[`3.ajuste.${d.id}`]}:{})}));
+ if(p==='3.2')return c.diretrizes.map(d=>({Diretriz:d.titulo,Posição:r[`3.pos.${d.id}`]??'',Prioritária:lista(r,'3.selecionadas').includes(d.id),...(lista(r,'3.selecionadas').includes(d.id)?detalhe32Visivel(r[`3.detalhe.${d.id}`])??{}:{}),...(r[`3.ajuste.${d.id}`]?{[rotuloAjuste32(r[`3.pos.${d.id}`])]:r[`3.ajuste.${d.id}`]}:{})}));
  if(p==='3.3')return lista(r,'3.selecionadas').map(id=>({Diretriz:c.diretrizes.find(d=>d.id===id)?.titulo,...detalhe32Visivel(r[`3.detalhe.${id}`])}));
- if(p==='3.4')return c.diretrizes.filter(d=>r[`3.ajuste.${d.id}`]).map(d=>({Diretriz:d.titulo,Ajuste:r[`3.ajuste.${d.id}`]}));
+ if(p==='3.4')return c.diretrizes.filter(d=>r[`3.ajuste.${d.id}`]).map(d=>({Diretriz:d.titulo,[rotuloAjuste32(r[`3.pos.${d.id}`])]:r[`3.ajuste.${d.id}`]}));
  if(p==='3.5')return{Objetivos:r['3.5.objetivos'],Texto:r['3.5.texto']};
  if(p==='4C')return c.produtos.map(d=>({Item:d.titulo,...produto4CVisivel(r[`4C.${d.id}`],d.titulo==='Outro')}));
  if(['4A'].includes(p)){const items=p==='4A'?[...c.projetos,...PROJETOS_HISTORICOS.filter(d=>r[`4A.${d.id}`])]:c.produtos;return items.map(d=>({Item:d.titulo,...(p==='4A'&&PROJETOS_HISTORICOS.some(h=>h.id===d.id)?{Registro:'Histórico — removido do formulário'}:{}),...r[`${p}.${d.id}`]}));}
@@ -85,3 +85,6 @@ export function itens4B(rs:{nome:string;cadeira_id:string;respostas:Respostas}[]
  const itens=rs.flatMap(r=>lista(r.respostas,'4B').filter(x=>presente(x?.Nome)).map(x=>({diretor:r.nome,cadeira_id:r.cadeira_id,Nome:String(x.Nome),Posição:x['Posição']??'','Status hoje':x['Status hoje']??'',Retorno:x.Retorno??'','Esforço/capital':x['Esforço/capital']??'','Recurso liberado':numero(x['Recurso liberado']),Comentário:x['Comentário']??'',duplicado:false,n:normalizarNome(x.Nome)})));
  return itens.map(i=>{const{n,...rest}=i;return{...rest,duplicado:itens.some(o=>o!==i&&o.cadeira_id!==i.cadeira_id&&parecido(n,o.n))};});
 }
+
+export const rotuloAjuste32=(pos:unknown)=>pos==='Discordo'?'Motivo da discordância':'Ajuste';
+export const tituloAjuste32=(pos:unknown)=>pos==='Discordo'?'Por que você discorda? O que proporia no lugar?':'Qual o ajuste?';
