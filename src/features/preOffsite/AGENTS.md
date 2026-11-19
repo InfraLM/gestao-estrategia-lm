@@ -6,3 +6,4 @@
 - Content-only database updates use a versioned SQL transformation recorded by migration and a separate data operation; this respects DDL-only migrations and preserves response rows.
 - 4C uses produto4CVisivel for admin, annex and Excel projections so retired answer fields remain stored without being displayed; completion checks Position and, for a used Other item, Name only.
 - Form progress uses completudeDetalhada per step (only required questions/fields visible to the director via perguntaPara; CAMPOS_NAO_CONTAM fields never count in any block and 4B rows are optional; archived items removed by prepararConfig); the form, admin preview and review share it, keeping completion and answers unchanged.
+- Admin read-only director view reuses the form Editor with an `alvo` (answers already readable by offsite_admin via RLS); persist is disabled so viewing never writes, keeping status and timestamps intact.
