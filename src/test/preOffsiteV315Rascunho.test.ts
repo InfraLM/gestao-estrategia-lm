@@ -61,7 +61,7 @@ describe('Pré-Offsite v3.15 · rascunho', () => {
     expect(refs.objetivos.filter((o: any) => !o.oculto).map((o: any) => o.codigo)).toEqual(['F.01', 'F.02', 'C.01', 'C.02', 'P.01', 'P.02', 'P.03', 'AC.01', 'AC.02']);
     expect((refs.objetivos.find((o: any) => o.id === 'u1') as any)?.oculto).toBe(true);
     expect((refs.kpis.find((k: any) => k.id === 'k1') as any)?.oculto).toBe(true);
-    expect(camposDetalhe32(c).find(f => f.nome === 'KPI')?.rotulo).toContain('BSC 2027 (Rev.04.1)');
+    expect(camposDetalhe32(c).map(f => f.nome)).toEqual(['O que sua área vai fazer']);
   });
 
   it('versão publicada sem bsc2027 continua igual', () => {

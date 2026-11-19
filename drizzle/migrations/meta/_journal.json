@@ -862,6 +862,13 @@
       "when": 1795045861220,
       "tag": "0122_pre_offsite_ajustes_54_43_4c",
       "breakpoints": true
+    },
+    {
+      "idx": 123,
+      "version": "7",
+      "when": 1795047295181,
+      "tag": "0123_pre_offsite_ajuste_32_detalhe",
+      "breakpoints": true
     }
   ]
 }

@@ -8,6 +8,7 @@ import { montarFrase, CAMPOS_DETALHE_32 } from './config';
 export type Respostas=Record<string, any>;
 export const respostaSchema=z.record(z.unknown()).refine(v=>JSON.stringify(v).length<=1000000,'Resposta muito extensa');
 export const produto4CVisivel=(v:any,outro:boolean)=>v&&typeof v==='object'?{...(outro&&v.Nome!==undefined?{Nome:v.Nome}:{}),...(v.Posição!==undefined?{Posição:v.Posição}:{})}:undefined;
+export const detalhe32Visivel=(v:any)=>v&&typeof v==='object'&&v['O que sua área vai fazer']!==undefined?{'O que sua área vai fazer':v['O que sua área vai fazer']}:undefined;
 export const lista=(r:Respostas,k:string):any[]=>Array.isArray(r[k])?r[k]:[];
 export const presente=(v:any):boolean=>Array.isArray(v)?v.length>0&&v.every(presente):v&&typeof v==='object'?Object.values(v).length>0&&Object.values(v).every(presente):v!==undefined&&v!==null&&String(v).trim()!=='';
 export function completude(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[]} {
@@ -18,7 +19,7 @@ export function completude(r:Respostas,c:Config,nome?:string):{percentual:number
  if(p.tipo==='lista'){const rows=lista(r,p.id);ok=rows.length>0&&rows.every(row=>(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(row?.[f.nome])));if(['2.1'].includes(p.id))ok=ok&&rows.length===3;if(p.minimo)ok=ok&&rows.length>=p.minimo;}
  if(p.tipo==='grupo'||p.tipo==='frase')ok=(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(r[p.id]?.[f.nome]));
  if(p.id==='3.2')ok=lista(r,'3.selecionadas').length===3&&c.diretrizes.every(d=>presente(r[`3.pos.${d.id}`]))&&lista(r,'3.selecionadas').every(id=>CAMPOS_DETALHE_32.map(f=>f.nome).every(k=>presente(r[`3.detalhe.${id}`]?.[k])))&&c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])).every(d=>presente(r[`3.ajuste.${d.id}`]));
- if(p.id==='3.3')ok=lista(r,'3.selecionadas').length===3&&lista(r,'3.selecionadas').every(id=>['Objeção mais forte','O que precisa ser verdade','O que sua área vai fazer','KPI','Quanto espera mover em 2027'].every(k=>presente(r[`3.detalhe.${id}`]?.[k])));
+ if(p.id==='3.3')ok=lista(r,'3.selecionadas').length===3&&lista(r,'3.selecionadas').every(id=>CAMPOS_DETALHE_32.map(f=>f.nome).every(k=>presente(r[`3.detalhe.${id}`]?.[k])));
  if(p.id==='3.4')ok=c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])).every(d=>presente(r[`3.ajuste.${d.id}`]));
  if(p.id==='3.5')ok=presente(r['3.5.texto']);
  if(p.id==='4A')ok=c.projetos.every(d=>camposProjeto(c,d).filter(f=>!f.opcional).every(f=>presente(r[`4A.${d.id}`]?.[f.nome])));
@@ -40,7 +41,7 @@ export const custoDiverge=(p:Record<string,any>)=>Math.abs(['T1','T2','T3','T4']
 export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
  r=respostasBloco0(r);
  const d:{titulo:string;dados:any}[]=[];
- const discordas=c.diretrizes.filter(x=>r[`3.pos.${x.id}`]==='Discordo');if(discordas.length)d.push({titulo:'1 · Diretrizes em discordância e indicadores',dados:discordas.map(x=>({diretriz:x.titulo,detalhes:r[`3.detalhe.${x.id}`],ajuste:r[`3.ajuste.${x.id}`]}))});
+ const discordas=c.diretrizes.filter(x=>['Discordo','Ajustaria'].includes(r[`3.pos.${x.id}`]));if(discordas.length)d.push({titulo:'1 · Diretrizes marcadas como Discordo ou Ajustaria e o ajuste proposto',dados:discordas.map(x=>({diretriz:x.titulo,posicao:r[`3.pos.${x.id}`],...(detalhe32Visivel(r[`3.detalhe.${x.id}`])?{detalhes:detalhe32Visivel(r[`3.detalhe.${x.id}`])}:{}),ajuste:r[`3.ajuste.${x.id}`]}))});
  d.push({titulo:'2 · Arquitetura do portfólio e mix de pagamento',dados:{'5.7':r['5.7'],'5.1':r['5.1']}});
  d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Adia','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...produto4CVisivel(r[`4C.${x.id}`],x.titulo==='Outro')}))}});
  if(c.perguntas[6]?.some(p=>p.id==='6.1'))d.push({titulo:'4 · Reação ao mandato e decisões fora da alçada',dados:{'6.1':r['6.1'],'0.18':r['0.18']}});else d.push({titulo:'4 · Decisões paradas ou tomadas fora da alçada',dados:{'0.18':r['0.18']}});
@@ -50,8 +51,8 @@ export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
 export const moeda=(v:any)=>numero(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 export function resumoResposta(r:Respostas,p:string,c:Config):any{
  if(p.startsWith('0.')){const v=respostasBloco0(r)[p];return p==='0.17'&&v?montarFrase(v):v;}
- if(p==='3.2')return c.diretrizes.map(d=>({Diretriz:d.titulo,Posição:r[`3.pos.${d.id}`]??'',Prioritária:lista(r,'3.selecionadas').includes(d.id),...(lista(r,'3.selecionadas').includes(d.id)?r[`3.detalhe.${d.id}`]??{}:{}),...(r[`3.ajuste.${d.id}`]?{Ajuste:r[`3.ajuste.${d.id}`]}:{})}));
- if(p==='3.3')return lista(r,'3.selecionadas').map(id=>({Diretriz:c.diretrizes.find(d=>d.id===id)?.titulo,...r[`3.detalhe.${id}`]}));
+ if(p==='3.2')return c.diretrizes.map(d=>({Diretriz:d.titulo,Posição:r[`3.pos.${d.id}`]??'',Prioritária:lista(r,'3.selecionadas').includes(d.id),...(lista(r,'3.selecionadas').includes(d.id)?detalhe32Visivel(r[`3.detalhe.${d.id}`])??{}:{}),...(r[`3.ajuste.${d.id}`]?{Ajuste:r[`3.ajuste.${d.id}`]}:{})}));
+ if(p==='3.3')return lista(r,'3.selecionadas').map(id=>({Diretriz:c.diretrizes.find(d=>d.id===id)?.titulo,...detalhe32Visivel(r[`3.detalhe.${id}`])}));
  if(p==='3.4')return c.diretrizes.filter(d=>r[`3.ajuste.${d.id}`]).map(d=>({Diretriz:d.titulo,Ajuste:r[`3.ajuste.${d.id}`]}));
  if(p==='3.5')return{Objetivos:r['3.5.objetivos'],Texto:r['3.5.texto']};
  if(p==='4C')return c.produtos.map(d=>({Item:d.titulo,...produto4CVisivel(r[`4C.${d.id}`],d.titulo==='Outro')}));
