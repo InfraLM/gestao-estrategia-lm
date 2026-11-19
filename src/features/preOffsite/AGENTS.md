@@ -5,3 +5,4 @@
 - Config may carry display-only overrides (question `rotulo`, Bloco 0 `kpisTexto`, form-local `bsc2027` list); blocks with no active question are hidden and renumbered by index helpers, keeping internal ids/answer keys and the app's BSC tables untouched.
 - Content-only database updates use a versioned SQL transformation recorded by migration and a separate data operation; this respects DDL-only migrations and preserves response rows.
 - 4C uses produto4CVisivel for admin, annex and Excel projections so retired answer fields remain stored without being displayed; completion checks Position and, for a used Other item, Name only.
+- Form progress uses completudeDetalhada per step (only required questions/fields visible to the director via perguntaPara; archived items removed by prepararConfig); the form, admin preview and review share it, keeping completion and answers unchanged.

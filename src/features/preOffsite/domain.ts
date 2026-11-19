@@ -1,4 +1,4 @@
-import { prefixoPergunta } from './presentation';
+import { prefixoPergunta, rotuloPergunta } from './presentation';
 import { camposProjeto, camposRiscos } from './editorConfig';
 import { PROJETOS_HISTORICOS } from './presentation';
 import { respostasBloco0, bloco0Completo, perguntaPara } from './bloco0';
@@ -11,11 +11,14 @@ export const produto4CVisivel=(v:any,outro:boolean)=>v&&typeof v==='object'?{...
 export const detalhe32Visivel=(v:any)=>v&&typeof v==='object'&&v['O que sua área vai fazer']!==undefined?{'O que sua área vai fazer':v['O que sua área vai fazer']}:undefined;
 export const lista=(r:Respostas,k:string):any[]=>Array.isArray(r[k])?r[k]:[];
 export const presente=(v:any):boolean=>Array.isArray(v)?v.length>0&&v.every(presente):v&&typeof v==='object'?Object.values(v).length>0&&Object.values(v).every(presente):v!==undefined&&v!==null&&String(v).trim()!=='';
-export function completude(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[]} {
+export type Falta={id:string;rotulo:string;texto:string};
+export type EtapaProgresso={total:number;feitas:number;percentual:number;faltas:Falta[]};
+/** Progresso por etapa: só perguntas/campos obrigatórios e visíveis para o diretor (sem opcionais, "Apenas" de outras cadeiras ou arquivados). */
+export function completudeDetalhada(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[];detalhes:EtapaProgresso[]} {
  r=respostasBloco0(r);
- const avisos:string[]=[];let total=0; const etapas=c.perguntas.map((qs,b)=>{
- const faltas:string[]=[];
- for(const p of qs){ if(b===0){const v=perguntaPara(p,nome??'');if(!v||v.opcional)continue;} total++; let ok=presente(r[p.id]);
+ const avisos:string[]=[];let total=0; const detalhes:EtapaProgresso[]=[];const etapas=c.perguntas.map((qs,b)=>{
+ const faltas:string[]=[];const pend:Falta[]=[];let tot=0;
+ for(const p0 of qs){ const p=perguntaPara(p0,nome??'');if(!p||p.opcional)continue; total++;tot++; let ok=presente(r[p.id]);
  if(p.tipo==='lista'){const rows=lista(r,p.id);ok=rows.length>0&&rows.every(row=>(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(row?.[f.nome])));if(['2.1'].includes(p.id))ok=ok&&rows.length===3;if(p.minimo)ok=ok&&rows.length>=p.minimo;}
  if(p.tipo==='grupo'||p.tipo==='frase')ok=(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(r[p.id]?.[f.nome]));
  if(p.id==='3.2')ok=lista(r,'3.selecionadas').length===3&&c.diretrizes.every(d=>presente(r[`3.pos.${d.id}`]))&&lista(r,'3.selecionadas').every(id=>CAMPOS_DETALHE_32.map(f=>f.nome).every(k=>presente(r[`3.detalhe.${id}`]?.[k])))&&c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])).every(d=>presente(r[`3.ajuste.${d.id}`]));
@@ -27,15 +30,16 @@ export function completude(r:Respostas,c:Config,nome?:string):{percentual:number
  if(p.id==='4.2')ok=c.projetos.some(d=>d.id===r['4.2'])&&presente(r['4.2.porque']);
  if(p.id==='4C')ok=c.produtos.every(d=>{const v=r[`4C.${d.id}`];return d.titulo==='Outro'&&!presente(v?.Nome)&&!presente(v?.Posição)?true:presente(v?.Posição)&&(d.titulo!=='Outro'||presente(v?.Nome));});
  if(p.id==='5.riscos')ok=c.escolhas.every(d=>camposRiscos(c).filter(f=>!f.opcional).every(f=>presente(r[d.id]?.[f.nome])));
- if(b===0)ok=bloco0Completo(p,r[p.id],nome??'');
- if(!ok)faltas.push(`${prefixoPergunta(p)}${p.titulo??p.texto}`);
+ if(b===0)ok=bloco0Completo(p0,r[p.id],nome??'');
+ if(!ok){faltas.push(`${prefixoPergunta(p)}${p.titulo??p.texto}`);pend.push({id:p.id,rotulo:p.id==='5.riscos'?(p.rotulo??'Riscos'):rotuloPergunta(p),texto:p.titulo??p.texto});}
  }
- avisos.push(...faltas);return faltas.length===0;
+ avisos.push(...faltas);detalhes.push({total:tot,feitas:tot-pend.length,percentual:tot?Math.round((tot-pend.length)/tot*100):100,faltas:pend});return faltas.length===0;
  });
  const percentual=Object.keys(r).length?Math.round((total-avisos.length)/total*100):0;
  for(const [i,p] of lista(r,'4.3').entries())if(custoDiverge(p))avisos.push(`4.3 · Proposta ${i+1}: soma dos trimestres difere do custo total.`);
- return{percentual,etapas,avisos};
+ return{percentual,etapas,avisos,detalhes};
 }
+export function completude(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[]}{const {percentual,etapas,avisos}=completudeDetalhada(r,c,nome);return{percentual,etapas,avisos};}
 export function numero(v:any):number{if(typeof v==='number')return v;const s=String(v??'').replace(/R\$\s?/g,'').trim();return Number(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s)||0;}
 export const custoDiverge=(p:Record<string,any>)=>Math.abs(['T1','T2','T3','T4'].reduce((s,k)=>s+numero(p[k]),0)-numero(p['Custo total']))>0.01;
 export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
