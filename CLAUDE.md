@@ -7,7 +7,9 @@ Este app é alterado por três caminhos: Lovable, GitHub e Claude. Antes de qual
 
 - **`git pull` antes de mexer.** A `main` recebe commits do Lovable a qualquer hora.
 - **Nunca envie direto para a `main`.** Trabalhe num branch `arthur/<area>-<assunto>` e abra um PR com o
-  modelo de `.github/pull_request_template.md`. Quem aprova o merge é o Arthur.
+  modelo de `.github/pull_request_template.md`. O Claude pode mesclar o próprio PR com testes e build
+  passando; mudança em `supabase/functions/` precisa ser republicada pelo chat do Lovable.
+- **Repositório público:** nunca coloque senha, chave ou dado sensível no código.
 - **Banco não vai pelo GitHub.** Migration enviada por aqui não é aplicada no Lovable Cloud. Se a
   mudança precisa de banco, escreva o pedido para o Lovable (título, contexto, o que fazer, critério
   de aceite) e marque isso no PR.

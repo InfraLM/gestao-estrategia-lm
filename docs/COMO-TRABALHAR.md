@@ -16,8 +16,14 @@ desfaça o trabalho do outro.
    Lovable: confira no histórico se entrou algo novo. A `main` muda pelos três caminhos.
 2. **Código pelo GitHub ou pelo Claude vai por branch e PR, nunca direto na `main`.**
    - O nome do branch é `<pessoa>/<area>-<assunto>`, por exemplo `arthur/desempenho-cache-metas`.
-   - O Lovable publica o que chega na `main`. O PR é o momento de revisar antes de publicar.
-   - Quem aprova o merge é o Arthur (cadeira técnica).
+   - O que chega na `main` aparece no editor do Lovable, mas só vai ao ar quando alguém clica em
+     **Publicar**. Publicar sobe a `main` inteira, inclusive o que outras pessoas mandaram.
+   - O Arthur (cadeira técnica) responde pelo merge. O Claude pode mesclar o próprio PR quando os
+     testes e o build passam e não há conflito com regra de negócio (decisão do Arthur, 17/11).
+   - Mudou algo em `supabase/functions/`? Função não sobe pelo GitHub: peça no chat do Lovable para
+     republicar as funções alteradas.
+   - O repositório é público (decisão com o Paulo, 19/11): nunca envie senha, chave ou dado
+     sensível. Segredos ficam só no Lovable (Cloud → Secrets).
 3. **Banco só pelo Lovable.**
    - Uma migration enviada pelo GitHub não é aplicada no Lovable Cloud. Foi assim que a 0103 virou
      0104.
@@ -61,7 +67,8 @@ desfaça o trabalho do outro.
 3. Faça o commit no padrão da regra 6 e envie o branch (`git push -u origin <branch>`).
 4. Abra o PR (`gh pr create`) e preencha o modelo.
 5. Espere a verificação automática ficar verde. Se o PR precisa de banco, peça ao Lovable e confira.
-6. O Arthur aprova e faz o merge. O Lovable publica.
+6. Faça o merge (o Arthur, ou o Claude no próprio PR). Se mexeu em funções, peça ao Lovable para
+   republicá-las. Para ir ao ar, alguém clica em **Publicar** no Lovable.
 
 ## Passo a passo: mudança pelo Lovable
 
