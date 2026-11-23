@@ -1,6 +1,7 @@
 import { analiseNaData } from "@/lib/analiseMetas";
 import { avaliarPorTipo, apontamentoMaisRecente, situacaoNumerica, FIM_PERIODO, type Avaliacao, type ArvoreSit, type CheckoutReg, type Fonte, type TipoApontamento, type StatusEntrega } from "@/lib/avaliacaoBsc";
 import { previstoNoMes, type CalendarioKpi } from '@/lib/frequenciaApontamento';
+import { farol, type CorFarol } from "@/lib/farol";
 
 export type Grupo = "estrategico" | "tatico" | "kr" | "cesta";
 export const GRUPO_LBL: Record<Grupo, string> = { estrategico: "KPI estratégico", tatico: "KPI tático", kr: "OKR / KR", cesta: "Cesta de metas" };
@@ -21,7 +22,9 @@ export function atingimento(valor: number | null, meta: number | null, sentido: 
 }
 
 export type Celula = { valor: number | null; meta: number | null; aval: Avaliacao; origem: string | null; ating: number | null; critico?: boolean;
-  fonte?: Fonte; status_entrega?: StatusEntrega | null; alertaDeclarado?: boolean; prazoVencido?: boolean; foraCalendario?: boolean };
+  fonte?: Fonte; status_entrega?: StatusEntrega | null; alertaDeclarado?: boolean; prazoVencido?: boolean; foraCalendario?: boolean;
+  /** Farol de 3 cores (src/lib/farol.ts), por cima do On/Off. */
+  farol?: CorFarol | null };
 type IndM = CalendarioKpi & { id: string; sentido: "maior" | "menor"; meta_semestre: number | null; meta_texto: string | null; tipo_apontamento?: TipoApontamento | null; prazo_entrega?: string | null;origem?:string;analise_configurada_em?:string|null;analise_historico?:any[];tolerancia?:number|null };
 type LancM = { declaracao?: string | null; justificativa?: string | null; status_entrega?: string | null; avanco_pct?: number | null; updated_at?: string | null;analise_snapshot?:any } | null;
 
@@ -39,7 +42,10 @@ export function celulaMes(ind: IndM, competencia: string, meta_mes: number | nul
   const valor = tipo === "entrega" ? null : realizado ?? situacaoNumerica(ind.id, arvore, checkouts, competencia)?.valor ?? null;
   const meta = tipo === "valor_mensal" ? meta_mes ?? ind.meta_semestre : tipo === "valor_periodo" ? ind.meta_semestre : null;
   const numerico = tipo === "valor_mensal" || (tipo === "valor_periodo" && r.fonte === "calculado" && hojeIso(hoje) > FIM_PERIODO);
-  return { valor, meta, aval: r.aval, origem: realizado != null && r.fonte === "calculado" ? "lançado" : r.origem, ating: numerico ? atingimento(valor, meta, ind.sentido) : null,
+  const tol = ind.origem !== "bsc" && ind.analise_configurada_em ? ind.tolerancia ?? null : null;
+  // Declarado (meta semestral no meio do período) e entrega não medem distância: Off = vermelho, On = verde.
+  const cor = farol({ aval: r.aval, valor: r.fonte === "calculado" ? valor : null, meta: tipo === "entrega" ? null : tipo === "valor_periodo" ? ind.meta_semestre ?? ind.meta_texto : meta, sentido: ind.sentido, tolerancia: tol });
+  return { farol: cor, valor, meta, aval: r.aval, origem: realizado != null && r.fonte === "calculado" ? "lançado" : r.origem, ating: numerico ? atingimento(valor, meta, ind.sentido) : null,
     fonte: r.fonte, foraCalendario, status_entrega: ap?.status_entrega ?? null, prazoVencido: tipo === "entrega" && r.aval === "off" && ap?.status_entrega !== "atrasada" };
 }
 const competenciaDa = (c: CheckoutReg) => c.conteudo?.kpis_resposta?.find((k:any)=>k.periodo_apontado)?.periodo_apontado??c.semana.slice(0,7);
