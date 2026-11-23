@@ -1,0 +1,10 @@
+CREATE OR REPLACE FUNCTION public.offsite_config_ajustes_20261119c(_conteudo jsonb, _revisao boolean DEFAULT true)
+RETURNS jsonb LANGUAGE sql IMMUTABLE SET search_path = public AS $$
+SELECT _conteudo || jsonb_build_object(
+ 'perguntas', (SELECT jsonb_agg((SELECT jsonb_agg(CASE WHEN p->>'id'='4.3' THEN jsonb_set(p,'{campos}',(SELECT coalesce(jsonb_agg(f ORDER BY f_ord),'[]'::jsonb) FROM jsonb_array_elements(p->'campos') WITH ORDINALITY campos(f,f_ord) WHERE f->>'nome' NOT IN ('Diretriz','KPI'))) ELSE p END ORDER BY p_ord) FROM jsonb_array_elements(bloco) WITH ORDINALITY perguntas(p,p_ord)) ORDER BY b_ord) FROM jsonb_array_elements(_conteudo->'perguntas') WITH ORDINALITY blocos(bloco,b_ord))
+) || CASE WHEN _revisao THEN jsonb_build_object('revisao_config', coalesce((_conteudo->>'revisao_config')::integer,0)+1) ELSE '{}'::jsonb END;
+$$;
+REVOKE ALL ON FUNCTION public.offsite_config_ajustes_20261119c(jsonb, boolean) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.offsite_config_ajustes_20261119c(jsonb, boolean) TO service_role;
+COMMENT ON FUNCTION public.offsite_config_ajustes_20261119c(jsonb, boolean) IS 'Pré-Offsite 19/11/2026: 4.3 sem Diretriz e KPI; aplicada via operação de dados, sem alterar respostas.';
+CREATE OR REPLACE FUNCTION public.offsite_promover(_id uuid,_indice integer) RETURNS uuid LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE r offsite_respostas; v uuid; p jsonb; BEGIN IF NOT offsite_admin() THEN RAISE EXCEPTION 'Sem permissão'; END IF; SELECT * INTO r FROM offsite_respostas WHERE id=_id FOR UPDATE; p:=r.respostas->'4.3'->_indice; IF p IS NULL OR coalesce(p->>'Nome','')='' THEN RAISE EXCEPTION 'Proposta sem nome'; END IF; p:=p-'Diretriz'-'KPI'; INSERT INTO offsite_backlog(resposta_id,proposta_indice,proposta,criado_por) VALUES(_id,_indice,p,auth.uid()) ON CONFLICT(resposta_id,proposta_indice) DO NOTHING; SELECT id INTO v FROM offsite_backlog WHERE resposta_id=_id AND proposta_indice=_indice; RETURN v; END $$;

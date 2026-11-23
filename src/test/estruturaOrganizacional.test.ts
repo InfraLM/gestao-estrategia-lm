@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type Cadeira, filtrarCadeiras, montarArvore, rotuloNivel } from "@/pages/estruturaOrganizacional";
+import { type Cadeira, filtrarCadeiras, montarArvore, rotuloNivel } from "@/features/estrutura/lib/estruturaOrganizacional";
 
 const cadeira = (id: string, campos: Partial<Cadeira> = {}): Cadeira => ({
   id, nome: id, nivel: "diretoria", cadeira_pai_id: null, mt_cadeira_id: null, ocupante_nome: null, pessoa_id: null,

@@ -1,4 +1,4 @@
-import { prefixoPergunta } from './presentation';
+import { prefixoPergunta, rotuloPergunta } from './presentation';
 import { camposProjeto, camposRiscos } from './editorConfig';
 import { PROJETOS_HISTORICOS } from './presentation';
 import { respostasBloco0, bloco0Completo, perguntaPara } from './bloco0';
@@ -7,41 +7,52 @@ import type { Config } from './config';
 import { montarFrase, CAMPOS_DETALHE_32 } from './config';
 export type Respostas=Record<string, any>;
 export const respostaSchema=z.record(z.unknown()).refine(v=>JSON.stringify(v).length<=1000000,'Resposta muito extensa');
+export const produto4CVisivel=(v:any,outro:boolean)=>v&&typeof v==='object'?{...(outro&&v.Nome!==undefined?{Nome:v.Nome}:{}),...(v.Posição!==undefined?{Posição:v.Posição}:{})}:undefined;
+export const detalhe32Visivel=(v:any)=>v&&typeof v==='object'&&v['O que sua área vai fazer']!==undefined?{'O que sua área vai fazer':v['O que sua área vai fazer']}:undefined;
 export const lista=(r:Respostas,k:string):any[]=>Array.isArray(r[k])?r[k]:[];
 export const presente=(v:any):boolean=>Array.isArray(v)?v.length>0&&v.every(presente):v&&typeof v==='object'?Object.values(v).length>0&&Object.values(v).every(presente):v!==undefined&&v!==null&&String(v).trim()!=='';
-export function completude(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[]} {
+export type Falta={id:string;rotulo:string;texto:string};
+/** Campos que nunca contam na completude (mesma regra do bloco0Completo). */
+export const CAMPOS_NAO_CONTAM=['Observação','Comentário','Recurso liberado'];
+export const CAMPOS_OBRIGATORIOS_4B=['Nome','Posição','Status hoje'];
+export const camposObrigatorios=<T extends {nome:string;opcional?:boolean}>(cs?:T[])=>(cs??[]).filter(f=>!f.opcional&&!CAMPOS_NAO_CONTAM.includes(f.nome));
+export type EtapaProgresso={total:number;feitas:number;percentual:number;faltas:Falta[]};
+/** Progresso por etapa: só perguntas/campos obrigatórios e visíveis para o diretor (sem opcionais, "Apenas" de outras cadeiras ou arquivados). */
+export function completudeDetalhada(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[];detalhes:EtapaProgresso[]} {
  r=respostasBloco0(r);
- const avisos:string[]=[];let total=0; const etapas=c.perguntas.map((qs,b)=>{
- const faltas:string[]=[];
- for(const p of qs){ if(b===0){const v=perguntaPara(p,nome??'');if(!v||v.opcional)continue;} total++; let ok=presente(r[p.id]);
- if(p.tipo==='lista'){const rows=lista(r,p.id);ok=rows.length>0&&rows.every(row=>(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(row?.[f.nome])));if(['2.1'].includes(p.id))ok=ok&&rows.length===3;if(p.minimo)ok=ok&&rows.length>=p.minimo;}
- if(p.tipo==='grupo'||p.tipo==='frase')ok=(p.campos??[]).filter(f=>!f.opcional).every(f=>presente(r[p.id]?.[f.nome]));
- if(p.id==='3.2')ok=lista(r,'3.selecionadas').length===3&&c.diretrizes.every(d=>presente(r[`3.pos.${d.id}`]))&&lista(r,'3.selecionadas').every(id=>CAMPOS_DETALHE_32.map(f=>f.nome).every(k=>presente(r[`3.detalhe.${id}`]?.[k])))&&c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])&&!lista(r,'3.selecionadas').includes(d.id)).every(d=>presente(r[`3.ajuste.${d.id}`]));
- if(p.id==='3.3')ok=lista(r,'3.selecionadas').length===3&&lista(r,'3.selecionadas').every(id=>['Objeção mais forte','O que precisa ser verdade','O que sua área vai fazer','KPI','Quanto espera mover em 2027'].every(k=>presente(r[`3.detalhe.${id}`]?.[k])));
- if(p.id==='3.4')ok=c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])&&!lista(r,'3.selecionadas').includes(d.id)).every(d=>presente(r[`3.ajuste.${d.id}`]));
+ const avisos:string[]=[];let total=0; const detalhes:EtapaProgresso[]=[];const etapas=c.perguntas.map((qs,b)=>{
+ const faltas:string[]=[];const pend:Falta[]=[];let tot=0;
+ for(const p0 of qs){ const p=perguntaPara(p0,nome??'');if(!p||p.opcional)continue; total++;tot++; let ok=presente(r[p.id]);
+ if(p.tipo==='lista'){const rows=lista(r,p.id);ok=rows.length>0&&rows.every(row=>camposObrigatorios(p.campos).every(f=>presente(row?.[f.nome])));if(['2.1'].includes(p.id))ok=ok&&rows.length===3;if(p.minimo)ok=ok&&rows.length>=p.minimo;}
+ if(p.tipo==='grupo'||p.tipo==='frase')ok=camposObrigatorios(p.campos).every(f=>presente(r[p.id]?.[f.nome]));
+ if(p.id==='4B')ok=lista(r,'4B').every(row=>CAMPOS_OBRIGATORIOS_4B.every(k=>presente(row?.[k])));
+ if(p.id==='3.2')ok=lista(r,'3.selecionadas').length===3&&c.diretrizes.every(d=>presente(r[`3.pos.${d.id}`]))&&lista(r,'3.selecionadas').every(id=>CAMPOS_DETALHE_32.map(f=>f.nome).every(k=>presente(r[`3.detalhe.${id}`]?.[k])))&&c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])).every(d=>presente(r[`3.ajuste.${d.id}`]));
+ if(p.id==='3.3')ok=lista(r,'3.selecionadas').length===3&&lista(r,'3.selecionadas').every(id=>CAMPOS_DETALHE_32.map(f=>f.nome).every(k=>presente(r[`3.detalhe.${id}`]?.[k])));
+ if(p.id==='3.4')ok=c.diretrizes.filter(d=>['Ajustaria','Discordo'].includes(r[`3.pos.${d.id}`])).every(d=>presente(r[`3.ajuste.${d.id}`]));
  if(p.id==='3.5')ok=presente(r['3.5.texto']);
  if(p.id==='4A')ok=c.projetos.every(d=>camposProjeto(c,d).filter(f=>!f.opcional).every(f=>presente(r[`4A.${d.id}`]?.[f.nome])));
  if(p.id==='4.1')ok=lista(r,'4.1').filter(id=>c.projetos.some(d=>d.id===id)).length===(p.limite??2)&&presente(r['4.1.porque']);
  if(p.id==='4.2')ok=c.projetos.some(d=>d.id===r['4.2'])&&presente(r['4.2.porque']);
- if(p.id==='4C')ok=c.produtos.filter(d=>d.titulo!=='Outro'||presente(r[`4C.${d.id}`]?.Nome)).every(d=>['Posição','Impacto na sua área e o que garantir na transição'].every(k=>presente(r[`4C.${d.id}`]?.[k])));
+ if(p.id==='4C')ok=c.produtos.every(d=>{const v=r[`4C.${d.id}`];return d.titulo==='Outro'&&!presente(v?.Nome)&&!presente(v?.Posição)?true:presente(v?.Posição)&&(d.titulo!=='Outro'||presente(v?.Nome));});
  if(p.id==='5.riscos')ok=c.escolhas.every(d=>camposRiscos(c).filter(f=>!f.opcional).every(f=>presente(r[d.id]?.[f.nome])));
- if(b===0)ok=bloco0Completo(p,r[p.id],nome??'');
- if(!ok)faltas.push(`${prefixoPergunta(p)}${p.titulo??p.texto}`);
+ if(b===0)ok=bloco0Completo(p0,r[p.id],nome??'');
+ if(!ok){faltas.push(`${prefixoPergunta(p)}${p.titulo??p.texto}`);pend.push({id:p.id,rotulo:p.id==='5.riscos'?(p.rotulo??'Riscos'):rotuloPergunta(p),texto:p.titulo??p.texto});}
  }
- avisos.push(...faltas);return faltas.length===0;
+ avisos.push(...faltas);detalhes.push({total:tot,feitas:tot-pend.length,percentual:tot?Math.round((tot-pend.length)/tot*100):100,faltas:pend});return faltas.length===0;
  });
  const percentual=Object.keys(r).length?Math.round((total-avisos.length)/total*100):0;
- for(const [i,p] of lista(r,'4.3').entries())if(custoDiverge(p))avisos.push(`4.3 · Proposta ${i+1}: soma dos trimestres difere do custo total.`);
- return{percentual,etapas,avisos};
+ return{percentual,etapas,avisos,detalhes};
 }
+export function completude(r:Respostas,c:Config,nome?:string):{percentual:number;etapas:boolean[];avisos:string[]}{const {percentual,etapas,avisos}=completudeDetalhada(r,c,nome);return{percentual,etapas,avisos};}
 export function numero(v:any):number{if(typeof v==='number')return v;const s=String(v??'').replace(/R\$\s?/g,'').trim();return Number(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s)||0;}
-export const custoDiverge=(p:Record<string,any>)=>Math.abs(['T1','T2','T3','T4'].reduce((s,k)=>s+numero(p[k]),0)-numero(p['Custo total']))>0.01;
+/** 4.3 sem T1–T4, Diretriz e KPI: respostas antigas nesses campos ficam guardadas, só não são exibidas. */
+export const semTrimestres=(p:any)=>{if(!p||typeof p!=='object')return p;const {T1,T2,T3,T4,Diretriz,KPI,...rest}=p;return rest;};
 export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
  r=respostasBloco0(r);
  const d:{titulo:string;dados:any}[]=[];
- const discordas=c.diretrizes.filter(x=>r[`3.pos.${x.id}`]==='Discordo');if(discordas.length)d.push({titulo:'1 · Diretrizes em discordância e indicadores',dados:discordas.map(x=>({diretriz:x.titulo,detalhes:r[`3.detalhe.${x.id}`],ajuste:r[`3.ajuste.${x.id}`]}))});
- d.push({titulo:'2 · Arquitetura do portfólio, mix de pagamento e working money',dados:{'5.7':r['5.7'],'5.1':r['5.1'],'5.4':r['5.4']}});
- d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Adia','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...r[`4C.${x.id}`]}))}});
+ const discordas=c.diretrizes.filter(x=>['Discordo','Ajustaria'].includes(r[`3.pos.${x.id}`]));if(discordas.length)d.push({titulo:'1 · Diretrizes marcadas como Discordo ou Ajustaria e o ajuste proposto',dados:discordas.map(x=>({diretriz:x.titulo,posicao:r[`3.pos.${x.id}`],...(detalhe32Visivel(r[`3.detalhe.${x.id}`])?{detalhes:detalhe32Visivel(r[`3.detalhe.${x.id}`])}:{}),[rotuloAjuste32(r[`3.pos.${x.id}`])]:r[`3.ajuste.${x.id}`]}))});
+ d.push({titulo:'2 · Arquitetura do portfólio e mix de pagamento',dados:{'5.7':r['5.7'],'5.1':r['5.1']}});
+ d.push({titulo:'3 · Programas do 4B a encerrar ou ajustar e produtos fora do núcleo',dados:{andamento:lista(r,'4B').filter(x=>['Ajusta escopo','Adia','Encerra'].includes(x?.['Posição'])),produtos:c.produtos.map(x=>({item:x.titulo,...produto4CVisivel(r[`4C.${x.id}`],x.titulo==='Outro')}))}});
  if(c.perguntas[6]?.some(p=>p.id==='6.1'))d.push({titulo:'4 · Reação ao mandato e decisões fora da alçada',dados:{'6.1':r['6.1'],'0.18':r['0.18']}});else d.push({titulo:'4 · Decisões paradas ou tomadas fora da alçada',dados:{'0.18':r['0.18']}});
  d.push({titulo:'5 · Novas frentes e funções',dados:{'0.3':r['0.3']}});
  d.push({titulo:'6 · Processos críticos e estruturantes, lacunas de competência e estrutura, lideranças dependentes e pontos de parada',dados:{'0.6':r['0.6'],'0.2':r['0.2'],'0.1':r['0.1'],'0.3':r['0.3'],'0.4':r['0.4'],'0.7':r['0.7']}});return d;
@@ -49,11 +60,13 @@ export function divergencias(r:Respostas,c:Config):{titulo:string;dados:any}[]{
 export const moeda=(v:any)=>numero(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 export function resumoResposta(r:Respostas,p:string,c:Config):any{
  if(p.startsWith('0.')){const v=respostasBloco0(r)[p];return p==='0.17'&&v?montarFrase(v):v;}
- if(p==='3.2')return c.diretrizes.map(d=>({Diretriz:d.titulo,Posição:r[`3.pos.${d.id}`]??'',Prioritária:lista(r,'3.selecionadas').includes(d.id),...(lista(r,'3.selecionadas').includes(d.id)?r[`3.detalhe.${d.id}`]??{}:{}),...(r[`3.ajuste.${d.id}`]?{Ajuste:r[`3.ajuste.${d.id}`]}:{})}));
- if(p==='3.3')return lista(r,'3.selecionadas').map(id=>({Diretriz:c.diretrizes.find(d=>d.id===id)?.titulo,...r[`3.detalhe.${id}`]}));
- if(p==='3.4')return c.diretrizes.filter(d=>r[`3.ajuste.${d.id}`]).map(d=>({Diretriz:d.titulo,Ajuste:r[`3.ajuste.${d.id}`]}));
+ if(p==='3.2')return c.diretrizes.map(d=>({Diretriz:d.titulo,Posição:r[`3.pos.${d.id}`]??'',Prioritária:lista(r,'3.selecionadas').includes(d.id),...(lista(r,'3.selecionadas').includes(d.id)?detalhe32Visivel(r[`3.detalhe.${d.id}`])??{}:{}),...(r[`3.ajuste.${d.id}`]?{[rotuloAjuste32(r[`3.pos.${d.id}`])]:r[`3.ajuste.${d.id}`]}:{})}));
+ if(p==='3.3')return lista(r,'3.selecionadas').map(id=>({Diretriz:c.diretrizes.find(d=>d.id===id)?.titulo,...detalhe32Visivel(r[`3.detalhe.${id}`])}));
+ if(p==='3.4')return c.diretrizes.filter(d=>r[`3.ajuste.${d.id}`]).map(d=>({Diretriz:d.titulo,[rotuloAjuste32(r[`3.pos.${d.id}`])]:r[`3.ajuste.${d.id}`]}));
  if(p==='3.5')return{Objetivos:r['3.5.objetivos'],Texto:r['3.5.texto']};
- if(['4A','4C'].includes(p)){const items=p==='4A'?[...c.projetos,...PROJETOS_HISTORICOS.filter(d=>r[`4A.${d.id}`])]:c.produtos;return items.map(d=>({Item:d.titulo,...(p==='4A'&&PROJETOS_HISTORICOS.some(h=>h.id===d.id)?{Registro:'Histórico — removido do formulário'}:{}),...r[`${p}.${d.id}`]}));}
+ if(p==='4C')return c.produtos.map(d=>({Item:d.titulo,...produto4CVisivel(r[`4C.${d.id}`],d.titulo==='Outro')}));
+ if(['4A'].includes(p)){const items=p==='4A'?[...c.projetos,...PROJETOS_HISTORICOS.filter(d=>r[`4A.${d.id}`])]:c.produtos;return items.map(d=>({Item:d.titulo,...(p==='4A'&&PROJETOS_HISTORICOS.some(h=>h.id===d.id)?{Registro:'Histórico — removido do formulário'}:{}),...r[`${p}.${d.id}`]}));}
+ if(p==='4.3')return lista(r,'4.3').map(semTrimestres);
  if(p==='4.1'||p==='4.2')return{Seleção:r[p],Justificativa:r[`${p}.porque`]};
  if(p==='5.riscos')return c.escolhas.map(d=>({Escolha:d.titulo,...r[d.id]}));return r[p];
 }
@@ -71,4 +84,14 @@ export type Item4B={diretor:string;cadeira_id:string;Nome:string;Posição:strin
 export function itens4B(rs:{nome:string;cadeira_id:string;respostas:Respostas}[]):Item4B[]{
  const itens=rs.flatMap(r=>lista(r.respostas,'4B').filter(x=>presente(x?.Nome)).map(x=>({diretor:r.nome,cadeira_id:r.cadeira_id,Nome:String(x.Nome),Posição:x['Posição']??'','Status hoje':x['Status hoje']??'',Retorno:x.Retorno??'','Esforço/capital':x['Esforço/capital']??'','Recurso liberado':numero(x['Recurso liberado']),Comentário:x['Comentário']??'',duplicado:false,n:normalizarNome(x.Nome)})));
  return itens.map(i=>{const{n,...rest}=i;return{...rest,duplicado:itens.some(o=>o!==i&&o.cadeira_id!==i.cadeira_id&&parecido(n,o.n))};});
+}
+
+export const rotuloAjuste32=(pos:unknown)=>pos==='Discordo'?'Motivo da discordância':'Ajuste';
+export const tituloAjuste32=(pos:unknown)=>pos==='Discordo'?'Por que você discorda? O que proporia no lugar?':'Qual o ajuste?';
+
+/** Situação exibida; não altera o status persistido nem a permissão de edição. */
+export function situacaoResposta(r: {status:string} | null | undefined, percentual:number):string {
+ if(!r)return 'Não iniciado';
+ if(r.status==='enviado')return 'Enviado';
+ return percentual===100?'Concluído':'Em andamento';
 }

@@ -1939,6 +1939,90 @@ export type Database = {
         }
         Relationships: []
       }
+      ia_limite_parametros: {
+        Row: {
+          atualizado_em: string
+          email_alerta: string
+          id: number
+          teto_base: number
+          teto_extra: number
+        }
+        Insert: {
+          atualizado_em?: string
+          email_alerta?: string
+          id?: number
+          teto_base?: number
+          teto_extra?: number
+        }
+        Update: {
+          atualizado_em?: string
+          email_alerta?: string
+          id?: number
+          teto_base?: number
+          teto_extra?: number
+        }
+        Relationships: []
+      }
+      ia_uso_alertas: {
+        Row: {
+          chamadas: number
+          criado_em: string
+          dia: string
+          envio_erro: string | null
+          envio_status: string
+          funcao: string
+          id: string
+          tipo: string
+          user_id: string
+        }
+        Insert: {
+          chamadas: number
+          criado_em?: string
+          dia: string
+          envio_erro?: string | null
+          envio_status?: string
+          funcao: string
+          id?: string
+          tipo: string
+          user_id: string
+        }
+        Update: {
+          chamadas?: number
+          criado_em?: string
+          dia?: string
+          envio_erro?: string | null
+          envio_status?: string
+          funcao?: string
+          id?: string
+          tipo?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ia_uso_diario: {
+        Row: {
+          atualizado_em: string
+          chamadas: number
+          dia: string
+          teto_do_dia: number
+          user_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          chamadas?: number
+          dia: string
+          teto_do_dia: number
+          user_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          chamadas?: number
+          dia?: string
+          teto_do_dia?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       incentivo_metas: {
         Row: {
           created_at: string
@@ -5497,6 +5581,78 @@ export type Database = {
         }
         Relationships: []
       }
+      qw_convites_email: {
+        Row: {
+          ciclo_id: string
+          email: string
+          enviado_em: string
+          enviado_por: string | null
+          id: string
+          lider_id: string | null
+          provedor_id: string | null
+        }
+        Insert: {
+          ciclo_id: string
+          email: string
+          enviado_em?: string
+          enviado_por?: string | null
+          id?: string
+          lider_id?: string | null
+          provedor_id?: string | null
+        }
+        Update: {
+          ciclo_id?: string
+          email?: string
+          enviado_em?: string
+          enviado_por?: string | null
+          id?: string
+          lider_id?: string | null
+          provedor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qw_convites_email_ciclo_id_fkey"
+            columns: ["ciclo_id"]
+            isOneToOne: false
+            referencedRelation: "qw_ciclos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qw_convites_email_lider_id_fkey"
+            columns: ["lider_id"]
+            isOneToOne: false
+            referencedRelation: "qw_lideres"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qw_envio_lista: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          atualizado_por: string | null
+          diretoria: string | null
+          email: string
+          nome: string
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          atualizado_por?: string | null
+          diretoria?: string | null
+          email: string
+          nome: string
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          atualizado_por?: string | null
+          diretoria?: string | null
+          email?: string
+          nome?: string
+        }
+        Relationships: []
+      }
       qw_envios: {
         Row: {
           aguardando_diretor: boolean
@@ -5556,6 +5712,10 @@ export type Database = {
           created_at: string
           envio_id: string
           faixa_investimento: string
+          ice_confianca: number | null
+          ice_facilidade: number | null
+          ice_impacto: number | null
+          ice_score: number | null
           id: string
           indicador: string
           investimento_estimado: string | null
@@ -5568,6 +5728,7 @@ export type Database = {
           resultado_medido: string | null
           status_execucao: string
           status_triagem: string
+          tem_custo: boolean | null
           titulo: string
           triado_em: string | null
           triado_por: string | null
@@ -5585,6 +5746,10 @@ export type Database = {
           created_at?: string
           envio_id: string
           faixa_investimento?: string
+          ice_confianca?: number | null
+          ice_facilidade?: number | null
+          ice_impacto?: number | null
+          ice_score?: number | null
           id?: string
           indicador?: string
           investimento_estimado?: string | null
@@ -5597,6 +5762,7 @@ export type Database = {
           resultado_medido?: string | null
           status_execucao?: string
           status_triagem?: string
+          tem_custo?: boolean | null
           titulo?: string
           triado_em?: string | null
           triado_por?: string | null
@@ -5614,6 +5780,10 @@ export type Database = {
           created_at?: string
           envio_id?: string
           faixa_investimento?: string
+          ice_confianca?: number | null
+          ice_facilidade?: number | null
+          ice_impacto?: number | null
+          ice_score?: number | null
           id?: string
           indicador?: string
           investimento_estimado?: string | null
@@ -5626,6 +5796,7 @@ export type Database = {
           resultado_medido?: string | null
           status_execucao?: string
           status_triagem?: string
+          tem_custo?: boolean | null
           titulo?: string
           triado_em?: string | null
           triado_por?: string | null
@@ -6835,6 +7006,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      ia_registrar_uso: { Args: { _funcao: string }; Returns: Json }
       is_admin_of_modulo: {
         Args: { _modulo: string; _user_id: string }
         Returns: boolean
@@ -7024,6 +7196,22 @@ export type Database = {
       offsite_acesso: { Args: never; Returns: Json }
       offsite_admin: { Args: never; Returns: boolean }
       offsite_cadeira: { Args: never; Returns: string }
+      offsite_config_ajustes_20261118: {
+        Args: { _conteudo: Json }
+        Returns: Json
+      }
+      offsite_config_ajustes_20261119: {
+        Args: { _conteudo: Json }
+        Returns: Json
+      }
+      offsite_config_ajustes_20261119b: {
+        Args: { _conteudo: Json; _revisao?: boolean }
+        Returns: Json
+      }
+      offsite_config_ajustes_20261119c: {
+        Args: { _conteudo: Json; _revisao?: boolean }
+        Returns: Json
+      }
       offsite_config_publicar: {
         Args: { _base: string; _conteudo: Json; _respostas?: Json }
         Returns: string
@@ -7270,6 +7458,7 @@ export type Database = {
       qw_email_chave: { Args: { _email: string }; Returns: string }
       qw_enviar: { Args: { _envio: string }; Returns: undefined }
       qw_envio_aguarda: { Args: { _envio: string }; Returns: boolean }
+      qw_envio_lista_salvar: { Args: { _itens: Json }; Returns: number }
       qw_fechar_ciclo: { Args: { _id: string }; Returns: undefined }
       qw_gov: { Args: { _uid: string }; Returns: boolean }
       qw_lider_ativar: {
@@ -7586,6 +7775,8 @@ export type Database = {
       }
       socios_vincular: { Args: never; Returns: undefined }
       status_report_pode_arquivo: { Args: { _name: string }; Returns: boolean }
+      usuario_liberado: { Args: { _uid: string }; Returns: boolean }
+      usuario_liberado_geral: { Args: { _uid: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "pmo" | "viewer" | "super_admin"

@@ -1,3 +1,5 @@
+import { registrarUsoIa } from "../_shared/limiteIa.ts";
+import { exigirContaLiberada } from "../_shared/autorizacaoIa.ts";
 // Edge function: analisa um Business Case com base no framework ScoreCard LM
 // e retorna gate (saudavel/condicional/bloqueado) + análise detalhada por dimensão.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -94,6 +96,10 @@ filial LM SP, Faculty Cloud, SVST, P04 Angola Pós Online.
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const negado = await exigirContaLiberada(req, corsHeaders);
+  if (negado) return negado;
+  const limite = await registrarUsoIa(req, "bc-scorecard-analisar", corsHeaders);
+  if (limite) return limite;
 
   try {
     const { submissao_id } = await req.json();

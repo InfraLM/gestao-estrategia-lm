@@ -9,9 +9,9 @@ describe('3.2 absorve 3.3/3.4 e nova 4A', () => {
     expect(ids).toContain('3.2'); expect(ids).not.toContain('3.3'); expect(ids).not.toContain('3.4');
   });
   it('resumo da 3.2 traz detalhe das escolhidas e ajuste', () => {
-    const r = { '3.selecionadas': ['1'], '3.pos.1': 'Concordo', '3.detalhe.1': { 'Objeção mais forte': 'x' }, '3.pos.2': 'Discordo', '3.ajuste.2': 'y' };
+    const r = { '3.selecionadas': ['1'], '3.pos.1': 'Concordo', '3.detalhe.1': { 'O que sua área vai fazer': 'x' }, '3.pos.2': 'Discordo', '3.ajuste.2': 'y' };
     const linhas = resumoResposta(r, '3.2', PADRAO);
-    expect(linhas[0]['Objeção mais forte']).toBe('x'); expect(linhas[1].Ajuste).toBe('y');
+    expect(linhas[0]['O que sua área vai fazer']).toBe('x'); expect(linhas[1]['Motivo da discordância']).toBe('y');
   });
   it('4A tem os cinco campos novos, com Impacto mantido e sinal opcional', () => {
     expect(CAMPOS_4A.map(f => f.nome)).toEqual(['Impacto', 'Premissa', 'Motivo provável', 'O que a área entrega ou cede', 'Sinal em 90 dias']);

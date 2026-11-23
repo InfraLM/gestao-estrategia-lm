@@ -764,6 +764,132 @@
       "when": 1794343076318,
       "tag": "0108_fix_departamentos_insert_repositorio_read",
       "breakpoints": true
+    },
+    {
+      "idx": 109,
+      "version": "7",
+      "when": 1794927352098,
+      "tag": "0109_quick_wins_tabela_ice",
+      "breakpoints": true
+    },
+    {
+      "idx": 110,
+      "version": "7",
+      "when": 1794927638865,
+      "tag": "0110_quick_wins_sem_triagem",
+      "breakpoints": true
+    },
+    {
+      "idx": 111,
+      "version": "7",
+      "when": 1794928376584,
+      "tag": "0111_acesso_fechado_contas_sem_cadastro",
+      "breakpoints": true
+    },
+    {
+      "idx": 112,
+      "version": "7",
+      "when": 1794928414903,
+      "tag": "0112_acesso_geral_separado_socios",
+      "breakpoints": true
+    },
+    {
+      "idx": 113,
+      "version": "7",
+      "when": 1794937634277,
+      "tag": "0113_quick_wins_custo_opcional",
+      "breakpoints": true
+    },
+    {
+      "idx": 114,
+      "version": "7",
+      "when": 1794938414954,
+      "tag": "0114_acesso_modulo_fechado_padrao",
+      "breakpoints": true
+    },
+    {
+      "idx": 115,
+      "version": "7",
+      "when": 1794938422960,
+      "tag": "0115_mt_auditoria_governanca",
+      "breakpoints": true
+    },
+    {
+      "idx": 116,
+      "version": "7",
+      "when": 1794946107827,
+      "tag": "0116_storage_leitura_vinculada_dono",
+      "breakpoints": true
+    },
+    {
+      "idx": 117,
+      "version": "7",
+      "when": 1794946337691,
+      "tag": "0117_storage_envio_vinculado_dono",
+      "breakpoints": true
+    },
+    {
+      "idx": 118,
+      "version": "7",
+      "when": 1794946911610,
+      "tag": "0118_ia_limite_diario",
+      "breakpoints": true
+    },
+    {
+      "idx": 119,
+      "version": "7",
+      "when": 1794947865313,
+      "tag": "0119_quick_wins_convite_email",
+      "breakpoints": true
+    },
+    {
+      "idx": 120,
+      "version": "7",
+      "when": 1794949329717,
+      "tag": "0120_quick_wins_lista_envio",
+      "breakpoints": true
+    },
+    {
+      "idx": 121,
+      "version": "7",
+      "when": 1794949737123,
+      "tag": "0121_quick_wins_convite_email",
+      "breakpoints": true
+    },
+    {
+      "idx": 122,
+      "version": "7",
+      "when": 1795045861220,
+      "tag": "0122_pre_offsite_ajustes_54_43_4c",
+      "breakpoints": true
+    },
+    {
+      "idx": 123,
+      "version": "7",
+      "when": 1795047295181,
+      "tag": "0123_pre_offsite_ajuste_32_detalhe",
+      "breakpoints": true
+    },
+    {
+      "idx": 124,
+      "version": "7",
+      "when": 1795048897617,
+      "tag": "0124_pre_offsite_43_sem_trimestres",
+      "breakpoints": true
+    },
+    {
+      "idx": 125,
+      "version": "7",
+      "when": 1795051164400,
+      "tag": "0125_pre_offsite_43_sem_diretriz_kpi",
+      "breakpoints": true
+    },
+    {
+      "idx": 126,
+      "version": "7",
+      "when": 1795095889207,
+      "tag": "0126_offsite_salvar_sem_62_lista",
+      "breakpoints": true
     }
   ]
 }

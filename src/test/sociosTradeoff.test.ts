@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calcularEixos, posicionamento, tensoes, validarEnvio, objetivosSugeridos, prazoAberto, pontosProjeto, statusExibido, compararSocios, normalizar, diretrizesSugeridas, escolhas, respostasAbertas } from "@/lib/sociosTradeoff";
+import { calcularEixos, posicionamento, tensoes, validarEnvio, objetivosSugeridos, prazoAberto, pontosProjeto, statusExibido, compararSocios, normalizar, diretrizesSugeridas, escolhas, respostasAbertas } from "@/features/socios/lib/sociosTradeoff";
 
 const rank = (...it: string[]) => ({ invest: it, invest_ok: true });
 

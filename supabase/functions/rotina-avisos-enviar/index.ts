@@ -1,15 +1,15 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { EMAIL_VALIDO, montarEnvio, REMETENTE_NOME_PADRAO, tokenValido, type TipoFila } from "./email.ts";
-import { credencialGmail, enviarGmail, ErroEnvio } from "./gmail.ts";
+import { EMAIL_VALIDO, montarConviteQuickWins, montarEnvio, tokenValido, type DadosEmail, type TipoFila } from "./email.ts";
+import { enviarEmail, ErroEnvio, REMETENTE_EMAIL } from "../_shared/enviarEmail.ts";
 
-// Weekly check-in/checkout e-mails (and assigned-impediment notices) through the Gmail API (Google Workspace).
+// Weekly check-in/checkout e-mails (and assigned-impediment notices) through Lovable Emails (notifylv.liberdademedicaedu.com.br).
 // - x-cron-token (pg_net wake on enqueue; 10-minute retry cron only while rows are pending): delivers the queue.
 // - Governança JWT + {acao:"configurar"}: registers this endpoint for the wake and marks the sender ready (audited).
 // - Governança JWT + {acao:"processar"}: delivers the queue on demand.
 // Rows are claimed/finished only through service-role RPCs: one row per claim, max 3 attempts, 14-day expiry.
 const MAX_POR_EXECUCAO = 100;
-const PAUSA_MS = 300; // gentle pacing for the Gmail API
+const PAUSA_MS = 300; // gentle pacing
 
 type Fila = { id: string; tipo: TipoFila; ciclo: string; nome: string; destinatario: string; pendencias: Record<string, unknown> | null; tentativas: number };
 
@@ -22,18 +22,15 @@ Deno.serve(async req => {
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const cronToken = Deno.env.get("ROTINA_AVISOS_CRON_TOKEN");
-  const remetente = { nome: Deno.env.get("GMAIL_REMETENTE_NOME") || REMETENTE_NOME_PADRAO, email: (Deno.env.get("GMAIL_REMETENTE") ?? "").trim().toLowerCase() };
-  let credencial: ReturnType<typeof credencialGmail> = null;
-  let erroCredencial = "";
-  try { credencial = credencialGmail(k => Deno.env.get(k)); } catch (e) { erroCredencial = String((e as Error).message); }
-  const faltaGmail = () => erroCredencial || (!credencial ? "Cadastre GMAIL_SERVICE_ACCOUNT_JSON (ou GMAIL_CLIENT_ID/SECRET/REFRESH_TOKEN)" : !EMAIL_VALIDO.test(remetente.email) ? "Cadastre GMAIL_REMETENTE (caixa que envia)" : "");
+  const faltaEnvio = () => (Deno.env.get("LOVABLE_API_KEY") ? "" : "Envio de e-mails indisponível (LOVABLE_API_KEY ausente)");
   if (!url || !anonKey || !serviceKey) return out({ error: "Configuração ausente" }, 503);
   const db = createClient(url, serviceKey, { auth: { persistSession: false } });
 
-  const enviar = async (para: string, m: { subject: string; text: string; html: string }) => {
-    const falta = faltaGmail();
-    if (falta || !credencial) throw new ErroEnvio(falta, false);
-    return await enviarGmail(credencial, remetente, para, m);
+  const enviar = async (modelo: string, para: string, dados: DadosEmail, chave: string) => {
+    const falta = faltaEnvio();
+    if (falta) throw new ErroEnvio(falta, false);
+    await enviarEmail(modelo, para, dados, chave);
+    return "";
   };
 
   const processar = async () => {
@@ -49,7 +46,7 @@ Deno.serve(async req => {
         let ok = false, provedorId = "", erro = "", temporaria = false;
         try {
           if (!EMAIL_VALIDO.test(e.destinatario ?? "")) throw new ErroEnvio("Destinatário sem e-mail válido", false);
-          provedorId = await enviar(e.destinatario, montarEnvio(e));
+          provedorId = await enviar(e.tipo === "impedimento" ? "impedimento-recebido" : "aviso-ciclo", e.destinatario, montarEnvio(e).dados, `aviso-${e.id}`);
           ok = true;
         } catch (err) {
           erro = String((err as Error).message ?? err).slice(0, 500);
@@ -87,15 +84,66 @@ Deno.serve(async req => {
   if (!gov) return out({ error: "Sem permissão: somente a Governança" }, 403);
 
   if (acao === "configurar") {
-    if (faltaGmail()) return out({ error: faltaGmail() }, 503);
+    if (faltaEnvio()) return out({ error: faltaEnvio() }, 503);
     if (!cronToken || cronToken.length < 32) return out({ error: "Cadastre o secret ROTINA_AVISOS_CRON_TOKEN (mín. 32 caracteres)" }, 503);
-    const { error } = await db.rpc("rotina_avisos_remetente_configurar", { _token: cronToken, _url: `${url}/functions/v1/rotina-avisos-enviar`, _uid: uid, _remetente: remetente.email });
+    const { error } = await db.rpc("rotina_avisos_remetente_configurar", { _token: cronToken, _url: `${url}/functions/v1/rotina-avisos-enviar`, _uid: uid, _remetente: REMETENTE_EMAIL });
     if (error) return out({ error: "Não foi possível conectar o remetente" }, 500);
-    return out({ ok: true, remetente: remetente.email });
+    return out({ ok: true, remetente: REMETENTE_EMAIL });
   }
 
   if (acao === "processar") {
     try { return out({ ok: true, ...(await processar()) }); } catch { return out({ ok: false, error: "Falha ao processar a fila" }, 500); }
+  }
+
+  // Quick Wins invitation (Governança). modo "teste": up to 5 corporate addresses, nothing recorded.
+  // modo "lideres": every active e-mail of the "Envio Quick Wins" list (qw_envio_lista), once per cycle (qw_convites_email).
+  if (acao === "qw_convite") {
+    const falta = faltaEnvio();
+    if (falta) return out({ error: falta }, 503);
+    const { data: ciclo } = await db.from("qw_ciclos").select("id,ano,data_fechamento,status").eq("status", "aberto").order("ano", { ascending: false }).limit(1).maybeSingle();
+    const modo = String(body?.modo ?? "");
+    if (modo === "teste") {
+      const para = Array.isArray(body?.para) ? [...new Set((body.para as unknown[]).map(e => String(e ?? "").trim().toLowerCase()).filter(Boolean))] : [];
+      if (!para.length || para.length > 5 || para.some(e => !EMAIL_VALIDO.test(e) || !e.endsWith("@liberdademedicaedu.com.br"))) return out({ error: "Informe de 1 a 5 e-mails @liberdademedicaedu.com.br" }, 400);
+      const m = montarConviteQuickWins({ ano: ciclo?.ano ?? new Date().getFullYear(), prazo: ciclo?.data_fechamento ?? null, teste: true });
+      const resultado: { para: string; ok: boolean; erro?: string }[] = [];
+      for (const e of para) {
+        try { await enviar("convite-quick-wins", e, m.dados, `qw-teste-${crypto.randomUUID()}`); resultado.push({ para: e, ok: true }); } catch (err) { resultado.push({ para: e, ok: false, erro: String((err as Error).message).slice(0, 300) }); }
+        await new Promise(r => setTimeout(r, PAUSA_MS));
+      }
+      return out({ ok: resultado.every(r => r.ok), resultado });
+    }
+    if (modo === "lideres") {
+      if (!ciclo) return out({ error: "Abra o ciclo de Quick Wins antes de enviar o convite" }, 409);
+      // Recipients = the "Envio Quick Wins" list (Governance-curated), once per e-mail per cycle.
+      const [{ data: lista, error: e1 }, { data: feitos, error: e2 }, { data: lideres }] = await Promise.all([
+        db.from("qw_envio_lista").select("email,nome").eq("ativo", true),
+        db.from("qw_convites_email").select("email").eq("ciclo_id", ciclo.id),
+        db.from("qw_lideres").select("id,email"),
+      ]);
+      if (e1 || e2) return out({ error: "Não foi possível carregar a lista Envio Quick Wins" }, 500);
+      const ja = new Set((feitos ?? []).map((f: { email: string }) => f.email.toLowerCase()));
+      const liderPorEmail = new Map(((lideres ?? []) as { id: string; email: string }[]).map(l => [l.email.trim().toLowerCase(), l.id]));
+      const m = montarConviteQuickWins({ ano: ciclo.ano, prazo: ciclo.data_fechamento });
+      let enviados = 0; const falhas: { nome: string; erro: string }[] = [];
+      for (const l of (lista ?? []) as { email: string; nome: string }[]) {
+        const email = l.email.trim().toLowerCase();
+        if (ja.has(email)) continue;
+        try {
+          if (!EMAIL_VALIDO.test(email)) throw new Error("E-mail inválido");
+          const id = await enviar("convite-quick-wins", email, m.dados, `qw-convite-${ciclo.id}-${email}`);
+          enviados++;
+          const { error: eReg } = await db.from("qw_convites_email").insert({ ciclo_id: ciclo.id, lider_id: liderPorEmail.get(email) ?? null, email, provedor_id: id || null, enviado_por: uid });
+          if (eReg) falhas.push({ nome: l.nome, erro: "E-mail enviado, mas não registrado (pode ser reenviado)" });
+        } catch (err) {
+          falhas.push({ nome: l.nome, erro: String((err as Error).message).slice(0, 200) });
+          if (err instanceof ErroEnvio && err.temporaria) break;
+        }
+        await new Promise(r => setTimeout(r, PAUSA_MS));
+      }
+      return out({ ok: !falhas.length, enviados, ja_enviados: ja.size, falhas });
+    }
+    return out({ error: "Modo inválido" }, 400);
   }
 
   return out({ error: "Ação inválida" }, 400);

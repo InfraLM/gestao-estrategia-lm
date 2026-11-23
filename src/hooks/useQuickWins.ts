@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
-export type QwPerfil = { lider_id: string | null; lider_restrito: boolean; diretor: boolean; governanca: boolean; gov_ceo: boolean };
+export type QwPerfil = { lider_id: string | null; liberado?: boolean; acesso_geral?: boolean; lider_restrito: boolean; diretor: boolean; governanca: boolean; gov_ceo: boolean };
 
 /** Perfil do usuário no Quick Wins, calculado no servidor (também vincula o líder pelo e-mail verificado). */
 export function useQwPerfil() {

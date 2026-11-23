@@ -1,3 +1,4 @@
+import { registrarUsoIa } from "../_shared/limiteIa.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { streamText, Output, APICallError } from 'npm:ai@6';
@@ -23,6 +24,8 @@ Deno.serve(async req => {
     if (authError || !auth.user) return resposta({ error: 'Faça login.' }, 401);
     const { data: permitido, error: permError } = await sb.rpc('proj_gov_ou_ceo', { _uid: auth.user.id });
     if (permError || !permitido) return resposta({ error: 'Somente Governança e CEO.' }, 403);
+    const limite = await registrarUsoIa(req, 'estrategia-sugerir', corsHeaders);
+    if (limite) return limite;
     const parsed = bodySchema.safeParse(await req.json());
     if (!parsed.success) return resposta({ error: 'Pedido inválido.' }, 400);
     const { modo, novamente, fontes: solicitadas } = parsed.data;

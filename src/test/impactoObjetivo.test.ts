@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { estaAtrasado, resumoImpacto, ItemImpacto } from "@/lib/impactoObjetivo";
+import { estaAtrasado, resumoImpacto, ItemImpacto } from "@/features/estrategia/lib/impactoObjetivo";
 
 const it_ = (p: Partial<ItemImpacto>): ItemImpacto => ({ id: "1", titulo: "x", origem: "ata", status: "Em andamento", prazo: "2026-10-01", responsavel: null, cadeira: null, ...p });
 

@@ -173,6 +173,7 @@ export default function AppLayout() {
   const access = useModuleAccess();
   const isAdmin = access.isSuperAdmin || access.roles.includes("admin");
   const visibleGroups = [...navGroups, ...(isAdmin ? [integracoesGroup] : [])].map(group => ({ ...group, children: group.children.filter(child => {
+    if (access.acessoPendente) return false;
     if (access.liderRestrito) return child.to === "/quick-wins";
     const module = moduleForPath(child.to);
     return !module || access.canAccessPath(module, child.to);

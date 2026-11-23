@@ -14,7 +14,7 @@ export function cronSemanal(dia: number, hora: string) {
   return `${m} ${utc % 24} * * ${(dia + Math.floor(utc / 24)) % 7}`;
 }
 export const podeReceberAviso = (d: DestinatarioAviso, tipo: "abertura" | "lembrete" | "manual") => !d.motivo && (tipo === "abertura" || !d.enviado);
-/** Same template the Gmail worker sends, so the Governance preview matches the real e-mail. */
+/** Same content the e-mail worker sends, so the Governance preview matches the real e-mail. */
 export function mensagemAviso(d: DestinatarioAviso, ciclo: string, tipo: "abertura" | "lembrete" | "manual" = "abertura") {
   if (!semanaLink(ciclo)) throw new Error("Ciclo inválido");
   return montarEmail({ nome: d.nome, ciclo, tipo, pendencias: d.pendencias });

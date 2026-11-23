@@ -268,3 +268,13 @@
 .offsite-table-scroll { position: relative; overflow: auto; contain: layout paint; }
 .offsite-form section[id] { scroll-margin-top: 14rem; }
 @media(max-width:639px) { .offsite-form section[id] { scroll-margin-top: 25rem; } }
+.offsite-form [id^="offsite-"] { scroll-margin-top: calc(var(--offsite-nav-h, 8rem) + 1rem); }
+.offsite-destaque { outline: 3px solid hsl(var(--primary)); outline-offset: 6px; border-radius: .5rem; transition: outline-color .3s; }
+@media print {
+  body * { visibility: hidden; }
+  .offsite-print, .offsite-print * { visibility: visible; }
+  .offsite-print { position: absolute; left: 0; top: 0; width: 100%; }
+  .offsite-print .no-print, .offsite-print .offsite-nav, .offsite-print .offsite-footer { display: none !important; }
+  .offsite-print .offsite-form { padding: 0; max-width: none; }
+  .offsite-print section, .offsite-print .offsite-question { break-inside: avoid-page; }
+}
