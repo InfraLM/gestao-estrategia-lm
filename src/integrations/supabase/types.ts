@@ -6918,6 +6918,10 @@ export type Database = {
         Args: { _editar?: boolean; _modulo: string; _uid: string }
         Returns: boolean
       }
+      acesso_proprio: {
+        Args: { _modulo: string; _uid: string }
+        Returns: boolean
+      }
       can_review_modulo: {
         Args: { _modulo: string; _user_id: string }
         Returns: boolean
@@ -7245,6 +7249,10 @@ export type Database = {
       }
       okr_diretor_da_cadeira: {
         Args: { _cadeira: string; _uid: string }
+        Returns: boolean
+      }
+      okr_kr_proprio: {
+        Args: { _cadeira: string; _origem: string; _uid: string }
         Returns: boolean
       }
       orc_budget_salvar: {

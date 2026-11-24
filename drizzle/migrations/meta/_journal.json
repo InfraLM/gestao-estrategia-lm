@@ -890,6 +890,13 @@
       "when": 1795095889207,
       "tag": "0126_offsite_salvar_sem_62_lista",
       "breakpoints": true
+    },
+    {
+      "idx": 127,
+      "version": "7",
+      "when": 1795544563520,
+      "tag": "0127_acesso_edicao_propria",
+      "breakpoints": true
     }
   ]
 }

@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Plus, Pencil, Trash2, Lock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
 import {
   useMetasBase, MESES_2S26, NOME_MES, STATUS_INI, statusEfetivo, fmtNum, fmtData, EMAIL_CORP,
   type Indicador, type Iniciativa,
@@ -51,6 +52,10 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
 export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: string[]; origemFixa?: string; embutido?: boolean } = {}) {
   const mostra = (a: string) => !abas || abas.includes(a);
   const b = useMetasBase();
+  const acesso = useModuleAccess();
+  // "Edição dos próprios" em OKRs: só KRs da própria cadeira (o servidor garante o mesmo).
+  const okrProprio = origemFixa === "okr" && !b.isGov && acesso.grants.some(g => g.modulo === "okrs" && g.nivel === "edicao_propria") && !!b.minhaCadeira;
+  const krProprio = (i: { origem?: string | null; cadeira_id?: string | null }) => okrProprio && i.origem === "okr" && i.cadeira_id === b.minhaCadeira;
   const [edit, setEdit] = useState<{ tipo: string; row: any } | null>(null);
   const [origemF, setOrigemF] = useState<string>(origemFixa ?? "todas");
   const [cadF, setCadF] = useState<string>("todas");
@@ -82,7 +87,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
   };
 
   const BotaoNovo = ({ tipo, row, label }: { tipo: string; row: any; label: string }) =>
-    ro ? null : <Button size="sm" onClick={() => tipo==='indicador'?abrirIndicador({origem:(origemFixa??'bsc') as any}):abrir(tipo, row)}><Plus className="h-4 w-4 mr-1" />{label}</Button>;
+    (ro && !(okrProprio && tipo === "indicador")) ? null : <Button size="sm" onClick={() => tipo==='indicador'?abrirIndicador({origem:(origemFixa??'bsc') as any, ...(okrProprio ? { cadeira_id: b.minhaCadeira } : {})}):abrir(tipo, row)}><Plus className="h-4 w-4 mr-1" />{label}</Button>;
   const Acoes = ({ tipo, row, tabela }: { tipo: string; row: any; tabela: string }) =>
     ro ? null : (
       <div className="flex gap-1 justify-end">
@@ -164,7 +169,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
           <ShieldCheck className="h-3 w-3" /> {b.isGov ? "Governança · pode editar" : "Diretor · somente leitura"}
         </Badge>
       </div>}
-      {embutido && <p className="text-xs text-muted-foreground">{b.isGov ? "Governança · pode editar" : "Somente leitura · edição pela Governança"}</p>}
+      {embutido && <p className="text-xs text-muted-foreground">{b.isGov ? "Governança · pode editar" : okrProprio ? "Você pode criar e editar os KRs da sua cadeira · demais itens somente leitura" : "Somente leitura · edição pela Governança"}</p>}
 
       <Tabs defaultValue={abas?.[0] ?? "indicadores"}>
         <div className="overflow-x-auto"><TabsList className="flex-wrap h-auto">
@@ -209,7 +214,7 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
                       <td className="p-2 text-xs">{i.meta_semestre != null ? `${fmtNum(i.meta_semestre)} ${i.unidade ?? ""}` : i.meta_texto ?? "—"}</td>
                       <td className="p-2 text-center text-xs">{nMetas ? `${nMetas}/6` : <span className="text-warning">pendente</span>}</td>
                       <td className="p-2 text-center"><Badge variant={i.status === "ativo" ? "default" : "secondary"} className="text-[10px]">{i.status}</Badge></td>
-                      <td className="p-2">{!ro && <div className="flex gap-1 justify-end">
+                      <td className="p-2">{(!ro || krProprio(i)) && <div className="flex gap-1 justify-end">
                         <Button size="icon" variant="ghost" aria-label="Editar" onClick={() => abrirIndicador(i)}><Pencil className="h-4 w-4" /></Button>
                         <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => remover("mt_indicadores", i.id)}><Trash2 className="h-4 w-4" /></Button>
                       </div>}</td>
@@ -372,13 +377,13 @@ export default function MetasCadastros({ abas, origemFixa, embutido }: { abas?: 
               return (<div className="space-y-3">
                 <div className="grid sm:grid-cols-3 gap-3">
                   <Campo label="Código"><Input value={r.codigo ?? ""} onChange={(e) => set("codigo", e.target.value)} placeholder="Ex.: c.01" /></Campo>
-                  <Campo label="Origem"><Sel value={r.origem} onChange={(v) => set("origem", v)} placeholder="Origem" items={[{ v: "bsc", l: "KPI do BSC" }, { v: "okr", l: "KR de OKR" }, { v: "cesta", l: "Cesta de metas" }]} /></Campo>
+                  <Campo label="Origem"><Sel value={r.origem} onChange={(v) => { if (!okrProprio) set("origem", v); }} placeholder="Origem" items={[{ v: "bsc", l: "KPI do BSC" }, { v: "okr", l: "KR de OKR" }, { v: "cesta", l: "Cesta de metas" }]} /></Campo>
                   <Campo label="Status"><Sel value={r.status} onChange={(v) => set("status", v)} placeholder="Status" items={[{ v: "ativo", l: "Ativo" }, { v: "arquivado", l: "Arquivado" }]} /></Campo>
                 </div>
                 <Campo label="Nome"><Input value={r.nome ?? ""} onChange={(e) => set("nome", e.target.value)} /></Campo>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <Campo label="Objetivo estratégico"><Sel value={r.objetivo_id} onChange={(v) => set("objetivo_id", v)} items={objItems} placeholder="Selecione" allowNone /></Campo>
-                  <Campo label="Cadeira responsável"><Sel value={r.cadeira_id} onChange={(v) => set("cadeira_id", v)} items={cadItems} placeholder="Selecione" allowNone /></Campo>
+                  <Campo label="Cadeira responsável">{okrProprio ? <Input value={nomeCad(r.cadeira_id)} disabled /> : <Sel value={r.cadeira_id} onChange={(v) => set("cadeira_id", v)} items={cadItems} placeholder="Selecione" allowNone />}</Campo>
                   {r.origem === "okr" && <Campo label="OKR"><Sel value={r.okr_id} onChange={(v) => set("okr_id", v)} items={okrItems} placeholder="Selecione" /></Campo>}
                 </div>
                 {r.origem!=='bsc'&&!r.id&&<Campo label="Tipo de análise da meta"><Sel value={r.tipo_apontamento??null} allowNone onChange={v=>set('tipo_apontamento',v)} placeholder="Sem tipo definido" items={Object.entries(ANALISE_LABEL).map(([v,l])=>({v,l}))}/>{r.tipo_apontamento&&<p className="text-xs text-muted-foreground">{ANALISE_AJUDA[r.tipo_apontamento as keyof typeof ANALISE_AJUDA]}</p>}</Campo>}

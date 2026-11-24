@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ACCESS_MODULES, AccessLevel } from "@/lib/moduleAccess";
+import { ACCESS_MODULES, AccessLevel, MODULOS_EDICAO_PROPRIA } from "@/lib/moduleAccess";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
@@ -27,11 +27,11 @@ export default function UserModuleMatrix({ userId, grants, isSuperAdmin, disable
     <h3 className="font-semibold">Acesso por módulo</h3>
     {isSuperAdmin && <p className="text-sm text-muted-foreground">O Admin Principal mantém acesso total.</p>}
     <div className="divide-y border rounded-md">
-      {ACCESS_MODULES.map(m => <div key={m.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
+      {[...ACCESS_MODULES, { id: "repositorios", label: "Repositórios" }].map(m => <div key={m.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
         <span className="text-sm">{m.label}</span>
         <Select value={isSuperAdmin ? "edicao" : (grants[m.id] && grants[m.id] !== "nenhum" ? grants[m.id] : "padrao")} disabled={disabled || isSuperAdmin || saving !== null} onValueChange={v => save(m.id, v)}>
           <SelectTrigger className="w-48" aria-label={`Acesso a ${m.label}`}><SelectValue /></SelectTrigger>
-          <SelectContent><SelectItem value="padrao">Nenhum</SelectItem><SelectItem value="leitura">Somente consulta</SelectItem><SelectItem value="edicao">Consulta e edição</SelectItem></SelectContent>
+          <SelectContent><SelectItem value="padrao">Nenhum</SelectItem><SelectItem value="leitura">Somente consulta</SelectItem>{MODULOS_EDICAO_PROPRIA.includes(m.id) && <SelectItem value="edicao_propria">Edição dos próprios</SelectItem>}<SelectItem value="edicao">Consulta e edição</SelectItem></SelectContent>
         </Select>
       </div>)}
     </div>
