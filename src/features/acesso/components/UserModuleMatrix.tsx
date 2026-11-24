@@ -27,7 +27,7 @@ export default function UserModuleMatrix({ userId, grants, isSuperAdmin, disable
     <h3 className="font-semibold">Acesso por módulo</h3>
     {isSuperAdmin && <p className="text-sm text-muted-foreground">O Admin Principal mantém acesso total.</p>}
     <div className="divide-y border rounded-md">
-      {[...ACCESS_MODULES, { id: "repositorios", label: "Repositórios" }].map(m => <div key={m.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
+      {ACCESS_MODULES.map(m => <div key={m.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
         <span className="text-sm">{m.label}</span>
         <Select value={isSuperAdmin ? "edicao" : (grants[m.id] && grants[m.id] !== "nenhum" ? grants[m.id] : "padrao")} disabled={disabled || isSuperAdmin || saving !== null} onValueChange={v => save(m.id, v)}>
           <SelectTrigger className="w-48" aria-label={`Acesso a ${m.label}`}><SelectValue /></SelectTrigger>

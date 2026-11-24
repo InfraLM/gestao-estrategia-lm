@@ -16,8 +16,8 @@ export const ACCESS_MODULES = [
 
 export type AccessModule = typeof ACCESS_MODULES[number]["id"] | "repositorios" | "socios";
 export type AccessLevel = "nenhum" | "leitura" | "edicao" | "edicao_propria";
-/** Módulos que aceitam "Edição dos próprios" (o servidor só libera itens do próprio usuário). */
-export const MODULOS_EDICAO_PROPRIA: readonly string[] = ["okrs", "repositorios"];
+/** Módulos que aceitam "Edição dos próprios" (só OKRs) (o servidor só libera itens do próprio usuário). */
+export const MODULOS_EDICAO_PROPRIA: readonly string[] = ["okrs"];
 export type ModuleGrant = { modulo: string; nivel: AccessLevel };
 
 export const CLOSED_MODULES: readonly string[] = ["decisoes", "estrutura", "incentivos"];
