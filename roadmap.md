@@ -1,3 +1,7 @@
+# Quick Wins · convite individual
+- [x] Botão por pessoa na lista, confirmação e seleção no servidor limitada à lista ativa; registro e prevenção de duplicidade por ciclo preservados.
+- [x] 35 testes passaram; tela autenticada e envio/releitura fictícios conferidos, sem e-mails reais; remetente republicado e destinatário fora da lista recusado no servidor. Botão pronto para próxima publicação do app.
+
 # Aviso extra 15/11 · Gmail
 - [x] Envio pelo conector Gmail gerenciado adicionado (preferido quando vinculado); token do cron gerado; função republicada; 15 testes passaram.
 - [x] Aviso único agendado domingo 15/11 08h (São Paulo), ciclo 16/11, só diretores que ainda não enviaram; o agendamento se remove depois de rodar e registra resultado em mt_auditoria.

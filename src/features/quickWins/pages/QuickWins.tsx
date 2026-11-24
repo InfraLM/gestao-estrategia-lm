@@ -256,7 +256,7 @@ function ConviteEmail({ d }: { d: Dados }) {
   const ciclo = d.ciclos.find((c) => c.status === "aberto");
   const qc = useQueryClient();
   const lista = useQuery({ queryKey: ["qw-envio-lista"], queryFn: async () => { const r = await db.from("qw_envio_lista").select("email,nome,diretoria,ativo").order("diretoria").order("nome"); if (r.error) throw r.error; return r.data as ItemEnvio[]; } });
-  const convites = useQuery({ queryKey: ["qw-convites", ciclo?.id], enabled: !!ciclo, queryFn: async () => { const r = await db.from("qw_convites_email").select("email").eq("ciclo_id", ciclo!.id); return r.error ? [] : (r.data as { email: string }[]).map((x) => x.email.toLowerCase()); } });
+  const convites = useQuery({ queryKey: ["qw-convites", ciclo?.id], enabled: !!ciclo, queryFn: async () => { if (!ciclo) return []; const r = await db.from("qw_convites_email").select("email").eq("ciclo_id", ciclo.id); if (r.error) throw r.error; return (r.data as { email: string }[]).map((x) => x.email.toLowerCase()); } });
   const ativos = (lista.data ?? []).filter((x) => x.ativo);
   const recebidos = new Set(convites.data ?? []);
   const lideresAtivos = new Set(d.lideres.filter((l) => l.ativo).map((l) => l.email.trim().toLowerCase()));
@@ -294,6 +294,14 @@ function ConviteEmail({ d }: { d: Dados }) {
     if (r.falhas?.length) erro({ message: `${r.enviados} enviados. Falhas: ${r.falhas.map((f: { nome: string; erro: string }) => `${f.nome} (${f.erro})`).join(" · ")}` });
     else toast({ title: `${r.enviados} convite(s) enviado(s)${r.ja_enviados ? ` · ${r.ja_enviados} já tinham recebido` : ""}` });
   };
+  const individual = async (pessoa: ItemEnvio) => {
+    if (!window.confirm(`Enviar o convite de Quick Wins para ${pessoa.nome} (${pessoa.email})?`)) return;
+    const r = await chamar({ modo: "individual", email: pessoa.email });
+    if (!r) return;
+    void convites.refetch();
+    if (r.falhas?.length) erro({ message: r.falhas.map((f: { erro: string }) => f.erro).join(" · ") });
+    else toast({ title: r.enviados ? `Convite enviado para ${pessoa.nome}` : "Essa pessoa já recebeu o convite neste ciclo" });
+  };
   return <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Mail className="h-4 w-4" />Convite por e-mail</CardTitle>
     <p className="text-sm text-muted-foreground">Texto aprovado (assinado pela Naira) com o link direto para o formulário. Prazo usado: {ciclo?.data_fechamento ? dataBR(ciclo.data_fechamento) : "sem data de fechamento no ciclo"}.</p></CardHeader>
     <CardContent className="space-y-4">
@@ -305,11 +313,12 @@ function ConviteEmail({ d }: { d: Dados }) {
         <h3 className="text-sm font-semibold">Envio Quick Wins</h3>
         <p className="text-xs text-muted-foreground">Quem recebe o convite (lista da Naira, e-mails conferidos na Zeev). Desligar tira a pessoa do envio sem apagar.</p>
         {lista.isError ? <p className="text-sm text-destructive">Não foi possível carregar a lista Envio Quick Wins.</p> :
-        <div className="overflow-x-auto rounded-md border"><table className="w-full text-sm"><thead className="bg-muted"><tr>{["Diretoria", "Nome", "E-mail", "Situação", "Envia"].map((h) => <th key={h} className="p-2 text-left">{h}</th>)}</tr></thead>
+        <div className="overflow-x-auto rounded-md border"><table className="w-full text-sm"><thead className="bg-muted"><tr>{["Diretoria", "Nome", "E-mail", "Situação", "Envia", "Convite individual"].map((h) => <th key={h} className="p-2 text-left">{h}</th>)}</tr></thead>
           <tbody>{(lista.data ?? []).map((x) => <tr key={x.email} className="border-t">
             <td className="p-2">{x.diretoria ?? "—"}</td><td className="p-2">{x.nome}</td><td className="p-2 break-all">{x.email}</td>
             <td className="p-2">{recebidos.has(x.email) ? <Badge variant="secondary">Recebeu</Badge> : lideresAtivos.has(x.email) ? <Badge variant="outline">Pendente</Badge> : <Badge variant="destructive" title="Sem cadastro ativo em Líderes: recebe o e-mail mas não acessa o formulário">Não é líder ativo</Badge>}</td>
             <td className="p-2"><Switch checked={x.ativo} disabled={busy} aria-label={`Envio Quick Wins: ${x.nome}`} onCheckedChange={(v) => salvarLista([{ ...x, ativo: v }], v ? "Incluído no envio" : "Retirado do envio")} /></td>
+            <td className="p-2"><Button size="sm" variant="outline" aria-label={`Enviar convite para ${x.nome}`} title={recebidos.has(x.email) ? "Já recebeu o convite neste ciclo" : !x.ativo ? "Pessoa fora da lista ativa de envio" : "Enviar convite individual"} disabled={busy || !ciclo || !x.ativo || recebidos.has(x.email) || convites.isPending || convites.isError} onClick={() => individual(x)}><Mail className="mr-2 h-4 w-4 shrink-0" />Enviar convite</Button></td>
           </tr>)}</tbody></table></div>}
         <div className="grid gap-2 md:grid-cols-[1fr_1.4fr_1fr_auto] md:items-end">
           <FormField id="qwl-nome" label="Nome"><Input value={novo.nome} onChange={(e) => setNovo({ ...novo, nome: e.target.value })} /></FormField>

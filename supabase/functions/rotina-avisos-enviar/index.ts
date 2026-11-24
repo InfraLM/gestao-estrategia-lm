@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { EMAIL_VALIDO, montarConviteQuickWins, montarEnvio, tokenValido, type DadosEmail, type TipoFila } from "./email.ts";
 import { enviarEmail, ErroEnvio, REMETENTE_EMAIL } from "../_shared/enviarEmail.ts";
+import { destinatariosConviteIndividual } from "./conviteIndividual.ts";
 
 // Weekly check-in/checkout e-mails (and assigned-impediment notices) through Lovable Emails (notifylv.liberdademedicaedu.com.br).
 // - x-cron-token (pg_net wake on enqueue; 10-minute retry cron only while rows are pending): delivers the queue.
@@ -113,7 +114,7 @@ Deno.serve(async req => {
       }
       return out({ ok: resultado.every(r => r.ok), resultado });
     }
-    if (modo === "lideres") {
+    if (modo === "lideres" || modo === "individual") {
       if (!ciclo) return out({ error: "Abra o ciclo de Quick Wins antes de enviar o convite" }, 409);
       // Recipients = the "Envio Quick Wins" list (Governance-curated), once per e-mail per cycle.
       const [{ data: lista, error: e1 }, { data: feitos, error: e2 }, { data: lideres }] = await Promise.all([
@@ -122,11 +123,16 @@ Deno.serve(async req => {
         db.from("qw_lideres").select("id,email"),
       ]);
       if (e1 || e2) return out({ error: "Não foi possível carregar a lista Envio Quick Wins" }, 500);
+      let destinatarios = (lista ?? []) as { email: string; nome: string }[];
+      if (modo === "individual") {
+        try { destinatarios = destinatariosConviteIndividual(destinatarios, body?.email); }
+        catch (err) { return out({ error: (err as Error).message }, 400); }
+      }
       const ja = new Set((feitos ?? []).map((f: { email: string }) => f.email.toLowerCase()));
       const liderPorEmail = new Map(((lideres ?? []) as { id: string; email: string }[]).map(l => [l.email.trim().toLowerCase(), l.id]));
       const m = montarConviteQuickWins({ ano: ciclo.ano, prazo: ciclo.data_fechamento });
       let enviados = 0; const falhas: { nome: string; erro: string }[] = [];
-      for (const l of (lista ?? []) as { email: string; nome: string }[]) {
+      for (const l of destinatarios) {
         const email = l.email.trim().toLowerCase();
         if (ja.has(email)) continue;
         try {
@@ -141,7 +147,7 @@ Deno.serve(async req => {
         }
         await new Promise(r => setTimeout(r, PAUSA_MS));
       }
-      return out({ ok: !falhas.length, enviados, ja_enviados: ja.size, falhas });
+      return out({ ok: !falhas.length, enviados, ja_enviados: destinatarios.filter(l => ja.has(l.email.trim().toLowerCase())).length, falhas });
     }
     return out({ error: "Modo inválido" }, 400);
   }
