@@ -47,6 +47,8 @@ import EntregasExtras from '@/features/metas/components/EntregasExtras';
 import { semanaLink } from '@/lib/avisosCiclo';
 import { sugerirDesvio } from '@/features/metas/lib/dashboardRotina';
 import { INICIO_FREQUENCIA, periodoApontamento, resumoFrequencia } from '@/lib/frequenciaApontamento';
+import { GuiaCicloSemanal, TextoResumido } from '@/features/metas/components/GuiaCicloSemanal';
+import { pendenciasPorSecao, rotuloContador, faltaTexto, usaVisualNovo } from '@/features/metas/lib/guiaSemanal';
 
 const db = supabase as any;
 export type Prioridade = PrioridadeV2;
@@ -455,6 +457,16 @@ export default function MetasSemanal() {
   ] : [{ id: "bloco-prioridades", label: "Prioridades", total: ci.prioridades.length }, { id: "bloco-apoio", label: "Apoio e confiança", total: null }];
   const navegar = (id: string) => { setSecao(id); requestAnimationFrame(() => irPara(id)); };
   const respostas = co.kpis_resposta.filter((k) => k.ok != null && retrato.some((r) => r.indicador_id === k.indicador_id));
+  // Visual mais didático (25/11): só super_admin até a Naira validar; "?visual=atual" mostra o de hoje. Só textos e organização.
+  const visualNovo = usaVisualNovo(access.roles, window.location.search);
+  const T = <A, B>(atual: A, novo: B) => (visualNovo ? novo : atual);
+  const porSecao = pendenciasPorSecao([...pendOut, ...pendIn]);
+  const cicloEnviado = seloCiclo(rows.find((x) => x.tipo === "checkin"), rows.find((x) => x.tipo === "checkout"), sem).estado === "enviado";
+  const prazoTxt = prazoCiclo(sem).toLocaleString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" });
+  const irPasso = (pa: "checkout" | "checkin" | "revisao") => {
+    if (pa === "revisao") return navegar("revisao-ciclo");
+    setVista("formulario"); setAba(pa); const alvo = pa === "checkout" ? "bloco-kpis" : "bloco-prioridades"; setSecao(alvo); setTimeout(() => irPara(alvo), 50);
+  };
 
   return (
     <div className="space-y-4 min-w-0" onBlur={e => { const id = e.target.id; if (id && e.target.matches("input, textarea") && !tocados.has(id)) setTocados(prev => new Set([...prev, id])); }}>
@@ -476,6 +488,7 @@ export default function MetasSemanal() {
           </div>
         </div>
       </header>
+      {visualNovo && vista === "formulario" && <GuiaCicloSemanal atual={aba} faltaCheckout={pendOut.length} faltaCheckin={pendIn.length} prazo={prazoTxt} enviado={cicloEnviado} onIr={irPasso} />}
       <AvisoTransparencia ativo={transp.ativo} />
       <Tabs value={vista} onValueChange={(v) => setVista(v as "formulario" | "painel")}>
         <TabsList className="h-auto"><TabsTrigger value="formulario">Responder o ciclo</TabsTrigger><TabsTrigger value="painel">Meu painel · conformidade</TabsTrigger></TabsList>
@@ -484,24 +497,24 @@ export default function MetasSemanal() {
 
       <div className={vista === "painel" ? "hidden" : undefined}>
       <Tabs value={aba} onValueChange={(v) => { setAba(v as Tipo); setSecao(v === "checkout" ? "bloco-kpis" : "bloco-prioridades"); }}>
-        <TabsList className="h-auto flex-wrap"><TabsTrigger value="checkout">Checkout · semana de {fmtSem(semOut)}</TabsTrigger><TabsTrigger value="checkin">Check-in · semana de {fmtSem(sem)}</TabsTrigger></TabsList>
+        <TabsList className="h-auto flex-wrap"><TabsTrigger value="checkout">{T(`Checkout · semana de ${fmtSem(semOut)}`, `① Como foi a semana · ${fmtSem(semOut)}`)}</TabsTrigger><TabsTrigger value="checkin">{T(`Check-in · semana de ${fmtSem(sem)}`, `② Plano da semana · ${fmtSem(sem)}`)}</TabsTrigger></TabsList>
 
         <nav aria-label="Seções do formulário semanal" className="sticky top-0 z-20 flex flex-wrap gap-1 border-b bg-background py-2">
-          {secoes.map(x => <Button key={x.id} type="button" size="sm" variant={secao === x.id ? "secondary" : "ghost"} aria-current={secao === x.id ? "location" : undefined} onClick={() => navegar(x.id)} className="h-auto min-h-10 whitespace-normal text-xs">{x.label}{x.total !== null && <span className="ml-1 text-muted-foreground">{x.total}</span>}</Button>)}
+          {secoes.map(x => <Button key={x.id} type="button" size="sm" variant={secao === x.id ? "secondary" : "ghost"} aria-current={secao === x.id ? "location" : undefined} onClick={() => navegar(x.id)} className="h-auto min-h-10 whitespace-normal text-xs">{x.label}{visualNovo ? (() => { const n = porSecao[x.id] ?? 0; const r = rotuloContador(n, x.total); return r ? <span className={`ml-1 ${n > 0 ? "font-medium text-destructive" : "text-success"}`}>· {r}</span> : null; })() : x.total !== null && <span className="ml-1 text-muted-foreground">{x.total}</span>}</Button>)}
           <Button size="sm" variant="ghost" onClick={() => navegar("revisao-ciclo")}><ListChecks className="mr-1 h-4 w-4" />Revisão</Button>
         </nav>
 
         <TabsContent value="checkout" className="space-y-4">
-          <p className="text-sm text-muted-foreground">Retrospectiva da semana que passou: KPIs, entregas, riscos e pendências das reuniões.</p>
+          <p className="text-sm text-muted-foreground">{T("Retrospectiva da semana que passou: KPIs, entregas, riscos e pendências das reuniões.", "Conte como foi a semana passada: indicadores, entregas, riscos e pendências das reuniões.")}</p>
           <section className="space-y-3 border-b py-5 scroll-mt-40" id="bloco-kpis" tabIndex={-1}>
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-semibold">1. Seus KPIs estão performando dentro do esperado?</h2>
+              <h2 className="font-semibold">{T("1. Seus KPIs estão performando dentro do esperado?", "1. Como estão seus indicadores?")}</h2>
               {podeEditar && sem>=INICIO_FREQUENCIA && !co.primeiro_envio_em && <Button size="sm" variant="outline" onClick={()=>setDesvioEscolha(!desvioEscolha)}><Plus className="h-4 w-4 mr-1"/>Desvio crítico</Button>}
               {podeEditar && sem>=INICIO_FREQUENCIA && !co.primeiro_envio_em && <Button size="sm" variant="outline" onClick={()=>{setOutrosAberto(!outrosAberto);setOutrosSel([]);}}><Plus className="h-4 w-4 mr-1"/>Apontar outros KPIs</Button>}
               {podeEditar && noAlvo.length > 0 && <Button size="sm" variant="outline" onClick={() => setCo({ ...co, kpis_resposta: confirmarNoAlvo(retrato, co.kpis_resposta, sem) })}>Confirmar Sim nos {noAlvo.length} no alvo</Button>}
             </div>
-            <p className="text-xs text-muted-foreground">Resposta opcional. {co.primeiro_envio_em ? `Números gravados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}` : "Números ao vivo até o envio"}{sem>=INICIO_FREQUENCIA?' · período fechado indicado em cada KPI':competencia ? ` · competência ${competencia.slice(5)}/${competencia.slice(0, 4)}` : " · semana sem competência mensal"}. Não altera o lançamento mensal.</p>
-            <p className="text-sm rounded bg-muted p-2">Cada KPI pede um apontamento conforme o tipo: <b>valor mensal</b> (On/Off calculado após o fim do mês), <b>meta semestral/anual</b> (você declara On/Off no mês; justificativa se Off) ou <b>entrega</b> (status de implantação × prazo).</p>
+            {visualNovo ? <p className="text-xs text-muted-foreground">Opcional: diga se cada indicador está dentro do esperado. Isso não muda o lançamento do mês.{co.primeiro_envio_em ? ` Números guardados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}.` : ""}</p> : <p className="text-xs text-muted-foreground">Resposta opcional. {co.primeiro_envio_em ? `Números gravados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}` : "Números ao vivo até o envio"}{sem>=INICIO_FREQUENCIA?' · período fechado indicado em cada KPI':competencia ? ` · competência ${competencia.slice(5)}/${competencia.slice(0, 4)}` : " · semana sem competência mensal"}. Não altera o lançamento mensal.</p>}
+            {T(<p className="text-sm rounded bg-muted p-2">Cada KPI pede um apontamento conforme o tipo: <b>valor mensal</b> (On/Off calculado após o fim do mês), <b>meta semestral/anual</b> (você declara On/Off no mês; justificativa se Off) ou <b>entrega</b> (status de implantação × prazo).</p>, <p className="text-sm rounded bg-muted p-2">Cada indicador é respondido de um jeito: <b>valor do mês</b> (o app calcula se ficou na meta quando o mês fecha), <b>meta do semestre ou do ano</b> (você diz se está na meta; se estiver fora, explica o motivo) ou <b>entrega</b> (você conta como está a implantação e o prazo).</p>)}
             {desvioEscolha && <Select onValueChange={id=>{const k=todosKpis.find(k=>k.indicador_id===id);if(!k)return;setCo({...co,kpis_retrato:[...retrato,{...k,desvio_critico:true}],kpis_resposta:[...co.kpis_resposta.filter(r=>r.indicador_id!==id),{...respostaVazia(id,sem),desvio_critico:true,ok:false}]});setDesvioEscolha(false);}}><SelectTrigger aria-label="KPI fora do calendário"><SelectValue placeholder="Adicionar KPI próprio fora do calendário"/></SelectTrigger><SelectContent>{todosKpis.filter(k=>!retrato.some(r=>r.indicador_id===k.indicador_id)).map(k=><SelectItem key={k.indicador_id} value={k.indicador_id}>{k.codigo} · {k.nome}</SelectItem>)}</SelectContent></Select>}
             {outrosAberto && (()=>{ const q=outrosBusca.trim().toLowerCase(); const disp=todosKpis.filter(k=>!retrato.some(r=>r.indicador_id===k.indicador_id)&&(!q||`${k.codigo} ${k.nome}`.toLowerCase().includes(q)));
               const grupos=[['bsc_e','BSC estratégico',disp.filter(k=>k.origem==='bsc'&&(k.nivel??'').toLowerCase().startsWith('estrat'))],['bsc_t','BSC tático',disp.filter(k=>k.origem==='bsc'&&!(k.nivel??'').toLowerCase().startsWith('estrat'))],['okr','KRs de OKR',disp.filter(k=>k.origem==='okr')],['cesta','Cesta de metas',disp.filter(k=>k.origem==='cesta')]] as const;
@@ -528,8 +541,8 @@ export default function MetasSemanal() {
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div><p className="font-medium text-sm">{k.codigo} · {k.nome}</p>
                         {k.frequencia&&<p className="text-xs text-muted-foreground">{resumoFrequencia(k)} · Período: {k.periodo_label??k.competencia}{k.tratamento?` · ${k.tratamento}`:''}</p>}
-                        {k.desvio_critico&&<Badge variant="destructive">Desvio crítico · cobrança mensal</Badge>}
-                        {k.voluntario&&!r.desvio_critico&&<div className="flex flex-wrap items-center gap-1"><Badge variant="outline">Fora do calendário · voluntário</Badge>{podeEditar&&!co.primeiro_envio_em&&<Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={()=>setCo({...co,kpis_retrato:retrato.filter(x=>x.indicador_id!==k.indicador_id),kpis_resposta:co.kpis_resposta.filter(x=>x.indicador_id!==k.indicador_id)})}>Remover</Button>}</div>}
+                        {k.desvio_critico&&<Badge variant="destructive" title={visualNovo ? "Fora da meta por 2 ou mais períodos seguidos e abaixo de 70%: precisa de causa, impacto e plano de ação." : undefined}>Desvio crítico · cobrança mensal</Badge>}
+                        {k.voluntario&&!r.desvio_critico&&<div className="flex flex-wrap items-center gap-1"><Badge variant="outline">{T("Fora do calendário · voluntário", "Fora do mês de informar (opcional)")}</Badge>{podeEditar&&!co.primeiro_envio_em&&<Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={()=>setCo({...co,kpis_retrato:retrato.filter(x=>x.indicador_id!==k.indicador_id),kpis_resposta:co.kpis_resposta.filter(x=>x.indicador_id!==k.indicador_id)})}>Remover</Button>}</div>}
                         {k.voluntario&&!r.desvio_critico&&podeEditar&&!co.primeiro_envio_em&&sugerirDesvio({...k,...r,voluntario:true} as any)&&<div role="status" className="mt-1 rounded border border-destructive/40 bg-destructive/5 p-2 text-xs">Valor indica Off track com desvio crítico. <Button size="sm" variant="outline" className="ml-1 h-6 px-2 text-xs" onClick={()=>{setCo({...co,kpis_retrato:retrato.map(x=>x.indicador_id===k.indicador_id?{...x,desvio_critico:true,periodo_label:periodoApontamento(x,sem,true).label}:x),kpis_resposta:co.kpis_resposta.map(x=>x.indicador_id===k.indicador_id?{...x,desvio_critico:true,ok:false}:x)});}}>Transformar em desvio crítico</Button></div>}
                         <p className="text-xs text-muted-foreground">Última situação atual apontada: {ult ? <><b className="text-foreground">{ult.valor}</b> · {ult.fonte}{ult.data && ult.fonte === "Árvore de KPIs" ? ` · ${new Date(ult.data).toLocaleDateString("pt-BR")}` : ult.fonte === "Árvore de KPIs" ? " · Rev.02" : ""}</> : "—"}</p></div>
                       <div className="flex gap-1"><Badge variant="outline">{ORIGEM_LBL[k.origem]}</Badge><Badge variant="secondary">{TIPO_LBL[tipo]}</Badge>{tipo === "valor_periodo" && r.declaracao && <Badge className={r.declaracao === "on" ? "bg-success text-success-foreground" : undefined} variant={r.declaracao === "off" ? "destructive" : "default"}>Status atual: {AVALIACAO_LBL[r.declaracao]}</Badge>}</div>
@@ -550,11 +563,11 @@ export default function MetasSemanal() {
                       {erroCampo(`kpi-${k.indicador_id}-desvio`) && <p role="alert" className="text-xs text-destructive">{erroCampo(`kpi-${k.indicador_id}-desvio`)}</p>}
                     </div>}
                     {tipo === "valor_periodo" && <div className={`space-y-2 rounded border-2 p-3 ${r.declaracao === "off" ? "border-destructive bg-destructive/5" : r.declaracao === "on" ? "border-success bg-success/5" : "border-primary/40 bg-muted/40"}`}>
-                      <p className="text-sm font-semibold">Status atual · sua avaliação neste ciclo</p>
+                      <p className="text-sm font-semibold">{T("Status atual · sua avaliação neste ciclo", "Como está este indicador agora?")}</p>
                       <p className="text-xs text-muted-foreground">A avaliação anterior aparece acima só como referência. Marque como o indicador está agora.</p>
                       <div className="flex gap-2">
-                        <Button size="sm" aria-pressed={r.declaracao === "on"} variant={r.declaracao === "on" ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "on" ? null : "on" })}>On track</Button>
-                        <Button size="sm" aria-pressed={r.declaracao === "off"} variant={r.declaracao === "off" ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "off" ? null : "off" })}>Off track</Button>
+                        <Button size="sm" aria-pressed={r.declaracao === "on"} variant={r.declaracao === "on" ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "on" ? null : "on" })}>{T("On track", "Na meta")}</Button>
+                        <Button size="sm" aria-pressed={r.declaracao === "off"} variant={r.declaracao === "off" ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { declaracao: r.declaracao === "off" ? null : "off" })}>{T("Off track", "Fora da meta")}</Button>
                       </div>
                       {r.declaracao === "off" && <FormField id={`kpi-${k.indicador_id}-just`} label="Justificativa" required error={erroCampo(`kpi-${k.indicador_id}-just`)}><Textarea rows={2} maxLength={LIMITE_TEXTO} value={r.justificativa ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { justificativa: e.target.value })} /></FormField>}
                     </div>}
@@ -565,14 +578,15 @@ export default function MetasSemanal() {
                       <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-avanco`}>% de avanço (opcional)</Label><Input id={`kpi-${k.indicador_id}-avanco`} type="number" min={0} max={100} value={r.avanco_pct ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { avanco_pct: e.target.value })} /></div>
                       <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-evidencia`}>Evidência / comentário (opcional)</Label><Input id={`kpi-${k.indicador_id}-evidencia`} maxLength={400} value={r.evidencia ?? ""} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { evidencia: e.target.value })} /></div>
                     </div>}
+                    {visualNovo && <p className="text-sm font-medium">Está dentro do esperado?</p>}
                     <div className="flex gap-2">
                       <Button size="sm" aria-label={`${k.codigo}: sim, dentro do esperado`} aria-pressed={r.ok === true} variant={r.ok === true ? "default" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, true) })}>Sim</Button>
                       <Button size="sm" aria-label={`${k.codigo}: não, fora do esperado`} aria-pressed={r.ok === false} variant={r.ok === false ? "destructive" : "outline"} disabled={!podeEditar} onClick={() => setResp(k.indicador_id, { ok: alternar(r.ok, false) })}>Não</Button>
                     </div>
                     {r.ok === false && <div className="space-y-2">
                       {!r.desvio_critico && <>
-                        <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-impacto`}>Impacto (opcional)</Label><Textarea rows={2} maxLength={LIMITE_TEXTO} id={`kpi-${k.indicador_id}-impacto`} value={r.impacto} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { impacto: e.target.value })} /></div>
-                        <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-plano`}>Plano de ação (opcional)</Label><Textarea rows={3} maxLength={LIMITE_TEXTO} id={`kpi-${k.indicador_id}-plano`} value={r.plano} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { plano: e.target.value })} /></div>
+                        <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-impacto`}>Impacto (opcional)</Label><Textarea rows={2} maxLength={LIMITE_TEXTO} id={`kpi-${k.indicador_id}-impacto`} placeholder={T(undefined, "Ex.: atraso de 2 semanas na meta de captação")} value={r.impacto} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { impacto: e.target.value })} /></div>
+                        <div className="space-y-1"><Label htmlFor={`kpi-${k.indicador_id}-plano`}>Plano de ação (opcional)</Label><Textarea rows={3} maxLength={LIMITE_TEXTO} id={`kpi-${k.indicador_id}-plano`} placeholder={T(undefined, "Ex.: revisar a régua de cobrança com o time financeiro até 05/12")} value={r.plano} disabled={!podeEditar} onChange={(e) => setResp(k.indicador_id, { plano: e.target.value })} /></div>
                       </>}
                       {r.plano.trim() && <div className="space-y-2 rounded bg-muted/50 p-2">
                         <label className="flex items-center gap-2 text-sm"><Checkbox checked={r.vira_iniciativa} disabled={!podeEditar || !!r.iniciativa_criada_id} onCheckedChange={(v) => setResp(k.indicador_id, { vira_iniciativa: !!v })} />Este plano vira uma iniciativa</label>
@@ -605,7 +619,7 @@ export default function MetasSemanal() {
           </section>
 
           <section className="space-y-4 border-b py-5 scroll-mt-40" id="bloco-entregas" tabIndex={-1}>
-            <div className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">2. Entregas das prioridades</h2></div>
+            <div className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">{T("2. Entregas das prioridades", "2. O que você entregou das prioridades da semana passada?")}</h2></div>
             {co.entregas.length === 0 && <p className="text-sm text-muted-foreground">Sem prioridades declaradas no check-in de {fmtSem(semOut)}.</p>}
             {podeEditar && entregasAtuais.length === 0 && cinOut.prioridades.some((p) => p.titulo) && (
               <Button variant="outline" size="sm" onClick={() => setCo({ ...co, entregas: mesclarHerdadas(entregasDePrioridades(cinOut.prioridades), co.entregas.filter((e) => e.herdada_de)) })}>Trazer prioridades do check-in de {fmtSem(semOut)}</Button>
@@ -614,7 +628,7 @@ export default function MetasSemanal() {
               const set = (x: Partial<EntregaV2>) => setCo({ ...co, entregas: co.entregas.map((q, j) => (j === i ? { ...q, ...x } : q)) });
               if (e.herdada_de) return (
                 <div key={i} id={`ent-${i}`} className="rounded border border-dashed p-3 space-y-2 text-sm">
-                  <p className="font-medium">{e.titulo} <span className="text-muted-foreground font-normal">· Prioridade estratégica apontada (ciclo {fmtSem(e.herdada_de)})</span></p>
+                  <p className="font-medium">{visualNovo ? <TextoResumido texto={e.titulo} /> : e.titulo} <span className="text-muted-foreground font-normal">· Prioridade estratégica apontada (ciclo {fmtSem(e.herdada_de)})</span></p>
                   <p className="text-muted-foreground">Você declarou isto como prioridade. Entregou nesta semana?</p>
                   <div className="flex flex-wrap gap-2 items-center">
                     {podeEditar && e.status !== "entregue" && <Button size="sm" variant="outline" onClick={() => set({ status: "entregue" })}>Entreguei</Button>}
@@ -628,7 +642,7 @@ export default function MetasSemanal() {
                 </div>);
               return (
                 <div key={i} className="grid gap-2 rounded border p-3 md:grid-cols-[1fr_180px]">
-                  <div className="self-center space-y-1"><p className="font-medium">{e.titulo}</p>{e.gov_acao_id && <Badge variant="secondary">Comitê {e.gov_comite_codigo || "—"}</Badge>}</div>
+                  <div className="self-center space-y-1"><p className="font-medium">{visualNovo ? <TextoResumido texto={e.titulo} /> : e.titulo}</p>{e.gov_acao_id && <Badge variant="secondary">Comitê {e.gov_comite_codigo || "—"}</Badge>}</div>
                   <Select value={e.status} onValueChange={(v) => set({ status: v as EntregaV2["status"] })} disabled={!podeEditar}>
                     <SelectTrigger id={`ent-${i}`} aria-label={`Resultado da entrega: ${e.titulo}`}><SelectValue placeholder="Resultado" /></SelectTrigger>
                     <SelectContent>{Object.entries(ENTREGA_LBL).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent>
@@ -670,7 +684,7 @@ export default function MetasSemanal() {
             {podeEditar && <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1.5"><Label htmlFor="risco-tipo">Tipo do item</Label><Select value={novoRisco.tipo} onValueChange={(v) => setNovoRisco({ ...novoRisco, tipo: v })}><SelectTrigger id="risco-tipo"><SelectValue /></SelectTrigger>
                 <SelectContent>{Object.entries(TIPO_RISCO).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent></Select></div>
-              <div className="space-y-1"><Label htmlFor="risco-descricao">Descrição · obrigatória ao registrar</Label><Textarea id="risco-descricao" aria-required="true" aria-label="Descrição do risco ou impedimento" placeholder="Descrição" maxLength={4000} value={novoRisco.descricao} onChange={(e) => setNovoRisco({ ...novoRisco, descricao: e.target.value })} /></div>
+              <div className="space-y-1"><Label htmlFor="risco-descricao">Descrição · obrigatória ao registrar</Label><Textarea id="risco-descricao" aria-required="true" aria-label="Descrição do risco ou impedimento" placeholder={T("Descrição", "Ex.: sem acesso ao sistema X, a migração está parada; precisa de decisão do comitê")} maxLength={4000} value={novoRisco.descricao} onChange={(e) => setNovoRisco({ ...novoRisco, descricao: e.target.value })} /></div>
               <div className="space-y-1"><Label htmlFor="risco-impacto">Impacto</Label><Textarea id="risco-impacto" aria-label="Impacto do risco ou impedimento" value={novoRisco.impacto} onChange={e=>setNovoRisco({...novoRisco,impacto:e.target.value})} maxLength={4000}/></div>
               <div className="space-y-1"><Label>Diretor atribuído (opcional)</Label><Select value={novoRisco.atribuido_cadeira_id || "nenhum"} onValueChange={v=>setNovoRisco({...novoRisco,atribuido_cadeira_id:v==="nenhum"?"":v})}><SelectTrigger aria-label="Diretor atribuído"><SelectValue placeholder="Diretor atribuído (opcional)"/></SelectTrigger><SelectContent><SelectItem value="nenhum">Sem atribuição</SelectItem>{b.cadeiras.filter(c=>c.ativo).map(c=><SelectItem key={c.id} value={c.id}>{c.nome} · {c.diretor_nome || "Sem diretor vinculado"}</SelectItem>)}</SelectContent></Select></div>
               <div className="space-y-1"><Label htmlFor="risco-prazo">Prazo desejado (opcional)</Label><Input id="risco-prazo" type="date" value={novoRisco.prazo_desejado} onChange={e=>setNovoRisco({...novoRisco,prazo_desejado:e.target.value})}/></div>
@@ -703,7 +717,7 @@ export default function MetasSemanal() {
         </TabsContent>
 
         <TabsContent value="checkin" className="space-y-4">
-          <p className="text-sm text-muted-foreground">Prioridades estratégicas que serão cobradas no próximo checkout.</p>
+          <p className="text-sm text-muted-foreground">{T("Prioridades estratégicas que serão cobradas no próximo checkout.", "Defina o que você vai entregar nesta semana. Isso será cobrado no próximo checkout.")}</p>
           <section className="space-y-4 border-b py-5 scroll-mt-40" id="bloco-prioridades" tabIndex={-1}>
             <h2 className="font-semibold">Prioridades estratégicas da semana de {fmtSem(sem)}</h2>
             {ci.prioridades.map((p, i) => {
@@ -711,14 +725,14 @@ export default function MetasSemanal() {
               return (
                 <div key={p.id} className="grid gap-2 rounded border p-3 md:grid-cols-[1fr_1fr_auto]">
                   {p.gov_acao_id && <div className="md:col-span-3"><Badge variant="secondary">Comitê {p.gov_comite_codigo || "—"}</Badge></div>}
-                  <FormField id={`pri-${i}-titulo`} label={`Prioridade ${i + 1}`} error={erroCampo(`pri-${i}-titulo`)}><Input placeholder="Título da prioridade" value={p.titulo} disabled={!podeEditar} onChange={(e) => set({ titulo: e.target.value })} /></FormField>
+                  <FormField id={`pri-${i}-titulo`} label={`Prioridade ${i + 1}`} error={erroCampo(`pri-${i}-titulo`)}><Input placeholder={T("Título da prioridade", "Ex.: fechar o contrato com o fornecedor X")} value={p.titulo} disabled={!podeEditar} onChange={(e) => set({ titulo: e.target.value })} /></FormField>
                   <div className="space-y-1.5 min-w-0"><Label htmlFor={`pri-${i}-iniciativa`}>Iniciativa vinculada (opcional)</Label><Select value={p.iniciativa_id || "none"} onValueChange={(v) => set({ iniciativa_id: v === "none" ? "" : v })} disabled={!podeEditar}>
                     <SelectTrigger id={`pri-${i}-iniciativa`}><SelectValue placeholder="Iniciativa vinculada" /></SelectTrigger>
                     <SelectContent><SelectItem value="none">Sem iniciativa vinculada</SelectItem>
                       {inis.map((x) => <SelectItem key={x.id} value={x.id}>{x.titulo} · {STATUS_INI[statusEfetivo(x)]}</SelectItem>)}</SelectContent>
                   </Select></div>
                   {podeEditar && <Button variant="ghost" size="icon" aria-label="Remover prioridade" onClick={() => setCi({ ...ci, prioridades: ci.prioridades.filter((_, j) => j !== i) })}><Trash2 className="h-4 w-4" /></Button>}
-                  <FormField id={`pri-${i}-resultado`} className="md:col-span-2" label="Resultado esperado até sexta (opcional)"><Input value={p.resultado} disabled={!podeEditar} onChange={(e) => set({ resultado: e.target.value })} /></FormField>
+                  <FormField id={`pri-${i}-resultado`} className="md:col-span-2" label="Resultado esperado até sexta (opcional)"><Input placeholder={T(undefined, "Ex.: contrato assinado e enviado ao financeiro")} value={p.resultado} disabled={!podeEditar} onChange={(e) => set({ resultado: e.target.value })} /></FormField>
                   <div className="md:col-span-2 grid gap-2 sm:grid-cols-[160px_1fr]">
                     <FormField id={`pri-${i}-prazo`} label="Prazo" required={!!p.titulo.trim()} error={erroCampo(`pri-${i}-prazo`)}><Input type="date" value={p.prazo} disabled={!podeEditar} onChange={(e) => set({ prazo: e.target.value })} /></FormField>
                     <div className="space-y-1"><Label>Responsável pela entrega</Label>{RespSelect({ id: `pri-${i}-resp`, v: p.responsavel, on: (r) => set({ responsavel: r }) })}</div>
@@ -751,8 +765,8 @@ export default function MetasSemanal() {
       {podeEditar && <div className="sticky bottom-0 z-30 border-t bg-background py-3 pr-12 sm:pr-14 flex flex-wrap items-center justify-between gap-3">
         <SaveFeedback state={salvo} onRetry={() => void flush()} />
         <div className="flex w-full flex-wrap gap-2 sm:w-auto">
-          <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => { setAba(aba === "checkout" ? "checkin" : "checkout"); setSecao(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"); setTimeout(() => irPara(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"), 50); }}><ArrowRight className="mr-1 h-4 w-4" />{aba === "checkout" ? "Check-in" : "Checkout"}</Button>
-          <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => navegar("revisao-ciclo")}><ListChecks className="mr-1 h-4 w-4" />Revisar{pendIn.length + pendOut.length > 0 ? ` (${pendIn.length + pendOut.length})` : ""}</Button>
+          <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => { setAba(aba === "checkout" ? "checkin" : "checkout"); setSecao(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"); setTimeout(() => irPara(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"), 50); }}><ArrowRight className="mr-1 h-4 w-4" />{aba === "checkout" ? T("Check-in", "Ir para o plano da semana") : T("Checkout", "Voltar para a semana passada")}</Button>
+          <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => navegar("revisao-ciclo")}><ListChecks className="mr-1 h-4 w-4" />{visualNovo ? `Revisar · ${faltaTexto(pendIn.length + pendOut.length)}` : `Revisar${pendIn.length + pendOut.length > 0 ? ` (${pendIn.length + pendOut.length})` : ""}`}</Button>
           <Button className="flex-1 sm:flex-none" disabled={pendIn.length + pendOut.length > 0 || enviando || salvo.estado === "salvando"} onClick={enviarCiclo}><Send className="mr-1 h-4 w-4" />{enviando ? "Enviando…" : seloCiclo(rows.find(r => r.tipo === "checkin"), rows.find(r => r.tipo === "checkout"), sem).estado === "enviado" ? "Reenviar ciclo" : "Enviar ciclo"}</Button>
         </div>
       </div>}
