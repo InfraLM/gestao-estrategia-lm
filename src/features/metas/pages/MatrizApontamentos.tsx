@@ -13,6 +13,8 @@ import { competenciaDaSemana } from "@/lib/rotinaSemanal";
 import { FAROL_LBL } from "@/lib/farol";
 import { celulaMes, marcarCriticos, grupoDo, GRUPO_LBL, type Grupo, type Celula } from "@/features/metas/lib/matrizApontamentos";
 import { cn } from "@/lib/utils";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
+import { usaVisualNovo } from "@/features/metas/lib/guiaSemanal";
 import rev02 from "@/data/bscRev02.json";
 import { devidoNoCiclo, previstoNoMes } from '@/lib/frequenciaApontamento';
 import { addDias } from '@/lib/rotinaSemanal';
@@ -21,13 +23,17 @@ const db = supabase as any;
 const COR: Record<string, string> = { on: "bg-success/15 text-success", off: "bg-destructive/15 text-destructive", acomp: "bg-muted text-muted-foreground", sem_meta: "bg-muted/50 text-muted-foreground", pendente: "bg-warning/15 text-warning", encerrada: "bg-muted/50 text-muted-foreground" };
 /** Amarelo do farol: tom próprio, para não confundir com "Pendente de apontamento" (warning). */
 const COR_AMARELO = "bg-yellow-100 text-yellow-900 dark:bg-yellow-500/20 dark:text-yellow-200";
-const corCelula = (x: Celula) => x.critico ? "bg-destructive text-destructive-foreground" : x.farol === "amarelo" ? COR_AMARELO : COR[x.aval];
+/** comFarol = false devolve as cores de antes do farol (só On/Off), para quem ainda não vê o farol. */
+const corCelula = (x: Celula, comFarol = true) => x.critico ? "bg-destructive text-destructive-foreground" : comFarol && x.farol === "amarelo" ? COR_AMARELO : COR[x.aval];
 const pct = (v: number | null) => (v == null ? "" : `${Math.round(v * 100)}%`);
 const dm = (s: string) => `${s.slice(8, 10)}/${s.slice(5, 7)}`;
 
 /** Matriz consolidada: lançamento mensal + situação dos checkouts enviados + árvore, pela regra única de avaliação. */
 export default function MatrizApontamentos() {
   const b = useMetasBase();
+  // Farol de 3 cores (23/11): só a Governança vê até a Naira validar; "?visual=atual" mostra a tela de antes.
+  const access = useModuleAccess();
+  const comFarol = usaVisualNovo(access.roles, window.location.search);
   const [lancs, setLancs] = useState<any[]>([]);
   const [metas, setMetas] = useState<any[]>([]);
   const [cks, setCks] = useState<(CheckoutReg & { cadeira_id: string })[]>([]);
@@ -99,9 +105,11 @@ export default function MatrizApontamentos() {
               <SelectContent>{MESES_2S26.map((m) => <SelectItem key={m} value={m}>{NOME_MES[m.slice(5)]}/26</SelectItem>)}</SelectContent></Select></div>
         ))}
         <div className="ml-auto flex flex-wrap gap-2 text-xs">
-          <span className={cn("rounded px-2 py-0.5", COR.on)}>Verde: na meta</span>
-          <span className={cn("rounded px-2 py-0.5", COR_AMARELO)}>Amarelo: até 5% da meta</span>
-          <span className={cn("rounded px-2 py-0.5", COR.off)}>Vermelho: fora da tolerância</span>
+          {comFarol ? <>
+            <span className={cn("rounded px-2 py-0.5", COR.on)}>Verde: na meta</span>
+            <span className={cn("rounded px-2 py-0.5", COR_AMARELO)}>Amarelo: até 5% da meta</span>
+            <span className={cn("rounded px-2 py-0.5", COR.off)}>Vermelho: fora da tolerância</span>
+          </> : <span className={cn("rounded px-2 py-0.5", COR.off)}>Off track</span>}
           <span className="rounded px-2 py-0.5 bg-destructive text-destructive-foreground inline-flex items-center gap-1"><Flame className="h-3 w-3" />Desvio crítico (2+ períodos off e abaixo de 70%)</span>
           <span className="inline-flex items-center gap-1 text-warning"><AlertTriangle className="h-3 w-3" />Plano "Não" sem iniciativa</span>
           <span className="rounded px-2 py-0.5 border border-destructive text-destructive">2+ meses declarados Off</span>
@@ -124,8 +132,8 @@ export default function MatrizApontamentos() {
                 <td className="p-2">{nomeCad(l.i.cadeira_id)}</td>
                 {cols.map((c) => { const x: Celula | undefined = modo === "mes" ? l.porMes[c] : l.semanais[c]; if (!x) return <td key={c} />;
                   return (
-                    <td key={c} className="p-1" title={`${x.farol ? `Farol ${FAROL_LBL[x.farol]} · ` : ""}${AVALIACAO_LBL[x.aval]}${x.origem ? ` · ${x.origem}` : ""}`}>
-                      <div className={cn("rounded p-1 text-center", corCelula(x), x.alertaDeclarado && "ring-1 ring-destructive")}>
+                    <td key={c} className="p-1" title={`${comFarol && x.farol ? `Farol ${FAROL_LBL[x.farol]} · ` : ""}${AVALIACAO_LBL[x.aval]}${x.origem ? ` · ${x.origem}` : ""}`}>
+                      <div className={cn("rounded p-1 text-center", corCelula(x, comFarol), x.alertaDeclarado && "ring-1 ring-destructive")}>
                         {x.foraCalendario&&<p className="text-muted-foreground">Fora do calendário</p>}
                         {x.fonte === "entrega" ? <>
                           <div className="font-semibold">{x.status_entrega ? STATUS_ENTREGA_LBL[x.status_entrega] : AVALIACAO_LBL[x.aval]}</div>
@@ -142,7 +150,7 @@ export default function MatrizApontamentos() {
           </table>
         </Card>
       ))}
-      <p className="text-xs text-muted-foreground">Valor: realizado lançado no mês; sem lançamento, a última situação numérica de um checkout enviado ou da Árvore de KPIs (a mais recente). Valor mensal: On/Off calculado depois do fim do mês. Meta semestral/anual: vale a declaração do diretor no mês ("declarado"); a comparação com a meta só no fim do período. Entrega: status × prazo. Farol: verde na meta; amarelo abaixo da meta mas a até 5% dela (ou dentro da tolerância cadastrada no indicador); vermelho fora disso, ou Off track sem número para medir. Desvio crítico só onde há atingimento numérico. Riscos da rotina não são ligados a indicadores, por isso o alerta usa o plano "Não" sem iniciativa.</p>
+      <p className="text-xs text-muted-foreground">Valor: realizado lançado no mês; sem lançamento, a última situação numérica de um checkout enviado ou da Árvore de KPIs (a mais recente). Valor mensal: On/Off calculado depois do fim do mês. Meta semestral/anual: vale a declaração do diretor no mês ("declarado"); a comparação com a meta só no fim do período. Entrega: status × prazo.{comFarol && " Farol: verde na meta; amarelo abaixo da meta mas a até 5% dela (ou dentro da tolerância cadastrada no indicador); vermelho fora disso, ou Off track sem número para medir."} Desvio crítico só onde há atingimento numérico. Riscos da rotina não são ligados a indicadores, por isso o alerta usa o plano "Não" sem iniciativa.</p>
     </div>
   );
 }
