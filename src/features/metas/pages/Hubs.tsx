@@ -9,6 +9,7 @@ import MetasLancamento from "@/features/metas/pages/MetasLancamento";
 import MatrizApontamentos from "@/features/metas/pages/MatrizApontamentos";
 import CalendarioApontamento from '@/features/metas/components/CalendarioApontamento';
 import FrequenciasPropostas from '@/features/metas/components/FrequenciasPropostas';
+import RegrasFarol from '@/features/metas/components/RegrasFarol';
 
 export function OkrsHub() {
   return <AbasPagina abas={[
@@ -33,6 +34,7 @@ export function LancamentosHub() {
     { id: "matriz", label: "Matriz de apontamentos", conteudo: <MatrizApontamentos /> },
     { id: "lancar", label: "Lançar mês", conteudo: <MetasLancamento /> },
     { id: "calendario", label: "Calendário de apontamento", conteudo: <><CalendarioApontamento indicadores={b.indicadores.filter(i=>i.status==='ativo'&&!i.parent_id&&(i.origem!=='bsc'||['Estratégico','Tático'].includes((i as {nivel?:string}).nivel??'Tático')))} cadeiras={b.cadeiras.filter(c=>c.ativo)} podeEditar={b.isGovernanca||ceo} reload={b.reload}/><FrequenciasPropostas indicadores={b.indicadores} cadeiras={b.cadeiras.filter(c=>c.ativo)} pode={b.isGovernanca||ceo} reload={b.reload}/></> },
+    ...(b.isGovernanca ? [{ id: "farol", label: "Regras do farol", conteudo: <RegrasFarol /> }] : []),
     ...(b.isGovernanca || ceo ? [{ id: "painel", label: "Painel e configuração", conteudo: <MetasPainel /> }] : []),
   ]} />;
 }

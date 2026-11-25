@@ -13,6 +13,8 @@ import { competenciaDaSemana } from "@/lib/rotinaSemanal";
 import { FAROL_LBL } from "@/lib/farol";
 import { celulaMes, marcarCriticos, grupoDo, GRUPO_LBL, type Grupo, type Celula } from "@/features/metas/lib/matrizApontamentos";
 import { cn } from "@/lib/utils";
+import { useRegrasFarol } from "@/features/metas/hooks/useRegrasFarol";
+import { fmtPct, pctDoIndicador } from "@/features/metas/lib/regrasFarol";
 import rev02 from "@/data/bscRev02.json";
 import { devidoNoCiclo, previstoNoMes } from '@/lib/frequenciaApontamento';
 import { addDias } from '@/lib/rotinaSemanal';
@@ -30,6 +32,7 @@ const dm = (s: string) => `${s.slice(8, 10)}/${s.slice(5, 7)}`;
 export default function MatrizApontamentos() {
   const b = useMetasBase();
   // Farol de 3 cores (23/11), aprovado pela Naira em 25/11: vale para todos; "?visual=atual" ainda mostra a tela de antes, para comparar.
+  const { regras } = useRegrasFarol();
   const comFarol = new URLSearchParams(window.location.search).get("visual") !== "atual";
   const [lancs, setLancs] = useState<any[]>([]);
   const [metas, setMetas] = useState<any[]>([]);
@@ -65,7 +68,7 @@ export default function MatrizApontamentos() {
       const realizado = (comp: string) => lancs.filter((x) => x.indicador_id === i.id && (fora(comp)?x.competencia<=comp:x.competencia===comp) && !x.sem_medicao).sort((a,z)=>z.competencia.localeCompare(a.competencia)||z.revisao-a.revisao)[0]?.valor ?? null;
       const lancDe = (comp: string) => lancs.filter((x) => x.indicador_id === i.id && (fora(comp)?x.competencia<=comp:x.competencia===comp)).sort((a,z)=>z.competencia.localeCompare(a.competencia)||z.revisao-a.revisao)[0] ?? null;
       const metaMes = (comp: string) => metas.find((x) => x.indicador_id === i.id && x.competencia === comp)?.meta_mes ?? null;
-      const mensais = marcarCriticos(MESES_2S26.map((comp) => celulaMes(i, comp, metaMes(comp), realizado(comp) == null ? null : Number(realizado(comp)), arvore, ck, new Date(), lancDe(comp))));
+      const mensais = marcarCriticos(MESES_2S26.map((comp) => celulaMes({ ...i, farol_pct: pctDoIndicador(regras, i.id) }, comp, metaMes(comp), realizado(comp) == null ? null : Number(realizado(comp)), arvore, ck, new Date(), lancDe(comp))));
       const porMes = Object.fromEntries(MESES_2S26.map((m, k) => [m, mensais[k]]));
       const semanais: Record<string, Celula> = {};
       for (const s of semanas) {
@@ -76,7 +79,7 @@ export default function MatrizApontamentos() {
       }
       return { i, g: grupoDo(i) as Grupo, porMes, semanais, alerta: alertas.has(i.id) };
     });
-  }, [b.indicadores, cks, lancs, metas, arv, cad, grupo, semanas, alertas]);
+  }, [b.indicadores, cks, lancs, metas, arv, cad, grupo, semanas, alertas, regras]);
 
   if (b.loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
   if (!b.isGovernanca && !b.minhaCadeira) return <p className="text-sm text-muted-foreground">A matriz é visível para a Governança, o CEO e os diretores com cadeira.</p>;
@@ -104,7 +107,7 @@ export default function MatrizApontamentos() {
         <div className="ml-auto flex flex-wrap gap-2 text-xs">
           {comFarol ? <>
             <span className={cn("rounded px-2 py-0.5", COR.on)}>Verde: na meta</span>
-            <span className={cn("rounded px-2 py-0.5", COR_AMARELO)}>Amarelo: até 5% da meta</span>
+            <span className={cn("rounded px-2 py-0.5", COR_AMARELO)}>Amarelo: até {fmtPct(regras.geralPct)} da meta</span>
             <span className={cn("rounded px-2 py-0.5", COR.off)}>Vermelho: fora da tolerância</span>
           </> : <span className={cn("rounded px-2 py-0.5", COR.off)}>Off track</span>}
           <span className="rounded px-2 py-0.5 bg-destructive text-destructive-foreground inline-flex items-center gap-1"><Flame className="h-3 w-3" />Desvio crítico (2+ períodos off e abaixo de 70%)</span>
@@ -147,7 +150,7 @@ export default function MatrizApontamentos() {
           </table>
         </Card>
       ))}
-      <p className="text-xs text-muted-foreground">Valor: realizado lançado no mês; sem lançamento, a última situação numérica de um checkout enviado ou da Árvore de KPIs (a mais recente). Valor mensal: On/Off calculado depois do fim do mês. Meta semestral/anual: vale a declaração do diretor no mês ("declarado"); a comparação com a meta só no fim do período. Entrega: status × prazo.{comFarol && " Farol: verde na meta; amarelo abaixo da meta mas a até 5% dela (ou dentro da tolerância cadastrada no indicador); vermelho fora disso, ou Off track sem número para medir."} Desvio crítico só onde há atingimento numérico. Riscos da rotina não são ligados a indicadores, por isso o alerta usa o plano "Não" sem iniciativa.</p>
+      <p className="text-xs text-muted-foreground">Valor: realizado lançado no mês; sem lançamento, a última situação numérica de um checkout enviado ou da Árvore de KPIs (a mais recente). Valor mensal: On/Off calculado depois do fim do mês. Meta semestral/anual: vale a declaração do diretor no mês ("declarado"); a comparação com a meta só no fim do período. Entrega: status × prazo.{comFarol && ` Farol: verde na meta; amarelo abaixo da meta mas a até ${fmtPct(regras.geralPct)} dela (ou na faixa própria do indicador, em Regras do farol, ou dentro da tolerância cadastrada no indicador); vermelho fora disso, ou Off track sem número para medir.`} Desvio crítico só onde há atingimento numérico. Riscos da rotina não são ligados a indicadores, por isso o alerta usa o plano "Não" sem iniciativa.</p>
     </div>
   );
 }
