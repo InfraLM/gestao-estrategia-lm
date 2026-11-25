@@ -1,3 +1,7 @@
+# Metas · regras do farol · 25/11/2026
+- [x] Migration 0130 aplicada com regras fornecidas, GRANTs antecipados ao RLS e inicialização separada (exigências da plataforma); sem telas nem mudanças de estrutura em outras tabelas.
+- [x] Linha única id 1 / amarelo_pct 0.05 confirmada no banco; duas tabelas com RLS, leitura anônima negada e políticas de leitura fornecidas. 15 testes isolados aprovados: Governança, limites 0–0.5, auditoria, exceção BSC, retirada sem apagar e leitura por módulo; compilação OK. Nenhuma alteração de regra real nem auditoria de teste no Cloud.
+
 # Integração app de Reuniões TI · 25/11/2026
 - [x] Migration 0129 aplicada com cabeçalho solicitado, sem DROP/DELETE e com GRANTs antecipados ao RLS; seis tabelas e gate de leitura confirmados no banco, execução de reun_receber só service_role. RLS impede gravações autenticadas mesmo com privilégios padrão existentes.
 - [x] reunioes-receber publicada com código intacto da main 6b2d621 (inclui PR #15); 15 testes aprovados, incluindo banco isolado e handler original (401/400 com configuração fictícia), compilação OK; nenhuma tela alterada.

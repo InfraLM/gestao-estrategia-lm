@@ -2577,6 +2577,65 @@ export type Database = {
         }
         Relationships: []
       }
+      mt_farol_excecoes: {
+        Row: {
+          amarelo_pct: number
+          ativo: boolean
+          atualizado_em: string
+          atualizado_por: string | null
+          indicador_id: string
+          motivo: string | null
+        }
+        Insert: {
+          amarelo_pct: number
+          ativo?: boolean
+          atualizado_em?: string
+          atualizado_por?: string | null
+          indicador_id: string
+          motivo?: string | null
+        }
+        Update: {
+          amarelo_pct?: number
+          ativo?: boolean
+          atualizado_em?: string
+          atualizado_por?: string | null
+          indicador_id?: string
+          motivo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_farol_excecoes_indicador_id_fkey"
+            columns: ["indicador_id"]
+            isOneToOne: true
+            referencedRelation: "mt_indicadores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_farol_regras: {
+        Row: {
+          amarelo_pct: number
+          atualizado_em: string
+          atualizado_por: string | null
+          id: number
+          motivo: string | null
+        }
+        Insert: {
+          amarelo_pct?: number
+          atualizado_em?: string
+          atualizado_por?: string | null
+          id?: number
+          motivo?: string | null
+        }
+        Update: {
+          amarelo_pct?: number
+          atualizado_em?: string
+          atualizado_por?: string | null
+          id?: number
+          motivo?: string | null
+        }
+        Relationships: []
+      }
       mt_frequencia_propostas: {
         Row: {
           criado_em: string
@@ -7303,6 +7362,10 @@ export type Database = {
         Returns: undefined
       }
       mt_email_corporativo: { Args: never; Returns: boolean }
+      mt_farol_salvar: {
+        Args: { _indicador_id: string; _motivo?: string; _pct: number }
+        Returns: undefined
+      }
       mt_fechar: { Args: { _comp: string }; Returns: undefined }
       mt_frequencia_dados: {
         Args: { _i: Database["public"]["Tables"]["mt_indicadores"]["Row"] }

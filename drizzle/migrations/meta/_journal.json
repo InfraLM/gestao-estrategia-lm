@@ -911,6 +911,13 @@
       "when": 1795620095136,
       "tag": "0129_integracao_reunioes_ti",
       "breakpoints": true
+    },
+    {
+      "idx": 130,
+      "version": "7",
+      "when": 1795620854183,
+      "tag": "0130_metas_regras_farol",
+      "breakpoints": true
     }
   ]
 }
