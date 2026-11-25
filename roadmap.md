@@ -1,3 +1,9 @@
+# Integração app de Reuniões TI · 25/11/2026
+- [x] Migration 0129 aplicada com cabeçalho solicitado, sem DROP/DELETE e com GRANTs antecipados ao RLS; seis tabelas e gate de leitura confirmados no banco, execução de reun_receber só service_role. RLS impede gravações autenticadas mesmo com privilégios padrão existentes.
+- [x] reunioes-receber publicada com código intacto da main 6b2d621 (inclui PR #15); 15 testes aprovados, incluindo banco isolado e handler original (401/400 com configuração fictícia), compilação OK; nenhuma tela alterada.
+- [ ] Arthur cadastra REUNIOES_INGEST_TOKEN (mínimo 32 caracteres) em Configurações do projeto → Segredos; depois verificar HTTP 401/400 e recebimento autenticado.
+- Endpoint publicado responde 503 "Integração não configurada" enquanto o segredo estiver ausente; nenhuma reunião de teste gravada no banco real.
+
 # Quick Wins · convite individual
 - [x] Botão por pessoa na lista, confirmação e seleção no servidor limitada à lista ativa; registro e prevenção de duplicidade por ciclo preservados.
 - [x] 35 testes passaram; tela autenticada e envio/releitura fictícios conferidos, sem e-mails reais; remetente republicado e destinatário fora da lista recusado no servidor. Botão pronto para próxima publicação do app.

@@ -6001,6 +6001,260 @@ export type Database = {
         }
         Relationships: []
       }
+      reun_acoes: {
+        Row: {
+          atualizado_em: string
+          descricao: string | null
+          origem_id: string
+          prazo: string | null
+          precisa_escalar: boolean | null
+          prioridade: string | null
+          removido: boolean
+          responsavel_email: string | null
+          responsavel_nome: string | null
+          reuniao_id: string
+          status: string | null
+          titulo: string
+        }
+        Insert: {
+          atualizado_em?: string
+          descricao?: string | null
+          origem_id: string
+          prazo?: string | null
+          precisa_escalar?: boolean | null
+          prioridade?: string | null
+          removido?: boolean
+          responsavel_email?: string | null
+          responsavel_nome?: string | null
+          reuniao_id: string
+          status?: string | null
+          titulo: string
+        }
+        Update: {
+          atualizado_em?: string
+          descricao?: string | null
+          origem_id?: string
+          prazo?: string | null
+          precisa_escalar?: boolean | null
+          prioridade?: string | null
+          removido?: boolean
+          responsavel_email?: string | null
+          responsavel_nome?: string | null
+          reuniao_id?: string
+          status?: string | null
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reun_acoes_reuniao_id_fkey"
+            columns: ["reuniao_id"]
+            isOneToOne: false
+            referencedRelation: "reun_reunioes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reun_deliberacoes: {
+        Row: {
+          atualizado_em: string
+          origem_id: string
+          racional: string | null
+          removido: boolean
+          responsavel_email: string | null
+          responsavel_nome: string | null
+          reuniao_id: string
+          titulo: string
+        }
+        Insert: {
+          atualizado_em?: string
+          origem_id: string
+          racional?: string | null
+          removido?: boolean
+          responsavel_email?: string | null
+          responsavel_nome?: string | null
+          reuniao_id: string
+          titulo: string
+        }
+        Update: {
+          atualizado_em?: string
+          origem_id?: string
+          racional?: string | null
+          removido?: boolean
+          responsavel_email?: string | null
+          responsavel_nome?: string | null
+          reuniao_id?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reun_deliberacoes_reuniao_id_fkey"
+            columns: ["reuniao_id"]
+            isOneToOne: false
+            referencedRelation: "reun_reunioes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reun_participantes: {
+        Row: {
+          atualizado_em: string
+          chave: string
+          email: string | null
+          nome: string | null
+          presente: boolean | null
+          removido: boolean
+          reuniao_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          chave: string
+          email?: string | null
+          nome?: string | null
+          presente?: boolean | null
+          removido?: boolean
+          reuniao_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          chave?: string
+          email?: string | null
+          nome?: string | null
+          presente?: boolean | null
+          removido?: boolean
+          reuniao_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reun_participantes_reuniao_id_fkey"
+            columns: ["reuniao_id"]
+            isOneToOne: false
+            referencedRelation: "reun_reunioes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reun_pauta: {
+        Row: {
+          atualizado_em: string
+          descricao: string | null
+          ordem: number
+          removido: boolean
+          reuniao_id: string
+          titulo: string
+        }
+        Insert: {
+          atualizado_em?: string
+          descricao?: string | null
+          ordem: number
+          removido?: boolean
+          reuniao_id: string
+          titulo: string
+        }
+        Update: {
+          atualizado_em?: string
+          descricao?: string | null
+          ordem?: number
+          removido?: boolean
+          reuniao_id?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reun_pauta_reuniao_id_fkey"
+            columns: ["reuniao_id"]
+            isOneToOne: false
+            referencedRelation: "reun_reunioes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reun_recebimentos: {
+        Row: {
+          id: string
+          recebido_em: string
+          resultado: string
+          reuniao_id: string
+        }
+        Insert: {
+          id?: string
+          recebido_em?: string
+          resultado: string
+          reuniao_id: string
+        }
+        Update: {
+          id?: string
+          recebido_em?: string
+          resultado?: string
+          reuniao_id?: string
+        }
+        Relationships: []
+      }
+      reun_reunioes: {
+        Row: {
+          ata_status: string | null
+          ata_validada_em: string | null
+          ata_validada_por_email: string | null
+          ata_validada_por_nome: string | null
+          criado_em: string
+          excluida: boolean
+          fim: string | null
+          gravacao_link: string | null
+          gravacao_resumo: string | null
+          gravacao_transcricao: string | null
+          id: string
+          inicio: string
+          organizador_email: string | null
+          organizador_nome: string | null
+          origem_atualizado_em: string
+          recebido_em: string
+          ritual_codigo: string | null
+          ritual_nome: string | null
+          titulo: string
+        }
+        Insert: {
+          ata_status?: string | null
+          ata_validada_em?: string | null
+          ata_validada_por_email?: string | null
+          ata_validada_por_nome?: string | null
+          criado_em?: string
+          excluida?: boolean
+          fim?: string | null
+          gravacao_link?: string | null
+          gravacao_resumo?: string | null
+          gravacao_transcricao?: string | null
+          id: string
+          inicio: string
+          organizador_email?: string | null
+          organizador_nome?: string | null
+          origem_atualizado_em: string
+          recebido_em?: string
+          ritual_codigo?: string | null
+          ritual_nome?: string | null
+          titulo: string
+        }
+        Update: {
+          ata_status?: string | null
+          ata_validada_em?: string | null
+          ata_validada_por_email?: string | null
+          ata_validada_por_nome?: string | null
+          criado_em?: string
+          excluida?: boolean
+          fim?: string | null
+          gravacao_link?: string | null
+          gravacao_resumo?: string | null
+          gravacao_transcricao?: string | null
+          id?: string
+          inicio?: string
+          organizador_email?: string | null
+          organizador_nome?: string | null
+          origem_atualizado_em?: string
+          recebido_em?: string
+          ritual_codigo?: string | null
+          ritual_nome?: string | null
+          titulo?: string
+        }
+        Relationships: []
+      }
       riscos_institucionais: {
         Row: {
           acoes_mitigadoras: string | null
@@ -7489,6 +7743,7 @@ export type Database = {
         Returns: undefined
       }
       qw_vincular: { Args: never; Returns: boolean }
+      reun_receber: { Args: { _dados: Json }; Returns: string }
       revisao_aprovar_pendentes: {
         Args: { _revisao_id: string }
         Returns: number
