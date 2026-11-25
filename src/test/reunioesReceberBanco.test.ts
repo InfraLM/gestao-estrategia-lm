@@ -87,7 +87,7 @@ describe("respostas HTTP do código original em ambiente isolado", () => {
   const handler = (token: string | undefined) => {
     let tratar: ((r: Request) => Promise<Response>) | undefined;
     const fonte = transformSync(readFileSync("supabase/functions/reunioes-receber/index.ts", "utf8").replace(/^import .*;\r?\n/gm, ""), { loader: "ts" }).code;
-    new Function("Deno", "createClient", "ErroContrato", "LIMITE_BYTES", "tokenConfere", "validarReuniao", fonte)(
+    new Function("Deno", "postgres", "ErroContrato", "LIMITE_BYTES", "tokenConfere", "validarReuniao", fonte)(
       { env: { get: (nome: string) => nome === "REUNIOES_INGEST_TOKEN" ? token : undefined }, serve: (fn: (r: Request) => Promise<Response>) => { tratar = fn; } },
       () => { throw new Error("Nenhuma gravação deve ocorrer"); }, ErroContrato, LIMITE_BYTES, tokenConfere, validarReuniao,
     );
@@ -99,6 +99,12 @@ describe("respostas HTTP do código original em ambiente isolado", () => {
   });
   it("com configuração, chamada sem token responde 401", async () => {
     expect((await handler(tokenFicticio)(new Request("https://teste.invalid", { method: "POST", body: "{}" }))).status).toBe(401);
+  });
+  it("com token, mas sem o banco de reuniões configurado, o GET de conferência responde 503 sem conectar", async () => {
+    expect((await handler(tokenFicticio)(new Request("https://teste.invalid", { method: "GET", headers: { "x-integracao-token": tokenFicticio } }))).status).toBe(503);
+  });
+  it("métodos diferentes de GET e POST respondem 405", async () => {
+    expect((await handler(tokenFicticio)(new Request("https://teste.invalid", { method: "PUT", body: "{}" }))).status).toBe(405);
   });
   it.each(["{}", "não é JSON"])("com token e corpo inválido %s responde 400", async body => {
     expect((await handler(tokenFicticio)(new Request("https://teste.invalid", { method: "POST", headers: { "x-integracao-token": tokenFicticio }, body }))).status).toBe(400);
