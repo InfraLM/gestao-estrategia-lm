@@ -13,8 +13,6 @@ import { competenciaDaSemana } from "@/lib/rotinaSemanal";
 import { FAROL_LBL } from "@/lib/farol";
 import { celulaMes, marcarCriticos, grupoDo, GRUPO_LBL, type Grupo, type Celula } from "@/features/metas/lib/matrizApontamentos";
 import { cn } from "@/lib/utils";
-import { useModuleAccess } from "@/hooks/useModuleAccess";
-import { usaVisualNovo } from "@/features/metas/lib/guiaSemanal";
 import rev02 from "@/data/bscRev02.json";
 import { devidoNoCiclo, previstoNoMes } from '@/lib/frequenciaApontamento';
 import { addDias } from '@/lib/rotinaSemanal';
@@ -31,9 +29,8 @@ const dm = (s: string) => `${s.slice(8, 10)}/${s.slice(5, 7)}`;
 /** Matriz consolidada: lançamento mensal + situação dos checkouts enviados + árvore, pela regra única de avaliação. */
 export default function MatrizApontamentos() {
   const b = useMetasBase();
-  // Farol de 3 cores (23/11): só a Governança vê até a Naira validar; "?visual=atual" mostra a tela de antes.
-  const access = useModuleAccess();
-  const comFarol = usaVisualNovo(access.roles, window.location.search);
+  // Farol de 3 cores (23/11), aprovado pela Naira em 25/11: vale para todos; "?visual=atual" ainda mostra a tela de antes, para comparar.
+  const comFarol = new URLSearchParams(window.location.search).get("visual") !== "atual";
   const [lancs, setLancs] = useState<any[]>([]);
   const [metas, setMetas] = useState<any[]>([]);
   const [cks, setCks] = useState<(CheckoutReg & { cadeira_id: string })[]>([]);
