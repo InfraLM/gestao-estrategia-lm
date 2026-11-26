@@ -38,7 +38,9 @@ export type KpiResposta = {
 };
 export type KpiLegado = { indicador_id: string; valor: string; situacao: string; comentario: string };
 export type CheckoutV2 = {
-  v: 2; entregas: Entrega[]; extras: string; extras_lista?: EntregaExtra[]; aprendizados: string; proxima: string; ritmo: number;
+  v: 2; entregas: Entrega[]; extras: string; extras_lista?: EntregaExtra[];
+  /** Justificativas dos KPIs fora da meta pelo farol (formulário em passos, 26/11/2026); não abre desvio formal. */
+  farol_justificativas?: import("@/features/metas/lib/guiaSemanal").JustificativaFarol[]; aprendizados: string; proxima: string; ritmo: number;
   kpis?: KpiLegado[]; kpis_retrato?: KpiRetrato[]; kpis_resposta: KpiResposta[]; envio_token?: string; primeiro_envio_em?: string; atas?: AtaStatus[];
   /** Gravada no primeiro envio: itens obrigatórios preenchidos (taxa de conformidade). */
   completude?: { feitos: number; total: number; faltando: string[] };
