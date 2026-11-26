@@ -918,6 +918,13 @@
       "when": 1795620854183,
       "tag": "0130_metas_regras_farol",
       "breakpoints": true
+    },
+    {
+      "idx": 131,
+      "version": "7",
+      "when": 1795700316779,
+      "tag": "0131_orcamento_resumo_fpa",
+      "breakpoints": true
     }
   ]
 }

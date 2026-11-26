@@ -3946,6 +3946,63 @@ export type Database = {
         }
         Relationships: []
       }
+      orc_fpa_linhas: {
+        Row: {
+          ano: number
+          bu_id: number | null
+          categoria_tipo: string | null
+          centro_custo_id: number
+          centro_custo_nome: string | null
+          forecast_nome: string | null
+          formato: string | null
+          item_chave: string
+          item_nome: string
+          item_tipo: string
+          mes: number
+          orcado: number | null
+          projetado: number | null
+          realizado: number | null
+          sincronizado_em: string
+          visao: string
+        }
+        Insert: {
+          ano: number
+          bu_id?: number | null
+          categoria_tipo?: string | null
+          centro_custo_id?: number
+          centro_custo_nome?: string | null
+          forecast_nome?: string | null
+          formato?: string | null
+          item_chave: string
+          item_nome: string
+          item_tipo: string
+          mes: number
+          orcado?: number | null
+          projetado?: number | null
+          realizado?: number | null
+          sincronizado_em?: string
+          visao: string
+        }
+        Update: {
+          ano?: number
+          bu_id?: number | null
+          categoria_tipo?: string | null
+          centro_custo_id?: number
+          centro_custo_nome?: string | null
+          forecast_nome?: string | null
+          formato?: string | null
+          item_chave?: string
+          item_nome?: string
+          item_tipo?: string
+          mes?: number
+          orcado?: number | null
+          projetado?: number | null
+          realizado?: number | null
+          sincronizado_em?: string
+          visao?: string
+        }
+        Relationships: []
+      }
       orc_integracao_config: {
         Row: {
           ativo: boolean
@@ -7580,6 +7637,7 @@ export type Database = {
         Args: { _acao: string; _centro: string; _projeto: string }
         Returns: undefined
       }
+      orc_fpa_importar: { Args: { _linhas: Json }; Returns: number }
       orc_importar: {
         Args: { _arquivo: string; _itens: Json; _modo?: string }
         Returns: number
