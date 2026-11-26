@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, ArrowRight, Send, ListChecks } from "lucide-react";
+import { Plus, Trash2, ArrowRight, ArrowLeft, Send, ListChecks } from "lucide-react";
 import { FormField } from "@/components/FormField";
 import { SaveFeedback, SaveState } from "@/components/SaveFeedback";
 import { exclusiveAction } from "@/lib/exclusiveAction";
@@ -47,8 +47,10 @@ import EntregasExtras from '@/features/metas/components/EntregasExtras';
 import { semanaLink } from '@/lib/avisosCiclo';
 import { sugerirDesvio } from '@/features/metas/lib/dashboardRotina';
 import { INICIO_FREQUENCIA, periodoApontamento, resumoFrequencia } from '@/lib/frequenciaApontamento';
-import { GuiaCicloSemanal, TextoResumido } from '@/features/metas/components/GuiaCicloSemanal';
-import { pendenciasPorSecao, rotuloContador, faltaTexto, usaVisualNovo } from '@/features/metas/lib/guiaSemanal';
+import { TextoResumido, PassosCiclo, BlocoFarol } from '@/features/metas/components/GuiaCicloSemanal';
+import { useFarolDaCadeira } from '@/features/metas/hooks/useFarolDaCadeira';
+import { cn } from '@/lib/utils';
+import { pendenciasPorSecao, rotuloContador, faltaTexto, usaVisualNovo, passosDoCiclo, passoDaSecao, pendenciasPorPasso, mesclarJustificativas, pendenciasFarol, secaoDaPendencia, PASSO_LBL, type PassoCiclo } from '@/features/metas/lib/guiaSemanal';
 
 const db = supabase as any;
 export type Prioridade = PrioridadeV2;
@@ -131,6 +133,8 @@ export default function MetasSemanal() {
   const [aba, setAba] = useState<Tipo>("checkout");
   // Painel de conformidade fica em aba própria para não tirar o foco da resposta do diretor.
   const [vista, setVista] = useState<"formulario" | "painel">("formulario");
+  // Formulário em passos (visual novo): começa no passo dos indicadores fora da meta; sem ele, cai no primeiro passo existente.
+  const [passo, setPasso] = useState<PassoCiclo>("farol");
   const ciRef = useRef(ci); const coRef = useRef(co);
   const sujo = useRef<Record<Tipo, boolean>>({ checkin: false, checkout: false });
   const gravando = useRef(false); const repetir = useRef(false);
@@ -268,8 +272,15 @@ export default function MetasSemanal() {
     }
     return m;
   }, [b.iniciativas, cad, co.envio_token]);
+  // Visual mais didático: só super_admin até a Naira validar; "?visual=atual" mostra o de hoje.
+  const visualNovo = usaVisualNovo(access.roles, window.location.search);
+  // KPIs vermelhos (obrigatório) e amarelos (opcional) pelo farol, só no visual novo (decisão da Naira, 26/11, d23).
+  const farolCad = useFarolDaCadeira(b.indicadores, cad, visualNovo);
+  const justFarol = useMemo(() => co.primeiro_envio_em ? (co.farol_justificativas ?? [])
+    : mesclarJustificativas(farolCad.itens.filter((it) => !(co.kpis_retrato ?? []).some((r) => r.indicador_id === it.indicador_id && r.desvio_critico)), co.farol_justificativas),
+    [farolCad.itens, co.primeiro_envio_em, co.kpis_retrato, co.farol_justificativas]);
   const pendIn = pendenciasCheckin(ci);
-  const pendOut = [...pendenciasCheckout(co, reaproveitaveis),
+  const pendOut = [...pendenciasCheckout(co, reaproveitaveis), ...(visualNovo ? pendenciasFarol(justFarol) : []),
     ...impedimentos.filter(r => devidoImpedimento(r, cad, sem) && !respostaCompleta(r.resposta_ciclo)).map(r => ({ campo: `impedimento-${r.id}`, texto: `Impedimento: preencha e salve plano, prazo e status — ${r.descricao}` })),
     ...(erroImpedimentos ? [{campo:"bloco-impedimentos",texto:"Não foi possível carregar os impedimentos recebidos."}] : [])];
 
@@ -291,6 +302,7 @@ export default function MetasSemanal() {
         out.kpis_retrato = (out.kpis_retrato ?? []).map((k: KpiRetrato) => ({ ...k, congelado_em: agora }));
         out.completude = calcularCompletude(out, inn, mesSR ? resumoSR : null);
       }
+      if (visualNovo && !out.primeiro_envio_em) out.farol_justificativas = justFarol;
       out.primeiro_envio_em ??= agora; inn.primeiro_envio_em ??= agora; inn.envio_token = out.envio_token;
       const resp: KpiResposta[] = [];
       for (const k of out.kpis_resposta as KpiResposta[]) {
@@ -410,7 +422,7 @@ export default function MetasSemanal() {
 
   const Revisao = ({ blocos, pend }: { blocos: { id: string; txt: string; aba: Tipo }[]; pend: (Pendencia & { aba: Tipo })[] }) => {
     const enviado = seloCiclo(rows.find((r) => r.tipo === "checkin"), rows.find((r) => r.tipo === "checkout"), sem).estado === "enviado";
-    const ir = (a: Tipo, id: string) => { setAba(a); setSecao(id); setTocados(prev => new Set([...prev, id])); setTimeout(() => irPara(id), 50); };
+    const ir = (a: Tipo, id: string) => { if (visualNovo) setPasso(passoDaSecao(secaoDaPendencia(id))); setAba(a); setSecao(id); setTocados(prev => new Set([...prev, id])); setTimeout(() => irPara(id), 50); };
     return (
       <Card className="p-4 space-y-3 border-primary/40" id="revisao-ciclo">
         <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">Revisão do ciclo antes de enviar</h3><SeloDoCiclo /></div>
@@ -457,16 +469,16 @@ export default function MetasSemanal() {
   ] : [{ id: "bloco-prioridades", label: "Prioridades", total: ci.prioridades.length }, { id: "bloco-apoio", label: "Apoio e confiança", total: null }];
   const navegar = (id: string) => { setSecao(id); requestAnimationFrame(() => irPara(id)); };
   const respostas = co.kpis_resposta.filter((k) => k.ok != null && retrato.some((r) => r.indicador_id === k.indicador_id));
-  // Visual mais didático (25/11): só super_admin até a Naira validar; "?visual=atual" mostra o de hoje. Só textos e organização.
-  const visualNovo = usaVisualNovo(access.roles, window.location.search);
   const T = <A, B>(atual: A, novo: B) => (visualNovo ? novo : atual);
   const porSecao = pendenciasPorSecao([...pendOut, ...pendIn]);
+  const passos = passosDoCiclo(justFarol.length > 0 || retrato.some((k) => k.desvio_critico));
+  const passoAtual: PassoCiclo = passos.includes(passo) ? passo : passos[0];
+  const idxPasso = passos.indexOf(passoAtual);
+  const ve = (p: PassoCiclo) => !visualNovo || passoAtual === p;
+  const irParaPasso = (p: PassoCiclo) => { setVista("formulario"); setPasso(p); if (p === "plano") setAba("checkin"); else if (p !== "revisao") setAba("checkout"); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const cicloEnviado = seloCiclo(rows.find((x) => x.tipo === "checkin"), rows.find((x) => x.tipo === "checkout"), sem).estado === "enviado";
   const prazoTxt = prazoCiclo(sem).toLocaleString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" });
-  const irPasso = (pa: "checkout" | "checkin" | "revisao") => {
-    if (pa === "revisao") return navegar("revisao-ciclo");
-    setVista("formulario"); setAba(pa); const alvo = pa === "checkout" ? "bloco-kpis" : "bloco-prioridades"; setSecao(alvo); setTimeout(() => irPara(alvo), 50);
-  };
+
 
   return (
     <div className="space-y-4 min-w-0" onBlur={e => { const id = e.target.id; if (id && e.target.matches("input, textarea") && !tocados.has(id)) setTocados(prev => new Set([...prev, id])); }}>
@@ -488,32 +500,38 @@ export default function MetasSemanal() {
           </div>
         </div>
       </header>
-      {visualNovo && vista === "formulario" && <GuiaCicloSemanal atual={aba} faltaCheckout={pendOut.length} faltaCheckin={pendIn.length} prazo={prazoTxt} enviado={cicloEnviado} onIr={irPasso} />}
+      {visualNovo && vista === "formulario" && <PassosCiclo passos={passos} atual={passoAtual} faltas={pendenciasPorPasso([...pendOut, ...pendIn])} prazo={cicloEnviado ? null : prazoTxt} onIr={irParaPasso} />}
       <AvisoTransparencia ativo={transp.ativo} />
       <Tabs value={vista} onValueChange={(v) => setVista(v as "formulario" | "painel")}>
         <TabsList className="h-auto"><TabsTrigger value="formulario">Responder o ciclo</TabsTrigger><TabsTrigger value="painel">Meu painel · conformidade</TabsTrigger></TabsList>
       </Tabs>
       {vista === "painel" && cad && <CartaoConformidade cadeira={cad} />}
 
-      <div className={vista === "painel" ? "hidden" : undefined}>
-      <Tabs value={aba} onValueChange={(v) => { setAba(v as Tipo); setSecao(v === "checkout" ? "bloco-kpis" : "bloco-prioridades"); }}>
-        <TabsList className="h-auto flex-wrap"><TabsTrigger value="checkout">{T(`Checkout · semana de ${fmtSem(semOut)}`, `① Como foi a semana · ${fmtSem(semOut)}`)}</TabsTrigger><TabsTrigger value="checkin">{T(`Check-in · semana de ${fmtSem(sem)}`, `② Plano da semana · ${fmtSem(sem)}`)}</TabsTrigger></TabsList>
+      <div className={vista === "painel" || (visualNovo && passoAtual === "revisao") ? "hidden" : undefined}>
+      <Tabs value={visualNovo ? (passoAtual === "plano" ? "checkin" : "checkout") : aba} onValueChange={(v) => { setAba(v as Tipo); setSecao(v === "checkout" ? "bloco-kpis" : "bloco-prioridades"); }}>
+        <TabsList className={cn("h-auto flex-wrap", visualNovo && "hidden")}><TabsTrigger value="checkout">{T(`Checkout · semana de ${fmtSem(semOut)}`, `① Como foi a semana · ${fmtSem(semOut)}`)}</TabsTrigger><TabsTrigger value="checkin">{T(`Check-in · semana de ${fmtSem(sem)}`, `② Plano da semana · ${fmtSem(sem)}`)}</TabsTrigger></TabsList>
 
-        <nav aria-label="Seções do formulário semanal" className="sticky top-0 z-20 flex flex-wrap gap-1 border-b bg-background py-2">
+        <nav aria-label="Seções do formulário semanal" className={cn("sticky top-0 z-20 flex flex-wrap gap-1 border-b bg-background py-2", visualNovo && "hidden")}>
           {secoes.map(x => <Button key={x.id} type="button" size="sm" variant={secao === x.id ? "secondary" : "ghost"} aria-current={secao === x.id ? "location" : undefined} onClick={() => navegar(x.id)} className="h-auto min-h-10 whitespace-normal text-xs">{x.label}{visualNovo ? (() => { const n = porSecao[x.id] ?? 0; const r = rotuloContador(n, x.total); return r ? <span className={`ml-1 ${n > 0 ? "font-medium text-destructive" : "text-success"}`}>· {r}</span> : null; })() : x.total !== null && <span className="ml-1 text-muted-foreground">{x.total}</span>}</Button>)}
           <Button size="sm" variant="ghost" onClick={() => navegar("revisao-ciclo")}><ListChecks className="mr-1 h-4 w-4" />Revisão</Button>
         </nav>
 
         <TabsContent value="checkout" className="space-y-4">
-          <p className="text-sm text-muted-foreground">{T("Retrospectiva da semana que passou: KPIs, entregas, riscos e pendências das reuniões.", "Conte como foi a semana passada: indicadores, entregas, riscos e pendências das reuniões.")}</p>
-          <section className="space-y-3 border-b py-5 scroll-mt-40" id="bloco-kpis" tabIndex={-1}>
-            <div className="flex flex-wrap items-center justify-between gap-2">
+          {!visualNovo && <p className="text-sm text-muted-foreground">Retrospectiva da semana que passou: KPIs, entregas, riscos e pendências das reuniões.</p>}
+          {visualNovo && ve("farol") && <section className="space-y-3 py-2 scroll-mt-40" id="bloco-farol" tabIndex={-1}>
+            <h2 className="font-semibold">Indicadores fora da meta</h2>
+            <BlocoFarol lista={justFarol} unidades={Object.fromEntries(b.indicadores.map((i) => [i.id, i.unidade ?? null]))} podeEditar={podeEditar && !co.primeiro_envio_em}
+              carregando={farolCad.carregando} erro={farolCad.erro} onChange={(l) => setCo({ ...co, farol_justificativas: l })} />
+          </section>}
+          <section className={cn("space-y-3 border-b py-5 scroll-mt-40", visualNovo && !(ve("farol") && retrato.some((k) => k.desvio_critico)) && "hidden")} id="bloco-kpis" tabIndex={-1}>
+            <div className={cn("flex flex-wrap items-center justify-between gap-2", visualNovo && "hidden")}>
               <h2 className="font-semibold">{T("1. Seus KPIs estão performando dentro do esperado?", "1. Como estão seus indicadores?")}</h2>
               {podeEditar && sem>=INICIO_FREQUENCIA && !co.primeiro_envio_em && <Button size="sm" variant="outline" onClick={()=>setDesvioEscolha(!desvioEscolha)}><Plus className="h-4 w-4 mr-1"/>Desvio crítico</Button>}
               {podeEditar && sem>=INICIO_FREQUENCIA && !co.primeiro_envio_em && <Button size="sm" variant="outline" onClick={()=>{setOutrosAberto(!outrosAberto);setOutrosSel([]);}}><Plus className="h-4 w-4 mr-1"/>Apontar outros KPIs</Button>}
               {podeEditar && noAlvo.length > 0 && <Button size="sm" variant="outline" onClick={() => setCo({ ...co, kpis_resposta: confirmarNoAlvo(retrato, co.kpis_resposta, sem) })}>Confirmar Sim nos {noAlvo.length} no alvo</Button>}
             </div>
-            {visualNovo ? <p className="text-xs text-muted-foreground">Opcional: diga se cada indicador está dentro do esperado. Isso não muda o lançamento do mês.{co.primeiro_envio_em ? ` Números guardados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}.` : ""}</p> : <p className="text-xs text-muted-foreground">Resposta opcional. {co.primeiro_envio_em ? `Números gravados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}` : "Números ao vivo até o envio"}{sem>=INICIO_FREQUENCIA?' · período fechado indicado em cada KPI':competencia ? ` · competência ${competencia.slice(5)}/${competencia.slice(0, 4)}` : " · semana sem competência mensal"}. Não altera o lançamento mensal.</p>}
+            {visualNovo && <h3 className="text-sm font-semibold">Desvio crítico: fora da meta por 2 ou mais períodos e abaixo de 70%</h3>}
+            {visualNovo ? <p className="hidden">Opcional: diga se cada indicador está dentro do esperado. Isso não muda o lançamento do mês.{co.primeiro_envio_em ? ` Números guardados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}.` : ""}</p> : <p className="text-xs text-muted-foreground">Resposta opcional. {co.primeiro_envio_em ? `Números gravados no envio de ${new Date(co.primeiro_envio_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}` : "Números ao vivo até o envio"}{sem>=INICIO_FREQUENCIA?' · período fechado indicado em cada KPI':competencia ? ` · competência ${competencia.slice(5)}/${competencia.slice(0, 4)}` : " · semana sem competência mensal"}. Não altera o lançamento mensal.</p>}
             {T(<p className="text-sm rounded bg-muted p-2">Cada KPI pede um apontamento conforme o tipo: <b>valor mensal</b> (On/Off calculado após o fim do mês), <b>meta semestral/anual</b> (você declara On/Off no mês; justificativa se Off) ou <b>entrega</b> (status de implantação × prazo).</p>, <p className="text-sm rounded bg-muted p-2">Cada indicador é respondido de um jeito: <b>valor do mês</b> (o app calcula se ficou na meta quando o mês fecha), <b>meta do semestre ou do ano</b> (você diz se está na meta; se estiver fora, explica o motivo) ou <b>entrega</b> (você conta como está a implantação e o prazo).</p>)}
             {desvioEscolha && <Select onValueChange={id=>{const k=todosKpis.find(k=>k.indicador_id===id);if(!k)return;setCo({...co,kpis_retrato:[...retrato,{...k,desvio_critico:true}],kpis_resposta:[...co.kpis_resposta.filter(r=>r.indicador_id!==id),{...respostaVazia(id,sem),desvio_critico:true,ok:false}]});setDesvioEscolha(false);}}><SelectTrigger aria-label="KPI fora do calendário"><SelectValue placeholder="Adicionar KPI próprio fora do calendário"/></SelectTrigger><SelectContent>{todosKpis.filter(k=>!retrato.some(r=>r.indicador_id===k.indicador_id)).map(k=><SelectItem key={k.indicador_id} value={k.indicador_id}>{k.codigo} · {k.nome}</SelectItem>)}</SelectContent></Select>}
             {outrosAberto && (()=>{ const q=outrosBusca.trim().toLowerCase(); const disp=todosKpis.filter(k=>!retrato.some(r=>r.indicador_id===k.indicador_id)&&(!q||`${k.codigo} ${k.nome}`.toLowerCase().includes(q)));
@@ -527,7 +545,7 @@ export default function MetasSemanal() {
               </div>; })()}
             {retrato.length === 0 && <p className="text-sm text-muted-foreground">{sem>=INICIO_FREQUENCIA?'Nenhum KPI devido neste ciclo.':'Nenhum KPI sob responsabilidade desta cadeira.'}</p>}
             <div className="grid gap-3 lg:grid-cols-2">
-              {retrato.map((k) => {
+              {(visualNovo ? retrato.filter((k) => k.desvio_critico) : retrato).map((k) => {
                 const r = resp(k.indicador_id); const cand = reaproveitaveis[k.indicador_id] ?? [];
                 const ult = ultimaSituacao(k.indicador_id, arvore.mapa[k.nome.trim()] ? { valor: arvore.mapa[k.nome.trim()], data: arvore.data } : null, hist.filter((h) => h.tipo === "checkout"), semOut);
                 const semMeta = k.meta_mes == null && (k.origem !== "bsc" || (k.meta_semestre == null && !k.meta_texto));
@@ -618,8 +636,8 @@ export default function MetasSemanal() {
               {(co.kpis ?? []).map((k, i) => { const ind = b.indicadores.find((x) => x.id === k.indicador_id); return <p key={i}>{ind?.codigo} · {ind?.nome} {k.valor && `— ${k.valor}`} {k.situacao && `(${SITUACAO_LBL[k.situacao]})`}</p>; })}</div>}
           </section>
 
-          <section className="space-y-4 border-b py-5 scroll-mt-40" id="bloco-entregas" tabIndex={-1}>
-            <div className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">{T("2. Entregas das prioridades", "2. O que você entregou das prioridades da semana passada?")}</h2></div>
+          <section className={cn("space-y-4 border-b py-5 scroll-mt-40", !ve("semana") && "hidden")} id="bloco-entregas" tabIndex={-1}>
+            <div className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">{T("2. Entregas das prioridades", "O que você entregou das prioridades da semana passada?")}</h2></div>
             {co.entregas.length === 0 && <p className="text-sm text-muted-foreground">Sem prioridades declaradas no check-in de {fmtSem(semOut)}.</p>}
             {podeEditar && entregasAtuais.length === 0 && cinOut.prioridades.some((p) => p.titulo) && (
               <Button variant="outline" size="sm" onClick={() => setCo({ ...co, entregas: mesclarHerdadas(entregasDePrioridades(cinOut.prioridades), co.entregas.filter((e) => e.herdada_de)) })}>Trazer prioridades do check-in de {fmtSem(semOut)}</Button>
@@ -664,8 +682,9 @@ export default function MetasSemanal() {
             <AcoesEntregaCheckout cadeira={cad} ciclo={sem} podeEditar={podeEditar} indicadores={b.indicadores} objetivos={b.objetivos} iniciativas={b.iniciativas} />
           </section>
 
+          <div className={cn(!ve("riscos") && "hidden")}>
           <section className="space-y-3 border-b py-5 scroll-mt-40" id="bloco-riscos" tabIndex={-1}>
-            <h2 className="font-semibold">3. Riscos, impedimentos e decisões pendentes</h2>
+            <h2 className="font-semibold">{T("3. Riscos, impedimentos e decisões pendentes", "Riscos, impedimentos e decisões pendentes")}</h2>
             <p className="text-xs text-muted-foreground">Ficam com a cadeira e reaparecem toda semana até serem resolvidos.</p>
             {abertos.length === 0 && <p className="text-sm text-muted-foreground">Nenhum item aberto.</p>}
             {abertos.map((r) => (
@@ -695,8 +714,9 @@ export default function MetasSemanal() {
 
           <ImpedimentosRecebidos itens={impedimentos} cadeira={cad} ciclo={sem} editar={podeEditar} governanca={b.isGovernanca} onReload={carregarImpedimentos} />
           {erroImpedimentos && <p role="alert" className="text-destructive">Não foi possível carregar os impedimentos.</p>}
+          </div>
 
-          <div id="bloco-atas" className="space-y-2"><h2 className="font-semibold">4. Pendências das reuniões</h2>
+          <div id="bloco-atas" className={cn("space-y-2", !ve("reunioes") && "hidden")}><h2 className="font-semibold">{T("4. Pendências das reuniões", "Pendências das reuniões")}</h2>
           <PendenciasComites status={co.atas ?? []} onStatus={(st: AtaStatus) => setCo({ ...co, atas: [...(co.atas ?? []).filter((x) => x.gov_acao_id !== st.gov_acao_id), st] })} cadeira={cad} usuario={b.user?.id} podeEditar={podeEditar} admin={access.roles.some((r) => r === "admin" || r === "super_admin")}
             vinculadas={ci.prioridades.flatMap((p) => (p.gov_acao_id ? [p.gov_acao_id] : []))}
             onPuxar={(acao) => {
@@ -708,12 +728,12 @@ export default function MetasSemanal() {
             }} />
           </div>
 
-          <section className="space-y-3 border-b py-5 scroll-mt-40" id="bloco-extras" tabIndex={-1}>
+          <section className={cn("space-y-3 border-b py-5 scroll-mt-40", !ve("semana") && "hidden")} id="bloco-extras" tabIndex={-1}>
             <EntregasExtras lista={co.extras_lista ?? []} onChange={extras_lista => setCo({ ...co, extras_lista })} disabled={!podeEditar} legado={co} governanca={b.isGovernanca} />
             <Escala lbl="Avaliação da semana (1 = ruim, 5 = excelente)" v={co.ritmo} on={(n) => setCo({ ...co, ritmo: n })} />
           </section>
-          {mesSR && cad && <StatusReportCiclo cadeira={cad} competencia={mesSR} ciclo={sem} podeEditar={podeEditar} userId={b.user?.id}
-            userNome={b.perfis.find((p) => p.user_id === b.user?.id)?.display_name ?? b.user?.email ?? null} onResumo={setResumoSR} />}
+          {mesSR && cad && <div className={cn(!ve("reunioes") && "hidden")}><StatusReportCiclo cadeira={cad} competencia={mesSR} ciclo={sem} podeEditar={podeEditar} userId={b.user?.id}
+            userNome={b.perfis.find((p) => p.user_id === b.user?.id)?.display_name ?? b.user?.email ?? null} onResumo={setResumoSR} /></div>}
         </TabsContent>
 
         <TabsContent value="checkin" className="space-y-4">
@@ -752,23 +772,27 @@ export default function MetasSemanal() {
       </Tabs>
       </div>
 
-      <Revisao pend={[...pendOut.map((p) => ({ ...p, aba: "checkout" as Tipo })), ...pendIn.map((p) => ({ ...p, aba: "checkin" as Tipo }))]} blocos={[
-        { aba: "checkout", id: "bloco-kpis", txt: `KPIs: ${respostas.length}/${retrato.length} respondidos · ${respostas.filter((k) => k.ok === false).length} "Não" · ${co.kpis_resposta.filter((k) => k.ok === false && k.vira_iniciativa && k.plano.trim()).length} plano(s) viram iniciativa` },
+      {ve("revisao") && <Revisao pend={[...pendOut.map((p) => ({ ...p, aba: "checkout" as Tipo })), ...pendIn.map((p) => ({ ...p, aba: "checkin" as Tipo }))]} blocos={[
+        ...(visualNovo ? (passos.includes("farol") ? [{ aba: "checkout" as Tipo, id: "bloco-farol", txt: `Indicadores fora da meta: ${justFarol.filter((j) => j.cor === "vermelho").length} vermelho(s), ${justFarol.filter((j) => j.cor === "amarelo").length} amarelo(s)${retrato.some((k) => k.desvio_critico) ? ` · ${retrato.filter((k) => k.desvio_critico).length} desvio(s) crítico(s)` : ""}` }] : []) : [{ aba: "checkout" as Tipo, id: "bloco-kpis", txt: `KPIs: ${respostas.length}/${retrato.length} respondidos · ${respostas.filter((k) => k.ok === false).length} "Não" · ${co.kpis_resposta.filter((k) => k.ok === false && k.vira_iniciativa && k.plano.trim()).length} plano(s) viram iniciativa` }]),
         { aba: "checkout", id: "bloco-entregas", txt: `Entregas: ${entregasAtuais.filter((e) => e.status === "entregue").length} de ${entregasAtuais.length}${co.entregas.length > entregasAtuais.length ? ` · ${co.entregas.length - entregasAtuais.length} de semanas anteriores` : ""}` },
         { aba: "checkout", id: "bloco-riscos", txt: `Riscos/impedimentos abertos: ${abertos.length}` },
         { aba: "checkout", id: "bloco-atas", txt: `Pendências de atas com seu status: ${(co.atas ?? []).filter((a) => a.status).length} · ${(co.atas ?? []).filter((a) => a.status === "entregue").length} aguardando baixa` },
         ...(mesSR ? [{ aba: "checkout" as Tipo, id: "bloco-status-report", txt: `Status report: ${resumoSR.completos} de ${resumoSR.total} projeto(s) completos${resumoSR.pendentes.length ? ` · pendente (não bloqueia o envio): ${resumoSR.pendentes.join(", ")}` : ""}` }] : []),
         { aba: "checkin", id: "bloco-prioridades", txt: `Prioridades: ${ci.prioridades.filter((p) => p.titulo.trim()).length}` },
         { aba: "checkin", id: "bloco-apoio", txt: `Apoio: ${ci.apoio.trim() ? "preenchido" : "—"} · Confiança ${ci.confianca}/5` },
-      ]} />
+      ]} />}
 
       {podeEditar && <div className="sticky bottom-0 z-30 border-t bg-background py-3 pr-12 sm:pr-14 flex flex-wrap items-center justify-between gap-3">
         <SaveFeedback state={salvo} onRetry={() => void flush()} />
-        <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+        {visualNovo ? <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+          {idxPasso > 0 && <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => irParaPasso(passos[idxPasso - 1])}><ArrowLeft className="mr-1 h-4 w-4" />Voltar</Button>}
+          {passoAtual !== "revisao" && <Button className="flex-1 sm:flex-none" onClick={() => irParaPasso(passos[idxPasso + 1])}>Próximo: {PASSO_LBL[passos[idxPasso + 1]]}<ArrowRight className="ml-1 h-4 w-4" /></Button>}
+          {passoAtual === "revisao" && <Button className="flex-1 sm:flex-none" disabled={pendIn.length + pendOut.length > 0 || enviando || salvo.estado === "salvando"} onClick={enviarCiclo}><Send className="mr-1 h-4 w-4" />{enviando ? "Enviando…" : cicloEnviado ? "Reenviar ciclo" : "Enviar ciclo"}</Button>}
+        </div> : <div className="flex w-full flex-wrap gap-2 sm:w-auto">
           <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => { setAba(aba === "checkout" ? "checkin" : "checkout"); setSecao(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"); setTimeout(() => irPara(aba === "checkout" ? "bloco-prioridades" : "bloco-kpis"), 50); }}><ArrowRight className="mr-1 h-4 w-4" />{aba === "checkout" ? T("Check-in", "Ir para o plano da semana") : T("Checkout", "Voltar para a semana passada")}</Button>
           <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => navegar("revisao-ciclo")}><ListChecks className="mr-1 h-4 w-4" />{visualNovo ? `Revisar · ${faltaTexto(pendIn.length + pendOut.length)}` : `Revisar${pendIn.length + pendOut.length > 0 ? ` (${pendIn.length + pendOut.length})` : ""}`}</Button>
           <Button className="flex-1 sm:flex-none" disabled={pendIn.length + pendOut.length > 0 || enviando || salvo.estado === "salvando"} onClick={enviarCiclo}><Send className="mr-1 h-4 w-4" />{enviando ? "Enviando…" : seloCiclo(rows.find(r => r.tipo === "checkin"), rows.find(r => r.tipo === "checkout"), sem).estado === "enviado" ? "Reenviar ciclo" : "Enviar ciclo"}</Button>
-        </div>
+        </div>}
       </div>}
 
     </div>
